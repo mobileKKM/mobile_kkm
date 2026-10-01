@@ -118,6 +118,26 @@ void main() {
       expect(await store.read(), isNull);
     });
 
+    test('inactive account: login 400 surfaces as EkpHttpException', () async {
+      adapter.onPost('/auth/login', [
+        (
+          400,
+          {'message': 'Konto jest nieaktywne', 'exceptionCode': 259, 'code': 1},
+        ),
+      ]);
+      await expectLater(
+        client.auth.login('x@y.z', 'never-activated'),
+        throwsA(
+          isA<EkpHttpException>()
+              .having((e) => e.statusCode, 'statusCode', 400)
+              .having((e) => e.message, 'message', 'Konto jest nieaktywne')
+              // `code` (1) shadows `exceptionCode` (259) in the pick order.
+              .having((e) => e.codeAsInt, 'codeAsInt', 1),
+        ),
+      );
+      expect(await store.read(), isNull);
+    });
+
     test('register with birthDate sends date and no pesel', () async {
       adapter.onPost('/auth/register', [
         (200, {'code': null, 'message': null}),
@@ -139,7 +159,7 @@ void main() {
       expect(body['repeat_email'], body['email']);
     });
 
-    test('register with pesel sends pesel and no birthDate', () async {
+    test('register with pesel sends pesel AND the derived birthDate', () async {
       adapter.onPost('/auth/register', [
         (200, {'code': null, 'message': null}),
       ]);
@@ -149,35 +169,34 @@ void main() {
         email: 'test@example.com',
         password: 'Sup3rSecret!',
         pesel: '90010112345',
+        // Derived client-side by the host app (captured 2026-10-01: the
+        // official app prefills birthDate from the PESEL and sends both).
+        birthDate: DateTime(1990, 1, 1),
       );
       final body =
           requestsTo('/auth/register').single.data as Map<String, dynamic>;
       expect(body['pesel'], '90010112345');
-      expect(body.containsKey('birthDate'), isFalse);
+      expect(
+        (body['birthDate'] as String).startsWith('1990-01-01T00:00:00'),
+        isTrue,
+      );
     });
 
-    test('register requires exactly one of pesel/birthDate', () async {
-      await expectLater(
-        client.auth.register(
-          firstName: 'a',
-          lastName: 'b',
-          email: 'c@d.e',
-          password: 'x',
-        ),
-        throwsArgumentError,
+    test('register always sends a birthDate', () async {
+      adapter.onPost('/auth/register', [
+        (200, {'code': null, 'message': null}),
+      ]);
+      await client.auth.register(
+        firstName: 'a',
+        lastName: 'b',
+        email: 'c@d.e',
+        password: 'x',
+        birthDate: DateTime(1983, 9, 28),
       );
-      await expectLater(
-        client.auth.register(
-          firstName: 'a',
-          lastName: 'b',
-          email: 'c@d.e',
-          password: 'x',
-          pesel: '90010112345',
-          birthDate: DateTime(1983, 9, 28),
-        ),
-        throwsArgumentError,
-      );
-      expect(requestsTo('/auth/register'), isEmpty);
+      final body =
+          requestsTo('/auth/register').single.data as Map<String, dynamic>;
+      expect(body['pesel'], isNull);
+      expect(body['birthDate'], startsWith('1983-09-28T00:00:00'));
     });
   });
 

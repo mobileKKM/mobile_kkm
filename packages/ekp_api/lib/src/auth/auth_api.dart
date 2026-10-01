@@ -73,26 +73,22 @@ class AuthApi extends EkpApiService {
 
   /// `POST auth/register`
   ///
-  /// The backend accepts **either** a PESEL or a birth date as the identity
-  /// anchor — provide exactly one of [pesel] or [birthDate]. An account
-  /// registered with [birthDate] has `pesel: null` in its user data (and
-  /// `mkkmData: null` until a medium is created).
+  /// The official client ALWAYS sends a `birthDate`: derived from the
+  /// PESEL client-side once the user types a valid number (so a PESEL
+  /// registration carries both `pesel` and the derived `birthDate`), or
+  /// entered manually for PESEL-less accounts (which later show
+  /// `pesel: null` in user data, and `mkkmData: null` until a medium is
+  /// created). This package deliberately does NOT derive birth dates
+  /// from PESELs — the host app computes the prefill and passes it in.
   Future<CodeMessageResponse> register({
     required String firstName,
     required String lastName,
     required String email,
     required String password,
+    required DateTime birthDate,
     String? pesel,
-    DateTime? birthDate,
     List<MarketingConsent> marketingConsents = const [],
   }) async {
-    if ((pesel == null) == (birthDate == null)) {
-      throw ArgumentError.value(
-        pesel,
-        'pesel',
-        'Provide exactly one of pesel or birthDate',
-      );
-    }
     return guard(() async {
       final response = await dio.post<Map<String, dynamic>>(
         EkpApiPaths.register,
@@ -108,7 +104,7 @@ class AuthApi extends EkpApiService {
           'password': password,
           'repeat_password': password,
           'pesel': ?pesel,
-          if (birthDate != null) 'birthDate': formatEkpBirthDate(birthDate),
+          'birthDate': formatEkpBirthDate(birthDate),
         },
       );
       return CodeMessageResponse.fromJson(

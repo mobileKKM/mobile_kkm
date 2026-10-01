@@ -71,12 +71,19 @@ void main() {
         lastName: 'Testowy',
         email: 'test@example.com',
         password: 'secret123',
+        // The official app derives the birth date from the PESEL
+        // client-side and sends BOTH (captured 2026-10-01).
         pesel: '90010112345',
+        birthDate: DateTime(1990, 1, 1),
       );
 
       final body = bodyOf(requestsTo('/auth/register').single);
       expect(body['pesel'], '90010112345');
-      expect(body['birthDate'], isNull);
+      expect(
+        (body['birthDate'] as String).startsWith('1990-01-01T00:00:00'),
+        isTrue,
+        reason: 'got ${body['birthDate']}',
+      );
       expect(body['repeat_email'], 'test@example.com');
       expect(body['repeat_password'], 'secret123');
       expect(body['marketingConsents'], isEmpty);
@@ -108,29 +115,6 @@ void main() {
         reason: 'got ${body['birthDate']}',
       );
       expect(body['birthDate'], contains(RegExp(r'[+-]\d{2}:\d{2}$')));
-    });
-
-    test('register rejects both/neither of pesel and birthDate', () {
-      expect(
-        () => client.auth.register(
-          firstName: 'a',
-          lastName: 'b',
-          email: 'c@d.e',
-          password: 'x',
-        ),
-        throwsArgumentError,
-      );
-      expect(
-        () => client.auth.register(
-          firstName: 'a',
-          lastName: 'b',
-          email: 'c@d.e',
-          password: 'x',
-          pesel: '90010112345',
-          birthDate: DateTime(1983, 9, 28),
-        ),
-        throwsArgumentError,
-      );
     });
 
     test('activate posts the e-mail token', () async {
