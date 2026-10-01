@@ -17,9 +17,10 @@ T _$identity<T>(T value) => value;
 mixin _$MkkmTicket {
 
  String? get ticketGuid;/// Base64 transaction code — the id used by `GET /tickets/{id}`.
- String? get transactionCode; String? get status; DateTime? get datePurchase; DateTime? get startDate; DateTime? get endDate; int? get monthsPeriod; int? get daysPeriod; double? get price; bool? get isAnyAssigned; bool? get assigned; bool? get canAssign; bool? get forCitizen; int? get ticketKindCode; int? get ticketNumberOfLineCode; int? get ticketPeriodCode; String? get specialTransportLine; bool? get isNetwork; bool? get isMetropolitan;/// Selected transport lines for line-scoped tickets. Element type
-/// unverified (always `[]` in captures) — kept raw.
- List<dynamic> get lines; bool? get fivePlusOneTicket;/// Numeric customer code — only present in ticket detail responses.
+ String? get transactionCode; String? get status; DateTime? get datePurchase; DateTime? get startDate; DateTime? get endDate; int? get monthsPeriod; int? get daysPeriod; double? get price; bool? get isAnyAssigned; bool? get assigned; bool? get canAssign; bool? get forCitizen; int? get ticketKindCode; int? get ticketNumberOfLineCode; int? get ticketPeriodCode; String? get specialTransportLine; bool? get isNetwork; bool? get isMetropolitan;/// Selected transport lines for line-scoped tickets, as full
+/// [TransportLine] objects (snake_case wire shape, same as the
+/// `dictionary/transport-line` response).
+ List<TransportLine> get lines; bool? get fivePlusOneTicket;/// Numeric customer code — only present in ticket detail responses.
  int? get customerId; int? get customerCode; int? get cityCardTypeCode; String? get productName; int? get paymentStateId; String? get paymentStateDescription; int? get paymentTypeCode; String? get paymentDescription; String? get promotionName; String? get cityCardTypeName;
 /// Create a copy of MkkmTicket
 /// with the given fields replaced by the non-null parameter values.
@@ -58,7 +59,7 @@ abstract mixin class $MkkmTicketCopyWith<$Res>  {
   factory $MkkmTicketCopyWith(MkkmTicket value, $Res Function(MkkmTicket) _then) = _$MkkmTicketCopyWithImpl;
 @useResult
 $Res call({
- String? ticketGuid, String? transactionCode, String? status, DateTime? datePurchase, DateTime? startDate, DateTime? endDate, int? monthsPeriod, int? daysPeriod, double? price, bool? isAnyAssigned, bool? assigned, bool? canAssign, bool? forCitizen, int? ticketKindCode, int? ticketNumberOfLineCode, int? ticketPeriodCode, String? specialTransportLine, bool? isNetwork, bool? isMetropolitan, List<dynamic> lines, bool? fivePlusOneTicket, int? customerId, int? customerCode, int? cityCardTypeCode, String? productName, int? paymentStateId, String? paymentStateDescription, int? paymentTypeCode, String? paymentDescription, String? promotionName, String? cityCardTypeName
+ String? ticketGuid, String? transactionCode, String? status, DateTime? datePurchase, DateTime? startDate, DateTime? endDate, int? monthsPeriod, int? daysPeriod, double? price, bool? isAnyAssigned, bool? assigned, bool? canAssign, bool? forCitizen, int? ticketKindCode, int? ticketNumberOfLineCode, int? ticketPeriodCode, String? specialTransportLine, bool? isNetwork, bool? isMetropolitan, List<TransportLine> lines, bool? fivePlusOneTicket, int? customerId, int? customerCode, int? cityCardTypeCode, String? productName, int? paymentStateId, String? paymentStateDescription, int? paymentTypeCode, String? paymentDescription, String? promotionName, String? cityCardTypeName
 });
 
 
@@ -97,7 +98,7 @@ as int?,specialTransportLine: freezed == specialTransportLine ? _self.specialTra
 as String?,isNetwork: freezed == isNetwork ? _self.isNetwork : isNetwork // ignore: cast_nullable_to_non_nullable
 as bool?,isMetropolitan: freezed == isMetropolitan ? _self.isMetropolitan : isMetropolitan // ignore: cast_nullable_to_non_nullable
 as bool?,lines: null == lines ? _self.lines : lines // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,fivePlusOneTicket: freezed == fivePlusOneTicket ? _self.fivePlusOneTicket : fivePlusOneTicket // ignore: cast_nullable_to_non_nullable
+as List<TransportLine>,fivePlusOneTicket: freezed == fivePlusOneTicket ? _self.fivePlusOneTicket : fivePlusOneTicket // ignore: cast_nullable_to_non_nullable
 as bool?,customerId: freezed == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
 as int?,customerCode: freezed == customerCode ? _self.customerCode : customerCode // ignore: cast_nullable_to_non_nullable
 as int?,cityCardTypeCode: freezed == cityCardTypeCode ? _self.cityCardTypeCode : cityCardTypeCode // ignore: cast_nullable_to_non_nullable
@@ -193,7 +194,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? ticketGuid,  String? transactionCode,  String? status,  DateTime? datePurchase,  DateTime? startDate,  DateTime? endDate,  int? monthsPeriod,  int? daysPeriod,  double? price,  bool? isAnyAssigned,  bool? assigned,  bool? canAssign,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<dynamic> lines,  bool? fivePlusOneTicket,  int? customerId,  int? customerCode,  int? cityCardTypeCode,  String? productName,  int? paymentStateId,  String? paymentStateDescription,  int? paymentTypeCode,  String? paymentDescription,  String? promotionName,  String? cityCardTypeName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? ticketGuid,  String? transactionCode,  String? status,  DateTime? datePurchase,  DateTime? startDate,  DateTime? endDate,  int? monthsPeriod,  int? daysPeriod,  double? price,  bool? isAnyAssigned,  bool? assigned,  bool? canAssign,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<TransportLine> lines,  bool? fivePlusOneTicket,  int? customerId,  int? customerCode,  int? cityCardTypeCode,  String? productName,  int? paymentStateId,  String? paymentStateDescription,  int? paymentTypeCode,  String? paymentDescription,  String? promotionName,  String? cityCardTypeName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MkkmTicket() when $default != null:
 return $default(_that.ticketGuid,_that.transactionCode,_that.status,_that.datePurchase,_that.startDate,_that.endDate,_that.monthsPeriod,_that.daysPeriod,_that.price,_that.isAnyAssigned,_that.assigned,_that.canAssign,_that.forCitizen,_that.ticketKindCode,_that.ticketNumberOfLineCode,_that.ticketPeriodCode,_that.specialTransportLine,_that.isNetwork,_that.isMetropolitan,_that.lines,_that.fivePlusOneTicket,_that.customerId,_that.customerCode,_that.cityCardTypeCode,_that.productName,_that.paymentStateId,_that.paymentStateDescription,_that.paymentTypeCode,_that.paymentDescription,_that.promotionName,_that.cityCardTypeName);case _:
@@ -214,7 +215,7 @@ return $default(_that.ticketGuid,_that.transactionCode,_that.status,_that.datePu
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? ticketGuid,  String? transactionCode,  String? status,  DateTime? datePurchase,  DateTime? startDate,  DateTime? endDate,  int? monthsPeriod,  int? daysPeriod,  double? price,  bool? isAnyAssigned,  bool? assigned,  bool? canAssign,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<dynamic> lines,  bool? fivePlusOneTicket,  int? customerId,  int? customerCode,  int? cityCardTypeCode,  String? productName,  int? paymentStateId,  String? paymentStateDescription,  int? paymentTypeCode,  String? paymentDescription,  String? promotionName,  String? cityCardTypeName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? ticketGuid,  String? transactionCode,  String? status,  DateTime? datePurchase,  DateTime? startDate,  DateTime? endDate,  int? monthsPeriod,  int? daysPeriod,  double? price,  bool? isAnyAssigned,  bool? assigned,  bool? canAssign,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<TransportLine> lines,  bool? fivePlusOneTicket,  int? customerId,  int? customerCode,  int? cityCardTypeCode,  String? productName,  int? paymentStateId,  String? paymentStateDescription,  int? paymentTypeCode,  String? paymentDescription,  String? promotionName,  String? cityCardTypeName)  $default,) {final _that = this;
 switch (_that) {
 case _MkkmTicket():
 return $default(_that.ticketGuid,_that.transactionCode,_that.status,_that.datePurchase,_that.startDate,_that.endDate,_that.monthsPeriod,_that.daysPeriod,_that.price,_that.isAnyAssigned,_that.assigned,_that.canAssign,_that.forCitizen,_that.ticketKindCode,_that.ticketNumberOfLineCode,_that.ticketPeriodCode,_that.specialTransportLine,_that.isNetwork,_that.isMetropolitan,_that.lines,_that.fivePlusOneTicket,_that.customerId,_that.customerCode,_that.cityCardTypeCode,_that.productName,_that.paymentStateId,_that.paymentStateDescription,_that.paymentTypeCode,_that.paymentDescription,_that.promotionName,_that.cityCardTypeName);case _:
@@ -234,7 +235,7 @@ return $default(_that.ticketGuid,_that.transactionCode,_that.status,_that.datePu
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? ticketGuid,  String? transactionCode,  String? status,  DateTime? datePurchase,  DateTime? startDate,  DateTime? endDate,  int? monthsPeriod,  int? daysPeriod,  double? price,  bool? isAnyAssigned,  bool? assigned,  bool? canAssign,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<dynamic> lines,  bool? fivePlusOneTicket,  int? customerId,  int? customerCode,  int? cityCardTypeCode,  String? productName,  int? paymentStateId,  String? paymentStateDescription,  int? paymentTypeCode,  String? paymentDescription,  String? promotionName,  String? cityCardTypeName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? ticketGuid,  String? transactionCode,  String? status,  DateTime? datePurchase,  DateTime? startDate,  DateTime? endDate,  int? monthsPeriod,  int? daysPeriod,  double? price,  bool? isAnyAssigned,  bool? assigned,  bool? canAssign,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<TransportLine> lines,  bool? fivePlusOneTicket,  int? customerId,  int? customerCode,  int? cityCardTypeCode,  String? productName,  int? paymentStateId,  String? paymentStateDescription,  int? paymentTypeCode,  String? paymentDescription,  String? promotionName,  String? cityCardTypeName)?  $default,) {final _that = this;
 switch (_that) {
 case _MkkmTicket() when $default != null:
 return $default(_that.ticketGuid,_that.transactionCode,_that.status,_that.datePurchase,_that.startDate,_that.endDate,_that.monthsPeriod,_that.daysPeriod,_that.price,_that.isAnyAssigned,_that.assigned,_that.canAssign,_that.forCitizen,_that.ticketKindCode,_that.ticketNumberOfLineCode,_that.ticketPeriodCode,_that.specialTransportLine,_that.isNetwork,_that.isMetropolitan,_that.lines,_that.fivePlusOneTicket,_that.customerId,_that.customerCode,_that.cityCardTypeCode,_that.productName,_that.paymentStateId,_that.paymentStateDescription,_that.paymentTypeCode,_that.paymentDescription,_that.promotionName,_that.cityCardTypeName);case _:
@@ -249,7 +250,7 @@ return $default(_that.ticketGuid,_that.transactionCode,_that.status,_that.datePu
 @JsonSerializable()
 
 class _MkkmTicket extends MkkmTicket {
-  const _MkkmTicket({this.ticketGuid, this.transactionCode, this.status, this.datePurchase, this.startDate, this.endDate, this.monthsPeriod, this.daysPeriod, this.price, this.isAnyAssigned, this.assigned, this.canAssign, this.forCitizen, this.ticketKindCode, this.ticketNumberOfLineCode, this.ticketPeriodCode, this.specialTransportLine, this.isNetwork, this.isMetropolitan,  List<dynamic> lines = const <dynamic>[], this.fivePlusOneTicket, this.customerId, this.customerCode, this.cityCardTypeCode, this.productName, this.paymentStateId, this.paymentStateDescription, this.paymentTypeCode, this.paymentDescription, this.promotionName, this.cityCardTypeName}): _lines = lines,super._();
+  const _MkkmTicket({this.ticketGuid, this.transactionCode, this.status, this.datePurchase, this.startDate, this.endDate, this.monthsPeriod, this.daysPeriod, this.price, this.isAnyAssigned, this.assigned, this.canAssign, this.forCitizen, this.ticketKindCode, this.ticketNumberOfLineCode, this.ticketPeriodCode, this.specialTransportLine, this.isNetwork, this.isMetropolitan,  List<TransportLine> lines = const <TransportLine>[], this.fivePlusOneTicket, this.customerId, this.customerCode, this.cityCardTypeCode, this.productName, this.paymentStateId, this.paymentStateDescription, this.paymentTypeCode, this.paymentDescription, this.promotionName, this.cityCardTypeName}): _lines = lines,super._();
   factory _MkkmTicket.fromJson(Map<String, dynamic> json) => _$MkkmTicketFromJson(json);
 
 @override final  String? ticketGuid;
@@ -272,12 +273,14 @@ class _MkkmTicket extends MkkmTicket {
 @override final  String? specialTransportLine;
 @override final  bool? isNetwork;
 @override final  bool? isMetropolitan;
-/// Selected transport lines for line-scoped tickets. Element type
-/// unverified (always `[]` in captures) — kept raw.
- final  List<dynamic> _lines;
-/// Selected transport lines for line-scoped tickets. Element type
-/// unverified (always `[]` in captures) — kept raw.
-@override@JsonKey() List<dynamic> get lines {
+/// Selected transport lines for line-scoped tickets, as full
+/// [TransportLine] objects (snake_case wire shape, same as the
+/// `dictionary/transport-line` response).
+ final  List<TransportLine> _lines;
+/// Selected transport lines for line-scoped tickets, as full
+/// [TransportLine] objects (snake_case wire shape, same as the
+/// `dictionary/transport-line` response).
+@override@JsonKey() List<TransportLine> get lines {
   if (_lines is EqualUnmodifiableListView) return _lines;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_lines);
@@ -331,7 +334,7 @@ abstract mixin class _$MkkmTicketCopyWith<$Res> implements $MkkmTicketCopyWith<$
   factory _$MkkmTicketCopyWith(_MkkmTicket value, $Res Function(_MkkmTicket) _then) = __$MkkmTicketCopyWithImpl;
 @override @useResult
 $Res call({
- String? ticketGuid, String? transactionCode, String? status, DateTime? datePurchase, DateTime? startDate, DateTime? endDate, int? monthsPeriod, int? daysPeriod, double? price, bool? isAnyAssigned, bool? assigned, bool? canAssign, bool? forCitizen, int? ticketKindCode, int? ticketNumberOfLineCode, int? ticketPeriodCode, String? specialTransportLine, bool? isNetwork, bool? isMetropolitan, List<dynamic> lines, bool? fivePlusOneTicket, int? customerId, int? customerCode, int? cityCardTypeCode, String? productName, int? paymentStateId, String? paymentStateDescription, int? paymentTypeCode, String? paymentDescription, String? promotionName, String? cityCardTypeName
+ String? ticketGuid, String? transactionCode, String? status, DateTime? datePurchase, DateTime? startDate, DateTime? endDate, int? monthsPeriod, int? daysPeriod, double? price, bool? isAnyAssigned, bool? assigned, bool? canAssign, bool? forCitizen, int? ticketKindCode, int? ticketNumberOfLineCode, int? ticketPeriodCode, String? specialTransportLine, bool? isNetwork, bool? isMetropolitan, List<TransportLine> lines, bool? fivePlusOneTicket, int? customerId, int? customerCode, int? cityCardTypeCode, String? productName, int? paymentStateId, String? paymentStateDescription, int? paymentTypeCode, String? paymentDescription, String? promotionName, String? cityCardTypeName
 });
 
 
@@ -370,7 +373,7 @@ as int?,specialTransportLine: freezed == specialTransportLine ? _self.specialTra
 as String?,isNetwork: freezed == isNetwork ? _self.isNetwork : isNetwork // ignore: cast_nullable_to_non_nullable
 as bool?,isMetropolitan: freezed == isMetropolitan ? _self.isMetropolitan : isMetropolitan // ignore: cast_nullable_to_non_nullable
 as bool?,lines: null == lines ? _self._lines : lines // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,fivePlusOneTicket: freezed == fivePlusOneTicket ? _self.fivePlusOneTicket : fivePlusOneTicket // ignore: cast_nullable_to_non_nullable
+as List<TransportLine>,fivePlusOneTicket: freezed == fivePlusOneTicket ? _self.fivePlusOneTicket : fivePlusOneTicket // ignore: cast_nullable_to_non_nullable
 as bool?,customerId: freezed == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
 as int?,customerCode: freezed == customerCode ? _self.customerCode : customerCode // ignore: cast_nullable_to_non_nullable
 as int?,cityCardTypeCode: freezed == cityCardTypeCode ? _self.cityCardTypeCode : cityCardTypeCode // ignore: cast_nullable_to_non_nullable

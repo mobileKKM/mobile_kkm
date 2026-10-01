@@ -193,6 +193,59 @@ void main() {
       expect(entry.transactionStateId, 9);
     });
 
+    test('cancelled history entries keep state 5, linger in Current', () {
+      final list = fixtureList('tickets_current_cancelled')
+          .whereType<Map<String, dynamic>>()
+          .map(TicketHistoryEntry.fromJson)
+          .toList();
+      expect(list, hasLength(2));
+      for (final entry in list) {
+        // Auto-cancelled for non-payment: transaction AND payment both 5.
+        expect(entry.transactionStateId, 5);
+        expect(entry.paymentStateId, 5);
+        expect(entry.isPayed, isFalse);
+        expect(
+          entry.transactionStateDescription,
+          'Transakcja anulowana',
+        );
+        expect(
+          entry.paymentStateDescription,
+          contains('anulowana'),
+        );
+      }
+    });
+
+    test('paid future-dated ticket is active, assignable, unassigned', () {
+      final res = MkkmTicketsResponse.fromJson(
+        fixture('mkkm_tickets_paid_future'),
+      );
+      final ticket = res.tickets.single;
+      // Paid = active, even before startDate (2025-10-01T00:00 local).
+      expect(ticket.statusEnum, MkkmTicketStatus.active);
+      expect(ticket.assigned, isFalse);
+      expect(ticket.isAnyAssigned, isFalse);
+      expect(ticket.canAssign, isTrue); // flips true on payment
+      expect(ticket.startDate, DateTime.utc(2025, 9, 30, 22));
+    });
+
+    test('pending ticket list parses typed transport lines', () {
+      final res = MkkmTicketsResponse.fromJson(
+        fixture('mkkm_tickets_pending'),
+      );
+      expect(res.tickets, hasLength(2));
+      expect(res.tickets.first.statusEnum, MkkmTicketStatus.active);
+      final pending = res.tickets.last;
+      expect(pending.statusEnum, MkkmTicketStatus.pending);
+      expect(pending.canAssign, isFalse); // awaiting payment
+      // Line-scoped ticket: full TransportLine objects, snake_case wire.
+      expect(pending.lines, hasLength(1));
+      final line = pending.lines.single;
+      expect(line.line, 12);
+      expect(line.isTram, isTrue);
+      expect(line.isBus, isFalse);
+      expect(line.hasSecondZone, isFalse);
+    });
+
     test('TicketDetailResponse parses state history lists', () {
       final res = TicketDetailResponse.fromJson(
         fixture('ticket_detail_returned'),

@@ -1,0 +1,58 @@
+{
+  "tickets": [
+    {
+      "ticketGuid": "feedfacefeedfacefeedfacefeedface",
+      "transactionCode": "NDAwMDAxIzE",
+      "status": "active",
+      "datePurchase": "2025-09-28T07:50:21.9572501Z",
+      "startDate": "2025-09-28T07:51:02.4693196Z",
+      "endDate": "2025-10-27T22:59:59Z",
+      "monthsPeriod": 1,
+      "daysPeriod": 7,
+      "price": 99.0,
+      "isAnyAssigned": true,
+      "assigned": false,
+      "canAssign": true,
+      "forCitizen": true,
+      "ticketKindCode": 21,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 1,
+      "specialTransportLine": "1001",
+      "isNetwork": true,
+      "isMetropolitan": false,
+      "lines": []
+    },
+    {
+      "ticketGuid": "feedfacefeedfacefeedfacefeedface",
+      "transactionCode": "NDAwMDA3IzE",
+      "status": "pending",
+      "datePurchase": "2025-10-01T13:42:15.23253Z",
+      "startDate": "2025-10-01T22:00:00Z",
+      "endDate": "2025-11-01T22:59:59Z",
+      "monthsPeriod": 1,
+      "daysPeriod": 7,
+      "price": 36.0,
+      "isAnyAssigned": false,
+      "assigned": false,
+      "canAssign": false,
+      "forCitizen": true,
+      "ticketKindCode": 22,
+      "ticketNumberOfLineCode": 1,
+      "ticketPeriodCode": 1,
+      "specialTransportLine": null,
+      "isNetwork": false,
+      "isMetropolitan": false,
+      "lines": [
+        {
+          "line": 12,
+          "second_zone": false,
+          "has_second_zone": false,
+          "is_tram": true,
+          "is_bus": false
+        }
+      ]
+    }
+  ],
+  "code": null,
+  "message": null
+}

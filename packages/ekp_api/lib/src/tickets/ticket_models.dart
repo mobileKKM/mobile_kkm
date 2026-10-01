@@ -2,6 +2,7 @@ import 'package:ekp_crypto/ekp_crypto.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../common/code_message.dart';
+import '../dictionary/dictionary_models.dart';
 
 part 'ticket_models.freezed.dart';
 part 'ticket_models.g.dart';
@@ -34,6 +35,14 @@ enum MkkmTicketStatus {
 /// including `fivePlusOneTicket`, `customerCode`, `cityCardTypeCode`,
 /// `productName`, payment fields and `cityCardTypeName`) inside the
 /// `ticketEkp` node of `GET /tickets/{transactionCode}`.
+///
+/// Status semantics (verified across captures): `active` means *paid/live*
+/// — a paid future-dated ticket is already `active` (and `canAssign`
+/// flips to true) right after payment; `pending` means *awaiting payment*
+/// (buy response, or bank-transfer limbo). A returned-but-unstarted
+/// ticket shows `returned` while its transaction state id stays 9 (same
+/// as normal completion) — the mkkm `status` field is the only "returned"
+/// signal.
 @freezed
 abstract class MkkmTicket with _$MkkmTicket {
   const factory MkkmTicket({
@@ -59,9 +68,10 @@ abstract class MkkmTicket with _$MkkmTicket {
     bool? isNetwork,
     bool? isMetropolitan,
 
-    /// Selected transport lines for line-scoped tickets. Element type
-    /// unverified (always `[]` in captures) — kept raw.
-    @Default(<dynamic>[]) List<dynamic> lines,
+    /// Selected transport lines for line-scoped tickets, as full
+    /// [TransportLine] objects (snake_case wire shape, same as the
+    /// `dictionary/transport-line` response).
+    @Default(<TransportLine>[]) List<TransportLine> lines,
     bool? fivePlusOneTicket,
 
     /// Numeric customer code — only present in ticket detail responses.

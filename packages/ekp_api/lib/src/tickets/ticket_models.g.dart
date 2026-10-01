@@ -32,7 +32,11 @@ _MkkmTicket _$MkkmTicketFromJson(Map<String, dynamic> json) => _MkkmTicket(
   specialTransportLine: json['specialTransportLine'] as String?,
   isNetwork: json['isNetwork'] as bool?,
   isMetropolitan: json['isMetropolitan'] as bool?,
-  lines: json['lines'] as List<dynamic>? ?? const <dynamic>[],
+  lines:
+      (json['lines'] as List<dynamic>?)
+          ?.map((e) => TransportLine.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const <TransportLine>[],
   fivePlusOneTicket: json['fivePlusOneTicket'] as bool?,
   customerId: (json['customerId'] as num?)?.toInt(),
   customerCode: (json['customerCode'] as num?)?.toInt(),

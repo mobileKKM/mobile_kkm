@@ -2,6 +2,7 @@ import 'package:ekp_crypto/ekp_crypto.dart';
 
 import '../common/api_paths.dart';
 import '../common/api_service.dart';
+import '../dictionary/dictionary_models.dart';
 import '../session/device_identity.dart';
 import 'ticket_models.dart';
 
@@ -30,7 +31,13 @@ class TicketsApi extends EkpApiService {
   /// `GET /tickets?customerCode=...&validity=Current|Past` — purchase
   /// history. Returns a **bare array**; 400s use the
   /// `{exceptionCode, message, errorToken}` envelope (see
-  /// [EkpHttpException.errorToken]).
+  /// [EkpHttpException.errorToken]) — observed transiently on identical
+  /// requests that later succeed, so treat them as retryable.
+  ///
+  /// Lifecycle quirks observed on the wire: tickets auto-cancelled for
+  /// non-payment (`transactionStateId` 5) linger under `Current` until
+  /// their validity window passes, while a returned-before-start ticket
+  /// disappears from both `Current` and `Past`.
   Future<List<TicketHistoryEntry>> history(
     String customerCode, {
     TicketValidity validity = TicketValidity.current,
@@ -80,20 +87,27 @@ class TicketsApi extends EkpApiService {
   /// Selection of a ticket for [calculate]/[buy] bodies.
   ///
   /// Mirrors the official client field-for-field. [specialTransportLine]
-  /// selects the metropolitan (rail) flavour; [lines] carries chosen
-  /// transport lines for line-scoped tickets (always `[]` in captures).
+  /// carries the pseudo-line code from the sales configuration's
+  /// `specialTransportLines` dictionary (`1001` = sieciowy/network,
+  /// `1003` = metropolitalny/+rail) — the official app sends `1001`
+  /// even for line-scoped selections, and the server then reflects the
+  /// actual choice (response `specialTransportLine` may be null with
+  /// `isNetwork: false`). [lines] carries the chosen transport lines as
+  /// full [TransportLine] objects for line-scoped tickets (empty for
+  /// network/metropolitan ones); they serialize to the snake_case wire
+  /// shape (`line`, `second_zone`, `is_tram`, ...).
   static Map<String, dynamic> selectionBody({
     required DateTime validFrom,
     required int ticketNumberOfLineCode,
     required String customerCode,
     required int ticketKindCode,
     required int ticketPeriodCode,
-    List<dynamic> lines = const [],
+    List<TransportLine> lines = const [],
     String? specialTransportLine,
   }) => {
     'validFrom': validFrom.toUtc().toIso8601String(),
     'ticketNumberOfLineCode': ticketNumberOfLineCode,
-    'lines': lines,
+    'lines': [for (final line in lines) line.toJson()],
     'specialTransportLine': ?specialTransportLine,
     'customerCode': customerCode,
     'ticketKindCode': ticketKindCode,
@@ -107,7 +121,7 @@ class TicketsApi extends EkpApiService {
     required String customerCode,
     required int ticketKindCode,
     required int ticketPeriodCode,
-    List<dynamic> lines = const [],
+    List<TransportLine> lines = const [],
     String? specialTransportLine,
   }) async {
     return guard(() async {
@@ -139,7 +153,7 @@ class TicketsApi extends EkpApiService {
     required String customerCode,
     required int ticketKindCode,
     required int ticketPeriodCode,
-    List<dynamic> lines = const [],
+    List<TransportLine> lines = const [],
     String? specialTransportLine,
   }) async {
     return guard(() async {
