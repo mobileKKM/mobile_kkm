@@ -419,14 +419,14 @@ void main() {
     );
 
     test('detail GETs by transaction code', () async {
-      adapter.onGet('/tickets/MjU5MzczMjUjMQ', [
+      adapter.onGet('/tickets/NDAwMDAxIzE', [
         (200, fixture('ticket_detail_active')),
       ]);
-      final res = await client.tickets.detail('MjU5MzczMjUjMQ');
+      final res = await client.tickets.detail('NDAwMDAxIzE');
       expect(res.ticket, isNotNull);
       expect(
-        requestsTo('/tickets/MjU5MzczMjUjMQ').single.path,
-        contains('/tickets/MjU5MzczMjUjMQ'),
+        requestsTo('/tickets/NDAwMDAxIzE').single.path,
+        contains('/tickets/NDAwMDAxIzE'),
       );
     });
 

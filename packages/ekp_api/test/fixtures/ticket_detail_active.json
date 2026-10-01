@@ -2,7 +2,7 @@
   "customerId": 200001,
   "ticket": {
     "transactionId": 400001,
-    "transactionCode": "MjU5MzczMjUjMQ",
+    "transactionCode": "NDAwMDAxIzE",
     "imported": true,
     "transactionDate": "2025-09-28T07:50:21.957Z",
     "ticketStartDate": "2025-09-28T07:51:02.47Z",
@@ -34,7 +34,7 @@
   },
   "ticketEkp": {
     "ticketGuid": "feedfacefeedfacefeedfacefeedface",
-    "transactionCode": "MjU5MzczMjUjMQ",
+    "transactionCode": "NDAwMDAxIzE",
     "status": "active",
     "datePurchase": "2025-09-28T07:50:21.9572501Z",
     "startDate": "2025-09-28T07:51:02.4693196Z",
