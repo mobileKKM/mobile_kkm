@@ -10,15 +10,9 @@ environment:
   sdk: ^3.13.4
 
 dependencies:
-  # Pinned to the 5.0.x line (^5.0.3 = latest published). Its RSA/AES helpers
-  # sit on pointycastle 3.x; see aztec_crypto.dart for the PKCS#1 handling.
-  encrypt: ^5.0.3
-  # Direct dep: encrypt imports pointycastle but does not re-export it, and we
-  # name RSAPublicKey in our API surface. Same constraint encrypt 5.0.3 uses.
-  pointycastle: ^3.9.1
+  asn1lib: ^1.6.5
+  pointycastle: ^4.0.0
 dev_dependencies:
   lints: ^5.0.0
   test: ^1.25.8
-  # Test-only: encode a generated public key back to a PKCS#1 PEM.
-  asn1lib: ^1.6.5
   coverage: ^1.15.1

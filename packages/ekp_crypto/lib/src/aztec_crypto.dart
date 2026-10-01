@@ -1,8 +1,20 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:pointycastle/pointycastle.dart' show RSAPublicKey;
+import 'package:asn1lib/asn1lib.dart';
+import 'package:pointycastle/export.dart'
+    show
+        AESEngine,
+        CBCBlockCipher,
+        KeyParameter,
+        ParametersWithIV,
+        PaddedBlockCipherImpl,
+        PaddedBlockCipherParameters,
+        PKCS1Encoding,
+        PKCS7Padding,
+        PublicKeyParameter,
+        RSAEngine,
+        RSAPublicKey;
 
 import 'android_base64.dart';
 import 'keys.dart';
@@ -58,12 +70,12 @@ class EkpAztecCrypto {
   String encryptJson(Map<String, dynamic> payload) {
     try {
       final plaintext = utf8.encode(jsonEncode(payload));
-      final key = encrypt.RSAKeyParser().parse(publicKeyPem) as RSAPublicKey;
-      final rsa = encrypt.RSA(
-        publicKey: key,
-        encoding: encrypt.RSAEncoding.PKCS1,
-      );
-      final block = rsa.encrypt(Uint8List.fromList(plaintext)).bytes;
+      final key = parseRsaPublicKey(publicKeyPem);
+      // PKCS#1 v1.5 with randomized type-2 padding: init() without an
+      // explicit SecureRandom auto-seeds pointycastle's FortunaRandom.
+      final rsa = PKCS1Encoding(RSAEngine())
+        ..init(true, PublicKeyParameter<RSAPublicKey>(key));
+      final block = rsa.process(Uint8List.fromList(plaintext));
       return encodeAndroidDefault(block);
     } on Object catch (e) {
       throw EkpCryptoException('request encryption failed: $e');
@@ -80,21 +92,69 @@ class EkpAztecCrypto {
       final blob = base64Decode(contractBase64.replaceAll(RegExp(r'\s'), ''));
       // 16 bytes IV + at least one AES block, block-aligned remainder.
       if (blob.length < 32 || (blob.length - 16) % 16 != 0) return null;
-      final aes = encrypt.Encrypter(
-        encrypt.AES(
-          encrypt.Key.fromUtf8(environment.aesKeyOf(secret)),
-          mode: encrypt.AESMode.cbc,
-          padding: 'PKCS7',
-        ),
-      );
-      // decrypt() utf8-decodes with allowMalformed — like crypto-js
+      // AES-128-CBC + PKCS#7 — the crypto-js defaults the official client
+      // relies on (PaddedBlockCipherImpl(PKCS7, CBC(AES)) == 'AES/CBC/PKCS7').
+      final aes = PaddedBlockCipherImpl(
+        PKCS7Padding(),
+        CBCBlockCipher(AESEngine()),
+      )..init(
+          false,
+          PaddedBlockCipherParameters(
+            ParametersWithIV(
+              KeyParameter(utf8.encode(environment.aesKeyOf(secret))),
+              blob.sublist(0, 16),
+            ),
+            null,
+          ),
+        );
+      final plaintext = aes.process(blob.sublist(16));
+      // utf8-decode with allowMalformed — like crypto-js
       // `.toString(CryptoJS.enc.Utf8)`, which never throws either.
-      return aes.decrypt(
-        encrypt.Encrypted(Uint8List.fromList(blob.sublist(16))),
-        iv: encrypt.IV(Uint8List.fromList(blob.sublist(0, 16))),
-      );
+      return utf8.decode(plaintext, allowMalformed: true);
     } on Object {
       return null;
     }
   }
+}
+
+/// Parses an RSA public key from a PEM envelope.
+///
+/// Supports the two public-key shapes the mKKM key material can take:
+/// PKCS#1 (`-----BEGIN RSA PUBLIC KEY-----`, the captured `aztecKey`
+/// format) and SubjectPublicKeyInfo (`-----BEGIN PUBLIC KEY-----`).
+/// Anything else throws — [EkpAztecCrypto.encryptJson] wraps that into an
+/// [EkpCryptoException].
+RSAPublicKey parseRsaPublicKey(String pem) {
+  final rows = pem.split(RegExp(r'\r\n?|\n'));
+  final header = rows.first;
+
+  ASN1Sequence sequence;
+  if (header == '-----BEGIN RSA PUBLIC KEY-----') {
+    sequence = _parseAsn1Sequence(rows);
+  } else if (header == '-----BEGIN PUBLIC KEY-----') {
+    // SPKI: SEQUENCE { AlgorithmIdentifier, BIT STRING { SEQUENCE { n, e } } }
+    final spki = _parseAsn1Sequence(rows);
+    final bitString = spki.elements[1];
+    sequence = ASN1Parser(
+      Uint8List.fromList(bitString.valueBytes().sublist(1)),
+    ).nextObject() as ASN1Sequence;
+  } else {
+    throw FormatException('Unable to parse key, invalid format.', header);
+  }
+
+  final modulus = (sequence.elements[0] as ASN1Integer).valueAsBigInteger;
+  final exponent = (sequence.elements[1] as ASN1Integer).valueAsBigInteger;
+  return RSAPublicKey(modulus, exponent);
+}
+
+/// Base64-decodes the PEM body (rows between the BEGIN/END markers) and
+/// parses its top-level ASN.1 object.
+ASN1Sequence _parseAsn1Sequence(List<String> rows) {
+  final keyText = rows
+      .skipWhile((row) => row.startsWith('-----BEGIN'))
+      .takeWhile((row) => !row.startsWith('-----END'))
+      .map((row) => row.trim())
+      .join('');
+  final keyBytes = Uint8List.fromList(base64.decode(keyText));
+  return ASN1Parser(keyBytes).nextObject() as ASN1Sequence;
 }

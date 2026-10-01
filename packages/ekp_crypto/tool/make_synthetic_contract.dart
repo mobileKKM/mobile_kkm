@@ -17,7 +17,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:ekp_crypto/ekp_crypto.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:pointycastle/export.dart';
 
 void main() {
   // Deterministic 512-char uppercase-hex token (the AZTEC plaintext shape).
@@ -27,16 +27,22 @@ void main() {
   ).join();
 
   final iv = List<int>.generate(16, (i) => i);
-  final aes = encrypt.Encrypter(
-    encrypt.AES(
-      encrypt.Key.fromUtf8(EkpCryptoEnvironment.production.aesKeyOf(cppSecret)),
-      mode: encrypt.AESMode.cbc,
-      padding: 'PKCS7',
-    ),
-  );
-  final ciphertext = aes
-      .encrypt(token, iv: encrypt.IV(Uint8List.fromList(iv)))
-      .bytes;
+  final aes = PaddedBlockCipherImpl(
+    PKCS7Padding(),
+    CBCBlockCipher(AESEngine()),
+  )..init(
+      true,
+      PaddedBlockCipherParameters(
+        ParametersWithIV(
+          KeyParameter(
+            utf8.encode(EkpCryptoEnvironment.production.aesKeyOf(cppSecret)),
+          ),
+          Uint8List.fromList(iv),
+        ),
+        null,
+      ),
+    );
+  final ciphertext = aes.process(utf8.encode(token));
 
   final blob = base64Encode([...iv, ...ciphertext]);
   const encoder = JsonEncoder.withIndent('  ');

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:asn1lib/asn1lib.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:ekp_crypto/ekp_crypto.dart';
 import 'package:pointycastle/export.dart';
 import 'package:test/test.dart';
@@ -32,16 +31,20 @@ String buildContractBlob(
 }) {
   // Fixed IV: synthetic test data, not a secret.
   final iv = List<int>.generate(16, (i) => i);
-  final aes = encrypt.Encrypter(
-    encrypt.AES(
-      encrypt.Key.fromUtf8(environment.aesKeyOf(secret)),
-      mode: encrypt.AESMode.cbc,
-      padding: 'PKCS7',
-    ),
-  );
-  final ciphertext = aes
-      .encrypt(token, iv: encrypt.IV(Uint8List.fromList(iv)))
-      .bytes;
+  final aes = PaddedBlockCipherImpl(
+    PKCS7Padding(),
+    CBCBlockCipher(AESEngine()),
+  )..init(
+      true,
+      PaddedBlockCipherParameters(
+        ParametersWithIV(
+          KeyParameter(utf8.encode(environment.aesKeyOf(secret))),
+          Uint8List.fromList(iv),
+        ),
+        null,
+      ),
+    );
+  final ciphertext = aes.process(utf8.encode(token));
   return base64Encode([...iv, ...ciphertext]);
 }
 
@@ -97,9 +100,30 @@ void main() {
 
   group('aztecKeyPem', () {
     test('parses as PKCS#1 RSA-2048 with e = 65537', () {
-      final key = encrypt.RSAKeyParser().parse(aztecKeyPem) as RSAPublicKey;
+      final key = parseRsaPublicKey(aztecKeyPem);
       expect(key.modulus!.bitLength, 2048);
       expect(key.exponent, BigInt.from(65537));
+    });
+
+    test('parses the same key from an SPKI envelope', () {
+      // Same aztecKey in SubjectPublicKeyInfo form (what openssl/pub
+      // tooling calls "public key") — parseRsaPublicKey must accept it
+      // and yield the identical key.
+      const spki = '''
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4NgeDRNowqtK1GC3UgDk
+TquMtb2P0SFNsi54OWcvYtihKuOsr+YeK9UmDmfK5xCRzBmwJ3uMrjVFnqNTW2eF
+IxB0rqS2qo0p7XrRJLQ7By96L7fYJn4gj4/IUER4vu/wLYzQMlCKD2mTtM6M2AaJ
+A/otrbwPIintebttEfZ3oEvTmeifTYNPMI648Zte140yVa0sipEr4Tjb26+lFn6h
+BT5pK+g7tuRBToiWPD1db+ysOcQx0PwLWAO5E/7EfJM0kveA8t+SxXPiA6JR95sm
+5l8NE2mdjP/cRCw4qIiz7AKJqUMduKDwgwLOkQXwSjXHNDR0q/N4dvfb97/hyea8
+ZwIDAQAB
+-----END PUBLIC KEY-----
+''';
+      final fromPkcs1 = parseRsaPublicKey(aztecKeyPem);
+      final fromSpki = parseRsaPublicKey(spki);
+      expect(fromSpki.modulus, fromPkcs1.modulus);
+      expect(fromSpki.exponent, fromPkcs1.exponent);
     });
   });
 
@@ -162,13 +186,9 @@ void main() {
 
       // Unwrap our own Android-style base64, then RSA-decrypt.
       final block = base64Decode(message.replaceAll('\n', ''));
-      final rsa = encrypt.RSA(
-        privateKey: keyPair.privateKey,
-        encoding: encrypt.RSAEncoding.PKCS1,
-      );
-      final decrypted = rsa.decrypt(
-        encrypt.Encrypted(Uint8List.fromList(block)),
-      );
+      final rsa = PKCS1Encoding(RSAEngine())
+        ..init(false, PrivateKeyParameter<RSAPrivateKey>(keyPair.privateKey));
+      final decrypted = rsa.process(Uint8List.fromList(block));
       expect(utf8.decode(decrypted), jsonEncode(payload));
     });
     test('round-trips non-ASCII payloads (UTF-8 symmetry)', () {
@@ -185,13 +205,9 @@ void main() {
       final message = local.encryptJson(payload);
 
       final block = base64Decode(message.replaceAll('\n', ''));
-      final rsa = encrypt.RSA(
-        privateKey: keyPair.privateKey,
-        encoding: encrypt.RSAEncoding.PKCS1,
-      );
-      final decrypted = rsa.decrypt(
-        encrypt.Encrypted(Uint8List.fromList(block)),
-      );
+      final rsa = PKCS1Encoding(RSAEngine())
+        ..init(false, PrivateKeyParameter<RSAPrivateKey>(keyPair.privateKey));
+      final decrypted = rsa.process(Uint8List.fromList(block));
       expect(utf8.decode(decrypted), jsonEncode(payload));
     });
     test('throws EkpCryptoException on garbage key material', () {
@@ -303,11 +319,9 @@ AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> _generateRsaKeyPair() {
         random,
       ),
     );
-  final pair = generator.generateKeyPair();
-  return AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey>(
-    pair.publicKey as RSAPublicKey,
-    pair.privateKey as RSAPrivateKey,
-  );
+  // pointycastle 4: generateKeyPair is generic — RSAKeyGenerator yields
+  // AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> directly, no casts.
+  return generator.generateKeyPair();
 }
 
 /// DER-encodes [key] as PKCS#1 `RSAPublicKey` and wraps it in the
