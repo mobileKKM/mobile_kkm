@@ -107,7 +107,7 @@ class AuthApi extends EkpApiService {
           'repeat_email': email,
           'password': password,
           'repeat_password': password,
-          if (pesel != null) 'pesel': pesel,
+          'pesel': ?pesel,
           if (birthDate != null) 'birthDate': formatEkpBirthDate(birthDate),
         },
       );

@@ -36,9 +36,9 @@ class AccountApi extends EkpApiService {
       await dio.post<dynamic>(
         EkpApiPaths.userData,
         data: {
-          if (phoneNumber != null) 'phoneNumber': phoneNumber,
-          if (firstName != null) 'firstName': firstName,
-          if (lastName != null) 'lastName': lastName,
+          'phoneNumber': ?phoneNumber,
+          'firstName': ?firstName,
+          'lastName': ?lastName,
           if (registeredAddress != null)
             'registeredAddress': registeredAddress.toJson(),
         },

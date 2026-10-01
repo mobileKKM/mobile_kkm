@@ -94,8 +94,7 @@ class TicketsApi extends EkpApiService {
     'validFrom': validFrom.toUtc().toIso8601String(),
     'ticketNumberOfLineCode': ticketNumberOfLineCode,
     'lines': lines,
-    if (specialTransportLine != null)
-      'specialTransportLine': specialTransportLine,
+    'specialTransportLine': ?specialTransportLine,
     'customerCode': customerCode,
     'ticketKindCode': ticketKindCode,
     'ticketPeriodCode': ticketPeriodCode,
