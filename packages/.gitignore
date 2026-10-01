@@ -1,0 +1,31 @@
+# Dart / Pub related
+.dart_tool/
+.pub-cache/
+.pub/
+
+# Libraries do not commit lockfiles
+pubspec.lock
+
+# Build outputs
+build/
+
+# Coverage reports
+coverage/
+
+# ekp_api fixture-extraction tooling — private, operates on undistributed
+# captures; kept for maintainer-local regeneration only
+ekp_api/tool/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code (keep out unless deliberately shared)
+.vscode/
+
+# Miscellaneous
+.DS_Store
+*.swp
+*.log
