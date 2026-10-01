@@ -1,0 +1,22 @@
+{
+  "commodityIndex": "285344513",
+  "commodityName": "Bilet aktywizujący 1-mies. sieciowy st. I",
+  "symbol": null,
+  "price": 50.0,
+  "validFrom": "2025-09-30T22:00:00Z",
+  "validTo": "2025-10-31T22:59:59Z",
+  "daysPeriod": 7,
+  "forCitizen": false,
+  "ticketKindCode": 17,
+  "ticketNumberOfLineCode": 3,
+  "ticketPeriodCode": 1,
+  "specialTransportLine": "1003",
+  "isNetwork": false,
+  "isMetropolitan": true,
+  "lines": [],
+  "hasSimilarTicket": false,
+  "commodityId": 1917,
+  "priceListPeriodId": 9,
+  "customerCode": 100002,
+  "similarTickets": []
+}

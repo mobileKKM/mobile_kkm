@@ -1,0 +1,46 @@
+{
+  "items": [
+    {
+      "storageTypeId": 2,
+      "cityCardCode": 1,
+      "cardNumber": 100004,
+      "customerCode": 100003,
+      "ccCustomerCode": 100003,
+      "ccCustomerId": 200002,
+      "firstName": "JAN",
+      "lastName": "TESTOWY",
+      "hasActiveInhabitantStatus": false,
+      "inhabitantStatusDateFrom": null,
+      "inhabitantStatusDateTo": null,
+      "deactivationDateToCommunique": null,
+      "blockPlannedStateId": null,
+      "blockPlannedStateDescription": null,
+      "blocked": false,
+      "issued": true,
+      "canBuyTickets": true,
+      "isDefault": false,
+      "storageTypeName": "Elektroniczna Legitymacja Studencka / Doktoranta"
+    },
+    {
+      "storageTypeId": null,
+      "cityCardCode": 8,
+      "cardNumber": null,
+      "customerCode": 100001,
+      "ccCustomerCode": 100001,
+      "ccCustomerId": 200001,
+      "firstName": "JAN",
+      "lastName": "TESTOWY",
+      "hasActiveInhabitantStatus": true,
+      "inhabitantStatusDateFrom": "2025-09-09T00:00:00",
+      "inhabitantStatusDateTo": "2027-09-08T23:59:59",
+      "deactivationDateToCommunique": null,
+      "blockPlannedStateId": null,
+      "blockPlannedStateDescription": null,
+      "blocked": false,
+      "issued": true,
+      "canBuyTickets": true,
+      "isDefault": false,
+      "storageTypeName": "mobilna Krakowska Karta Miejska"
+    }
+  ]
+}

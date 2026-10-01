@@ -1,0 +1,22 @@
+{
+  "minAppVersion": "1.6.10",
+  "customerPageUrl": "https://ekp.mpk.krakow.pl",
+  "regulationsUrl": "https://ekp.mpk.krakow.pl/documents/Regulamin Elektronicznego Konta Pasażera KMK.pdf",
+  "declarationOfAccessibilityUrl": "https://ekp.mpk.krakow.pl/documents/deklaracja_dostepnosci.html",
+  "regulations5plus1Url": "https://ekp.mpk.krakow.pl/documents/Regulamin nabywania i korzystania z Biletu Półrocznego.pdf",
+  "regulationsPurchaseUrl": "https://ekp.mpk.krakow.pl/documents/Regulamin internetowej sprzedazy biletów.pdf",
+  "informationObligationUrl": "https://ekp.mpk.krakow.pl/documents/Obowiązek informacyjny-sprzedaż internetowa biletów.pdf",
+  "returnPaymentSuccessUrl": "https://ekp.mpk.krakow.pl/payment/success",
+  "returnPaymentErrorUrl": "https://ekp.mpk.krakow.pl/payment/rejected",
+  "busTimetableUrl": "https://ttss.mpk.krakow.pl/internetservice/",
+  "busTimetableEnabled": true,
+  "tramTimetableUrl": "https://ttss.krakow.pl/internetservice/",
+  "tramTimetableEnabled": false,
+  "salesViewAnnouncement": {
+    "text": "Wybierając komunikację miejską zamiast samochodu ograniczasz 7-krotnie emisję CO2 każdego dnia. Twoja średnia dzienna podróż to tylko 0,07 kg CO2.",
+    "startDate": "2023-09-18T07:00:00Z",
+    "endDate": "2030-12-30T23:00:00Z"
+  },
+  "code": null,
+  "message": null
+}

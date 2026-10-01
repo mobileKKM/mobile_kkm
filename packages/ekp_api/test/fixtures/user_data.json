@@ -1,0 +1,38 @@
+{
+  "userData": {
+    "pesel": "90010112345",
+    "birthDate": "2000-01-03T00:00:00",
+    "email": "test@example.com",
+    "firstName": "Jan",
+    "lastName": "Testowy",
+    "phoneNumber": null,
+    "photoUrl": "https://api.example.com/photo.jpg?preset=preview",
+    "registeredAddress": {
+      "city": "Kraków",
+      "postalCode": "00-001",
+      "street": "ul. Testowa",
+      "buildingNumber": "1",
+      "apartmentNumber": "41"
+    },
+    "invoiceByInternet": false,
+    "autoInvoice": false,
+    "mailNotifications": false,
+    "pushNotifications": true,
+    "hasStorageMediumWithCCCustomer": true
+  },
+  "mkkmData": {
+    "customerCode": "100001",
+    "hasInhabitantPrivilege": true,
+    "inhabitantPrivilegeDateFrom": "2025-09-08T22:00:00Z",
+    "inhabitantPrivilegeDateTo": "2027-09-08T21:59:59Z",
+    "hasActiveSubscription": false,
+    "hadAnyInhabitantPrivilege": true,
+    "detached": false
+  },
+  "cardsNotAdded": false,
+  "hasKkmCard": false,
+  "hasActiveSubscription": false,
+  "canIssueInvoice": false,
+  "code": null,
+  "message": null
+}

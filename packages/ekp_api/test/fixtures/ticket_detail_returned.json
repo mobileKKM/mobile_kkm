@@ -1,0 +1,149 @@
+{
+  "customerId": 200001,
+  "ticket": {
+    "transactionId": 400003,
+    "transactionCode": "MjU5MDIwNjAjMQ",
+    "imported": true,
+    "transactionDate": "2025-09-19T16:22:56.62Z",
+    "ticketStartDate": "2025-09-19T16:23:20.453Z",
+    "ticketExpiryDate": "2025-09-20T21:59:59Z",
+    "specialTransportLine": "1001",
+    "isNetwork": true,
+    "isMetropolitan": false,
+    "cityLine1": 1001,
+    "zoneLine1": 128,
+    "cityLine2": 0,
+    "zoneLine2": 0,
+    "price": 99.0,
+    "transactionStateId": 9,
+    "transactionStateDescription": "Transakcja zakończona pomyślnie - nie wymaga zapisu na nośniku plastikowym",
+    "paymentTypeCode": null,
+    "paymentDescription": "ePłatność - przelew elektroniczny",
+    "paymentStateId": 3,
+    "paymentStateDescription": "Płatność potwierdzona i zakończona",
+    "paymentAccepted": "2025-09-19T16:23:20.453Z",
+    "productIndex": "352453377",
+    "productName": "Bilet norm. mieszk. 1-mies. sieciowy st. I",
+    "productType": 1,
+    "productTypeName": "Bilet okresowy",
+    "promotionName": null,
+    "isPayed": true,
+    "ticketKindCode": 21,
+    "ticketPeriodCode": 1,
+    "ticketNumberOfLineCode": 3
+  },
+  "ticketEkp": {
+    "ticketGuid": "feedfacefeedfacefeedfacefeedface",
+    "transactionCode": "MjU5MDIwNjAjMQ",
+    "status": "returned",
+    "datePurchase": "2025-09-19T16:22:56.6192147Z",
+    "startDate": "2025-09-19T16:23:20.4546504Z",
+    "endDate": "2025-09-20T21:59:59Z",
+    "monthsPeriod": 1,
+    "daysPeriod": 7,
+    "price": 99.0,
+    "isAnyAssigned": false,
+    "assigned": false,
+    "canAssign": false,
+    "forCitizen": true,
+    "ticketKindCode": 21,
+    "ticketNumberOfLineCode": 3,
+    "ticketPeriodCode": 1,
+    "specialTransportLine": "1001",
+    "isNetwork": true,
+    "isMetropolitan": false,
+    "lines": [],
+    "fivePlusOneTicket": false,
+    "customerId": 300001,
+    "customerCode": 100001,
+    "cityCardTypeCode": 8,
+    "productName": "Bilet norm. mieszk. 1-mies. sieciowy st. I",
+    "paymentStateId": null,
+    "paymentStateDescription": null,
+    "paymentTypeCode": null,
+    "paymentDescription": null,
+    "promotionName": null,
+    "cityCardTypeName": "mobilna Krakowska Karta Miejska"
+  },
+  "canChangeLine": false,
+  "canReturn": false,
+  "canEditByInternet": true,
+  "canChangeStorageMedium": false,
+  "canGenerateInvoice": false,
+  "canBuyTheSame": true,
+  "possibleRefundViaTpay": true,
+  "minExpireReturnDate": null,
+  "invoiceHeaderId": null,
+  "transactionStateList": [
+    {
+      "nextNumber": 6,
+      "createDate": "2025-09-20T21:45:49.417Z",
+      "stateDescription": "Transakcja zakończona pomyślnie - nie wymaga zapisu na nośniku plastikowym"
+    },
+    {
+      "nextNumber": 5,
+      "createDate": "2025-09-20T21:45:49.363Z",
+      "stateDescription": "Zwrot części nie wykorzystanych dni"
+    },
+    {
+      "nextNumber": 4,
+      "createDate": "2025-09-19T16:23:20.453Z",
+      "stateDescription": "Transakcja zakończona pomyślnie - nie wymaga zapisu na nośniku plastikowym"
+    },
+    {
+      "nextNumber": 2,
+      "createDate": "2025-09-19T16:23:20.453Z",
+      "stateDescription": "Transakcja zapłacona"
+    },
+    {
+      "nextNumber": 1,
+      "createDate": "2025-09-19T16:22:56.62Z",
+      "stateDescription": "Transakcja dodana"
+    }
+  ],
+  "paymentStateList": [
+    {
+      "nextNumber": 1,
+      "createDate": "2025-09-19T16:22:56.62Z",
+      "stateDescription": "Płatność rozpoczęta"
+    },
+    {
+      "nextNumber": 2,
+      "createDate": "2025-09-19T16:23:20.453Z",
+      "stateDescription": "Płatność potwierdzona i zakończona"
+    }
+  ],
+  "refundStateList": [
+    {
+      "nextNumber": 1,
+      "createDate": "2025-09-20T21:45:49.037Z",
+      "stateDescription": "Zwrot rozpoczęty"
+    },
+    {
+      "nextNumber": 2,
+      "createDate": "2025-09-20T21:45:49.537Z",
+      "stateDescription": "Zwrot czeka na zgodę"
+    },
+    {
+      "nextNumber": 3,
+      "createDate": "2025-09-20T21:45:49.537Z",
+      "stateDescription": "Zwrot został przekazany do realizacji"
+    },
+    {
+      "nextNumber": 4,
+      "createDate": "2025-09-20T21:45:50.43Z",
+      "stateDescription": "Zwrot został zrealizowany pomyślnie"
+    }
+  ],
+  "changeLineList": null,
+  "ticketReturns": [
+    {
+      "returnDate": "2025-09-20T21:45:49Z",
+      "returnQty": 28,
+      "unitPriceReturn": 92.4,
+      "paymentTypeDescription": "Zwrot przelewu elektronicznego za pośrednictwem TPay"
+    }
+  ],
+  "storageMediumChanges": null,
+  "downloads": null
+}

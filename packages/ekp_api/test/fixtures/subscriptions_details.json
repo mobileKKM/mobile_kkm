@@ -1,0 +1,11 @@
+{
+  "isSubscriptionSignedIn": false,
+  "counter": 0,
+  "maskedCardNumber": null,
+  "subscriptionSignedInDate": null,
+  "activeTicket": null,
+  "pendingTicket": null,
+  "customerDetail": null,
+  "isAutomaticSubscriptionEnabled": false,
+  "isCycleRefreshEnabled": false
+}

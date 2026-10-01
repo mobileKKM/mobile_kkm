@@ -1,0 +1,319 @@
+import 'package:ekp_api/ekp_api.dart';
+import 'package:test/test.dart';
+
+import 'fixtures.dart';
+
+void main() {
+  group('auth models', () {
+    test('AuthSession parses login response', () {
+      final session = AuthSession.fromJson(fixture('login_response'));
+      expect(session.token, 'aaa.bbb.ccc');
+      expect(session.refresh, 'feedfacefeedfacefeedfacefeedface');
+      expect(
+        session.expires!.isUtc,
+        isTrue,
+        reason: 'Z-suffixed dates are UTC',
+      );
+      expect(
+        session.isExpired,
+        isTrue,
+        reason: 'the fixture expiry lies in the past',
+      );
+    });
+
+    test('PasswordPolicy parses', () {
+      final policy = PasswordPolicy.fromJson(fixture('password_policy'));
+      expect(policy.minLength, 8);
+      expect(policy.requiredUppercase, 1);
+      expect(policy.requiredDigits, 1);
+    });
+
+    test('CodeMessageResponse exposes string code accessors', () {
+      final res = CodeMessageResponse.fromJson(
+        fixture('change_password_error'),
+      );
+      expect(res.codeAsString, 'PasswordInHistory');
+      expect(res.message, 'Hasło zostało już użyte w przeszłości');
+    });
+
+    test('MarketingConsentsResponse parses', () {
+      final res = MarketingConsentsResponse.fromJson(fixture('auth_consents'));
+      expect(res.marketingConsents, hasLength(1));
+      expect(res.marketingConsents.first.id, 4);
+      expect(res.marketingConsents.first.isChecked, isFalse);
+    });
+  });
+
+  group('account models', () {
+    test('UserDataResponse parses full user data', () {
+      final res = UserDataResponse.fromJson(fixture('user_data'));
+      final user = res.userData!;
+      expect(user.firstName, 'Jan');
+      expect(user.lastName, 'Testowy');
+      expect(user.pesel, '90010112345');
+      expect(user.email, 'test@example.com');
+      expect(user.registeredAddress!.city, 'Kraków');
+      expect(
+        res.mkkmData!.customerCode,
+        '100001',
+        reason: 'mkkmData.customerCode is sanitized numeric-as-string',
+      );
+      expect(res.mkkmData!.hasInhabitantPrivilege, isTrue);
+      expect(res.canIssueInvoice, isFalse);
+    });
+
+    test('InhabitantStatus parses', () {
+      final res = InhabitantStatus.fromJson(fixture('inhabitant_status'));
+      expect(res.isActive, isTrue);
+      expect(res.firstName, 'Jan');
+      expect(res.dateFromUtc, isNotNull);
+    });
+
+    test('InhabitantContract parses epoch-ms expiration and decodes PNG', () {
+      final res = InhabitantContract.fromJson(fixture('inhabitant_contract'));
+      expect(res.expirationDate!.isUtc, isTrue);
+      expect(res.contract, isNotEmpty);
+      expect(res.decodeContractPng(), isNotEmpty);
+    });
+
+    test('StreetAutocompleteResponse parses', () {
+      final res = StreetAutocompleteResponse.fromJson(
+        fixture('street_autocomplete'),
+      );
+      expect(res.streets, ['TESTOWA']);
+    });
+  });
+
+  group('storage medium models', () {
+    test('StorageMediumListResponse parses and filters mKKM', () {
+      final res = StorageMediumListResponse.fromJson(
+        fixture('storage_medium_list'),
+      );
+      expect(res.items, hasLength(2));
+      expect(res.items.every((m) => m.canBuyTickets == true), isTrue);
+      final mkkm = res.mkkmMedia;
+      expect(mkkm, hasLength(1));
+      expect(mkkm.single.isMkkm, isTrue);
+      expect(mkkm.single.cityCardCode, 8);
+      expect(mkkm.single.storageTypeName, 'mobilna Krakowska Karta Miejska');
+    });
+  });
+
+  group('dictionary models', () {
+    test('TicketKindListResponse parses', () {
+      final res = TicketKindListResponse.fromJson(fixture('ticket_kind_list'));
+      expect(res.kinds, isNotEmpty);
+      final normal = res.kinds.firstWhere((k) => k.code == 2);
+      expect(normal.description, 'Normalny');
+      expect(normal.availableForSell, isTrue);
+    });
+
+    test('TicketNumberOfLineListResponse parses', () {
+      final res = TicketNumberOfLineListResponse.fromJson(
+        fixture('ticket_number_of_line_list'),
+      );
+      final all = res.list.firstWhere((l) => l.code == 3);
+      expect(all.description, 'Wszystkie linie - Strefa I');
+      expect(all.selectableLines, isFalse);
+      expect(all.sumLinesToSelection, 0);
+    });
+
+    test('TicketPeriodListResponse parses', () {
+      final res = TicketPeriodListResponse.fromJson(
+        fixture('ticket_period_list'),
+      );
+      final one = res.list.firstWhere((p) => p.code == 1);
+      expect(one.value, 1);
+      expect(one.unit, 2, reason: '2 = months');
+    });
+
+    test('TransportLineResponse parses populated prefix-search results', () {
+      final res = TransportLineResponse.fromJson(fixture('transport_line'));
+      expect(res.lines, hasLength(90));
+
+      // Typed element access (wire fields are snake_case — see the model).
+      final first = res.lines.first;
+      expect(first.line, 1);
+      expect(first.isTram, isTrue);
+      expect(first.isBus, isFalse);
+      expect(first.secondZone, isFalse);
+      expect(first.hasSecondZone, isFalse);
+
+      // Every entry is exactly one of tram/bus …
+      for (final line in res.lines) {
+        expect(line.isTram != line.isBus, isTrue, reason: 'line ${line.line}');
+      }
+      // … trams are the 1xx-less lines (1, 10–19), buses the 1xx range.
+      final trams = res.lines.where((l) => l.isTram!).map((l) => l.line);
+      expect(trams, const [1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
+
+      // The endpoint is a PREFIX search: number=1 -> 1, 10–19, 100–199.
+      for (final line in res.lines) {
+        expect(line.line.toString().startsWith('1'), isTrue);
+      }
+    });
+
+    test('CityCardTypesResponse parses raw map and resolves names', () {
+      final res = CityCardTypesResponse.fromJson(fixture('city_card_types'));
+      expect(res.types.containsKey('8'), isTrue);
+      expect(res.nameForCode(8), 'mKKM', reason: 'values arrive padded');
+      expect(res.nameForCode(1), 'ELS');
+      expect(res.nameForCode(999), isNull);
+    });
+  });
+
+  group('ticket models', () {
+    test('MkkmTicketsResponse parses active ticket with 7-digit fractions', () {
+      final res = MkkmTicketsResponse.fromJson(fixture('mkkm_tickets'));
+      expect(res.tickets, hasLength(1));
+      final ticket = res.tickets.single;
+      expect(ticket.statusEnum, MkkmTicketStatus.active);
+      expect(ticket.ticketGuid, 'feedfacefeedfacefeedfacefeedface');
+      expect(ticket.transactionCode, isNotNull);
+      expect(ticket.price, 99.0);
+      expect(
+        ticket.datePurchase!.microsecond,
+        greaterThan(0),
+        reason: 'sub-millisecond fractions survive parsing',
+      );
+      expect(ticket.forCitizen, isTrue);
+      expect(ticket.canAssign, isTrue);
+    });
+
+    test('tickets history parses bare array', () {
+      final list = fixtureList('tickets_current')
+          .whereType<Map<String, dynamic>>()
+          .map(TicketHistoryEntry.fromJson)
+          .toList();
+      expect(list, hasLength(1));
+      final entry = list.single;
+      expect(entry.transactionId, 400001);
+      expect(entry.isPayed, isTrue);
+      expect(entry.productName, contains('mies.'));
+      expect(entry.transactionStateId, 9);
+    });
+
+    test('TicketDetailResponse parses state history lists', () {
+      final res = TicketDetailResponse.fromJson(
+        fixture('ticket_detail_returned'),
+      );
+      expect(res.ticket!.transactionCode, isNotNull);
+      expect(res.ticketEkp!.statusEnum, MkkmTicketStatus.returned);
+      expect(res.canReturn, isFalse, reason: 'already returned');
+      expect(res.transactionStateList, isNotNull);
+      expect(
+        res.transactionStateList!.first.stateDescription,
+        contains('zakończona'),
+      );
+      expect(res.paymentStateList, hasLength(2));
+      expect(res.downloads, isNull);
+    });
+
+    test('TicketDetailResponse parses active ticket as returnable', () {
+      final res = TicketDetailResponse.fromJson(
+        fixture('ticket_detail_active'),
+      );
+      expect(res.ticketEkp!.statusEnum, MkkmTicketStatus.active);
+      expect(res.canReturn, isTrue);
+      expect(res.possibleRefundViaTpay, isNotNull);
+      expect(res.minExpireReturnDate, isNotNull);
+    });
+
+    test('TicketSalesConfiguration parses with non-null success code', () {
+      final res = TicketSalesConfiguration.fromJson(fixture('sales_config'));
+      expect(res.codeAsInt, 1, reason: 'code 1 on HTTP 200 success!');
+      expect(res.ticketKinds, isNotEmpty);
+      expect(res.ticketPeriods, isNotEmpty);
+      expect(res.priceListConfigurations, isNotEmpty);
+      expect(res.firstDayOfValidity, isNotNull);
+      expect(res.hasCracovCardPrivilege, isNotNull);
+    });
+
+    test('TicketCalculation parses echoed effective kind', () {
+      final res = TicketCalculation.fromJson(fixture('tickets_calculate'));
+      expect(res.price, 99.0);
+      expect(res.commodityName, 'Bilet norm. mieszk. 1-mies. sieciowy st. I');
+      expect(
+        res.ticketKindCode,
+        21,
+        reason: 'server maps requested kind 2 → effective 21 for residents',
+      );
+      expect(res.hasSimilarTicket, isFalse);
+    });
+
+    test('TicketPurchaseResponse parses pending buy + tpay urls', () {
+      final res = TicketPurchaseResponse.fromJson(fixture('buy_response'));
+      expect(res.ticket!.statusEnum, MkkmTicketStatus.pending);
+      expect(res.urls!.paymentUrl, contains('tpay.com'));
+      expect(res.urls!.returnUrl, contains('/payment/success'));
+    });
+
+    test('TicketReturnCalculation parses refund preview', () {
+      final res = TicketReturnCalculation.fromJson(
+        fixture('ticket_returns_calculate'),
+      );
+      expect(res.returnPrice, 92.4);
+      expect(res.newTicketExpiryDate, isNotNull);
+    });
+
+    test('TicketReturnResult parses submission outcome', () {
+      final res = TicketReturnResult.fromJson(fixture('ticket_return'));
+      expect(res.createdCorrectionInvoice, isFalse);
+      expect(res.success, isTrue);
+    });
+  });
+
+  group('payment models', () {
+    test('BankListResponse parses snake_case fields', () {
+      final res = BankListResponse.fromJson(fixture('banks'));
+      expect(res.list, isNotEmpty);
+      final blik = res.list.firstWhere((b) => b.isBlik);
+      expect(blik.id, '150');
+      expect(blik.name, 'BLIK');
+      final card = res.list.firstWhere((b) => b.id == '103');
+      expect(card.mainBankId, '53');
+      expect(card.availableViaWebview, isTrue);
+    });
+  });
+
+  group('subscription models', () {
+    test('SubscriptionDetails parses unsigned state', () {
+      final res = SubscriptionDetails.fromJson(
+        fixture('subscriptions_details'),
+      );
+      expect(res.isSubscriptionSignedIn, isFalse);
+      expect(res.counter, 0);
+      expect(res.activeTicket, isNull);
+    });
+
+    test('SubscriptionAvailableActions parses', () {
+      final res = SubscriptionAvailableActions.fromJson(
+        fixture('subscriptions_actions'),
+      );
+      expect(res.buyTicket, isFalse);
+      expect(res.newCard, isFalse);
+    });
+  });
+
+  group('invoice + misc models', () {
+    test('InvoiceListResponse parses empty list', () {
+      final res = InvoiceListResponse.fromJson(fixture('invoices'));
+      expect(res.list, isEmpty);
+      expect(res.rowCount, 0);
+    });
+
+    test('ServiceStatus parses', () {
+      final res = ServiceStatus.fromJson(fixture('service_status'));
+      expect(res.isAvailable, isTrue);
+      expect(res.customMessage, '');
+    });
+
+    test('MobileAppConfig parses urls and announcement', () {
+      final res = MobileAppConfig.fromJson(fixture('app_config'));
+      expect(res.minAppVersion, '1.6.10');
+      expect(res.busTimetableEnabled, isTrue);
+      expect(res.tramTimetableEnabled, isFalse);
+      expect(res.salesViewAnnouncement!.text, contains('CO2'));
+    });
+  });
+}

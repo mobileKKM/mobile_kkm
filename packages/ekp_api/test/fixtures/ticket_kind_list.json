@@ -1,0 +1,302 @@
+{
+  "kinds": [
+    {
+      "code": 1,
+      "description": "Normalny ogólnodostepny",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 1
+    },
+    {
+      "code": 2,
+      "description": "Normalny",
+      "availableForSell": true,
+      "availableWhenCracovCardAuthorizationIsNotValid": true,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 1
+    },
+    {
+      "code": 3,
+      "description": "Karta Krakowska",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 5
+    },
+    {
+      "code": 4,
+      "description": "Bezpłatny [KKR z ND]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 5,
+      "description": "Socjalny",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 3
+    },
+    {
+      "code": 6,
+      "description": "Bezpłatny [Inne uprawnienia]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 7,
+      "description": "Na okaziciela",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 1
+    },
+    {
+      "code": 8,
+      "description": "Bezpłatny [Dzieci niepełnosprawne]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 9,
+      "description": "Bezpłatny [Uczniownie z rodzin wielodzietnych]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 10,
+      "description": "Bezpłatny [Wychowankowie z Rodzinnych Domów Dziecka]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 11,
+      "description": "Bezpłatny [Honorowy Dawca Krwi]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 12,
+      "description": "Bezpłatny [Inwalidzi narządu ruchu]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 13,
+      "description": "Bezpłatny [Policja]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 14,
+      "description": "Ulgowy",
+      "availableForSell": true,
+      "availableWhenCracovCardAuthorizationIsNotValid": true,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 2
+    },
+    {
+      "code": 15,
+      "description": "Bezpłatny [Uczniowie szkół krakowskich]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 16,
+      "description": "Bezpłatny [Osoby niepełnosprawne]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 17,
+      "description": "Aktywizujący",
+      "availableForSell": true,
+      "availableWhenCracovCardAuthorizationIsNotValid": true,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 3
+    },
+    {
+      "code": 18,
+      "description": "Karta Krakowska [rezerwa]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 5
+    },
+    {
+      "code": 19,
+      "description": "Bezpłatny [Pracowniczy]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 21,
+      "description": "Normalny Mieszkańca",
+      "availableForSell": true,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": true,
+      "groupId": 1
+    },
+    {
+      "code": 22,
+      "description": "Ulgowy Mieszkańca",
+      "availableForSell": true,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": true,
+      "groupId": 2
+    },
+    {
+      "code": 30,
+      "description": "Blokada kasownika",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 5
+    },
+    {
+      "code": 31,
+      "description": "Tryb serwisowy kasownika",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 5
+    },
+    {
+      "code": 20,
+      "description": "Bezpłatny [Osoby niewidome]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 23,
+      "description": "Bezpłatny [Osoby z upośledzeniem umysłowym]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 24,
+      "description": "Bezpłatny [Kombatanci]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    },
+    {
+      "code": 33,
+      "description": "Ulgowy Gminny",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 2
+    },
+    {
+      "code": 34,
+      "description": "Szkolny",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 2
+    },
+    {
+      "code": 35,
+      "description": "Studencki",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 2
+    },
+    {
+      "code": 36,
+      "description": "Kombatancki",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 2
+    },
+    {
+      "code": 38,
+      "description": "Doktorancki",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 2
+    },
+    {
+      "code": 25,
+      "description": "Bezpłatny [Zasłużeni Dawcy Przeszczepu]",
+      "availableForSell": false,
+      "availableWhenCracovCardAuthorizationIsNotValid": false,
+      "availableWhenCracovCardAuthorizationIsValid": false,
+      "groupId": 4
+    }
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "name": "Normalny",
+      "selectableKind": false,
+      "selectableLine": true,
+      "selectableLineAreaRange": true,
+      "selectableExpiryDate": false,
+      "selectableTicketPeriod": true,
+      "constantTicketPeriod": null
+    },
+    {
+      "id": 2,
+      "name": "Ulgowy",
+      "selectableKind": false,
+      "selectableLine": true,
+      "selectableLineAreaRange": true,
+      "selectableExpiryDate": false,
+      "selectableTicketPeriod": true,
+      "constantTicketPeriod": null
+    },
+    {
+      "id": 3,
+      "name": "Specjalny",
+      "selectableKind": true,
+      "selectableLine": false,
+      "selectableLineAreaRange": true,
+      "selectableExpiryDate": false,
+      "selectableTicketPeriod": false,
+      "constantTicketPeriod": 1
+    },
+    {
+      "id": 4,
+      "name": "Bezpłatny",
+      "selectableKind": true,
+      "selectableLine": false,
+      "selectableLineAreaRange": false,
+      "selectableExpiryDate": true,
+      "selectableTicketPeriod": false,
+      "constantTicketPeriod": 12
+    }
+  ]
+}

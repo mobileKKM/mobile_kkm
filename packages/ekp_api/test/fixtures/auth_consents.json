@@ -1,0 +1,9 @@
+{
+  "marketingConsents": [
+    {
+      "id": 4,
+      "content": "Akceptuję regulamin",
+      "isChecked": false
+    }
+  ]
+}

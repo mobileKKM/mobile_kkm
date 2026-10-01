@@ -1,0 +1,28 @@
+{
+  "tickets": [
+    {
+      "ticketGuid": "feedfacefeedfacefeedfacefeedface",
+      "transactionCode": "MjU5NjI3MjMjMQ",
+      "status": "active",
+      "datePurchase": "2025-09-30T16:58:06.0587679Z",
+      "startDate": "2025-09-30T22:00:00Z",
+      "endDate": "2025-10-31T22:59:59Z",
+      "monthsPeriod": 1,
+      "daysPeriod": 7,
+      "price": 96.5,
+      "isAnyAssigned": true,
+      "assigned": true,
+      "canAssign": false,
+      "forCitizen": false,
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 1,
+      "specialTransportLine": "1003",
+      "isNetwork": false,
+      "isMetropolitan": true,
+      "lines": []
+    }
+  ],
+  "code": null,
+  "message": null
+}

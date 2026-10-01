@@ -1,0 +1,40 @@
+{
+  "ticket": {
+    "ticketGuid": "feedfacefeedfacefeedfacefeedface",
+    "transactionCode": null,
+    "status": "pending",
+    "datePurchase": "2025-09-29T22:06:06.4219366Z",
+    "startDate": "2025-09-30T22:00:00Z",
+    "endDate": "2025-10-31T22:59:59Z",
+    "monthsPeriod": 1,
+    "daysPeriod": 7,
+    "price": 50.0,
+    "isAnyAssigned": false,
+    "assigned": false,
+    "canAssign": false,
+    "forCitizen": false,
+    "ticketKindCode": 17,
+    "ticketNumberOfLineCode": 3,
+    "ticketPeriodCode": 1,
+    "specialTransportLine": "1001",
+    "isNetwork": true,
+    "isMetropolitan": false,
+    "lines": [],
+    "fivePlusOneTicket": false,
+    "customerId": 300002,
+    "customerCode": 100002,
+    "cityCardTypeCode": 8,
+    "productName": null,
+    "paymentStateId": null,
+    "paymentStateDescription": null,
+    "paymentTypeCode": null,
+    "paymentDescription": null,
+    "promotionName": null,
+    "cityCardTypeName": "mobilna Krakowska Karta Miejska"
+  },
+  "urls": {
+    "paymentUrl": "https://secure.tpay.com/?gtitle=TR-ZP2-1168812X&uid=01M3QK9TNWP2MFXA5JT6HMYJZF",
+    "returnUrl": "https://ekp.mpk.krakow.pl/payment/success?id=feedfacefeedfacefeedfacefeedface&type=2",
+    "returnErrorUrl": "https://ekp.mpk.krakow.pl/payment/rejected?id=feedfacefeedfacefeedfacefeedface&type=2"
+  }
+}

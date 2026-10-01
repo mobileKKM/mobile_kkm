@@ -1,0 +1,11 @@
+{
+  "dateFromUtc": "2025-09-08T22:00:00Z",
+  "dateToUtc": "2027-09-08T21:59:59Z",
+  "isActive": true,
+  "firstName": "Jan",
+  "lastName": "Testowy",
+  "photoUrl": "https://api.example.com/photo.jpg?preset=preview",
+  "customerCode": "100001",
+  "code": null,
+  "message": null
+}

@@ -1,0 +1,156 @@
+{
+  "list": [
+    {
+      "id": "103",
+      "name": "Karta płatnicza",
+      "banks": "53",
+      "img": "https://secure.tpay.com/_/g/103-c2p.png",
+      "main_bank_id": "53",
+      "available_via_webview": true
+    },
+    {
+      "id": "113",
+      "name": "Alior Bank SA",
+      "banks": "9",
+      "img": "https://secure.tpay.com/_/g/113.png",
+      "main_bank_id": "9",
+      "available_via_webview": true
+    },
+    {
+      "id": "102",
+      "name": "Bank Pekao SA",
+      "banks": "4,55",
+      "img": "https://secure.tpay.com/_/g/102.png",
+      "main_bank_id": "4",
+      "available_via_webview": true
+    },
+    {
+      "id": "108",
+      "name": "PKO Bank Polski",
+      "banks": "21",
+      "img": "https://secure.tpay.com/_/g/108.png",
+      "main_bank_id": "21",
+      "available_via_webview": true
+    },
+    {
+      "id": "110",
+      "name": "Inteligo",
+      "banks": "14",
+      "img": "https://secure.tpay.com/_/g/110.png",
+      "main_bank_id": "14",
+      "available_via_webview": true
+    },
+    {
+      "id": "150",
+      "name": "BLIK",
+      "banks": "64",
+      "img": "https://secure.tpay.com/_/g/150.png",
+      "main_bank_id": "64",
+      "available_via_webview": true
+    },
+    {
+      "id": "160",
+      "name": "mBank",
+      "banks": "18",
+      "img": "https://secure.tpay.com/_/g/160.png",
+      "main_bank_id": "18",
+      "available_via_webview": true
+    },
+    {
+      "id": "111",
+      "name": "ING Bank Śląski SA",
+      "banks": "13",
+      "img": "https://secure.tpay.com/_/g/111.png",
+      "main_bank_id": "13",
+      "available_via_webview": true
+    },
+    {
+      "id": "114",
+      "name": "Bank Millennium SA",
+      "banks": "2",
+      "img": "https://secure.tpay.com/_/g/114.png",
+      "main_bank_id": "2",
+      "available_via_webview": true
+    },
+    {
+      "id": "115",
+      "name": "Erste Bank Polska SA",
+      "banks": "6",
+      "img": "https://secure.tpay.com/_/g/115.png",
+      "main_bank_id": "6",
+      "available_via_webview": true
+    },
+    {
+      "id": "116",
+      "name": "Credit Agricole Polska SA",
+      "banks": "17",
+      "img": "https://secure.tpay.com/_/g/116.png",
+      "main_bank_id": "17",
+      "available_via_webview": true
+    },
+    {
+      "id": "119",
+      "name": "Velo Bank",
+      "banks": "12",
+      "img": "https://secure.tpay.com/_/g/119.png",
+      "main_bank_id": "12",
+      "available_via_webview": true
+    },
+    {
+      "id": "124",
+      "name": "Bank Pocztowy SA",
+      "banks": "5",
+      "img": "https://secure.tpay.com/_/g/124.png",
+      "main_bank_id": "5",
+      "available_via_webview": true
+    },
+    {
+      "id": "135",
+      "name": "Banki Spółdzielcze",
+      "banks": "63",
+      "img": "https://secure.tpay.com/_/g/135.png",
+      "main_bank_id": "63",
+      "available_via_webview": true
+    },
+    {
+      "id": "133",
+      "name": "BNP Paribas Bank Polska SA",
+      "banks": "1",
+      "img": "https://secure.tpay.com/_/g/133.png",
+      "main_bank_id": "1",
+      "available_via_webview": true
+    },
+    {
+      "id": "145",
+      "name": "Plus Bank SA",
+      "banks": "15",
+      "img": "https://secure.tpay.com/_/g/145.png",
+      "main_bank_id": "15",
+      "available_via_webview": true
+    },
+    {
+      "id": "166",
+      "name": "Google Pay",
+      "banks": "68",
+      "img": "https://secure.tpay.com/_/g/166.png",
+      "main_bank_id": "68",
+      "available_via_webview": false
+    },
+    {
+      "id": "170",
+      "name": "Apple Pay",
+      "banks": "75",
+      "img": "https://secure.tpay.com/_/g/170.png",
+      "main_bank_id": "75",
+      "available_via_webview": true
+    },
+    {
+      "id": "171",
+      "name": "Visa Mobile",
+      "banks": "79",
+      "img": "https://secure.tpay.com/_/g/171.png",
+      "main_bank_id": "79",
+      "available_via_webview": true
+    }
+  ]
+}

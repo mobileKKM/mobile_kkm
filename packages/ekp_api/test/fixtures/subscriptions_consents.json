@@ -1,0 +1,9 @@
+{
+  "marketingConsents": [
+    {
+      "id": 5,
+      "content": "AKCEPTUJĘ REGULAMIN BILETU 5+1",
+      "isChecked": false
+    }
+  ]
+}

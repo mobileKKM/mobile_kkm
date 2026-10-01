@@ -1,0 +1,22 @@
+{
+  "commodityIndex": "352453377",
+  "commodityName": "Bilet norm. mieszk. 1-mies. sieciowy st. I",
+  "symbol": null,
+  "price": 99.0,
+  "validFrom": "2025-10-27T23:00:00Z",
+  "validTo": "2025-11-27T22:59:59Z",
+  "daysPeriod": 7,
+  "forCitizen": true,
+  "ticketKindCode": 21,
+  "ticketNumberOfLineCode": 3,
+  "ticketPeriodCode": 1,
+  "specialTransportLine": "1001",
+  "isNetwork": true,
+  "isMetropolitan": false,
+  "lines": [],
+  "hasSimilarTicket": false,
+  "commodityId": 2185,
+  "priceListPeriodId": 9,
+  "customerCode": 100001,
+  "similarTickets": []
+}

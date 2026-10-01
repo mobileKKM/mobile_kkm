@@ -1,0 +1,636 @@
+{
+  "lines": [
+    {
+      "line": 1,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 10,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 11,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 12,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 13,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 14,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 15,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 16,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 17,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 18,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 19,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    },
+    {
+      "line": 100,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 101,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 102,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 103,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 104,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 105,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 106,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 107,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 108,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 109,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 110,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 111,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 112,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 113,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 116,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 120,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 121,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 122,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 123,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 124,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 125,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 126,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 127,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 128,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 129,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 130,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 131,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 132,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 133,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 134,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 135,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 136,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 137,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 138,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 139,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 140,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 141,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 142,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 143,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 144,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 147,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 148,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 149,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 150,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 151,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 152,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 153,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 155,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 156,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 158,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 159,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 160,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 161,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 162,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 163,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 164,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 168,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 169,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 171,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 172,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 173,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 174,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 175,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 176,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 178,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 179,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 180,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 181,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 182,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 183,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 184,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 191,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 192,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 193,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 194,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 195,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 196,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 198,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    },
+    {
+      "line": 199,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": false,
+      "is_bus": true
+    }
+  ],
+  "code": null,
+  "message": null
+}

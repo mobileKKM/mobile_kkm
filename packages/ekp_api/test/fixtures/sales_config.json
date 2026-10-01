@@ -1,0 +1,355 @@
+{
+  "hasCracovCardPrivilege": false,
+  "firstDayOfValidity": "2025-09-30T00:00:00",
+  "lastDayOfValidity": "2025-10-30T00:00:00",
+  "ticketNumberOfLines": [
+    {
+      "code": 3,
+      "description": "Wszystkie linie - Strefa I",
+      "urbanLineQty": 0,
+      "suburbanLineQty": -1,
+      "suburban2LineQty": -1,
+      "isMetropolitan": true,
+      "isNetwork": true,
+      "selectableLines": false,
+      "sumLinesToSelection": 0
+    },
+    {
+      "code": 12,
+      "description": "Wszystkie linie - Strefa II",
+      "urbanLineQty": -1,
+      "suburbanLineQty": 0,
+      "suburban2LineQty": -1,
+      "isMetropolitan": true,
+      "isNetwork": false,
+      "selectableLines": false,
+      "sumLinesToSelection": 0
+    },
+    {
+      "code": 15,
+      "description": "Wszystkie linie - Strefa I+II",
+      "urbanLineQty": 0,
+      "suburbanLineQty": 0,
+      "suburban2LineQty": -1,
+      "isMetropolitan": true,
+      "isNetwork": false,
+      "selectableLines": false,
+      "sumLinesToSelection": 0
+    },
+    {
+      "code": 48,
+      "description": "Wszystkie linie - Strefa III",
+      "urbanLineQty": -1,
+      "suburbanLineQty": -1,
+      "suburban2LineQty": 0,
+      "isMetropolitan": true,
+      "isNetwork": false,
+      "selectableLines": false,
+      "sumLinesToSelection": 0
+    },
+    {
+      "code": 60,
+      "description": "Wszystkie linie - Strefa II+III",
+      "urbanLineQty": -1,
+      "suburbanLineQty": 0,
+      "suburban2LineQty": 0,
+      "isMetropolitan": true,
+      "isNetwork": false,
+      "selectableLines": false,
+      "sumLinesToSelection": 0
+    },
+    {
+      "code": 63,
+      "description": "Wszystkie linie - Strefa I+II+III",
+      "urbanLineQty": 0,
+      "suburbanLineQty": 0,
+      "suburban2LineQty": 0,
+      "isMetropolitan": true,
+      "isNetwork": false,
+      "selectableLines": false,
+      "sumLinesToSelection": 0
+    }
+  ],
+  "ticketPeriods": [
+    {
+      "code": 1,
+      "description": "Jeden miesiąc",
+      "value": 1,
+      "unit": 2,
+      "isMetropolitan": true,
+      "isNetwork": true,
+      "useDescription": false
+    },
+    {
+      "code": 2,
+      "description": "Dwa miesiące",
+      "value": 2,
+      "unit": 2,
+      "isMetropolitan": true,
+      "isNetwork": true,
+      "useDescription": false
+    },
+    {
+      "code": 3,
+      "description": "Trzy miesiące",
+      "value": 3,
+      "unit": 2,
+      "isMetropolitan": true,
+      "isNetwork": true,
+      "useDescription": false
+    }
+  ],
+  "ticketKinds": [
+    {
+      "code": 2,
+      "description": "Normalny"
+    },
+    {
+      "code": 14,
+      "description": "Ulgowy"
+    },
+    {
+      "code": 17,
+      "description": "Aktywizujący"
+    }
+  ],
+  "specialTransportLines": [
+    {
+      "specialTransportLine": "1003",
+      "name": "metropolitalny",
+      "description": "Wszystkie linie KMK w wybranej strefie oraz Koleje Regionalne",
+      "buttonName": "Bilet bez zniżki Karty Krakowskiej",
+      "isNetwork": false,
+      "isMetropolitan": true
+    }
+  ],
+  "priceListConfigurations": [
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 15,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 15,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 15,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 15,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 15,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 15,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 17,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 17,
+      "ticketNumberOfLineCode": 15,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 12,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 12,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 12,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 48,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 48,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 48,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 63,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 63,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 63,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 60,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 60,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 2,
+      "ticketNumberOfLineCode": 60,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 12,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 12,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 12,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 48,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 48,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 48,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 63,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 63,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 63,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 60,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 60,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 14,
+      "ticketNumberOfLineCode": 60,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 17,
+      "ticketNumberOfLineCode": 63,
+      "ticketPeriodCode": 1
+    },
+    {
+      "ticketKindCode": 17,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 17,
+      "ticketNumberOfLineCode": 3,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 17,
+      "ticketNumberOfLineCode": 15,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 17,
+      "ticketNumberOfLineCode": 15,
+      "ticketPeriodCode": 3
+    },
+    {
+      "ticketKindCode": 17,
+      "ticketNumberOfLineCode": 63,
+      "ticketPeriodCode": 2
+    },
+    {
+      "ticketKindCode": 17,
+      "ticketNumberOfLineCode": 63,
+      "ticketPeriodCode": 3
+    }
+  ],
+  "code": 1,
+  "message": null
+}

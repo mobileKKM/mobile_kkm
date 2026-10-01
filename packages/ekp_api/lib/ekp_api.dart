@@ -1,0 +1,34 @@
+/// Unofficial Dart client for the EKP (mKKM) API of ZTP / MPK Kraków.
+library;
+
+export 'src/account/account_api.dart';
+export 'src/account/account_models.dart';
+export 'src/auth/auth_api.dart';
+export 'src/auth/auth_models.dart';
+export 'src/common/api_exception.dart';
+export 'src/common/api_paths.dart';
+export 'src/common/api_service.dart';
+export 'src/common/code_message.dart';
+export 'src/common/ekp_defaults.dart';
+export 'src/dictionary/dictionary_api.dart';
+export 'src/dictionary/dictionary_models.dart';
+export 'src/ekp_client.dart';
+export 'src/interceptors/auth_interceptor.dart';
+export 'src/interceptors/device_headers_interceptor.dart';
+export 'src/invoices/invoice_models.dart';
+export 'src/invoices/invoices_api.dart';
+export 'src/misc/misc_api.dart';
+export 'src/misc/misc_models.dart';
+export 'src/payments/payments_api.dart';
+export 'src/payments/payment_models.dart';
+export 'src/session/auth_session.dart';
+export 'src/session/device_identity.dart';
+export 'src/session/session_event.dart';
+export 'src/session/session_manager.dart';
+export 'src/session/token_store.dart';
+export 'src/storage_medium/storage_medium_api.dart';
+export 'src/storage_medium/storage_medium_models.dart';
+export 'src/subscriptions/subscription_models.dart';
+export 'src/subscriptions/subscriptions_api.dart';
+export 'src/tickets/ticket_models.dart';
+export 'src/tickets/tickets_api.dart';

@@ -1,0 +1,275 @@
+{
+  "list": [
+    {
+      "code": 1,
+      "description": "Jeden miesiąc",
+      "availableForSell": true,
+      "forAll": true,
+      "forKK": true,
+      "value": 1,
+      "unit": 2
+    },
+    {
+      "code": 2,
+      "description": "Dwa miesiące",
+      "availableForSell": true,
+      "forAll": true,
+      "forKK": true,
+      "value": 2,
+      "unit": 2
+    },
+    {
+      "code": 3,
+      "description": "Trzy miesiące",
+      "availableForSell": true,
+      "forAll": true,
+      "forKK": true,
+      "value": 3,
+      "unit": 2
+    },
+    {
+      "code": 4,
+      "description": "Cztery miesiące",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 4,
+      "unit": 2
+    },
+    {
+      "code": 5,
+      "description": "Pięć miesięcy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 5,
+      "unit": 2
+    },
+    {
+      "code": 6,
+      "description": "Sześć miesięcy",
+      "availableForSell": true,
+      "forAll": false,
+      "forKK": true,
+      "value": 6,
+      "unit": 2
+    },
+    {
+      "code": 7,
+      "description": "Siedem miesięcy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 7,
+      "unit": 2
+    },
+    {
+      "code": 8,
+      "description": "Osiem miesięcy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 8,
+      "unit": 2
+    },
+    {
+      "code": 9,
+      "description": "Dziewięć miesięcy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 9,
+      "unit": 2
+    },
+    {
+      "code": 10,
+      "description": "Dziesięć miesięcy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 10,
+      "unit": 2
+    },
+    {
+      "code": 11,
+      "description": "Jedenaście miesięcy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 11,
+      "unit": 2
+    },
+    {
+      "code": 12,
+      "description": "Dwanaście miesięcy",
+      "availableForSell": true,
+      "forAll": false,
+      "forKK": true,
+      "value": 12,
+      "unit": 2
+    },
+    {
+      "code": 13,
+      "description": "Bilet ważny do końca roku kalendarzowego",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 13,
+      "unit": 2
+    },
+    {
+      "code": 14,
+      "description": "Semestr (150 dni)",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 150,
+      "unit": 3
+    },
+    {
+      "code": 15,
+      "description": "Pół roku",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 6,
+      "unit": 2
+    },
+    {
+      "code": 20,
+      "description": "1 - godzinny",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 1,
+      "unit": 4
+    },
+    {
+      "code": 21,
+      "description": "24 - godzinny",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 24,
+      "unit": 4
+    },
+    {
+      "code": 22,
+      "description": "48 - godzinny",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 48,
+      "unit": 4
+    },
+    {
+      "code": 23,
+      "description": "72 - godzinny",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 72,
+      "unit": 4
+    },
+    {
+      "code": 24,
+      "description": "4 - dobowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 96,
+      "unit": 4
+    },
+    {
+      "code": 25,
+      "description": "5 - dobowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 120,
+      "unit": 4
+    },
+    {
+      "code": 26,
+      "description": "6 - dobowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 144,
+      "unit": 4
+    },
+    {
+      "code": 27,
+      "description": "7 - dobowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 168,
+      "unit": 4
+    },
+    {
+      "code": 31,
+      "description": "1 - dniowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 1,
+      "unit": 3
+    },
+    {
+      "code": 32,
+      "description": "2 - dniowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 2,
+      "unit": 3
+    },
+    {
+      "code": 33,
+      "description": "3 - dniowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 3,
+      "unit": 3
+    },
+    {
+      "code": 34,
+      "description": "4 - dniowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 4,
+      "unit": 3
+    },
+    {
+      "code": 35,
+      "description": "5 - dniowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 5,
+      "unit": 3
+    },
+    {
+      "code": 36,
+      "description": "6 - dniowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 6,
+      "unit": 3
+    },
+    {
+      "code": 37,
+      "description": "7 - dniowy",
+      "availableForSell": false,
+      "forAll": false,
+      "forKK": false,
+      "value": 7,
+      "unit": 3
+    }
+  ],
+  "rowCount": 30
+}
