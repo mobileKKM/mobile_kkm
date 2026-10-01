@@ -394,6 +394,49 @@ void main() {
       final res = await client.subscriptions.marketingConsents();
       expect(res.marketingConsents, isNotNull);
     });
+
+    test('signIn posts customer data, consents with content', () async {
+      adapter.onPost('/subscriptions/sign-in', [(200, '')]);
+      await client.subscriptions.signIn(
+        firstName: 'JAN',
+        lastName: 'TESTOWY',
+        email: 'test@example.com',
+        pesel: '90010112345',
+        ccCustomerId: 200001,
+        marketingConsents: const [
+          MarketingConsent(
+            id: 5,
+            content: 'AKCEPTUJĘ REGULAMIN BILETU 5+1',
+            isChecked: true,
+          ),
+        ],
+      );
+      final req = requestsTo('/subscriptions/sign-in').single;
+      expectBearer(req);
+      expect(bodyOf(req), {
+        'firstName': 'JAN',
+        'lastName': 'TESTOWY',
+        'email': 'test@example.com',
+        'pesel': '90010112345',
+        'ccCustomerId': 200001,
+        'marketingConsents': [
+          {
+            'id': 5,
+            'content': 'AKCEPTUJĘ REGULAMIN BILETU 5+1',
+            'isChecked': true,
+          },
+        ],
+        'isCycleRefreshEnabled': false,
+      });
+    });
+
+    test('cancel posts the literal null body', () async {
+      adapter.onPost('/subscriptions/cancel', [(200, '')]);
+      await client.subscriptions.cancel();
+      final req = requestsTo('/subscriptions/cancel').single;
+      expectBearer(req);
+      expect(req.data, 'null');
+    });
   });
 
   group('TicketsApi', () {
@@ -517,6 +560,20 @@ void main() {
       adapter.onGet('/payments/banks', [(200, fixture('banks'))]);
       final res = await client.payments.banks();
       expect(res.list, isNotEmpty);
+    });
+
+    test('changePaymentCard posts literal null, parses redirect', () async {
+      adapter.onPost('/payments/change-payment-card', [
+        (200, fixture('change_payment_card')),
+      ]);
+      final res = await client.payments.changePaymentCard();
+      expect(
+        res.tPayRedirectUrl,
+        'https://secure.tpay.com/cards/?sale_auth=deadbeef',
+      );
+      final req = requestsTo('/payments/change-payment-card').single;
+      expectBearer(req);
+      expect(req.data, 'null');
     });
 
     test('check returns confirmed on HTTP 200', () async {

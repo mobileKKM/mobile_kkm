@@ -52,3 +52,19 @@ abstract class PaymentCheckResult with _$PaymentCheckResult {
     Object? code,
   }) = _PaymentCheckResult;
 }
+
+/// `POST payments/change-payment-card` — initiates a tpay card change for
+/// the subscription's recurring payment. The URL opens in a webview and
+/// completes through the same `/payment/{success,rejected}` →
+/// `payments/result` sequence as a ticket purchase.
+@freezed
+abstract class ChangePaymentCardResponse with _$ChangePaymentCardResponse {
+  const factory ChangePaymentCardResponse({
+    /// tpay card-management page, e.g.
+    /// `https://secure.tpay.com/cards/?sale_auth=<token>`.
+    String? tPayRedirectUrl,
+  }) = _ChangePaymentCardResponse;
+
+  factory ChangePaymentCardResponse.fromJson(Map<String, dynamic> json) =>
+      _$ChangePaymentCardResponseFromJson(json);
+}

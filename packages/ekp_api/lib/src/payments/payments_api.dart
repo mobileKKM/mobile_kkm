@@ -21,6 +21,29 @@ class PaymentsApi extends EkpApiService {
     });
   }
 
+  /// `POST payments/change-payment-card` — starts a tpay card change for
+  /// the subscription's recurring payment (available once
+  /// `subscriptions/available-actions` reports `changeCard: true`).
+  ///
+  /// The official client sends the literal 4-byte body `null`; the
+  /// response carries [ChangePaymentCardResponse.tPayRedirectUrl], which
+  /// opens in a webview and completes through the same
+  /// `/payment/{success,rejected}` → `payments/result` sequence as a
+  /// ticket purchase.
+  Future<ChangePaymentCardResponse> changePaymentCard() async {
+    return guard(() async {
+      final response = await dio.post<Map<String, dynamic>>(
+        EkpApiPaths.paymentsChangePaymentCard,
+        // Literal "null" — byte-for-byte parity with the official client
+        // (its content-length is 4).
+        data: 'null',
+      );
+      return ChangePaymentCardResponse.fromJson(
+        response.data ?? const <String, dynamic>{},
+      );
+    });
+  }
+
   /// `POST payments/check` with `{id: ticketGuid}`.
   ///
   /// * HTTP 200 → [PaymentCheckStatus.confirmed]

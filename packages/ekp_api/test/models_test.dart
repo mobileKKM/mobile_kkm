@@ -284,6 +284,29 @@ void main() {
       expect(res.isSubscriptionSignedIn, isFalse);
       expect(res.counter, 0);
       expect(res.activeTicket, isNull);
+      expect(res.customerDetail, isNull);
+    });
+
+    test('SubscriptionDetails parses the signed-in shape', () {
+      final res = SubscriptionDetails.fromJson(
+        fixture('subscriptions_details_signed'),
+      );
+      expect(res.isSubscriptionSignedIn, isTrue);
+      expect(res.maskedCardNumber, '****1234');
+      expect(res.isAutomaticSubscriptionEnabled, isFalse);
+      expect(res.isCycleRefreshEnabled, isFalse);
+      // Local time WITHOUT a UTC offset on the wire.
+      expect(
+        res.subscriptionSignedInDate!.toIso8601String(),
+        '2025-10-01T15:43:39.107',
+      );
+      final detail = res.customerDetail!;
+      expect(detail.firstName, 'JAN');
+      expect(detail.lastName, 'TESTOWY');
+      expect(detail.pesel, '90010112345');
+      expect(detail.email, 'test@example.com');
+      expect(detail.cityCardCode, 8); // 8 = mKKM in city-card-types
+      expect(detail.clientCode, 100001);
     });
 
     test('SubscriptionAvailableActions parses', () {
@@ -292,6 +315,16 @@ void main() {
       );
       expect(res.buyTicket, isFalse);
       expect(res.newCard, isFalse);
+    });
+
+    test('SubscriptionAvailableActions parses signed-in actions', () {
+      final res = SubscriptionAvailableActions.fromJson(
+        fixture('subscriptions_actions_signed'),
+      );
+      expect(res.changeCard, isTrue);
+      expect(res.buyTicket, isTrue);
+      expect(res.newCard, isFalse);
+      expect(res.changeStorageMedium, isFalse);
     });
   });
 

@@ -35,3 +35,13 @@ _BankListResponse _$BankListResponseFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$BankListResponseToJson(_BankListResponse instance) =>
     <String, dynamic>{'list': instance.list};
+
+_ChangePaymentCardResponse _$ChangePaymentCardResponseFromJson(
+  Map<String, dynamic> json,
+) => _ChangePaymentCardResponse(
+  tPayRedirectUrl: json['tPayRedirectUrl'] as String?,
+);
+
+Map<String, dynamic> _$ChangePaymentCardResponseToJson(
+  _ChangePaymentCardResponse instance,
+) => <String, dynamic>{'tPayRedirectUrl': instance.tPayRedirectUrl};

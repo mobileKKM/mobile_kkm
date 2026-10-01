@@ -16,7 +16,11 @@ _SubscriptionDetails _$SubscriptionDetailsFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['subscriptionSignedInDate'] as String),
       activeTicket: json['activeTicket'],
       pendingTicket: json['pendingTicket'],
-      customerDetail: json['customerDetail'],
+      customerDetail: json['customerDetail'] == null
+          ? null
+          : SubscriptionCustomerDetail.fromJson(
+              json['customerDetail'] as Map<String, dynamic>,
+            ),
       isAutomaticSubscriptionEnabled:
           json['isAutomaticSubscriptionEnabled'] as bool?,
       isCycleRefreshEnabled: json['isCycleRefreshEnabled'] as bool?,
@@ -35,6 +39,28 @@ Map<String, dynamic> _$SubscriptionDetailsToJson(
   'customerDetail': instance.customerDetail,
   'isAutomaticSubscriptionEnabled': instance.isAutomaticSubscriptionEnabled,
   'isCycleRefreshEnabled': instance.isCycleRefreshEnabled,
+};
+
+_SubscriptionCustomerDetail _$SubscriptionCustomerDetailFromJson(
+  Map<String, dynamic> json,
+) => _SubscriptionCustomerDetail(
+  firstName: json['firstName'] as String?,
+  lastName: json['lastName'] as String?,
+  pesel: json['pesel'] as String?,
+  email: json['email'] as String?,
+  cityCardCode: (json['cityCardCode'] as num?)?.toInt(),
+  clientCode: (json['clientCode'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$SubscriptionCustomerDetailToJson(
+  _SubscriptionCustomerDetail instance,
+) => <String, dynamic>{
+  'firstName': instance.firstName,
+  'lastName': instance.lastName,
+  'pesel': instance.pesel,
+  'email': instance.email,
+  'cityCardCode': instance.cityCardCode,
+  'clientCode': instance.clientCode,
 };
 
 _SubscriptionAvailableActions _$SubscriptionAvailableActionsFromJson(

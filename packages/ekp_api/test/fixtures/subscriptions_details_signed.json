@@ -1,0 +1,18 @@
+{
+  "isSubscriptionSignedIn": true,
+  "counter": 0,
+  "maskedCardNumber": "****1234",
+  "subscriptionSignedInDate": "2025-10-01T15:43:39.107",
+  "activeTicket": null,
+  "pendingTicket": null,
+  "customerDetail": {
+    "firstName": "JAN",
+    "lastName": "TESTOWY",
+    "pesel": "90010112345",
+    "email": "test@example.com",
+    "cityCardCode": 8,
+    "clientCode": 100001
+  },
+  "isAutomaticSubscriptionEnabled": false,
+  "isCycleRefreshEnabled": false
+}

@@ -65,6 +65,8 @@ abstract final class EkpApiPaths {
   static const String paymentsBanks = '$apiRoot/payments/banks';
   static const String paymentsCheck = '$apiRoot/payments/check';
   static const String paymentsResult = '$apiRoot/payments/result';
+  static const String paymentsChangePaymentCard =
+      '$apiRoot/payments/change-payment-card';
 
   // -------------------------------------------------------- subscriptions
   static const String subscriptionsDetails = '$apiRoot/subscriptions/details';
@@ -72,6 +74,8 @@ abstract final class EkpApiPaths {
       '$apiRoot/subscriptions/available-actions';
   static const String subscriptionsMarketingConsents =
       '$apiRoot/subscriptions/marketing-consents';
+  static const String subscriptionsSignIn = '$apiRoot/subscriptions/sign-in';
+  static const String subscriptionsCancel = '$apiRoot/subscriptions/cancel';
 
   // ------------------------------------------------------------ invoices
   static const String invoices = '$apiRoot/invoices';

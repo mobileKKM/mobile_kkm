@@ -68,8 +68,10 @@ client.session.events.listen((event) { /* auth lifecycle */ });
 
 ## Not yet covered
 
-- Subscription (5+1) activation, inhabitant contract signing (only the
-  read-only endpoints are implemented)
+- Subscription (5+1) ticket purchase (`buyTicket` action) and the
+  automatic-renewal toggle (`isAutomaticSubscriptionEnabled`) — sign-in,
+  card change and cancellation *are* implemented
+- Inhabitant contract signing
 - The tpay payment webview itself (the `payments/result` callback after a
   successful/rejected payment *is* implemented; rendering the webview is
   the host app's job)

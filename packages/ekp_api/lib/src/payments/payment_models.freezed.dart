@@ -843,4 +843,278 @@ as String?,code: freezed == code ? _self.code : code ,
 
 }
 
+
+/// @nodoc
+mixin _$ChangePaymentCardResponse {
+
+/// tpay card-management page, e.g.
+/// `https://secure.tpay.com/cards/?sale_auth=<token>`.
+ String? get tPayRedirectUrl;
+/// Create a copy of ChangePaymentCardResponse
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ChangePaymentCardResponseCopyWith<ChangePaymentCardResponse> get copyWith => _$ChangePaymentCardResponseCopyWithImpl<ChangePaymentCardResponse>(this as ChangePaymentCardResponse, _$identity);
+
+  /// Serializes this ChangePaymentCardResponse to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as ChangePaymentCardResponse;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChangePaymentCardResponse&&(identical(other.tPayRedirectUrl, _this.tPayRedirectUrl) || other.tPayRedirectUrl == _this.tPayRedirectUrl));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as ChangePaymentCardResponse;
+  return Object.hash(runtimeType,_this.tPayRedirectUrl);
+}
+
+@override
+String toString() {
+  final _this = this as ChangePaymentCardResponse;
+  return 'ChangePaymentCardResponse(tPayRedirectUrl: ${_this.tPayRedirectUrl})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ChangePaymentCardResponseCopyWith<$Res>  {
+  factory $ChangePaymentCardResponseCopyWith(ChangePaymentCardResponse value, $Res Function(ChangePaymentCardResponse) _then) = _$ChangePaymentCardResponseCopyWithImpl;
+@useResult
+$Res call({
+ String? tPayRedirectUrl
+});
+
+
+
+
+}
+/// @nodoc
+class _$ChangePaymentCardResponseCopyWithImpl<$Res>
+    implements $ChangePaymentCardResponseCopyWith<$Res> {
+  _$ChangePaymentCardResponseCopyWithImpl(this._self, this._then);
+
+  final ChangePaymentCardResponse _self;
+  final $Res Function(ChangePaymentCardResponse) _then;
+
+/// Create a copy of ChangePaymentCardResponse
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? tPayRedirectUrl = freezed,}) {
+  return _then(ChangePaymentCardResponse(
+tPayRedirectUrl: freezed == tPayRedirectUrl ? _self.tPayRedirectUrl : tPayRedirectUrl // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ChangePaymentCardResponse].
+extension ChangePaymentCardResponsePatterns on ChangePaymentCardResponse {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ChangePaymentCardResponse value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ChangePaymentCardResponse() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ChangePaymentCardResponse value)  $default,){
+final _that = this;
+switch (_that) {
+case _ChangePaymentCardResponse():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ChangePaymentCardResponse value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ChangePaymentCardResponse() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? tPayRedirectUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ChangePaymentCardResponse() when $default != null:
+return $default(_that.tPayRedirectUrl);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? tPayRedirectUrl)  $default,) {final _that = this;
+switch (_that) {
+case _ChangePaymentCardResponse():
+return $default(_that.tPayRedirectUrl);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? tPayRedirectUrl)?  $default,) {final _that = this;
+switch (_that) {
+case _ChangePaymentCardResponse() when $default != null:
+return $default(_that.tPayRedirectUrl);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _ChangePaymentCardResponse implements ChangePaymentCardResponse {
+  const _ChangePaymentCardResponse({this.tPayRedirectUrl});
+  factory _ChangePaymentCardResponse.fromJson(Map<String, dynamic> json) => _$ChangePaymentCardResponseFromJson(json);
+
+/// tpay card-management page, e.g.
+/// `https://secure.tpay.com/cards/?sale_auth=<token>`.
+@override final  String? tPayRedirectUrl;
+
+/// Create a copy of ChangePaymentCardResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ChangePaymentCardResponseCopyWith<_ChangePaymentCardResponse> get copyWith => __$ChangePaymentCardResponseCopyWithImpl<_ChangePaymentCardResponse>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$ChangePaymentCardResponseToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangePaymentCardResponse&&(identical(other.tPayRedirectUrl, tPayRedirectUrl) || other.tPayRedirectUrl == tPayRedirectUrl));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,tPayRedirectUrl);
+}
+
+@override
+String toString() {
+    return 'ChangePaymentCardResponse(tPayRedirectUrl: $tPayRedirectUrl)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ChangePaymentCardResponseCopyWith<$Res> implements $ChangePaymentCardResponseCopyWith<$Res> {
+  factory _$ChangePaymentCardResponseCopyWith(_ChangePaymentCardResponse value, $Res Function(_ChangePaymentCardResponse) _then) = __$ChangePaymentCardResponseCopyWithImpl;
+@override @useResult
+$Res call({
+ String? tPayRedirectUrl
+});
+
+
+
+
+}
+/// @nodoc
+class __$ChangePaymentCardResponseCopyWithImpl<$Res>
+    implements _$ChangePaymentCardResponseCopyWith<$Res> {
+  __$ChangePaymentCardResponseCopyWithImpl(this._self, this._then);
+
+  final _ChangePaymentCardResponse _self;
+  final $Res Function(_ChangePaymentCardResponse) _then;
+
+/// Create a copy of ChangePaymentCardResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? tPayRedirectUrl = freezed,}) {
+  return _then(_ChangePaymentCardResponse(
+tPayRedirectUrl: freezed == tPayRedirectUrl ? _self.tPayRedirectUrl : tPayRedirectUrl // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
 // dart format on
