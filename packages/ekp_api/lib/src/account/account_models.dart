@@ -106,8 +106,12 @@ abstract class InhabitantStatus with EkpCodeMessage, _$InhabitantStatus {
       _$InhabitantStatusFromJson(json);
 }
 
-/// `GET account/inhabitant-contract` — the signed inhabitant (Karta
-/// Krakowska) contract image. The actual signing flow was never captured.
+/// `GET account/inhabitant-contract` — the inhabitant (Karta Krakowska)
+/// contract's AZTEC barcode, signed server-side and returned as a
+/// base64-encoded PNG ready to display and scan. No crypto is involved
+/// on this endpoint and there is no client-side signing step — unlike
+/// the mKKM AZTEC `contract-e`, whose barcode must be rendered
+/// client-side from the decrypted token.
 @freezed
 abstract class InhabitantContract with _$InhabitantContract {
   const factory InhabitantContract({
@@ -116,7 +120,7 @@ abstract class InhabitantContract with _$InhabitantContract {
     /// hence the local [_parseEpochMs] hook).
     @JsonKey(fromJson: _parseEpochMs) DateTime? expirationDate,
 
-    /// Base64 encoded PNG of the signed contract.
+    /// Base64-encoded PNG of the AZTEC barcode (signed server-side).
     String? contract,
   }) = _InhabitantContract;
 

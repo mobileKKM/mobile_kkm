@@ -59,7 +59,9 @@ class AccountApi extends EkpApiService {
     });
   }
 
-  /// `GET account/inhabitant-contract`
+  /// `GET account/inhabitant-contract` — the contract's AZTEC barcode as
+  /// a base64-encoded PNG (decode via
+  /// [InhabitantContract.decodeContractPng]).
   Future<InhabitantContract> inhabitantContract() async {
     return guard(() async {
       final response = await dio.get<Map<String, dynamic>>(
