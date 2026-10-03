@@ -14,11 +14,10 @@ with the long-term goal of a free and open replacement app.
 
 ## Status
 
-**The app itself has not been started yet.** So far the project consists
-of the [`ekp-dart`](./packages/README.md) foundation — a pure-Dart API
-client for the EKP backend plus the crypto helpers for its encrypted
-endpoints. The Flutter application that will sit on top of them is the
-next step.
+The project consists of the [`ekp-dart`](./packages/README.md)
+foundation — a pure-Dart API client for the EKP backend plus the crypto
+helpers for its encrypted endpoints — and a freshly scaffolded Flutter
+application at the repository root whose development is the next step.
 
 ## Packages
 
@@ -30,25 +29,33 @@ next step.
 ## Repository layout
 
 ```
+lib/                  Flutter application (scaffold so far)
 packages/ekp_api/     Dart API client package
 packages/ekp_crypto/  encrypted-endpoint crypto package
 ```
 
-The Flutter application will live at the repository root once its
-development starts. The raw network captures this project's knowledge
-derives from are **intentionally not included** in this repository (they
-contain personal data).
+The raw network captures this project's knowledge derives from are
+**intentionally not included** in this repository (they contain personal
+data).
 
 ## Developing
 
-```bash
-# package tests (pure Dart, no Flutter needed)
-cd packages/ekp_api    && dart pub get && dart test
-cd packages/ekp_crypto && dart pub get && dart test
+The repository is a [pub workspace](https://dart.dev/tools/pub/workspaces):
+the app and the packages under `packages/` share a single dependency
+resolution — one `pub get`, one lockfile, one analysis context.
 
-# static analysis
-cd packages/ekp_api    && dart analyze
-cd packages/ekp_crypto && dart analyze
+```bash
+# resolve the whole workspace (app + packages), from the repo root
+flutter pub get
+
+# static analysis — covers every workspace member in one context
+flutter analyze
+
+# tests — the app suite runs from the root, each package from its own
+# directory (ekp_api's tests load fixtures relative to the package dir)
+flutter test
+(cd packages/ekp_api    && dart test)
+(cd packages/ekp_crypto && dart test)
 ```
 
 ## License

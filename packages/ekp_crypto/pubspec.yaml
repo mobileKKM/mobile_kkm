@@ -9,10 +9,14 @@ publish_to: 'none'
 environment:
   sdk: ^3.13.4
 
+# Member of the repository-root pub workspace; dependencies resolve against
+# the shared root solve when developed inside the repo.
+resolution: workspace
+
 dependencies:
   asn1lib: ^1.6.5
   pointycastle: ^4.0.0
 dev_dependencies:
-  lints: ^5.0.0
+  lints: ^6.0.0
   test: ^1.25.8
   coverage: ^1.15.1

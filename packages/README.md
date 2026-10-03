@@ -29,19 +29,30 @@ LICENSE      GPL-3.0-or-later
 
 The raw network captures this project's knowledge derives from are
 **intentionally not included** in this repository (they contain personal
-data). A companion Flutter application built on these packages exists but
-has not been published yet.
+data). A companion Flutter application built on these packages lives in
+the parent repository (scaffold so far) and has not been published yet.
 
 ## Developing
 
-```bash
-# tests (pure Dart, no Flutter needed)
-cd ekp_api    && dart pub get && dart test
-cd ekp_crypto && dart pub get && dart test
+Inside the repository the packages are members of the root
+[pub workspace](https://dart.dev/tools/pub/workspaces): run
+`flutter pub get` once at the repository root — there is no per-package
+`pub get`, lockfile, or `.dart_tool` directory anymore.
 
-# static analysis
-dart analyze
+```bash
+# tests (pure Dart, no Flutter needed) — run from each package directory
+# (ekp_api's tests load fixtures relative to the package dir)
+cd ekp_api    && dart test
+cd ekp_crypto && dart test
+
+# static analysis — the repo root analyze covers every workspace member
+cd ../.. && flutter analyze
 ```
+
+To resolve a package outside the workspace (e.g. to validate its own
+dependency constraints standalone), put a `pubspec_overrides.yaml` next
+to its `pubspec.yaml` containing only `resolution:` — see
+[the workspace docs](https://dart.dev/tools/pub/workspaces#temporarily-resolving-a-package-outside-its-workspace).
 
 ## License
 
