@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Scrollable, width-constrained page used by the secondary auth screens.
 class AuthPage extends StatelessWidget {

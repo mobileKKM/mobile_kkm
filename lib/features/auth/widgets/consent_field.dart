@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// A mandatory consent checkbox, optionally followed by a link to the

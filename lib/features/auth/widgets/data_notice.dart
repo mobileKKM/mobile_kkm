@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/features/auth/constants/information_obligation.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 

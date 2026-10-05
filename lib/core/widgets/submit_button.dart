@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Primary action button that shows a spinner and blocks taps while
 /// [loading].

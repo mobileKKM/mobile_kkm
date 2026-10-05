@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:ekp_api/ekp_api.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/app.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';

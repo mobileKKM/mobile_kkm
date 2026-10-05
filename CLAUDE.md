@@ -67,6 +67,8 @@ Layout: `core/` for shared code (api, platform, providers, router, theme, widget
 
 State is Riverpod 3 with hand-written providers (no `riverpod_generator`); routing is `go_router`.
 
+Material widgets come from `package:material_ui/material_ui.dart`, not `package:flutter/material.dart`: go_router 18 only recognises `material_ui`'s `MaterialApp` and silently drops page transitions and the iOS back swipe otherwise. For the same reason `MobileKkmApp` uses `GlobalMaterialLocalizations.delegates` from `material_ui` rather than the generated `AppLocalizations.localizationsDelegates`.
+
 - **Injection seam:** `deviceIdentityProvider`, `tokenStoreProvider` and `userDataCacheProvider` throw by default and are overridden in `main()` with `flutter_secure_storage`-backed implementations. `ekpClientProvider` builds the `EkpClient` from them. Platform side effects are also providers (`urlOpenerProvider`, `linkSettingsProvider`) so tests can replace them.
 - **Auth state:** `AuthController` mirrors `EkpSessionManager`'s event stream into `AuthStatus` (`unknown` → `authenticated` / `unauthenticated`). On startup it renews an expired stored session (10 s cap) before leaving `unknown`.
 - **Routing:** `routerProvider` re-runs its redirect whenever `AuthStatus` changes. The pure function `redirectFor(uri, status)` in `core/router/app_router.dart` holds all the gating logic: `unknown` → splash, `authenticated` → home, `unauthenticated` → login unless `Routes.isPublic`. A new signed-out screen must be added to `Routes.isPublic`.

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:ekp_api/ekp_api.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';

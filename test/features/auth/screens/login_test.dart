@@ -1,7 +1,9 @@
 import 'package:ekp_api/ekp_api.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/features/auth/screens/login_screen.dart';
+import 'package:mobile_kkm/features/auth/screens/register_screen.dart';
 
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';
@@ -100,6 +102,21 @@ void main() {
 
     expect(find.text('This field is required'), findsNWidgets(2));
     expect(adapter.requests, isEmpty);
+  });
+
+  testWidgets('opening another screen runs a page transition', (tester) async {
+    await pumpApp(tester, FakeAdapter());
+
+    await tester.tap(find.text('Create account'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 80));
+
+    // Mid-transition both screens are on stage; without one the login screen
+    // would already be gone.
+    expect(find.byType(LoginScreen), findsOneWidget);
+    expect(find.byType(RegisterScreen), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.byType(LoginScreen), findsNothing);
   });
 
   testWidgets('the keyboard covers the illustration, not the form', (tester) async {

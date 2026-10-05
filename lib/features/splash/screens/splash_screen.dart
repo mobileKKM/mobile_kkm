@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 
 /// Shown while the stored session is read and, if it has expired, renewed.
