@@ -78,9 +78,11 @@ class EkpSessionManager {
   /// empty jar — like this client's after an app restart — just gets a
   /// 401). It is deliberately not implemented.
   ///
-  /// On success the store is updated and [EkpSessionUpdated] emitted. On
-  /// failure the session is cleared, [EkpSessionExpired] emitted and
-  /// `false` returned. Concurrent callers share one recovery attempt.
+  /// On success the store is updated and [EkpSessionUpdated] emitted. When
+  /// the server rejects the refresh token the session is cleared,
+  /// [EkpSessionExpired] emitted and `false` returned. A connection-level
+  /// failure (no response) also returns `false` but leaves the session
+  /// untouched. Concurrent callers share one recovery attempt.
   Future<bool> recover() {
     return _recoveryInFlight ??= _recover().whenComplete(() {
       _recoveryInFlight = null;
@@ -105,7 +107,10 @@ class EkpSessionManager {
       );
       await publishUpdated(AuthSession.fromJson(_asMap(response.data)));
       return true;
-    } on DioException {
+    } on DioException catch (e) {
+      // No response at all (offline, timeout): the refresh token was never
+      // judged, so keep the session and let a later attempt try again.
+      if (e.response == null) return false;
       await publishExpired();
       return false;
     } on FormatException {

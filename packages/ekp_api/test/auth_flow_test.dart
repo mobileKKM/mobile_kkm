@@ -278,6 +278,15 @@ void main() {
     });
   });
 
+  test('recover keeps the session when the server is unreachable', () async {
+    await store.write(sessionA);
+    // No route registered: the request fails without an HTTP response.
+    final ok = await client.session.recover();
+    expect(ok, isFalse);
+    expect((await store.read())!.token, tokenA);
+    expect(events.whereType<EkpSessionExpired>(), isEmpty);
+  });
+
   group('automatic 401 recovery', () {
     test('recovers once, retries the request with the fresh token', () async {
       await store.write(sessionA);
