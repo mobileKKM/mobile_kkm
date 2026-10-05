@@ -13,8 +13,7 @@ class LinkHint extends ConsumerStatefulWidget {
   ConsumerState<LinkHint> createState() => _LinkHintState();
 }
 
-class _LinkHintState extends ConsumerState<LinkHint>
-    with WidgetsBindingObserver {
+class _LinkHintState extends ConsumerState<LinkHint> with WidgetsBindingObserver {
   bool? _canOpenLinks;
 
   @override

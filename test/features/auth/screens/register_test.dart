@@ -20,16 +20,10 @@ FakeAdapter _adapter() => FakeAdapter()
       {'id': 4, 'content': _consent, 'isChecked': false},
     ],
   })
-  ..reply('GET', '/client/mobile-app/config', 200, {
-    'regulationsUrl': 'https://ekp.test/documents/Regulamin konta.pdf',
-  })
+  ..reply('GET', '/client/mobile-app/config', 200, {'regulationsUrl': 'https://ekp.test/documents/Regulamin konta.pdf'})
   ..reply('POST', '/auth/register', 200, {'code': null, 'message': null});
 
-Future<void> _openRegister(
-  WidgetTester tester,
-  FakeAdapter adapter, {
-  List<Uri>? openedUrls,
-}) async {
+Future<void> _openRegister(WidgetTester tester, FakeAdapter adapter, {List<Uri>? openedUrls}) async {
   await pumpApp(tester, adapter, openedUrls: openedUrls);
   await tapVisible(tester, find.text('Create account'));
 }
@@ -44,14 +38,12 @@ Future<void> _fillBasics(WidgetTester tester) async {
   await tester.enterText(field('Repeat password'), 'Secret123');
 }
 
-Future<void> _submit(WidgetTester tester) =>
-    tapVisible(tester, find.widgetWithText(FilledButton, 'Create account'));
+Future<void> _submit(WidgetTester tester) => tapVisible(tester, find.widgetWithText(FilledButton, 'Create account'));
 
 Iterable<Object?> _registerRequests(FakeAdapter adapter) =>
     adapter.requests.where((r) => r.path.endsWith('/auth/register'));
 
-TextFormField _widget(WidgetTester tester, String label) =>
-    tester.widget<TextFormField>(field(label));
+TextFormField _widget(WidgetTester tester, String label) => tester.widget<TextFormField>(field(label));
 
 void main() {
   testWidgets('sections follow the official order', (tester) async {
@@ -74,9 +66,7 @@ void main() {
     expect(order, orderedEquals([...order]..sort()));
   });
 
-  testWidgets('birth date follows the PESEL and is not editable', (
-    tester,
-  ) async {
+  testWidgets('birth date follows the PESEL and is not editable', (tester) async {
     await _openRegister(tester, _adapter());
 
     expect(_widget(tester, 'Date of birth').enabled, isFalse);
@@ -94,9 +84,7 @@ void main() {
     expect(_widget(tester, 'Date of birth').controller!.text, isEmpty);
   });
 
-  testWidgets('without a PESEL the birth date is picked by hand', (
-    tester,
-  ) async {
+  testWidgets('without a PESEL the birth date is picked by hand', (tester) async {
     await _openRegister(tester, _adapter());
     await tester.enterText(field('PESEL number'), '44051401359');
 
@@ -128,8 +116,7 @@ void main() {
     await tapVisible(tester, find.text(_consent));
     await _submit(tester);
 
-    final body =
-        adapter.requestTo('/auth/register').data as Map<String, dynamic>;
+    final body = adapter.requestTo('/auth/register').data as Map<String, dynamic>;
     expect(body['email'], 'jan@example.com');
     expect(body['repeat_email'], 'jan@example.com');
     expect(body['repeat_password'], 'Secret123');
@@ -142,9 +129,7 @@ void main() {
     expect(find.textContaining('jan@example.com'), findsOneWidget);
   });
 
-  testWidgets('submits a hand-picked birth date without a PESEL', (
-    tester,
-  ) async {
+  testWidgets('submits a hand-picked birth date without a PESEL', (tester) async {
     final adapter = _adapter();
     await _openRegister(tester, adapter);
 
@@ -156,8 +141,7 @@ void main() {
     await tapVisible(tester, find.text(_consent));
     await _submit(tester);
 
-    final body =
-        adapter.requestTo('/auth/register').data as Map<String, dynamic>;
+    final body = adapter.requestTo('/auth/register').data as Map<String, dynamic>;
     expect(body.containsKey('pesel'), isFalse);
     expect(body['birthDate'], isNotNull);
   });
@@ -172,10 +156,7 @@ void main() {
     await _submit(tester);
 
     expect(find.text('Enter a valid e-mail address'), findsOneWidget);
-    expect(
-      find.text('The password does not meet the requirements'),
-      findsOneWidget,
-    );
+    expect(find.text('The password does not meet the requirements'), findsOneWidget);
     expect(find.text('Enter a valid PESEL number'), findsOneWidget);
     expect(_registerRequests(adapter), isEmpty);
   });
@@ -218,14 +199,10 @@ void main() {
 
     await tapVisible(tester, find.text('Regulations'));
 
-    expect(opened.map((url) => url.toString()), [
-      'https://ekp.test/documents/Regulamin%20konta.pdf',
-    ]);
+    expect(opened.map((url) => url.toString()), ['https://ekp.test/documents/Regulamin%20konta.pdf']);
   });
 
-  testWidgets('no regulations link when the config is unavailable', (
-    tester,
-  ) async {
+  testWidgets('no regulations link when the config is unavailable', (tester) async {
     final adapter = _adapter()..fail('GET', '/client/mobile-app/config');
     await _openRegister(tester, adapter);
 
@@ -248,10 +225,7 @@ void main() {
 
   testWidgets('a server error message is shown', (tester) async {
     final adapter = _adapter()
-      ..reply('POST', '/auth/register', 400, {
-        'code': 2,
-        'message': 'Konto o podanym adresie już istnieje',
-      });
+      ..reply('POST', '/auth/register', 400, {'code': 2, 'message': 'Konto o podanym adresie już istnieje'});
     await _openRegister(tester, adapter);
 
     await _fillBasics(tester);
@@ -259,9 +233,7 @@ void main() {
     await tapVisible(tester, find.text(_consent));
     await _submit(tester);
 
-    await tester.ensureVisible(
-      find.text('Konto o podanym adresie już istnieje'),
-    );
+    await tester.ensureVisible(find.text('Konto o podanym adresie już istnieje'));
     expect(find.text('Check your inbox'), findsNothing);
   });
 }

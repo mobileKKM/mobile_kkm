@@ -15,9 +15,7 @@ Future<void> main() async {
   _registerFontLicenses();
 
   const storage = FlutterSecureStorage(
-    iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.first_unlock_this_device,
-    ),
+    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
   );
   // The native splash stays up until the first frame, so resolving the
   // device identity here does not show a blank screen.
@@ -38,9 +36,7 @@ Future<void> main() async {
 void _registerFontLicenses() {
   LicenseRegistry.addLicense(() async* {
     for (final font in ['Montserrat', 'Inter']) {
-      yield LicenseEntryWithLineBreaks([
-        font,
-      ], await rootBundle.loadString('assets/fonts/$font-OFL.txt'));
+      yield LicenseEntryWithLineBreaks([font], await rootBundle.loadString('assets/fonts/$font-OFL.txt'));
     }
   });
 }

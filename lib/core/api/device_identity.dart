@@ -12,10 +12,7 @@ const _deviceIdKey = 'ekp.device_id';
 /// The device id is a random per-installation value (16 hex chars, the
 /// shape the official client sends). It is kept across logouts because the
 /// server binds refresh tokens to it.
-Future<EkpDeviceIdentity> loadDeviceIdentity(
-  FlutterSecureStorage storage, {
-  DeviceInfoPlugin? deviceInfo,
-}) async {
+Future<EkpDeviceIdentity> loadDeviceIdentity(FlutterSecureStorage storage, {DeviceInfoPlugin? deviceInfo}) async {
   final deviceId = await _loadOrCreateDeviceId(storage);
   final info = deviceInfo ?? DeviceInfoPlugin();
 
@@ -56,8 +53,5 @@ Future<String> _loadOrCreateDeviceId(FlutterSecureStorage storage) async {
 @visibleForTesting
 String generateDeviceId([Random? random]) {
   final rng = random ?? Random.secure();
-  return List.generate(
-    8,
-    (_) => rng.nextInt(256).toRadixString(16).padLeft(2, '0'),
-  ).join();
+  return List.generate(8, (_) => rng.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
 }

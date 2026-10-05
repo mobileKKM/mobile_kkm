@@ -89,8 +89,7 @@ abstract class MkkmTicket with _$MkkmTicket {
 
   const MkkmTicket._();
 
-  factory MkkmTicket.fromJson(Map<String, dynamic> json) =>
-      _$MkkmTicketFromJson(json);
+  factory MkkmTicket.fromJson(Map<String, dynamic> json) => _$MkkmTicketFromJson(json);
 
   MkkmTicketStatus get statusEnum => MkkmTicketStatus.fromWire(status);
 }
@@ -106,8 +105,7 @@ abstract class MkkmTicketsResponse with EkpCodeMessage, _$MkkmTicketsResponse {
     String? message,
   }) = _MkkmTicketsResponse;
 
-  factory MkkmTicketsResponse.fromJson(Map<String, dynamic> json) =>
-      _$MkkmTicketsResponseFromJson(json);
+  factory MkkmTicketsResponse.fromJson(Map<String, dynamic> json) => _$MkkmTicketsResponseFromJson(json);
 }
 
 /// Element of the bare array returned by `GET /tickets?customerCode=&validity=`.
@@ -146,22 +144,17 @@ abstract class TicketHistoryEntry with _$TicketHistoryEntry {
     int? ticketNumberOfLineCode,
   }) = _TicketHistoryEntry;
 
-  factory TicketHistoryEntry.fromJson(Map<String, dynamic> json) =>
-      _$TicketHistoryEntryFromJson(json);
+  factory TicketHistoryEntry.fromJson(Map<String, dynamic> json) => _$TicketHistoryEntryFromJson(json);
 }
 
 /// Entry of the `transactionStateList` / `paymentStateList` /
 /// `refundStateList` / `changeLineList` history arrays in ticket detail.
 @freezed
 abstract class TicketStateChange with _$TicketStateChange {
-  const factory TicketStateChange({
-    int? nextNumber,
-    DateTime? createDate,
-    String? stateDescription,
-  }) = _TicketStateChange;
+  const factory TicketStateChange({int? nextNumber, DateTime? createDate, String? stateDescription}) =
+      _TicketStateChange;
 
-  factory TicketStateChange.fromJson(Map<String, dynamic> json) =>
-      _$TicketStateChangeFromJson(json);
+  factory TicketStateChange.fromJson(Map<String, dynamic> json) => _$TicketStateChangeFromJson(json);
 }
 
 /// `GET /tickets/{transactionCode}` — note: no `{code, message}` envelope.
@@ -191,8 +184,7 @@ abstract class TicketDetailResponse with _$TicketDetailResponse {
     dynamic downloads,
   }) = _TicketDetailResponse;
 
-  factory TicketDetailResponse.fromJson(Map<String, dynamic> json) =>
-      _$TicketDetailResponseFromJson(json);
+  factory TicketDetailResponse.fromJson(Map<String, dynamic> json) => _$TicketDetailResponseFromJson(json);
 }
 
 /// Element of `ticketNumberOfLines` in the sales configuration.
@@ -210,8 +202,7 @@ abstract class SalesLineOption with _$SalesLineOption {
     int? sumLinesToSelection,
   }) = _SalesLineOption;
 
-  factory SalesLineOption.fromJson(Map<String, dynamic> json) =>
-      _$SalesLineOptionFromJson(json);
+  factory SalesLineOption.fromJson(Map<String, dynamic> json) => _$SalesLineOptionFromJson(json);
 }
 
 /// Element of `ticketPeriods` in the sales configuration.
@@ -229,18 +220,15 @@ abstract class SalesPeriodOption with _$SalesPeriodOption {
     bool? useDescription,
   }) = _SalesPeriodOption;
 
-  factory SalesPeriodOption.fromJson(Map<String, dynamic> json) =>
-      _$SalesPeriodOptionFromJson(json);
+  factory SalesPeriodOption.fromJson(Map<String, dynamic> json) => _$SalesPeriodOptionFromJson(json);
 }
 
 /// Element of `ticketKinds` in the sales configuration.
 @freezed
 abstract class SalesKindOption with _$SalesKindOption {
-  const factory SalesKindOption({int? code, String? description}) =
-      _SalesKindOption;
+  const factory SalesKindOption({int? code, String? description}) = _SalesKindOption;
 
-  factory SalesKindOption.fromJson(Map<String, dynamic> json) =>
-      _$SalesKindOptionFromJson(json);
+  factory SalesKindOption.fromJson(Map<String, dynamic> json) => _$SalesKindOptionFromJson(json);
 }
 
 /// Element of `specialTransportLines` in the sales configuration —
@@ -256,22 +244,17 @@ abstract class SpecialTransportLine with _$SpecialTransportLine {
     bool? isMetropolitan,
   }) = _SpecialTransportLine;
 
-  factory SpecialTransportLine.fromJson(Map<String, dynamic> json) =>
-      _$SpecialTransportLineFromJson(json);
+  factory SpecialTransportLine.fromJson(Map<String, dynamic> json) => _$SpecialTransportLineFromJson(json);
 }
 
 /// Element of `priceListConfigurations` — the valid (kind, lineOption,
 /// period) combinations.
 @freezed
 abstract class PriceListConfiguration with _$PriceListConfiguration {
-  const factory PriceListConfiguration({
-    int? ticketKindCode,
-    int? ticketNumberOfLineCode,
-    int? ticketPeriodCode,
-  }) = _PriceListConfiguration;
+  const factory PriceListConfiguration({int? ticketKindCode, int? ticketNumberOfLineCode, int? ticketPeriodCode}) =
+      _PriceListConfiguration;
 
-  factory PriceListConfiguration.fromJson(Map<String, dynamic> json) =>
-      _$PriceListConfigurationFromJson(json);
+  factory PriceListConfiguration.fromJson(Map<String, dynamic> json) => _$PriceListConfigurationFromJson(json);
 }
 
 /// `GET tickets/ticket-sales-configuration/{customerCode}`.
@@ -279,8 +262,7 @@ abstract class PriceListConfiguration with _$PriceListConfiguration {
 /// Note: this endpoint returns `code: 1` (int) **on success** — a non-null
 /// code does not imply an error here.
 @freezed
-abstract class TicketSalesConfiguration
-    with EkpCodeMessage, _$TicketSalesConfiguration {
+abstract class TicketSalesConfiguration with EkpCodeMessage, _$TicketSalesConfiguration {
   const TicketSalesConfiguration._();
 
   const factory TicketSalesConfiguration({
@@ -290,16 +272,13 @@ abstract class TicketSalesConfiguration
     @Default(<SalesLineOption>[]) List<SalesLineOption> ticketNumberOfLines,
     @Default(<SalesPeriodOption>[]) List<SalesPeriodOption> ticketPeriods,
     @Default(<SalesKindOption>[]) List<SalesKindOption> ticketKinds,
-    @Default(<SpecialTransportLine>[])
-    List<SpecialTransportLine> specialTransportLines,
-    @Default(<PriceListConfiguration>[])
-    List<PriceListConfiguration> priceListConfigurations,
+    @Default(<SpecialTransportLine>[]) List<SpecialTransportLine> specialTransportLines,
+    @Default(<PriceListConfiguration>[]) List<PriceListConfiguration> priceListConfigurations,
     Object? code,
     String? message,
   }) = _TicketSalesConfiguration;
 
-  factory TicketSalesConfiguration.fromJson(Map<String, dynamic> json) =>
-      _$TicketSalesConfigurationFromJson(json);
+  factory TicketSalesConfiguration.fromJson(Map<String, dynamic> json) => _$TicketSalesConfigurationFromJson(json);
 }
 
 /// `POST tickets/calculate` — price preview for a ticket selection.
@@ -332,8 +311,7 @@ abstract class TicketCalculation with _$TicketCalculation {
     @Default(<dynamic>[]) List<dynamic> similarTickets,
   }) = _TicketCalculation;
 
-  factory TicketCalculation.fromJson(Map<String, dynamic> json) =>
-      _$TicketCalculationFromJson(json);
+  factory TicketCalculation.fromJson(Map<String, dynamic> json) => _$TicketCalculationFromJson(json);
 }
 
 /// `urls` node of `tickets/buy` / `tickets/pay`.
@@ -348,20 +326,15 @@ abstract class PurchaseUrls with _$PurchaseUrls {
     String? returnErrorUrl,
   }) = _PurchaseUrls;
 
-  factory PurchaseUrls.fromJson(Map<String, dynamic> json) =>
-      _$PurchaseUrlsFromJson(json);
+  factory PurchaseUrls.fromJson(Map<String, dynamic> json) => _$PurchaseUrlsFromJson(json);
 }
 
 /// `POST tickets/buy` and `POST tickets/pay`.
 @freezed
 abstract class TicketPurchaseResponse with _$TicketPurchaseResponse {
-  const factory TicketPurchaseResponse({
-    MkkmTicket? ticket,
-    PurchaseUrls? urls,
-  }) = _TicketPurchaseResponse;
+  const factory TicketPurchaseResponse({MkkmTicket? ticket, PurchaseUrls? urls}) = _TicketPurchaseResponse;
 
-  factory TicketPurchaseResponse.fromJson(Map<String, dynamic> json) =>
-      _$TicketPurchaseResponseFromJson(json);
+  factory TicketPurchaseResponse.fromJson(Map<String, dynamic> json) => _$TicketPurchaseResponseFromJson(json);
 }
 
 /// `POST ticket-returns/calculate`.
@@ -369,8 +342,7 @@ abstract class TicketPurchaseResponse with _$TicketPurchaseResponse {
 /// Note the suspicious `ticketStartDate` (holds the *expiry of the returned
 /// period*) vs `newTicketExpiryDate` naming in the raw response.
 @freezed
-abstract class TicketReturnCalculation
-    with EkpCodeMessage, _$TicketReturnCalculation {
+abstract class TicketReturnCalculation with EkpCodeMessage, _$TicketReturnCalculation {
   const TicketReturnCalculation._();
 
   const factory TicketReturnCalculation({
@@ -381,20 +353,15 @@ abstract class TicketReturnCalculation
     String? message,
   }) = _TicketReturnCalculation;
 
-  factory TicketReturnCalculation.fromJson(Map<String, dynamic> json) =>
-      _$TicketReturnCalculationFromJson(json);
+  factory TicketReturnCalculation.fromJson(Map<String, dynamic> json) => _$TicketReturnCalculationFromJson(json);
 }
 
 /// `POST ticket-returns` — return submission result.
 @freezed
 abstract class TicketReturnResult with _$TicketReturnResult {
-  const factory TicketReturnResult({
-    bool? createdCorrectionInvoice,
-    bool? success,
-  }) = _TicketReturnResult;
+  const factory TicketReturnResult({bool? createdCorrectionInvoice, bool? success}) = _TicketReturnResult;
 
-  factory TicketReturnResult.fromJson(Map<String, dynamic> json) =>
-      _$TicketReturnResultFromJson(json);
+  factory TicketReturnResult.fromJson(Map<String, dynamic> json) => _$TicketReturnResultFromJson(json);
 }
 
 /// `POST mkkm/tickets/assign-e` — binds a purchased ticket to the device
@@ -404,18 +371,12 @@ abstract class TicketReturnResult with _$TicketReturnResult {
 /// `{code, message}` envelope (observed with HTTP 200 — do not rely on the
 /// status code alone, see [EkpCodeMessage]).
 @freezed
-abstract class TicketAssignResponse
-    with EkpCodeMessage, _$TicketAssignResponse {
+abstract class TicketAssignResponse with EkpCodeMessage, _$TicketAssignResponse {
   const TicketAssignResponse._();
 
-  const factory TicketAssignResponse({
-    bool? assigned,
-    Object? code,
-    String? message,
-  }) = _TicketAssignResponse;
+  const factory TicketAssignResponse({bool? assigned, Object? code, String? message}) = _TicketAssignResponse;
 
-  factory TicketAssignResponse.fromJson(Map<String, dynamic> json) =>
-      _$TicketAssignResponseFromJson(json);
+  factory TicketAssignResponse.fromJson(Map<String, dynamic> json) => _$TicketAssignResponseFromJson(json);
 }
 
 /// `POST mkkm/tickets/contract-e` — the encrypted AZTEC contract of an
@@ -424,18 +385,12 @@ abstract class TicketAssignResponse
 /// [contract] is base64: 16 IV bytes followed by AES-128-CBC ciphertext
 /// (PKCS#7). Decrypt with [decodeAztec] to get the ~119 s hex token.
 @freezed
-abstract class TicketContractResponse
-    with EkpCodeMessage, _$TicketContractResponse {
+abstract class TicketContractResponse with EkpCodeMessage, _$TicketContractResponse {
   const TicketContractResponse._();
 
-  const factory TicketContractResponse({
-    String? contract,
-    Object? code,
-    String? message,
-  }) = _TicketContractResponse;
+  const factory TicketContractResponse({String? contract, Object? code, String? message}) = _TicketContractResponse;
 
-  factory TicketContractResponse.fromJson(Map<String, dynamic> json) =>
-      _$TicketContractResponseFromJson(json);
+  factory TicketContractResponse.fromJson(Map<String, dynamic> json) => _$TicketContractResponseFromJson(json);
 
   /// Decrypts [contract] into the 512-char hex AZTEC token, or `null` when
   /// absent/unparseable — mirroring the official client's catch-and-null
@@ -449,9 +404,6 @@ abstract class TicketContractResponse
     EkpCryptoEnvironment environment = EkpCryptoEnvironment.production,
   }) {
     if (contract == null) return null;
-    return EkpAztecCrypto(
-      secret: secret ?? cppSecret,
-      environment: environment,
-    ).decryptContract(contract!);
+    return EkpAztecCrypto(secret: secret ?? cppSecret, environment: environment).decryptContract(contract!);
   }
 }

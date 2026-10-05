@@ -19,9 +19,7 @@ Future<void> _signIn(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('starts on the login screen when there is no session', (
-    tester,
-  ) async {
+  testWidgets('starts on the login screen when there is no session', (tester) async {
     await pumpApp(tester, FakeAdapter());
     expect(find.text('mobileKKM'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
@@ -40,8 +38,7 @@ void main() {
     );
 
     testWidgets('is renewed before opening home', (tester) async {
-      final adapter = FakeAdapter()
-        ..reply('POST', '/auth/token/recover', 200, _loginReply);
+      final adapter = FakeAdapter()..reply('POST', '/auth/token/recover', 200, _loginReply);
       final app = await pumpApp(tester, adapter, session: expired);
 
       expect(find.text('Sign out'), findsOneWidget);
@@ -52,10 +49,7 @@ void main() {
       final adapter = FakeAdapter()..reply('POST', '/auth/token/recover', 401);
       await pumpApp(tester, adapter, session: expired);
 
-      expect(
-        find.text('Your session has expired. Please sign in again.'),
-        findsOneWidget,
-      );
+      expect(find.text('Your session has expired. Please sign in again.'), findsOneWidget);
     });
 
     testWidgets('is kept when the server is unreachable', (tester) async {
@@ -68,8 +62,7 @@ void main() {
   });
 
   testWidgets('successful login opens home', (tester) async {
-    final adapter = FakeAdapter()
-      ..reply('POST', '/auth/login', 200, _loginReply);
+    final adapter = FakeAdapter()..reply('POST', '/auth/login', 200, _loginReply);
     await pumpApp(tester, adapter);
 
     await _signIn(tester);
@@ -109,18 +102,13 @@ void main() {
     expect(adapter.requests, isEmpty);
   });
 
-  testWidgets('the keyboard covers the illustration, not the form', (
-    tester,
-  ) async {
+  testWidgets('the keyboard covers the illustration, not the form', (tester) async {
     await pumpApp(tester, FakeAdapter());
     final screen = tester.view.physicalSize / tester.view.devicePixelRatio;
     final skyline = find.byType(SvgPicture);
     final button = find.widgetWithText(FilledButton, 'Sign in');
     expect(tester.getRect(skyline).bottom, screen.height);
-    expect(
-      tester.getRect(button).bottom,
-      lessThanOrEqualTo(tester.getRect(skyline).top),
-    );
+    expect(tester.getRect(button).bottom, lessThanOrEqualTo(tester.getRect(skyline).top));
 
     // A 300dp keyboard (the view is 3x).
     tester.view.viewInsets = const FakeViewPadding(bottom: 900);
@@ -132,10 +120,7 @@ void main() {
     expect(tester.getRect(skyline).bottom, screen.height);
     expect(tester.getRect(skyline).top, greaterThanOrEqualTo(keyboardTop));
     // The form's viewport ends at the keyboard, so everything is reachable.
-    expect(
-      tester.getRect(find.byType(SingleChildScrollView)).bottom,
-      keyboardTop,
-    );
+    expect(tester.getRect(find.byType(SingleChildScrollView)).bottom, keyboardTop);
     await tester.ensureVisible(button);
     await tester.pumpAndSettle();
     expect(tester.getRect(button).bottom, lessThanOrEqualTo(keyboardTop));
@@ -150,17 +135,12 @@ void main() {
     expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
   });
 
-  testWidgets('an expired session returns to login with a notice', (
-    tester,
-  ) async {
+  testWidgets('an expired session returns to login with a notice', (tester) async {
     final app = await pumpApp(tester, FakeAdapter(), session: signedInSession);
 
     await app.client.session.publishExpired();
     await tester.pumpAndSettle();
 
-    expect(
-      find.text('Your session has expired. Please sign in again.'),
-      findsOneWidget,
-    );
+    expect(find.text('Your session has expired. Please sign in again.'), findsOneWidget);
   });
 }

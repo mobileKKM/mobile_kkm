@@ -33,8 +33,7 @@ class SecureUserDataCache implements UserDataCache {
   }
 
   @override
-  Future<void> write(UserDataResponse data) =>
-      _storage.write(key: _key, value: jsonEncode(data.toJson()));
+  Future<void> write(UserDataResponse data) => _storage.write(key: _key, value: jsonEncode(data.toJson()));
 
   @override
   Future<void> clear() => _storage.delete(key: _key);

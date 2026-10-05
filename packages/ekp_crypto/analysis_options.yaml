@@ -1,5 +1,9 @@
 include: package:lints/recommended.yaml
 
-analyzer:
-  errors:
-    invalid_annotation_target: ignore
+formatter:
+  page_width: 120
+
+linter:
+  rules:
+    directives_ordering: true
+    sort_pub_dependencies: true

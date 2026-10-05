@@ -27,20 +27,12 @@ class HomeScreen extends ConsumerWidget {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                if (user.email != null)
-                  Text(user.email!, textAlign: TextAlign.center),
+                if (user.email != null) Text(user.email!, textAlign: TextAlign.center),
                 const SizedBox(height: 24),
               ],
-              Text(
-                l10n.homePlaceholder,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+              Text(l10n.homePlaceholder, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: 24),
-              OutlinedButton(
-                onPressed: () => ref.read(ekpClientProvider).auth.logout(),
-                child: Text(l10n.logout),
-              ),
+              OutlinedButton(onPressed: () => ref.read(ekpClientProvider).auth.logout(), child: Text(l10n.logout)),
             ],
           ),
         ),

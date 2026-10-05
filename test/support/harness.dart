@@ -75,8 +75,7 @@ Future<App> pumpApp(
   final store = InMemoryTokenStore();
   if (session != null) await store.write(session);
   final client = EkpClient(
-    dio: Dio(BaseOptions(baseUrl: 'https://ekp.test'))
-      ..httpClientAdapter = adapter,
+    dio: Dio(BaseOptions(baseUrl: 'https://ekp.test'))..httpClientAdapter = adapter,
     tokenStore: store,
   );
   addTearDown(client.dispose);
@@ -85,12 +84,8 @@ Future<App> pumpApp(
     ProviderScope(
       overrides: [
         ekpClientProvider.overrideWithValue(client),
-        linkSettingsProvider.overrideWithValue(
-          linkSettings ?? FakeLinkSettings(),
-        ),
-        userDataCacheProvider.overrideWithValue(
-          userDataCache ?? InMemoryUserDataCache(),
-        ),
+        linkSettingsProvider.overrideWithValue(linkSettings ?? FakeLinkSettings()),
+        userDataCacheProvider.overrideWithValue(userDataCache ?? InMemoryUserDataCache()),
         // Records instead of launching a browser.
         urlOpenerProvider.overrideWithValue((url) async {
           openedUrls?.add(url);
@@ -102,9 +97,7 @@ Future<App> pumpApp(
   );
   await tester.pumpAndSettle();
 
-  final container = ProviderScope.containerOf(
-    tester.element(find.byType(MobileKkmApp)),
-  );
+  final container = ProviderScope.containerOf(tester.element(find.byType(MobileKkmApp)));
   return App(client, container.read(routerProvider));
 }
 

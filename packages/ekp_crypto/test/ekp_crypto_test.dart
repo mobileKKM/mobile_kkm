@@ -17,10 +17,7 @@ const deviceName = 'unknown Android SDK built for arm64';
 
 /// Deterministic 512-char uppercase-hex token — the AZTEC plaintext shape
 /// the official scheme produces.
-final String syntheticToken = List<String>.generate(
-  512,
-  (i) => '0123456789ABCDEF'[(i * 7) % 16],
-).join();
+final String syntheticToken = List<String>.generate(512, (i) => '0123456789ABCDEF'[(i * 7) % 16]).join();
 
 /// Builds a contract-e style blob — base64(IV ‖ AES-128-CBC/PKCS7(token)) —
 /// the exact inverse of [EkpAztecCrypto.decryptContract].
@@ -31,16 +28,11 @@ String buildContractBlob(
 }) {
   // Fixed IV: synthetic test data, not a secret.
   final iv = List<int>.generate(16, (i) => i);
-  final aes = PaddedBlockCipherImpl(
-    PKCS7Padding(),
-    CBCBlockCipher(AESEngine()),
-  )..init(
+  final aes = PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()))
+    ..init(
       true,
       PaddedBlockCipherParameters(
-        ParametersWithIV(
-          KeyParameter(utf8.encode(environment.aesKeyOf(secret))),
-          Uint8List.fromList(iv),
-        ),
+        ParametersWithIV(KeyParameter(utf8.encode(environment.aesKeyOf(secret))), Uint8List.fromList(iv)),
         null,
       ),
     );
@@ -77,10 +69,7 @@ void main() {
     test('exactly 76 base64 chars form one full line', () {
       // 57 bytes = 19 x 3 -> 76 b64 chars, no '=' padding.
       final bytes = List<int>.generate(57, (i) => i);
-      expect(
-        encodeAndroidDefault(bytes).split('\n').map((l) => l.length),
-        const [76, 0],
-      );
+      expect(encodeAndroidDefault(bytes).split('\n').map((l) => l.length), const [76, 0]);
     });
 
     test('padding survives the wrap (58 bytes -> [76, 4])', () {
@@ -88,11 +77,7 @@ void main() {
       // in '==' — the wrap must not split or strip the padding.
       final bytes = List<int>.generate(58, (i) => (i * 3) % 256);
       final wrapped = encodeAndroidDefault(bytes);
-      expect(wrapped.split('\n').map((l) => l.length).toList(), const [
-        76,
-        4,
-        0,
-      ]);
+      expect(wrapped.split('\n').map((l) => l.length).toList(), const [76, 4, 0]);
       expect(wrapped.endsWith('==\n'), isTrue);
       expect(base64Decode(wrapped.replaceAll('\n', '')), bytes);
     });
@@ -129,14 +114,8 @@ ZwIDAQAB
 
   group('EkpCryptoEnvironment key slicing', () {
     test('production uses chars 0-16, development chars 16-32', () {
-      expect(
-        EkpCryptoEnvironment.production.aesKeyOf(cppSecret),
-        'VoEVG4Yv/u1IFP6S',
-      );
-      expect(
-        EkpCryptoEnvironment.development.aesKeyOf(cppSecret),
-        'PnsVGi1SWPnrwQfJ',
-      );
+      expect(EkpCryptoEnvironment.production.aesKeyOf(cppSecret), 'VoEVG4Yv/u1IFP6S');
+      expect(EkpCryptoEnvironment.development.aesKeyOf(cppSecret), 'PnsVGi1SWPnrwQfJ');
       expect(cppSecret.length, 32);
     });
   });
@@ -145,29 +124,16 @@ ZwIDAQAB
     final crypto = const EkpAztecCrypto();
 
     test('produces the server-expected wire shape', () {
-      final message = crypto.encryptJson({
-        'id': ticketGuid,
-        'device_name': deviceName,
-      });
+      final message = crypto.encryptJson({'id': ticketGuid, 'device_name': deviceName});
 
       // Byte-for-byte shape of every captured request body.
-      expect(message.split('\n').map((l) => l.length).toList(), const [
-        76,
-        76,
-        76,
-        76,
-        40,
-        0,
-      ]);
+      expect(message.split('\n').map((l) => l.length).toList(), const [76, 76, 76, 76, 40, 0]);
       expect(base64Decode(message.replaceAll('\n', '')).length, 256);
     });
 
     test('serializes the payload exactly like JSON.stringify', () {
       final payload = {'id': ticketGuid, 'device_name': deviceName};
-      expect(
-        jsonEncode(payload),
-        '{"id":"$ticketGuid","device_name":"$deviceName"}',
-      );
+      expect(jsonEncode(payload), '{"id":"$ticketGuid","device_name":"$deviceName"}');
     });
 
     test('randomizes PKCS#1 padding (two calls differ)', () {
@@ -186,8 +152,7 @@ ZwIDAQAB
 
       // Unwrap our own Android-style base64, then RSA-decrypt.
       final block = base64Decode(message.replaceAll('\n', ''));
-      final rsa = PKCS1Encoding(RSAEngine())
-        ..init(false, PrivateKeyParameter<RSAPrivateKey>(keyPair.privateKey));
+      final rsa = PKCS1Encoding(RSAEngine())..init(false, PrivateKeyParameter<RSAPrivateKey>(keyPair.privateKey));
       final decrypted = rsa.process(Uint8List.fromList(block));
       expect(utf8.decode(decrypted), jsonEncode(payload));
     });
@@ -198,33 +163,23 @@ ZwIDAQAB
       final keyPair = _generateRsaKeyPair();
       final pem = _encodePublicKeyToPkcs1Pem(keyPair.publicKey);
       final local = EkpAztecCrypto(publicKeyPem: pem);
-      final payload = {
-        'id': ticketGuid,
-        'device_name': 'Urządzenie ćwierćważne numer 12',
-      };
+      final payload = {'id': ticketGuid, 'device_name': 'Urządzenie ćwierćważne numer 12'};
       final message = local.encryptJson(payload);
 
       final block = base64Decode(message.replaceAll('\n', ''));
-      final rsa = PKCS1Encoding(RSAEngine())
-        ..init(false, PrivateKeyParameter<RSAPrivateKey>(keyPair.privateKey));
+      final rsa = PKCS1Encoding(RSAEngine())..init(false, PrivateKeyParameter<RSAPrivateKey>(keyPair.privateKey));
       final decrypted = rsa.process(Uint8List.fromList(block));
       expect(utf8.decode(decrypted), jsonEncode(payload));
     });
     test('throws EkpCryptoException on garbage key material', () {
       const broken = EkpAztecCrypto(publicKeyPem: 'not a pem');
-      expect(
-        () => broken.encryptJson({'a': 1}),
-        throwsA(isA<EkpCryptoException>()),
-      );
+      expect(() => broken.encryptJson({'a': 1}), throwsA(isA<EkpCryptoException>()));
     });
 
     test('throws EkpCryptoException when payload exceeds one RSA block', () {
       // RSA-2048 PKCS#1 v1.5 carries at most 256 - 11 = 245 plaintext bytes.
       final oversized = {'pad': 'x' * 300}; // ~309 bytes of JSON
-      expect(
-        () => crypto.encryptJson(oversized),
-        throwsA(isA<EkpCryptoException>()),
-      );
+      expect(() => crypto.encryptJson(oversized), throwsA(isA<EkpCryptoException>()));
     });
   });
 
@@ -234,18 +189,11 @@ ZwIDAQAB
     test('decrypts a contract blob back into the AZTEC hex token', () {
       final hex = crypto.decryptContract(buildContractBlob(syntheticToken));
       expect(hex, syntheticToken);
-      expect(
-        hex,
-        matches(RegExp('^[0-9A-F]{512}\$')),
-        reason: 'plaintext must be 512 uppercase hex chars',
-      );
+      expect(hex, matches(RegExp('^[0-9A-F]{512}\$')), reason: 'plaintext must be 512 uppercase hex chars');
     });
 
     test('returns null when the blob was encrypted with a different key', () {
-      final wrongKeyBlob = buildContractBlob(
-        syntheticToken,
-        secret: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-      );
+      final wrongKeyBlob = buildContractBlob(syntheticToken, secret: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
       expect(crypto.decryptContract(wrongKeyBlob), isNull);
     });
 
@@ -274,13 +222,8 @@ ZwIDAQAB
     });
 
     test('decrypts with the development key slice', () {
-      final devBlob = buildContractBlob(
-        syntheticToken,
-        environment: EkpCryptoEnvironment.development,
-      );
-      const devCrypto = EkpAztecCrypto(
-        environment: EkpCryptoEnvironment.development,
-      );
+      final devBlob = buildContractBlob(syntheticToken, environment: EkpCryptoEnvironment.development);
+      const devCrypto = EkpAztecCrypto(environment: EkpCryptoEnvironment.development);
       expect(devCrypto.decryptContract(devBlob), syntheticToken);
       // …and the production key must NOT open a development blob.
       expect(crypto.decryptContract(devBlob), isNull);
@@ -291,8 +234,7 @@ ZwIDAQAB
       // removes \s — pin that polluted whitespace of every kind (leading,
       // interior, trailing; space, tab, CR, LF) still decrypts.
       final blob = buildContractBlob(syntheticToken);
-      final polluted =
-          ' \t${blob.substring(0, 100)}\r\n ${blob.substring(100)}\n';
+      final polluted = ' \t${blob.substring(0, 100)}\r\n ${blob.substring(100)}\n';
       expect(crypto.decryptContract(polluted), syntheticToken);
     });
   });
@@ -308,17 +250,10 @@ ZwIDAQAB
 
 /// Generates a 2048-bit RSA keypair (test only; ~0.5 s).
 AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> _generateRsaKeyPair() {
-  final seed = Uint8List.fromList(
-    List<int>.generate(32, (_) => Random.secure().nextInt(256)),
-  );
+  final seed = Uint8List.fromList(List<int>.generate(32, (_) => Random.secure().nextInt(256)));
   final random = FortunaRandom()..seed(KeyParameter(seed));
   final generator = RSAKeyGenerator()
-    ..init(
-      ParametersWithRandom(
-        RSAKeyGeneratorParameters(BigInt.from(65537), 2048, 64),
-        random,
-      ),
-    );
+    ..init(ParametersWithRandom(RSAKeyGeneratorParameters(BigInt.from(65537), 2048, 64), random));
   // pointycastle 4: generateKeyPair is generic — RSAKeyGenerator yields
   // AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> directly, no casts.
   return generator.generateKeyPair();

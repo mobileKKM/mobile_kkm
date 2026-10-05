@@ -17,19 +17,15 @@ abstract class TicketKind with _$TicketKind {
     int? groupId,
   }) = _TicketKind;
 
-  factory TicketKind.fromJson(Map<String, dynamic> json) =>
-      _$TicketKindFromJson(json);
+  factory TicketKind.fromJson(Map<String, dynamic> json) => _$TicketKindFromJson(json);
 }
 
 /// `GET dictionary/ticket-kind-list`
 @freezed
 abstract class TicketKindListResponse with _$TicketKindListResponse {
-  const factory TicketKindListResponse({
-    @Default(<TicketKind>[]) List<TicketKind> kinds,
-  }) = _TicketKindListResponse;
+  const factory TicketKindListResponse({@Default(<TicketKind>[]) List<TicketKind> kinds}) = _TicketKindListResponse;
 
-  factory TicketKindListResponse.fromJson(Map<String, dynamic> json) =>
-      _$TicketKindListResponseFromJson(json);
+  factory TicketKindListResponse.fromJson(Map<String, dynamic> json) => _$TicketKindListResponseFromJson(json);
 }
 
 /// `GET dictionary/ticket-number-of-line-list` element — how many/which
@@ -49,17 +45,14 @@ abstract class TicketNumberOfLine with _$TicketNumberOfLine {
     int? sumLinesToSelection,
   }) = _TicketNumberOfLine;
 
-  factory TicketNumberOfLine.fromJson(Map<String, dynamic> json) =>
-      _$TicketNumberOfLineFromJson(json);
+  factory TicketNumberOfLine.fromJson(Map<String, dynamic> json) => _$TicketNumberOfLineFromJson(json);
 }
 
 /// `GET dictionary/ticket-number-of-line-list`
 @freezed
-abstract class TicketNumberOfLineListResponse
-    with _$TicketNumberOfLineListResponse {
-  const factory TicketNumberOfLineListResponse({
-    @Default(<TicketNumberOfLine>[]) List<TicketNumberOfLine> list,
-  }) = _TicketNumberOfLineListResponse;
+abstract class TicketNumberOfLineListResponse with _$TicketNumberOfLineListResponse {
+  const factory TicketNumberOfLineListResponse({@Default(<TicketNumberOfLine>[]) List<TicketNumberOfLine> list}) =
+      _TicketNumberOfLineListResponse;
 
   factory TicketNumberOfLineListResponse.fromJson(Map<String, dynamic> json) =>
       _$TicketNumberOfLineListResponseFromJson(json);
@@ -79,19 +72,16 @@ abstract class TicketPeriod with _$TicketPeriod {
     int? unit,
   }) = _TicketPeriod;
 
-  factory TicketPeriod.fromJson(Map<String, dynamic> json) =>
-      _$TicketPeriodFromJson(json);
+  factory TicketPeriod.fromJson(Map<String, dynamic> json) => _$TicketPeriodFromJson(json);
 }
 
 /// `GET dictionary/ticket-period-list`
 @freezed
 abstract class TicketPeriodListResponse with _$TicketPeriodListResponse {
-  const factory TicketPeriodListResponse({
-    @Default(<TicketPeriod>[]) List<TicketPeriod> list,
-  }) = _TicketPeriodListResponse;
+  const factory TicketPeriodListResponse({@Default(<TicketPeriod>[]) List<TicketPeriod> list}) =
+      _TicketPeriodListResponse;
 
-  factory TicketPeriodListResponse.fromJson(Map<String, dynamic> json) =>
-      _$TicketPeriodListResponseFromJson(json);
+  factory TicketPeriodListResponse.fromJson(Map<String, dynamic> json) => _$TicketPeriodListResponseFromJson(json);
 }
 
 /// `GET dictionary/transport-line?number=...` element.
@@ -108,8 +98,7 @@ abstract class TransportLine with _$TransportLine {
     @JsonKey(name: 'is_bus') bool? isBus,
   }) = _TransportLine;
 
-  factory TransportLine.fromJson(Map<String, dynamic> json) =>
-      _$TransportLineFromJson(json);
+  factory TransportLine.fromJson(Map<String, dynamic> json) => _$TransportLineFromJson(json);
 }
 
 /// `GET dictionary/transport-line?number=...`
@@ -118,8 +107,7 @@ abstract class TransportLine with _$TransportLine {
 /// (1, 10–19, 100–199, …). An empty result is `{"lines": [], "code": null,
 /// "message": null}` — the response still carries the code/message envelope.
 @freezed
-abstract class TransportLineResponse
-    with EkpCodeMessage, _$TransportLineResponse {
+abstract class TransportLineResponse with EkpCodeMessage, _$TransportLineResponse {
   const TransportLineResponse._();
 
   const factory TransportLineResponse({
@@ -128,8 +116,7 @@ abstract class TransportLineResponse
     String? message,
   }) = _TransportLineResponse;
 
-  factory TransportLineResponse.fromJson(Map<String, dynamic> json) =>
-      _$TransportLineResponseFromJson(json);
+  factory TransportLineResponse.fromJson(Map<String, dynamic> json) => _$TransportLineResponseFromJson(json);
 }
 
 /// `GET dictionary/city-card-types` — a raw map of code → name
@@ -137,16 +124,13 @@ abstract class TransportLineResponse
 @freezed
 abstract class CityCardTypesResponse with _$CityCardTypesResponse {
   @Freezed(fromJson: false, toJson: false)
-  const factory CityCardTypesResponse({
-    @Default(<String, String>{}) Map<String, String> types,
-  }) = _CityCardTypesResponse;
+  const factory CityCardTypesResponse({@Default(<String, String>{}) Map<String, String> types}) =
+      _CityCardTypesResponse;
 
   const CityCardTypesResponse._();
 
   factory CityCardTypesResponse.fromJson(Map<String, dynamic> json) {
-    return CityCardTypesResponse(
-      types: json.map((k, dynamic v) => MapEntry(k, (v ?? '').toString())),
-    );
+    return CityCardTypesResponse(types: json.map((k, dynamic v) => MapEntry(k, (v ?? '').toString())));
   }
 
   /// Name for a numeric card code (e.g. 8 → `mKKM`), trimmed; null unknown.

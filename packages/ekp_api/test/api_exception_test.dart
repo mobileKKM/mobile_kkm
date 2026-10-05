@@ -4,25 +4,22 @@ import 'package:test/test.dart';
 
 void main() {
   group('EkpApiException.fromDio', () {
-    test(
-      '401 with body becomes EkpUnauthorizedException carrying the code',
-      () {
-        final e = EkpApiException.fromDio(
-          DioException(
+    test('401 with body becomes EkpUnauthorizedException carrying the code', () {
+      final e = EkpApiException.fromDio(
+        DioException(
+          requestOptions: RequestOptions(path: '/x'),
+          response: Response(
+            statusCode: 401,
             requestOptions: RequestOptions(path: '/x'),
-            response: Response(
-              statusCode: 401,
-              requestOptions: RequestOptions(path: '/x'),
-              data: {'code': 5, 'message': 'Sesja wygasła'},
-            ),
+            data: {'code': 5, 'message': 'Sesja wygasła'},
           ),
-        );
-        expect(e, isA<EkpUnauthorizedException>());
-        expect(e.statusCode, 401);
-        expect(e.message, 'Sesja wygasła');
-        expect(e.codeAsInt, 5);
-      },
-    );
+        ),
+      );
+      expect(e, isA<EkpUnauthorizedException>());
+      expect(e.statusCode, 401);
+      expect(e.message, 'Sesja wygasła');
+      expect(e.codeAsInt, 5);
+    });
 
     test('tickets-history 400 shape maps exceptionCode + errorToken', () {
       final e = EkpApiException.fromDio(

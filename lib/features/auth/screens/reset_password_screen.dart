@@ -22,8 +22,7 @@ class ResetPasswordScreen extends ConsumerStatefulWidget {
   final String token;
 
   @override
-  ConsumerState<ResetPasswordScreen> createState() =>
-      _ResetPasswordScreenState();
+  ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
@@ -48,10 +47,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       _error = null;
     });
     try {
-      await ref
-          .read(ekpClientProvider)
-          .auth
-          .resetPassword(token: widget.token, newPassword: _password.text);
+      await ref.read(ekpClientProvider).auth.resetPassword(token: widget.token, newPassword: _password.text);
       if (!mounted) return;
       TextInput.finishAutofillContext();
       context.go(Routes.loginAfterPasswordReset());
@@ -76,10 +72,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (_error != null) ...[
-                MessageBanner(_error!),
-                const SizedBox(height: 16),
-              ],
+              if (_error != null) ...[MessageBanner(_error!), const SizedBox(height: 16)],
               PasswordField(
                 controller: _password,
                 label: l10n.newPasswordLabel,
@@ -97,21 +90,13 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                 autofillHints: const [AutofillHints.newPassword],
                 textInputAction: TextInputAction.done,
                 onSubmitted: _submit,
-                validator: (value) =>
-                    value == _password.text ? null : l10n.passwordsDontMatch,
+                validator: (value) => value == _password.text ? null : l10n.passwordsDontMatch,
               ),
               const SizedBox(height: 24),
-              SubmitButton(
-                label: l10n.resetSubmit,
-                loading: _submitting,
-                onPressed: _submit,
-              ),
+              SubmitButton(label: l10n.resetSubmit, loading: _submitting, onPressed: _submit),
               const SizedBox(height: 8),
               // Opened from a link there is no screen to go back to.
-              TextButton(
-                onPressed: () => context.go(Routes.login),
-                child: Text(l10n.backToLogin),
-              ),
+              TextButton(onPressed: () => context.go(Routes.login), child: Text(l10n.backToLogin)),
             ],
           ),
         ),

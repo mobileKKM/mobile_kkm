@@ -99,11 +99,7 @@ class EkpSessionManager {
     try {
       final response = await _dio.post<dynamic>(
         EkpApiPaths.tokenRecover,
-        data: {
-          'token': refresh,
-          'deviceId': device.deviceId,
-          'deviceName': device.deviceName,
-        },
+        data: {'token': refresh, 'deviceId': device.deviceId, 'deviceName': device.deviceName},
       );
       await publishUpdated(AuthSession.fromJson(_asMap(response.data)));
       return true;

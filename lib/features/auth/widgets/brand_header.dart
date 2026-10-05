@@ -9,12 +9,7 @@ class BrandHeader extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(14),
-          child: Image.asset(
-            'assets/images/app_logo.png',
-            width: 56,
-            height: 56,
-            excludeFromSemantics: true,
-          ),
+          child: Image.asset('assets/images/app_logo.png', width: 56, height: 56, excludeFromSemantics: true),
         ),
         const SizedBox(width: 16),
         // Scales down instead of overflowing at large text sizes.
@@ -24,8 +19,7 @@ class BrandHeader extends StatelessWidget {
             alignment: AlignmentDirectional.centerStart,
             child: Text(
               'mobileKKM',
-              style: Theme.of(context).textTheme.headlineMedium
-                  ?.copyWith(fontWeight: FontWeight.w700),
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
         ),

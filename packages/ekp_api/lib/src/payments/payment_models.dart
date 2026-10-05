@@ -27,11 +27,9 @@ abstract class Bank with _$Bank {
 /// `GET payments/banks`
 @freezed
 abstract class BankListResponse with _$BankListResponse {
-  const factory BankListResponse({@Default(<Bank>[]) List<Bank> list}) =
-      _BankListResponse;
+  const factory BankListResponse({@Default(<Bank>[]) List<Bank> list}) = _BankListResponse;
 
-  factory BankListResponse.fromJson(Map<String, dynamic> json) =>
-      _$BankListResponseFromJson(json);
+  factory BankListResponse.fromJson(Map<String, dynamic> json) => _$BankListResponseFromJson(json);
 }
 
 enum PaymentCheckStatus {
@@ -46,11 +44,8 @@ enum PaymentCheckStatus {
 /// "pending" is a normal intermediate state.
 @freezed
 abstract class PaymentCheckResult with _$PaymentCheckResult {
-  const factory PaymentCheckResult({
-    required PaymentCheckStatus status,
-    String? message,
-    Object? code,
-  }) = _PaymentCheckResult;
+  const factory PaymentCheckResult({required PaymentCheckStatus status, String? message, Object? code}) =
+      _PaymentCheckResult;
 }
 
 /// `POST payments/change-payment-card` — initiates a tpay card change for
@@ -65,6 +60,5 @@ abstract class ChangePaymentCardResponse with _$ChangePaymentCardResponse {
     String? tPayRedirectUrl,
   }) = _ChangePaymentCardResponse;
 
-  factory ChangePaymentCardResponse.fromJson(Map<String, dynamic> json) =>
-      _$ChangePaymentCardResponseFromJson(json);
+  factory ChangePaymentCardResponse.fromJson(Map<String, dynamic> json) => _$ChangePaymentCardResponseFromJson(json);
 }

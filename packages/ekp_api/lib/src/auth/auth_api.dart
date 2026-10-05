@@ -3,8 +3,8 @@ import 'package:dio/dio.dart';
 import '../common/api_exception.dart';
 import '../common/api_paths.dart';
 import '../common/api_service.dart';
-import '../session/device_identity.dart';
 import '../session/auth_session.dart';
+import '../session/device_identity.dart';
 import '../session/session_manager.dart';
 import 'auth_models.dart';
 
@@ -20,11 +20,7 @@ class AuthApi extends EkpApiService {
   /// On success the session is persisted and
   /// [EkpSessionAuthenticated] emitted. HTTP 401 (wrong credentials —
   /// the server sends an empty body) becomes [EkpUnauthorizedException].
-  Future<AuthSession> login(
-    String username,
-    String password, {
-    bool rememberMe = true,
-  }) async {
+  Future<AuthSession> login(String username, String password, {bool rememberMe = true}) async {
     return guard(() async {
       try {
         final response = await dio.post<Map<String, dynamic>>(
@@ -37,16 +33,12 @@ class AuthApi extends EkpApiService {
             'password': password,
           },
         );
-        final session = AuthSession.fromJson(
-          response.data ?? const <String, dynamic>{},
-        );
+        final session = AuthSession.fromJson(response.data ?? const <String, dynamic>{});
         await _session.publishAuthenticated(session);
         return session;
       } on DioException catch (e) {
         if (e.response?.statusCode == 401) {
-          throw const EkpUnauthorizedException(
-            message: 'Nieprawidłowy e-mail lub hasło.',
-          );
+          throw const EkpUnauthorizedException(message: 'Nieprawidłowy e-mail lub hasło.');
         }
         rethrow;
       }
@@ -94,8 +86,7 @@ class AuthApi extends EkpApiService {
         EkpApiPaths.register,
         data: {
           'marketingConsents': [
-            for (final c in marketingConsents)
-              {'id': c.id, 'isChecked': c.isChecked},
+            for (final c in marketingConsents) {'id': c.id, 'isChecked': c.isChecked},
           ],
           'firstName': firstName,
           'lastName': lastName,
@@ -107,9 +98,7 @@ class AuthApi extends EkpApiService {
           'birthDate': formatEkpBirthDate(birthDate),
         },
       );
-      return CodeMessageResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return CodeMessageResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -117,13 +106,8 @@ class AuthApi extends EkpApiService {
   /// (`ekp.mpk.krakow.pl/...?token=...`).
   Future<CodeMessageResponse> activate(String token) async {
     return guard(() async {
-      final response = await dio.post<Map<String, dynamic>>(
-        EkpApiPaths.activate,
-        data: {'token': token},
-      );
-      return CodeMessageResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.post<Map<String, dynamic>>(EkpApiPaths.activate, data: {'token': token});
+      return CodeMessageResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -136,15 +120,9 @@ class AuthApi extends EkpApiService {
     return guard(() async {
       final response = await dio.post<Map<String, dynamic>>(
         EkpApiPaths.changePassword,
-        data: {
-          'previousPassword': previousPassword,
-          'newPassword': newPassword,
-          'repeatPassword': repeatPassword,
-        },
+        data: {'previousPassword': previousPassword, 'newPassword': newPassword, 'repeatPassword': repeatPassword},
       );
-      return CodeMessageResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return CodeMessageResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -155,49 +133,34 @@ class AuthApi extends EkpApiService {
         EkpApiPaths.resetPasswordLinkRequest,
         data: {'email': email},
       );
-      return CodeMessageResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return CodeMessageResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `POST auth/reset-password` — token comes from the reset e-mail link.
-  Future<CodeMessageResponse> resetPassword({
-    required String token,
-    required String newPassword,
-  }) async {
+  Future<CodeMessageResponse> resetPassword({required String token, required String newPassword}) async {
     return guard(() async {
       final response = await dio.post<Map<String, dynamic>>(
         EkpApiPaths.resetPassword,
         data: {'token': token, 'newPassword': newPassword},
       );
-      return CodeMessageResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return CodeMessageResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `GET auth/password-policy`
   Future<PasswordPolicy> passwordPolicy() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.passwordPolicy,
-      );
-      return PasswordPolicy.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.passwordPolicy);
+      return PasswordPolicy.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `GET auth/marketing-consents`
   Future<MarketingConsentsResponse> marketingConsents() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.authMarketingConsents,
-      );
-      return MarketingConsentsResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.authMarketingConsents);
+      return MarketingConsentsResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 }

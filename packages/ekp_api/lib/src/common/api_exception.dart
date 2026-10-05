@@ -2,12 +2,7 @@ import 'package:dio/dio.dart';
 
 /// Base type for all errors raised by this package.
 sealed class EkpApiException implements Exception {
-  const EkpApiException({
-    this.message,
-    this.statusCode,
-    this.code,
-    this.errorToken,
-  });
+  const EkpApiException({this.message, this.statusCode, this.code, this.errorToken});
 
   /// Human readable message (server-provided when available).
   final String? message;
@@ -49,28 +44,15 @@ sealed class EkpApiException implements Exception {
 
     final body = response.data;
     final fields = body is Map<String, dynamic> ? body : <String, dynamic>{};
-    final message = fields['message'] is String
-        ? fields['message'] as String
-        : null;
+    final message = fields['message'] is String ? fields['message'] as String : null;
     // /tickets history 400s use `exceptionCode` instead of `code`.
     final code = fields['code'] ?? fields['exceptionCode'];
-    final errorToken = fields['errorToken'] is String
-        ? fields['errorToken'] as String
-        : null;
+    final errorToken = fields['errorToken'] is String ? fields['errorToken'] as String : null;
 
     if (response.statusCode == 401) {
-      return EkpUnauthorizedException(
-        message: message,
-        statusCode: response.statusCode,
-        code: code,
-      );
+      return EkpUnauthorizedException(message: message, statusCode: response.statusCode, code: code);
     }
-    return EkpHttpException(
-      message: message,
-      statusCode: response.statusCode,
-      code: code,
-      errorToken: errorToken,
-    );
+    return EkpHttpException(message: message, statusCode: response.statusCode, code: code, errorToken: errorToken);
   }
 
   @override
@@ -99,12 +81,7 @@ class EkpUnauthorizedException extends EkpApiException {
 
 /// Any non-2xx response other than 401.
 class EkpHttpException extends EkpApiException {
-  const EkpHttpException({
-    super.message,
-    super.statusCode,
-    super.code,
-    super.errorToken,
-  });
+  const EkpHttpException({super.message, super.statusCode, super.code, super.errorToken});
 }
 
 /// The stored session could not be recovered (both recover and refresh

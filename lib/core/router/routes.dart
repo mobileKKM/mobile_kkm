@@ -12,15 +12,12 @@ abstract final class Routes {
   static const _activatePrefix = '/activate/';
   static const _resetPasswordPrefix = '/reset-password/';
 
-  static String activate(String token) =>
-      '$_activatePrefix${Uri.encodeComponent(token)}';
-  static String resetPassword(String token) =>
-      '$_resetPasswordPrefix${Uri.encodeComponent(token)}';
+  static String activate(String token) => '$_activatePrefix${Uri.encodeComponent(token)}';
+  static String resetPassword(String token) => '$_resetPasswordPrefix${Uri.encodeComponent(token)}';
 
   static String loginAfterPasswordReset() => '$login?notice=password-reset';
 
-  static String sent(String route, String email) =>
-      Uri(path: route, queryParameters: {'email': email}).toString();
+  static String sent(String route, String email) => Uri(path: route, queryParameters: {'email': email}).toString();
 
   /// The in-app route for a link from an EKP e-mail.
   static String forEmailLink(EmailLink link) => switch (link.kind) {
@@ -34,9 +31,5 @@ abstract final class Routes {
 
   /// Screens available without a session.
   static bool isPublic(String path) =>
-      path == login ||
-      path == register ||
-      path == registerSent ||
-      path == forgotPassword ||
-      path == forgotPasswordSent;
+      path == login || path == register || path == registerSent || path == forgotPassword || path == forgotPasswordSent;
 }

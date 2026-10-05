@@ -35,10 +35,7 @@ class AuthInterceptor extends Interceptor {
   Future<bool>? _recoveryInFlight;
 
   @override
-  void onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final session = await _session.currentSession();
     if (session != null && _wantsBearer(options)) {
       options.headers['authorization'] = 'Bearer ${session.token}';
@@ -52,9 +49,7 @@ class AuthInterceptor extends Interceptor {
     final requestOptions = err.requestOptions;
 
     final recoverable =
-        status == 401 &&
-        !requestOptions.path.contains('/auth/') &&
-        requestOptions.extra[_retriedFlag] != true;
+        status == 401 && !requestOptions.path.contains('/auth/') && requestOptions.extra[_retriedFlag] != true;
 
     if (!recoverable) {
       handler.next(err);
@@ -66,9 +61,7 @@ class AuthInterceptor extends Interceptor {
       handler.reject(
         DioException(
           requestOptions: requestOptions,
-          error: const EkpSessionExpiredException(
-            message: 'Sesja wygasła. Zaloguj się ponownie.',
-          ),
+          error: const EkpSessionExpiredException(message: 'Sesja wygasła. Zaloguj się ponownie.'),
         ),
       );
       return;
@@ -92,12 +85,9 @@ class AuthInterceptor extends Interceptor {
     }
   }
 
-  static bool _wantsBearer(RequestOptions options) =>
-      !_anonymousPaths.any(options.path.endsWith);
+  static bool _wantsBearer(RequestOptions options) => !_anonymousPaths.any(options.path.endsWith);
 
   Future<bool> _recoverSingleFlight() {
-    return _recoveryInFlight ??= _session.recover().whenComplete(
-      () => _recoveryInFlight = null,
-    );
+    return _recoveryInFlight ??= _session.recover().whenComplete(() => _recoveryInFlight = null);
   }
 }

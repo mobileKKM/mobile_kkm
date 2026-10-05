@@ -19,8 +19,7 @@ class LinkSettings {
   Future<bool> canOpenLinks() async {
     if (!isSupported) return false;
     try {
-      return await _channel.invokeMethod<bool>('canOpenLinks', ekpLinkHost) ??
-          false;
+      return await _channel.invokeMethod<bool>('canOpenLinks', ekpLinkHost) ?? false;
     } on PlatformException {
       return false;
     } on MissingPluginException {

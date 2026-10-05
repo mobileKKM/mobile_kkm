@@ -20,10 +20,7 @@ class DeviceHeadersInterceptor extends Interceptor {
     options.headers[Headers.acceptHeader] = 'application/json';
     // okhttp sends content-type on every request, even GETs; only fill in
     // when unset so JSON bodies and multipart uploads keep their own value.
-    options.headers.putIfAbsent(
-      Headers.contentTypeHeader,
-      () => 'application/json',
-    );
+    options.headers.putIfAbsent(Headers.contentTypeHeader, () => 'application/json');
     options.headers['x-device-id'] = device.deviceId;
     options.headers['x-platform'] = device.platform;
     options.headers['x-device-name'] = device.deviceName;

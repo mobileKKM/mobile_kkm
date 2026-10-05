@@ -12,14 +12,8 @@ String? validateEmail(AppLocalizations l10n, String? value) {
   return _emailPattern.hasMatch(email) ? null : l10n.emailInvalid;
 }
 
-String? validateNewPassword(
-  AppLocalizations l10n,
-  List<PasswordRule> rules,
-  String? value,
-) {
+String? validateNewPassword(AppLocalizations l10n, List<PasswordRule> rules, String? value) {
   final password = value ?? '';
   if (password.isEmpty) return l10n.fieldRequired;
-  return rules.every((rule) => rule.isSatisfiedBy(password))
-      ? null
-      : l10n.passwordTooWeak;
+  return rules.every((rule) => rule.isSatisfiedBy(password)) ? null : l10n.passwordTooWeak;
 }

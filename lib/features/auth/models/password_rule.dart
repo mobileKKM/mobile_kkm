@@ -14,12 +14,9 @@ class PasswordRule {
     final actual = switch (kind) {
       PasswordRuleKind.minLength => password.runes.length,
       // Case-mapping instead of [a-z] so Polish letters count too.
-      PasswordRuleKind.lowercase =>
-        chars.where((c) => c != c.toUpperCase()).length,
-      PasswordRuleKind.uppercase =>
-        chars.where((c) => c != c.toLowerCase()).length,
-      PasswordRuleKind.digits =>
-        chars.where((c) => RegExp(r'^\d$').hasMatch(c)).length,
+      PasswordRuleKind.lowercase => chars.where((c) => c != c.toUpperCase()).length,
+      PasswordRuleKind.uppercase => chars.where((c) => c != c.toLowerCase()).length,
+      PasswordRuleKind.digits => chars.where((c) => RegExp(r'^\d$').hasMatch(c)).length,
     };
     return actual >= count;
   }

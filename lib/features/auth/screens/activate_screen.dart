@@ -27,8 +27,7 @@ class _ActivateScreenState extends ConsumerState<ActivateScreen> {
     _activation = _activate();
   }
 
-  Future<void> _activate() =>
-      ref.read(ekpClientProvider).auth.activate(widget.token);
+  Future<void> _activate() => ref.read(ekpClientProvider).auth.activate(widget.token);
 
   @override
   Widget build(BuildContext context) {
@@ -54,37 +53,21 @@ class _ActivateScreenState extends ConsumerState<ActivateScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (error == null) ...[
-                Icon(
-                  Icons.check_circle_outline,
-                  size: 64,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(Icons.check_circle_outline, size: 64, color: theme.colorScheme.primary),
                 const SizedBox(height: 24),
-                Text(
-                  l10n.activateSuccess,
-                  style: theme.textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
-                ),
+                Text(l10n.activateSuccess, style: theme.textTheme.bodyLarge, textAlign: TextAlign.center),
               ] else ...[
                 MessageBanner(l10n.activateFailure),
                 const SizedBox(height: 8),
                 Text(
                   describeError(l10n, error),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
+                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: () => setState(() => _activation = _activate()),
-                  child: Text(l10n.retry),
-                ),
+                OutlinedButton(onPressed: () => setState(() => _activation = _activate()), child: Text(l10n.retry)),
               ],
               const SizedBox(height: 24),
-              FilledButton(
-                onPressed: () => context.go(Routes.login),
-                child: Text(l10n.continueToLogin),
-              ),
+              FilledButton(onPressed: () => context.go(Routes.login), child: Text(l10n.continueToLogin)),
             ],
           );
         },

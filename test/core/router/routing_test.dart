@@ -4,19 +4,12 @@ import 'package:mobile_kkm/features/auth/providers/auth_controller.dart';
 
 void main() {
   group('redirectFor', () {
-    String? go(String location, AuthStatus status) =>
-        redirectFor(Uri.parse(location), status);
+    String? go(String location, AuthStatus status) => redirectFor(Uri.parse(location), status);
 
     test('e-mail links map to their screens in every auth state', () {
       for (final status in AuthStatus.values) {
-        expect(
-          go('/konto-uzytkownika/reset,abc.html', status),
-          '/reset-password/abc',
-        );
-        expect(
-          go('/konto-uzytkownika/activate,abc.html', status),
-          '/activate/abc',
-        );
+        expect(go('/konto-uzytkownika/reset,abc.html', status), '/reset-password/abc');
+        expect(go('/konto-uzytkownika/activate,abc.html', status), '/activate/abc');
         expect(go('/reset-password/abc', status), isNull);
         expect(go('/activate/abc', status), isNull);
       }
@@ -33,10 +26,7 @@ void main() {
       expect(go('/home', AuthStatus.unauthenticated), '/login');
       expect(go('/nope', AuthStatus.unauthenticated), '/login');
       expect(go('/login', AuthStatus.unauthenticated), isNull);
-      expect(
-        go('/login?notice=password-reset', AuthStatus.unauthenticated),
-        isNull,
-      );
+      expect(go('/login?notice=password-reset', AuthStatus.unauthenticated), isNull);
       expect(go('/register', AuthStatus.unauthenticated), isNull);
       expect(go('/forgot-password/sent', AuthStatus.unauthenticated), isNull);
     });

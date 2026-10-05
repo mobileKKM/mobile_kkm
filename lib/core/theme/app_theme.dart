@@ -21,14 +21,11 @@ abstract final class AppTheme {
     ),
   );
 
-  static ThemeData dark() => _build(
-    ColorScheme.fromSeed(seedColor: brand, brightness: Brightness.dark),
-  );
+  static ThemeData dark() => _build(ColorScheme.fromSeed(seedColor: brand, brightness: Brightness.dark));
 
   static ThemeData _build(ColorScheme scheme) {
     final base = ThemeData(colorScheme: scheme, fontFamily: _bodyFont);
-    TextStyle? heading(TextStyle? style) =>
-        style?.copyWith(fontFamily: _headingFont, fontWeight: FontWeight.w600);
+    TextStyle? heading(TextStyle? style) => style?.copyWith(fontFamily: _headingFont, fontWeight: FontWeight.w600);
 
     final text = base.textTheme;
     return base.copyWith(
@@ -43,22 +40,14 @@ abstract final class AppTheme {
         titleMedium: heading(text.titleMedium),
         titleSmall: heading(text.titleSmall),
       ),
-      inputDecorationTheme: const InputDecorationTheme(
-        border: OutlineInputBorder(),
-      ),
+      inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(52),
-          textStyle: const TextStyle(
-            fontFamily: _bodyFont,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: const TextStyle(fontFamily: _bodyFont, fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
-      snackBarTheme: const SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-      ),
+      snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
     );
   }
 }

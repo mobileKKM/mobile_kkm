@@ -37,12 +37,7 @@ class ConsentField extends StatelessWidget {
           children: [
             Row(
               children: [
-                Checkbox(
-                  value: field.value,
-                  isError: field.hasError,
-                  onChanged: toggle,
-                  semanticLabel: label,
-                ),
+                Checkbox(value: field.value, isError: field.hasError, onChanged: toggle, semanticLabel: label),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Wrap(
@@ -51,15 +46,10 @@ class ConsentField extends StatelessWidget {
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () => toggle(!(field.value ?? false)),
-                        child: ExcludeSemantics(
-                          child: Text(label, style: theme.textTheme.bodyLarge),
-                        ),
+                        child: ExcludeSemantics(child: Text(label, style: theme.textTheme.bodyLarge)),
                       ),
                       if (onOpenRegulations != null)
-                        TextButton(
-                          onPressed: onOpenRegulations,
-                          child: Text(l10n.regulationsLink),
-                        ),
+                        TextButton(onPressed: onOpenRegulations, child: Text(l10n.regulationsLink)),
                     ],
                   ),
                 ),
@@ -70,9 +60,7 @@ class ConsentField extends StatelessWidget {
                 padding: const EdgeInsetsDirectional.only(start: 16),
                 child: Text(
                   field.errorText!,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.error,
-                  ),
+                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error),
                 ),
               ),
           ],

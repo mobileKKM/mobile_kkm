@@ -26,8 +26,7 @@ abstract class SubscriptionDetails with _$SubscriptionDetails {
     bool? isCycleRefreshEnabled,
   }) = _SubscriptionDetails;
 
-  factory SubscriptionDetails.fromJson(Map<String, dynamic> json) =>
-      _$SubscriptionDetailsFromJson(json);
+  factory SubscriptionDetails.fromJson(Map<String, dynamic> json) => _$SubscriptionDetailsFromJson(json);
 }
 
 /// Customer snapshot inside the signed-in `subscriptions/details`
@@ -45,14 +44,12 @@ abstract class SubscriptionCustomerDetail with _$SubscriptionCustomerDetail {
     int? clientCode,
   }) = _SubscriptionCustomerDetail;
 
-  factory SubscriptionCustomerDetail.fromJson(Map<String, dynamic> json) =>
-      _$SubscriptionCustomerDetailFromJson(json);
+  factory SubscriptionCustomerDetail.fromJson(Map<String, dynamic> json) => _$SubscriptionCustomerDetailFromJson(json);
 }
 
 /// `GET subscriptions/available-actions`
 @freezed
-abstract class SubscriptionAvailableActions
-    with _$SubscriptionAvailableActions {
+abstract class SubscriptionAvailableActions with _$SubscriptionAvailableActions {
   const factory SubscriptionAvailableActions({
     bool? newCard,
     bool? changeCard,
@@ -66,13 +63,11 @@ abstract class SubscriptionAvailableActions
 
 /// `GET subscriptions/marketing-consents` (5+1 regulation consents).
 @freezed
-abstract class SubscriptionMarketingConsentsResponse
-    with _$SubscriptionMarketingConsentsResponse {
+abstract class SubscriptionMarketingConsentsResponse with _$SubscriptionMarketingConsentsResponse {
   const factory SubscriptionMarketingConsentsResponse({
     @Default(<MarketingConsent>[]) List<MarketingConsent> marketingConsents,
   }) = _SubscriptionMarketingConsentsResponse;
 
-  factory SubscriptionMarketingConsentsResponse.fromJson(
-    Map<String, dynamic> json,
-  ) => _$SubscriptionMarketingConsentsResponseFromJson(json);
+  factory SubscriptionMarketingConsentsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SubscriptionMarketingConsentsResponseFromJson(json);
 }

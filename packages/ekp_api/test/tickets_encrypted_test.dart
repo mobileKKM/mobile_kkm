@@ -28,11 +28,7 @@ void main() {
     dio.httpClientAdapter = adapter;
 
     client = EkpClient(
-      device: const EkpDeviceIdentity(
-        deviceId: '23a71d82a4f5a3e1',
-        platform: 'android 34',
-        deviceName: deviceName,
-      ),
+      device: const EkpDeviceIdentity(deviceId: '23a71d82a4f5a3e1', platform: 'android 34', deviceName: deviceName),
       tokenStore: InMemoryTokenStore(),
       dio: dio,
     );
@@ -40,14 +36,11 @@ void main() {
 
   tearDown(() => client.dispose());
 
-  Map<String, dynamic> bodyOf(RequestOptions options) =>
-      options.data as Map<String, dynamic>;
+  Map<String, dynamic> bodyOf(RequestOptions options) => options.data as Map<String, dynamic>;
 
   group('TicketsApi.assign', () {
     test('posts an Android-Base64-wrapped RSA block as {"message"}', () async {
-      adapter.onPost('/mkkm/tickets/assign-e', [
-        (200, fixture('assign_e_response')),
-      ]);
+      adapter.onPost('/mkkm/tickets/assign-e', [(200, fixture('assign_e_response'))]);
 
       final response = await client.tickets.assign(ticketGuid);
 
@@ -59,59 +52,35 @@ void main() {
 
       // Shape parity with the official client's assign-e bodies
       // (Android Base64.DEFAULT wrapping of a single 256-byte block).
-      expect(message.split('\n').map((l) => l.length).toList(), const [
-        76,
-        76,
-        76,
-        76,
-        40,
-        0,
-      ]);
+      expect(message.split('\n').map((l) => l.length).toList(), const [76, 76, 76, 76, 40, 0]);
       expect(base64Decode(message.replaceAll('\n', '')).length, 256);
     });
 
     test('device_name defaults to the device identity', () async {
-      adapter.onPost('/mkkm/tickets/assign-e', [
-        (200, fixture('assign_e_response')),
-      ]);
+      adapter.onPost('/mkkm/tickets/assign-e', [(200, fixture('assign_e_response'))]);
       await client.tickets.assign(ticketGuid);
 
       // The plaintext payload is RSA-encrypted (opaque), but our own crypto
       // is deterministic about serialization: same inputs -> same JSON.
-      final reference = const EkpAztecCrypto().encryptJson({
-        'id': ticketGuid,
-        'device_name': deviceName,
-      });
-      final sent =
-          bodyOf(adapter.requestsTo('/mkkm/tickets/assign-e').single)['message']
-              as String;
+      final reference = const EkpAztecCrypto().encryptJson({'id': ticketGuid, 'device_name': deviceName});
+      final sent = bodyOf(adapter.requestsTo('/mkkm/tickets/assign-e').single)['message'] as String;
 
       // Both are random-padded ciphertexts; identical shape, different bytes.
-      expect(
-        base64Decode(sent.replaceAll('\n', '')).length,
-        base64Decode(reference.replaceAll('\n', '')).length,
-      );
+      expect(base64Decode(sent.replaceAll('\n', '')).length, base64Decode(reference.replaceAll('\n', '')).length);
       expect(sent, isNot(reference));
     });
 
     test('explicit deviceName overrides the identity', () async {
-      adapter.onPost('/mkkm/tickets/assign-e', [
-        (200, fixture('assign_e_response')),
-      ]);
+      adapter.onPost('/mkkm/tickets/assign-e', [(200, fixture('assign_e_response'))]);
       await client.tickets.assign(ticketGuid, deviceName: 'Google Pixel 8');
 
-      final message =
-          bodyOf(adapter.requestsTo('/mkkm/tickets/assign-e').single)['message']
-              as String;
+      final message = bodyOf(adapter.requestsTo('/mkkm/tickets/assign-e').single)['message'] as String;
       expect(message.split('\n').length, 6); // still the same wire shape
     });
 
     test('carries the error envelope through on failure', () async {
       adapter.onPost('/mkkm/tickets/assign-e', [
-        (
-          200,
-          {'assigned': false, 'code': 5, 'message': 'Bilet już przypisany'},
-        ),
+        (200, {'assigned': false, 'code': 5, 'message': 'Bilet już przypisany'}),
       ]);
 
       final response = await client.tickets.assign(ticketGuid);
@@ -124,9 +93,7 @@ void main() {
 
   group('TicketsApi.contract', () {
     test('round-trips a contract into the AZTEC hex token', () async {
-      adapter.onPost('/mkkm/tickets/contract-e', [
-        (200, fixture('contract_e_response')),
-      ]);
+      adapter.onPost('/mkkm/tickets/contract-e', [(200, fixture('contract_e_response'))]);
 
       final response = await client.tickets.contract(ticketGuid);
 
@@ -150,42 +117,26 @@ void main() {
     });
 
     test('posts a {"ticketGuid": …} payload in the wire shape', () async {
-      adapter.onPost('/mkkm/tickets/contract-e', [
-        (200, fixture('contract_e_response')),
-      ]);
+      adapter.onPost('/mkkm/tickets/contract-e', [(200, fixture('contract_e_response'))]);
       await client.tickets.contract(ticketGuid);
 
       final req = adapter.requestsTo('/mkkm/tickets/contract-e').single;
       final message = bodyOf(req)['message'] as String;
-      expect(message.split('\n').map((l) => l.length).toList(), const [
-        76,
-        76,
-        76,
-        76,
-        40,
-        0,
-      ]);
+      expect(message.split('\n').map((l) => l.length).toList(), const [76, 76, 76, 76, 40, 0]);
       expect(base64Decode(message.replaceAll('\n', '')).length, 256);
     });
   });
 
   group('TicketContractResponse.decodeAztec', () {
     test('returns null for a contract with garbage bytes', () {
-      final response = TicketContractResponse(
-        contract: base64Encode(List<int>.filled(64, 7)),
-      );
+      final response = TicketContractResponse(contract: base64Encode(List<int>.filled(64, 7)));
       expect(response.decodeAztec(), isNull);
     });
 
     test('uses the override secret/environment hooks', () {
-      final response = TicketContractResponse(
-        contract: base64Encode(List<int>.filled(64, 7)),
-      );
+      final response = TicketContractResponse(contract: base64Encode(List<int>.filled(64, 7)));
       expect(
-        response.decodeAztec(
-          secret: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-          environment: EkpCryptoEnvironment.development,
-        ),
+        response.decodeAztec(secret: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', environment: EkpCryptoEnvironment.development),
         isNull,
       );
     });

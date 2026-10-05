@@ -40,31 +40,20 @@ class AuthController extends Notifier<AuthState> {
       // Renew before entering the app, so the first screen does not start
       // with a stale token. A rejected refresh token signs the user out via
       // the event stream; being offline keeps the session as it is.
-      await session.recover().timeout(
-        _startupRecoveryTimeout,
-        onTimeout: () => false,
-      );
+      await session.recover().timeout(_startupRecoveryTimeout, onTimeout: () => false);
       stored = await session.currentSession();
     }
     if (!ref.mounted || state.status != AuthStatus.unknown) return;
-    state = AuthState(
-      stored == null ? AuthStatus.unauthenticated : AuthStatus.authenticated,
-    );
+    state = AuthState(stored == null ? AuthStatus.unauthenticated : AuthStatus.authenticated);
   }
 
   void _onEvent(EkpSessionEvent event) {
     state = switch (event) {
-      EkpSessionAuthenticated() ||
-      EkpSessionUpdated() => const AuthState(AuthStatus.authenticated),
-      EkpSessionExpired() => const AuthState(
-        AuthStatus.unauthenticated,
-        sessionExpired: true,
-      ),
+      EkpSessionAuthenticated() || EkpSessionUpdated() => const AuthState(AuthStatus.authenticated),
+      EkpSessionExpired() => const AuthState(AuthStatus.unauthenticated, sessionExpired: true),
       EkpSessionLoggedOut() => const AuthState(AuthStatus.unauthenticated),
     };
   }
 }
 
-final authControllerProvider = NotifierProvider<AuthController, AuthState>(
-  AuthController.new,
-);
+final authControllerProvider = NotifierProvider<AuthController, AuthState>(AuthController.new);

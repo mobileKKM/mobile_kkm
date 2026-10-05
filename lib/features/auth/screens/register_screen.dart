@@ -72,9 +72,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final locale = AppLocalizations.of(context).localeName;
     setState(() {
       _birthDate = date;
-      _birthDateText.text = date == null
-          ? ''
-          : DateFormat.yMd(locale).format(date);
+      _birthDateText.text = date == null ? '' : DateFormat.yMd(locale).format(date);
     });
   }
 
@@ -97,8 +95,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (picked != null && mounted) _setBirthDate(picked);
   }
 
-  bool _isChecked(MarketingConsent consent) =>
-      _consentChoices[consent.id] ?? consent.isChecked ?? false;
+  bool _isChecked(MarketingConsent consent) => _consentChoices[consent.id] ?? consent.isChecked ?? false;
 
   Future<void> _submit(List<MarketingConsent> consents) async {
     if (_submitting || !_formKey.currentState!.validate()) return;
@@ -119,10 +116,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             password: _password.text,
             birthDate: _birthDate!,
             pesel: _noPesel ? null : _pesel.text,
-            marketingConsents: [
-              for (final consent in consents)
-                consent.copyWith(isChecked: _isChecked(consent)),
-            ],
+            marketingConsents: [for (final consent in consents) consent.copyWith(isChecked: _isChecked(consent))],
           );
       if (!mounted) return;
       TextInput.finishAutofillContext();
@@ -141,10 +135,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final l10n = AppLocalizations.of(context);
     final rules = passwordRulesFor(ref.watch(passwordPolicyProvider).value);
     final consents = ref.watch(marketingConsentsProvider);
-    final regulationsUrl = ref
-        .watch(mobileAppConfigProvider)
-        .value
-        ?.regulationsUrl;
+    final regulationsUrl = ref.watch(mobileAppConfigProvider).value?.regulationsUrl;
 
     return AuthPage(
       title: l10n.registerTitle,
@@ -154,10 +145,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (_error != null) ...[
-                MessageBanner(_error!),
-                const SizedBox(height: 16),
-              ],
+              if (_error != null) ...[MessageBanner(_error!), const SizedBox(height: 16)],
               SectionHeading(l10n.sectionPersonal),
               TextFormField(
                 controller: _firstName,
@@ -181,15 +169,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 controller: _pesel,
                 enabled: !_noPesel,
                 keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(11),
-                ],
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(11)],
                 decoration: InputDecoration(labelText: l10n.peselLabel),
                 onChanged: (value) => _setBirthDate(Pesel.birthDate(value)),
-                validator: (value) => _noPesel || Pesel.isValid(value ?? '')
-                    ? null
-                    : l10n.peselInvalid,
+                validator: (value) => _noPesel || Pesel.isValid(value ?? '') ? null : l10n.peselInvalid,
               ),
               CheckboxListTile(
                 value: _noPesel,
@@ -209,9 +192,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   helperText: _noPesel ? null : l10n.birthDateFromPeselHelper,
                   suffixIcon: const Icon(Icons.calendar_today_outlined),
                 ),
-                validator: (_) => _noPesel && _birthDate == null
-                    ? l10n.birthDateRequired
-                    : null,
+                validator: (_) => _noPesel && _birthDate == null ? l10n.birthDateRequired : null,
               ),
               const SizedBox(height: 24),
               SectionHeading(l10n.sectionContact),
@@ -232,9 +213,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 autocorrect: false,
                 autofillHints: const [AutofillHints.email],
                 decoration: InputDecoration(labelText: l10n.repeatEmailLabel),
-                validator: (value) =>
-                    (value ?? '').trim().toLowerCase() ==
-                        _email.text.trim().toLowerCase()
+                validator: (value) => (value ?? '').trim().toLowerCase() == _email.text.trim().toLowerCase()
                     ? null
                     : l10n.emailsDontMatch,
               ),
@@ -256,8 +235,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 label: l10n.repeatPasswordLabel,
                 autofillHints: const [AutofillHints.newPassword],
                 textInputAction: TextInputAction.done,
-                validator: (value) =>
-                    value == _password.text ? null : l10n.passwordsDontMatch,
+                validator: (value) => value == _password.text ? null : l10n.passwordsDontMatch,
               ),
               const SizedBox(height: 16),
               ...switch (consents) {
@@ -266,8 +244,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ConsentField(
                       label: consent.content ?? '',
                       initialValue: _isChecked(consent),
-                      onChanged: (checked) =>
-                          _consentChoices[consent.id ?? -1] = checked,
+                      onChanged: (checked) => _consentChoices[consent.id ?? -1] = checked,
                       onOpenRegulations: regulationsUrl == null
                           ? null
                           : () => ref.read(urlOpenerProvider)(
@@ -277,14 +254,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                 ],
                 AsyncError(:final error) => [
-                  MessageBanner(
-                    '${l10n.consentsLoadError} ${describeError(l10n, error)}',
-                  ),
+                  MessageBanner('${l10n.consentsLoadError} ${describeError(l10n, error)}'),
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: TextButton(
-                      onPressed: () =>
-                          ref.invalidate(marketingConsentsProvider),
+                      onPressed: () => ref.invalidate(marketingConsentsProvider),
                       child: Text(l10n.retry),
                     ),
                   ),
@@ -298,9 +272,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 label: l10n.registerSubmit,
                 loading: _submitting,
                 // The consents are part of the request, so wait for them.
-                onPressed: consents.hasValue
-                    ? () => _submit(consents.requireValue)
-                    : null,
+                onPressed: consents.hasValue ? () => _submit(consents.requireValue) : null,
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -308,10 +280,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(l10n.alreadyHaveAccountPrompt),
-                  TextButton(
-                    onPressed: () => context.go(Routes.login),
-                    child: Text(l10n.signInLink),
-                  ),
+                  TextButton(onPressed: () => context.go(Routes.login), child: Text(l10n.signInLink)),
                 ],
               ),
             ],

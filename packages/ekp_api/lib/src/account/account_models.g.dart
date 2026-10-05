@@ -24,9 +24,7 @@ Map<String, dynamic> _$AddressToJson(_Address instance) => <String, dynamic>{
 
 _UserData _$UserDataFromJson(Map<String, dynamic> json) => _UserData(
   pesel: json['pesel'] as String?,
-  birthDate: json['birthDate'] == null
-      ? null
-      : DateTime.parse(json['birthDate'] as String),
+  birthDate: json['birthDate'] == null ? null : DateTime.parse(json['birthDate'] as String),
   email: json['email'] as String?,
   firstName: json['firstName'] as String?,
   lastName: json['lastName'] as String?,
@@ -39,8 +37,7 @@ _UserData _$UserDataFromJson(Map<String, dynamic> json) => _UserData(
   autoInvoice: json['autoInvoice'] as bool?,
   mailNotifications: json['mailNotifications'] as bool?,
   pushNotifications: json['pushNotifications'] as bool?,
-  hasStorageMediumWithCCCustomer:
-      json['hasStorageMediumWithCCCustomer'] as bool?,
+  hasStorageMediumWithCCCustomer: json['hasStorageMediumWithCCCustomer'] as bool?,
 );
 
 Map<String, dynamic> _$UserDataToJson(_UserData instance) => <String, dynamic>{
@@ -76,98 +73,75 @@ _MkkmData _$MkkmDataFromJson(Map<String, dynamic> json) => _MkkmData(
 Map<String, dynamic> _$MkkmDataToJson(_MkkmData instance) => <String, dynamic>{
   'customerCode': instance.customerCode,
   'hasInhabitantPrivilege': instance.hasInhabitantPrivilege,
-  'inhabitantPrivilegeDateFrom': instance.inhabitantPrivilegeDateFrom
-      ?.toIso8601String(),
-  'inhabitantPrivilegeDateTo': instance.inhabitantPrivilegeDateTo
-      ?.toIso8601String(),
+  'inhabitantPrivilegeDateFrom': instance.inhabitantPrivilegeDateFrom?.toIso8601String(),
+  'inhabitantPrivilegeDateTo': instance.inhabitantPrivilegeDateTo?.toIso8601String(),
   'hasActiveSubscription': instance.hasActiveSubscription,
   'hadAnyInhabitantPrivilege': instance.hadAnyInhabitantPrivilege,
   'detached': instance.detached,
 };
 
-_UserDataResponse _$UserDataResponseFromJson(Map<String, dynamic> json) =>
-    _UserDataResponse(
-      userData: json['userData'] == null
-          ? null
-          : UserData.fromJson(json['userData'] as Map<String, dynamic>),
-      mkkmData: json['mkkmData'] == null
-          ? null
-          : MkkmData.fromJson(json['mkkmData'] as Map<String, dynamic>),
-      cardsNotAdded: json['cardsNotAdded'] as bool?,
-      hasKkmCard: json['hasKkmCard'] as bool?,
-      hasActiveSubscription: json['hasActiveSubscription'] as bool?,
-      canIssueInvoice: json['canIssueInvoice'] as bool?,
-      code: json['code'],
-      message: json['message'] as String?,
-    );
-
-Map<String, dynamic> _$UserDataResponseToJson(_UserDataResponse instance) =>
-    <String, dynamic>{
-      'userData': instance.userData,
-      'mkkmData': instance.mkkmData,
-      'cardsNotAdded': instance.cardsNotAdded,
-      'hasKkmCard': instance.hasKkmCard,
-      'hasActiveSubscription': instance.hasActiveSubscription,
-      'canIssueInvoice': instance.canIssueInvoice,
-      'code': instance.code,
-      'message': instance.message,
-    };
-
-_InhabitantStatus _$InhabitantStatusFromJson(Map<String, dynamic> json) =>
-    _InhabitantStatus(
-      dateFromUtc: json['dateFromUtc'] == null
-          ? null
-          : DateTime.parse(json['dateFromUtc'] as String),
-      dateToUtc: json['dateToUtc'] == null
-          ? null
-          : DateTime.parse(json['dateToUtc'] as String),
-      isActive: json['isActive'] as bool?,
-      firstName: json['firstName'] as String?,
-      lastName: json['lastName'] as String?,
-      photoUrl: json['photoUrl'] as String?,
-      customerCode: json['customerCode'] as String?,
-      code: json['code'],
-      message: json['message'] as String?,
-    );
-
-Map<String, dynamic> _$InhabitantStatusToJson(_InhabitantStatus instance) =>
-    <String, dynamic>{
-      'dateFromUtc': instance.dateFromUtc?.toIso8601String(),
-      'dateToUtc': instance.dateToUtc?.toIso8601String(),
-      'isActive': instance.isActive,
-      'firstName': instance.firstName,
-      'lastName': instance.lastName,
-      'photoUrl': instance.photoUrl,
-      'customerCode': instance.customerCode,
-      'code': instance.code,
-      'message': instance.message,
-    };
-
-_InhabitantContract _$InhabitantContractFromJson(Map<String, dynamic> json) =>
-    _InhabitantContract(
-      expirationDate: _parseEpochMs(json['expirationDate']),
-      contract: json['contract'] as String?,
-    );
-
-Map<String, dynamic> _$InhabitantContractToJson(_InhabitantContract instance) =>
-    <String, dynamic>{
-      'expirationDate': instance.expirationDate?.toIso8601String(),
-      'contract': instance.contract,
-    };
-
-_StreetAutocompleteResponse _$StreetAutocompleteResponseFromJson(
-  Map<String, dynamic> json,
-) => _StreetAutocompleteResponse(
-  streets:
-      (json['streets'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-      const <String>[],
+_UserDataResponse _$UserDataResponseFromJson(Map<String, dynamic> json) => _UserDataResponse(
+  userData: json['userData'] == null ? null : UserData.fromJson(json['userData'] as Map<String, dynamic>),
+  mkkmData: json['mkkmData'] == null ? null : MkkmData.fromJson(json['mkkmData'] as Map<String, dynamic>),
+  cardsNotAdded: json['cardsNotAdded'] as bool?,
+  hasKkmCard: json['hasKkmCard'] as bool?,
+  hasActiveSubscription: json['hasActiveSubscription'] as bool?,
+  canIssueInvoice: json['canIssueInvoice'] as bool?,
   code: json['code'],
   message: json['message'] as String?,
 );
 
-Map<String, dynamic> _$StreetAutocompleteResponseToJson(
-  _StreetAutocompleteResponse instance,
-) => <String, dynamic>{
+Map<String, dynamic> _$UserDataResponseToJson(_UserDataResponse instance) => <String, dynamic>{
+  'userData': instance.userData,
+  'mkkmData': instance.mkkmData,
+  'cardsNotAdded': instance.cardsNotAdded,
+  'hasKkmCard': instance.hasKkmCard,
+  'hasActiveSubscription': instance.hasActiveSubscription,
+  'canIssueInvoice': instance.canIssueInvoice,
+  'code': instance.code,
+  'message': instance.message,
+};
+
+_InhabitantStatus _$InhabitantStatusFromJson(Map<String, dynamic> json) => _InhabitantStatus(
+  dateFromUtc: json['dateFromUtc'] == null ? null : DateTime.parse(json['dateFromUtc'] as String),
+  dateToUtc: json['dateToUtc'] == null ? null : DateTime.parse(json['dateToUtc'] as String),
+  isActive: json['isActive'] as bool?,
+  firstName: json['firstName'] as String?,
+  lastName: json['lastName'] as String?,
+  photoUrl: json['photoUrl'] as String?,
+  customerCode: json['customerCode'] as String?,
+  code: json['code'],
+  message: json['message'] as String?,
+);
+
+Map<String, dynamic> _$InhabitantStatusToJson(_InhabitantStatus instance) => <String, dynamic>{
+  'dateFromUtc': instance.dateFromUtc?.toIso8601String(),
+  'dateToUtc': instance.dateToUtc?.toIso8601String(),
+  'isActive': instance.isActive,
+  'firstName': instance.firstName,
+  'lastName': instance.lastName,
+  'photoUrl': instance.photoUrl,
+  'customerCode': instance.customerCode,
+  'code': instance.code,
+  'message': instance.message,
+};
+
+_InhabitantContract _$InhabitantContractFromJson(Map<String, dynamic> json) =>
+    _InhabitantContract(expirationDate: _parseEpochMs(json['expirationDate']), contract: json['contract'] as String?);
+
+Map<String, dynamic> _$InhabitantContractToJson(_InhabitantContract instance) => <String, dynamic>{
+  'expirationDate': instance.expirationDate?.toIso8601String(),
+  'contract': instance.contract,
+};
+
+_StreetAutocompleteResponse _$StreetAutocompleteResponseFromJson(Map<String, dynamic> json) =>
+    _StreetAutocompleteResponse(
+      streets: (json['streets'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const <String>[],
+      code: json['code'],
+      message: json['message'] as String?,
+    );
+
+Map<String, dynamic> _$StreetAutocompleteResponseToJson(_StreetAutocompleteResponse instance) => <String, dynamic>{
   'streets': instance.streets,
   'code': instance.code,
   'message': instance.message,

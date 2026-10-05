@@ -84,8 +84,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get errorNetwork =>
-      'Could not reach the server. Check your internet connection and try again.';
+  String get errorNetwork => 'Could not reach the server. Check your internet connection and try again.';
 
   @override
   String get errorGeneric => 'Something went wrong. Please try again.';
@@ -115,12 +114,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerLink => 'Create account';
 
   @override
-  String get sessionExpiredNotice =>
-      'Your session has expired. Please sign in again.';
+  String get sessionExpiredNotice => 'Your session has expired. Please sign in again.';
 
   @override
-  String get passwordResetDoneNotice =>
-      'Your password has been changed. You can sign in now.';
+  String get passwordResetDoneNotice => 'Your password has been changed. You can sign in now.';
 
   @override
   String get registerTitle => 'Create account';
@@ -215,12 +212,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get inboxBrowserHint =>
-      'The link opens in your browser. Finish there, then come back and sign in.';
+  String get inboxBrowserHint => 'The link opens in your browser. Finish there, then come back and sign in.';
 
   @override
-  String get inboxAppHint =>
-      'Open the link on this device to continue in the app.';
+  String get inboxAppHint => 'Open the link on this device to continue in the app.';
 
   @override
   String get inboxEnableLinksHint =>
@@ -248,8 +243,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activateSuccess => 'Your account is active. You can sign in now.';
 
   @override
-  String get activateFailure =>
-      'The account could not be activated. The link may have expired or already been used.';
+  String get activateFailure => 'The account could not be activated. The link may have expired or already been used.';
 
   @override
   String get continueToLogin => 'Go to sign in';

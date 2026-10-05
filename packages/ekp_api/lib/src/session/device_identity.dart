@@ -29,9 +29,6 @@ class EkpDeviceIdentity {
   final String userAgent;
 
   /// Placeholder identity for tests — never send to production.
-  factory EkpDeviceIdentity.test() => const EkpDeviceIdentity(
-    deviceId: '0000000000000000',
-    platform: 'test',
-    deviceName: 'ekp_api test',
-  );
+  factory EkpDeviceIdentity.test() =>
+      const EkpDeviceIdentity(deviceId: '0000000000000000', platform: 'test', deviceName: 'ekp_api test');
 }

@@ -27,35 +27,20 @@ class MockAdapter implements HttpClientAdapter {
   final List<_Route> _routes = [];
   final List<RequestOptions> requests = [];
 
-  void on(
-    String method,
-    String pathFragment,
-    List<MockReply> replies, {
-    Map<String, List<String>>? responseHeaders,
-  }) {
+  void on(String method, String pathFragment, List<MockReply> replies, {Map<String, List<String>>? responseHeaders}) {
     _routes.add(_Route(method, pathFragment, replies, responseHeaders));
   }
 
-  void onGet(
-    String pathFragment,
-    List<MockReply> replies, {
-    Map<String, List<String>>? responseHeaders,
-  }) => on('GET', pathFragment, replies, responseHeaders: responseHeaders);
+  void onGet(String pathFragment, List<MockReply> replies, {Map<String, List<String>>? responseHeaders}) =>
+      on('GET', pathFragment, replies, responseHeaders: responseHeaders);
 
-  void onPost(
-    String pathFragment,
-    List<MockReply> replies, {
-    Map<String, List<String>>? responseHeaders,
-  }) => on('POST', pathFragment, replies, responseHeaders: responseHeaders);
+  void onPost(String pathFragment, List<MockReply> replies, {Map<String, List<String>>? responseHeaders}) =>
+      on('POST', pathFragment, replies, responseHeaders: responseHeaders);
 
-  void onPut(
-    String pathFragment,
-    List<MockReply> replies, {
-    Map<String, List<String>>? responseHeaders,
-  }) => on('PUT', pathFragment, replies, responseHeaders: responseHeaders);
+  void onPut(String pathFragment, List<MockReply> replies, {Map<String, List<String>>? responseHeaders}) =>
+      on('PUT', pathFragment, replies, responseHeaders: responseHeaders);
 
-  Iterable<RequestOptions> requestsTo(String fragment) =>
-      requests.where((r) => r.path.contains(fragment));
+  Iterable<RequestOptions> requestsTo(String fragment) => requests.where((r) => r.path.contains(fragment));
 
   @override
   Future<ResponseBody> fetch(
@@ -64,18 +49,12 @@ class MockAdapter implements HttpClientAdapter {
     Future<void>? cancelFuture,
   ) async {
     requests.add(options);
-    final route = _routes.where(
-      (r) => r.method == options.method && options.path.contains(r.fragment),
-    );
+    final route = _routes.where((r) => r.method == options.method && options.path.contains(r.fragment));
     if (route.isEmpty) {
-      throw StateError(
-        'No mock registered for ${options.method} ${options.path}',
-      );
+      throw StateError('No mock registered for ${options.method} ${options.path}');
     }
     final r = route.first;
-    final index = r.cursor < r.replies.length
-        ? r.cursor++
-        : r.replies.length - 1;
+    final index = r.cursor < r.replies.length ? r.cursor++ : r.replies.length - 1;
     final (status, body) = r.replies[index];
     final data = switch (body) {
       null => '',

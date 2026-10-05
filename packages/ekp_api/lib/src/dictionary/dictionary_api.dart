@@ -9,36 +9,24 @@ class DictionaryApi extends EkpApiService {
   /// `GET dictionary/ticket-kind-list`
   Future<TicketKindListResponse> ticketKindList() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.ticketKindList,
-      );
-      return TicketKindListResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.ticketKindList);
+      return TicketKindListResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `GET dictionary/ticket-number-of-line-list`
   Future<TicketNumberOfLineListResponse> ticketNumberOfLineList() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.ticketNumberOfLineList,
-      );
-      return TicketNumberOfLineListResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.ticketNumberOfLineList);
+      return TicketNumberOfLineListResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `GET dictionary/ticket-period-list`
   Future<TicketPeriodListResponse> ticketPeriodList() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.ticketPeriodList,
-      );
-      return TicketPeriodListResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.ticketPeriodList);
+      return TicketPeriodListResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -52,21 +40,15 @@ class DictionaryApi extends EkpApiService {
         EkpApiPaths.transportLine,
         queryParameters: {'number': number},
       );
-      return TransportLineResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return TransportLineResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `GET dictionary/city-card-types`
   Future<CityCardTypesResponse> cityCardTypes() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.cityCardTypes,
-      );
-      return CityCardTypesResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.cityCardTypes);
+      return CityCardTypesResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 }

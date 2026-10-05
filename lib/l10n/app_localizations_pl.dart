@@ -92,8 +92,7 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get errorNetwork =>
-      'Nie udało się połączyć z serwerem. Sprawdź połączenie z internetem i spróbuj ponownie.';
+  String get errorNetwork => 'Nie udało się połączyć z serwerem. Sprawdź połączenie z internetem i spróbuj ponownie.';
 
   @override
   String get errorGeneric => 'Coś poszło nie tak. Spróbuj ponownie.';
@@ -126,8 +125,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get sessionExpiredNotice => 'Sesja wygasła. Zaloguj się ponownie.';
 
   @override
-  String get passwordResetDoneNotice =>
-      'Hasło zostało zmienione. Możesz się zalogować.';
+  String get passwordResetDoneNotice => 'Hasło zostało zmienione. Możesz się zalogować.';
 
   @override
   String get registerTitle => 'Załóż konto';
@@ -181,8 +179,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get birthDateLabel => 'Data urodzenia';
 
   @override
-  String get birthDateFromPeselHelper =>
-      'Uzupełniana na podstawie numeru PESEL';
+  String get birthDateFromPeselHelper => 'Uzupełniana na podstawie numeru PESEL';
 
   @override
   String get birthDateRequired => 'Wybierz datę urodzenia';
@@ -203,8 +200,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get forgotTitle => 'Resetowanie hasła';
 
   @override
-  String get forgotBody =>
-      'Podaj adres e-mail swojego konta, a wyślemy Ci link do ustawienia nowego hasła.';
+  String get forgotBody => 'Podaj adres e-mail swojego konta, a wyślemy Ci link do ustawienia nowego hasła.';
 
   @override
   String get forgotSubmit => 'Wyślij link';
@@ -223,12 +219,10 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get inboxBrowserHint =>
-      'Link otworzy się w przeglądarce. Dokończ tam, a potem wróć i zaloguj się.';
+  String get inboxBrowserHint => 'Link otworzy się w przeglądarce. Dokończ tam, a potem wróć i zaloguj się.';
 
   @override
-  String get inboxAppHint =>
-      'Otwórz link na tym urządzeniu, aby kontynuować w aplikacji.';
+  String get inboxAppHint => 'Otwórz link na tym urządzeniu, aby kontynuować w aplikacji.';
 
   @override
   String get inboxEnableLinksHint =>
@@ -256,8 +250,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get activateSuccess => 'Konto jest aktywne. Możesz się zalogować.';
 
   @override
-  String get activateFailure =>
-      'Nie udało się aktywować konta. Link mógł wygasnąć lub został już użyty.';
+  String get activateFailure => 'Nie udało się aktywować konta. Link mógł wygasnąć lub został już użyty.';
 
   @override
   String get continueToLogin => 'Przejdź do logowania';

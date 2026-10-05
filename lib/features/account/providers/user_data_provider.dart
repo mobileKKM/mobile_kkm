@@ -7,9 +7,7 @@ import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
 import 'package:mobile_kkm/features/auth/providers/auth_controller.dart';
 
 /// Persistence for [userDataProvider], supplied in `main()`.
-final userDataCacheProvider = Provider<UserDataCache>(
-  (ref) => throw UnimplementedError('overridden in main()'),
-);
+final userDataCacheProvider = Provider<UserDataCache>((ref) => throw UnimplementedError('overridden in main()'));
 
 /// The signed-in user's account data: loaded once, held in memory for the
 /// whole session and mirrored to [UserDataCache].
@@ -21,9 +19,7 @@ final userDataCacheProvider = Provider<UserDataCache>(
 class UserDataController extends AsyncNotifier<UserDataResponse?> {
   @override
   Future<UserDataResponse?> build() async {
-    final status = ref.watch(
-      authControllerProvider.select((state) => state.status),
-    );
+    final status = ref.watch(authControllerProvider.select((state) => state.status));
     final cache = ref.watch(userDataCacheProvider);
 
     switch (status) {
@@ -63,8 +59,7 @@ class UserDataController extends AsyncNotifier<UserDataResponse?> {
   }
 }
 
-final userDataProvider =
-    AsyncNotifierProvider<UserDataController, UserDataResponse?>(
-      UserDataController.new,
-      retry: (_, _) => null,
-    );
+final userDataProvider = AsyncNotifierProvider<UserDataController, UserDataResponse?>(
+  UserDataController.new,
+  retry: (_, _) => null,
+);

@@ -9,16 +9,8 @@ void main() {
       final session = AuthSession.fromJson(fixture('login_response'));
       expect(session.token, 'aaa.bbb.ccc');
       expect(session.refresh, 'feedfacefeedfacefeedfacefeedface');
-      expect(
-        session.expires!.isUtc,
-        isTrue,
-        reason: 'Z-suffixed dates are UTC',
-      );
-      expect(
-        session.isExpired,
-        isTrue,
-        reason: 'the fixture expiry lies in the past',
-      );
+      expect(session.expires!.isUtc, isTrue, reason: 'Z-suffixed dates are UTC');
+      expect(session.isExpired, isTrue, reason: 'the fixture expiry lies in the past');
     });
 
     test('PasswordPolicy parses', () {
@@ -29,9 +21,7 @@ void main() {
     });
 
     test('CodeMessageResponse exposes string code accessors', () {
-      final res = CodeMessageResponse.fromJson(
-        fixture('change_password_error'),
-      );
+      final res = CodeMessageResponse.fromJson(fixture('change_password_error'));
       expect(res.codeAsString, 'PasswordInHistory');
       expect(res.message, 'Hasło zostało już użyte w przeszłości');
     });
@@ -53,11 +43,7 @@ void main() {
       expect(user.pesel, '90010112345');
       expect(user.email, 'test@example.com');
       expect(user.registeredAddress!.city, 'Kraków');
-      expect(
-        res.mkkmData!.customerCode,
-        '100001',
-        reason: 'mkkmData.customerCode is sanitized numeric-as-string',
-      );
+      expect(res.mkkmData!.customerCode, '100001', reason: 'mkkmData.customerCode is sanitized numeric-as-string');
       expect(res.mkkmData!.hasInhabitantPrivilege, isTrue);
       expect(res.canIssueInvoice, isFalse);
     });
@@ -77,18 +63,14 @@ void main() {
     });
 
     test('StreetAutocompleteResponse parses', () {
-      final res = StreetAutocompleteResponse.fromJson(
-        fixture('street_autocomplete'),
-      );
+      final res = StreetAutocompleteResponse.fromJson(fixture('street_autocomplete'));
       expect(res.streets, ['TESTOWA']);
     });
   });
 
   group('storage medium models', () {
     test('StorageMediumListResponse parses and filters mKKM', () {
-      final res = StorageMediumListResponse.fromJson(
-        fixture('storage_medium_list'),
-      );
+      final res = StorageMediumListResponse.fromJson(fixture('storage_medium_list'));
       expect(res.items, hasLength(2));
       expect(res.items.every((m) => m.canBuyTickets == true), isTrue);
       final mkkm = res.mkkmMedia;
@@ -109,9 +91,7 @@ void main() {
     });
 
     test('TicketNumberOfLineListResponse parses', () {
-      final res = TicketNumberOfLineListResponse.fromJson(
-        fixture('ticket_number_of_line_list'),
-      );
+      final res = TicketNumberOfLineListResponse.fromJson(fixture('ticket_number_of_line_list'));
       final all = res.list.firstWhere((l) => l.code == 3);
       expect(all.description, 'Wszystkie linie - Strefa I');
       expect(all.selectableLines, isFalse);
@@ -119,9 +99,7 @@ void main() {
     });
 
     test('TicketPeriodListResponse parses', () {
-      final res = TicketPeriodListResponse.fromJson(
-        fixture('ticket_period_list'),
-      );
+      final res = TicketPeriodListResponse.fromJson(fixture('ticket_period_list'));
       final one = res.list.firstWhere((p) => p.code == 1);
       expect(one.value, 1);
       expect(one.unit, 2, reason: '2 = months');
@@ -171,11 +149,7 @@ void main() {
       expect(ticket.ticketGuid, 'feedfacefeedfacefeedfacefeedface');
       expect(ticket.transactionCode, isNotNull);
       expect(ticket.price, 99.0);
-      expect(
-        ticket.datePurchase!.microsecond,
-        greaterThan(0),
-        reason: 'sub-millisecond fractions survive parsing',
-      );
+      expect(ticket.datePurchase!.microsecond, greaterThan(0), reason: 'sub-millisecond fractions survive parsing');
       expect(ticket.forCitizen, isTrue);
       expect(ticket.canAssign, isTrue);
     });
@@ -204,21 +178,13 @@ void main() {
         expect(entry.transactionStateId, 5);
         expect(entry.paymentStateId, 5);
         expect(entry.isPayed, isFalse);
-        expect(
-          entry.transactionStateDescription,
-          'Transakcja anulowana',
-        );
-        expect(
-          entry.paymentStateDescription,
-          contains('anulowana'),
-        );
+        expect(entry.transactionStateDescription, 'Transakcja anulowana');
+        expect(entry.paymentStateDescription, contains('anulowana'));
       }
     });
 
     test('paid future-dated ticket is active, assignable, unassigned', () {
-      final res = MkkmTicketsResponse.fromJson(
-        fixture('mkkm_tickets_paid_future'),
-      );
+      final res = MkkmTicketsResponse.fromJson(fixture('mkkm_tickets_paid_future'));
       final ticket = res.tickets.single;
       // Paid = active, even before startDate (2025-10-01T00:00 local).
       expect(ticket.statusEnum, MkkmTicketStatus.active);
@@ -229,9 +195,7 @@ void main() {
     });
 
     test('pending ticket list parses typed transport lines', () {
-      final res = MkkmTicketsResponse.fromJson(
-        fixture('mkkm_tickets_pending'),
-      );
+      final res = MkkmTicketsResponse.fromJson(fixture('mkkm_tickets_pending'));
       expect(res.tickets, hasLength(2));
       expect(res.tickets.first.statusEnum, MkkmTicketStatus.active);
       final pending = res.tickets.last;
@@ -247,25 +211,18 @@ void main() {
     });
 
     test('TicketDetailResponse parses state history lists', () {
-      final res = TicketDetailResponse.fromJson(
-        fixture('ticket_detail_returned'),
-      );
+      final res = TicketDetailResponse.fromJson(fixture('ticket_detail_returned'));
       expect(res.ticket!.transactionCode, isNotNull);
       expect(res.ticketEkp!.statusEnum, MkkmTicketStatus.returned);
       expect(res.canReturn, isFalse, reason: 'already returned');
       expect(res.transactionStateList, isNotNull);
-      expect(
-        res.transactionStateList!.first.stateDescription,
-        contains('zakończona'),
-      );
+      expect(res.transactionStateList!.first.stateDescription, contains('zakończona'));
       expect(res.paymentStateList, hasLength(2));
       expect(res.downloads, isNull);
     });
 
     test('TicketDetailResponse parses active ticket as returnable', () {
-      final res = TicketDetailResponse.fromJson(
-        fixture('ticket_detail_active'),
-      );
+      final res = TicketDetailResponse.fromJson(fixture('ticket_detail_active'));
       expect(res.ticketEkp!.statusEnum, MkkmTicketStatus.active);
       expect(res.canReturn, isTrue);
       expect(res.possibleRefundViaTpay, isNotNull);
@@ -286,11 +243,7 @@ void main() {
       final res = TicketCalculation.fromJson(fixture('tickets_calculate'));
       expect(res.price, 99.0);
       expect(res.commodityName, 'Bilet norm. mieszk. 1-mies. sieciowy st. I');
-      expect(
-        res.ticketKindCode,
-        21,
-        reason: 'server maps requested kind 2 → effective 21 for residents',
-      );
+      expect(res.ticketKindCode, 21, reason: 'server maps requested kind 2 → effective 21 for residents');
       expect(res.hasSimilarTicket, isFalse);
     });
 
@@ -302,9 +255,7 @@ void main() {
     });
 
     test('TicketReturnCalculation parses refund preview', () {
-      final res = TicketReturnCalculation.fromJson(
-        fixture('ticket_returns_calculate'),
-      );
+      final res = TicketReturnCalculation.fromJson(fixture('ticket_returns_calculate'));
       expect(res.returnPrice, 92.4);
       expect(res.newTicketExpiryDate, isNotNull);
     });
@@ -331,9 +282,7 @@ void main() {
 
   group('subscription models', () {
     test('SubscriptionDetails parses unsigned state', () {
-      final res = SubscriptionDetails.fromJson(
-        fixture('subscriptions_details'),
-      );
+      final res = SubscriptionDetails.fromJson(fixture('subscriptions_details'));
       expect(res.isSubscriptionSignedIn, isFalse);
       expect(res.counter, 0);
       expect(res.activeTicket, isNull);
@@ -341,18 +290,13 @@ void main() {
     });
 
     test('SubscriptionDetails parses the signed-in shape', () {
-      final res = SubscriptionDetails.fromJson(
-        fixture('subscriptions_details_signed'),
-      );
+      final res = SubscriptionDetails.fromJson(fixture('subscriptions_details_signed'));
       expect(res.isSubscriptionSignedIn, isTrue);
       expect(res.maskedCardNumber, '****1234');
       expect(res.isAutomaticSubscriptionEnabled, isFalse);
       expect(res.isCycleRefreshEnabled, isFalse);
       // Local time WITHOUT a UTC offset on the wire.
-      expect(
-        res.subscriptionSignedInDate!.toIso8601String(),
-        '2025-10-01T15:43:39.107',
-      );
+      expect(res.subscriptionSignedInDate!.toIso8601String(), '2025-10-01T15:43:39.107');
       final detail = res.customerDetail!;
       expect(detail.firstName, 'JAN');
       expect(detail.lastName, 'TESTOWY');
@@ -363,17 +307,13 @@ void main() {
     });
 
     test('SubscriptionAvailableActions parses', () {
-      final res = SubscriptionAvailableActions.fromJson(
-        fixture('subscriptions_actions'),
-      );
+      final res = SubscriptionAvailableActions.fromJson(fixture('subscriptions_actions'));
       expect(res.buyTicket, isFalse);
       expect(res.newCard, isFalse);
     });
 
     test('SubscriptionAvailableActions parses signed-in actions', () {
-      final res = SubscriptionAvailableActions.fromJson(
-        fixture('subscriptions_actions_signed'),
-      );
+      final res = SubscriptionAvailableActions.fromJson(fixture('subscriptions_actions_signed'));
       expect(res.changeCard, isTrue);
       expect(res.buyTicket, isTrue);
       expect(res.newCard, isFalse);

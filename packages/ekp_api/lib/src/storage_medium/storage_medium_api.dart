@@ -12,12 +12,8 @@ class StorageMediumApi extends EkpApiService {
   /// `GET storage-medium/list`
   Future<StorageMediumListResponse> list() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.storageMediumList,
-      );
-      return StorageMediumListResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.storageMediumList);
+      return StorageMediumListResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 

@@ -9,11 +9,7 @@ final passwordPolicyProvider = FutureProvider.autoDispose<PasswordPolicy>(
 );
 
 /// `auth/marketing-consents` — the registration checkboxes.
-final marketingConsentsProvider =
-    FutureProvider.autoDispose<List<MarketingConsent>>((ref) async {
-      final response = await ref
-          .watch(ekpClientProvider)
-          .auth
-          .marketingConsents();
-      return response.marketingConsents;
-    }, retry: (_, _) => null);
+final marketingConsentsProvider = FutureProvider.autoDispose<List<MarketingConsent>>((ref) async {
+  final response = await ref.watch(ekpClientProvider).auth.marketingConsents();
+  return response.marketingConsents;
+}, retry: (_, _) => null);

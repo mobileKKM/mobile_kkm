@@ -12,36 +12,24 @@ class SubscriptionsApi extends EkpApiService {
   /// `GET subscriptions/details`
   Future<SubscriptionDetails> details() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.subscriptionsDetails,
-      );
-      return SubscriptionDetails.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.subscriptionsDetails);
+      return SubscriptionDetails.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `GET subscriptions/available-actions`
   Future<SubscriptionAvailableActions> availableActions() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.subscriptionsAvailableActions,
-      );
-      return SubscriptionAvailableActions.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.subscriptionsAvailableActions);
+      return SubscriptionAvailableActions.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `GET subscriptions/marketing-consents`
   Future<SubscriptionMarketingConsentsResponse> marketingConsents() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.subscriptionsMarketingConsents,
-      );
-      return SubscriptionMarketingConsentsResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.subscriptionsMarketingConsents);
+      return SubscriptionMarketingConsentsResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -78,8 +66,7 @@ class SubscriptionsApi extends EkpApiService {
           'pesel': pesel,
           'ccCustomerId': ccCustomerId,
           'marketingConsents': [
-            for (final c in marketingConsents)
-              {'id': c.id, 'content': c.content, 'isChecked': c.isChecked},
+            for (final c in marketingConsents) {'id': c.id, 'content': c.content, 'isChecked': c.isChecked},
           ],
           'isCycleRefreshEnabled': isCycleRefreshEnabled,
         },

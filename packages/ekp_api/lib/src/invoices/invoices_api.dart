@@ -24,9 +24,7 @@ class InvoicesApi extends EkpApiService {
           'request.sortDirection': sortDirection,
         },
       );
-      return InvoiceListResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return InvoiceListResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 }

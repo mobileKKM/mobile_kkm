@@ -33,8 +33,7 @@ abstract class StorageMedium with _$StorageMedium {
 
   const StorageMedium._();
 
-  factory StorageMedium.fromJson(Map<String, dynamic> json) =>
-      _$StorageMediumFromJson(json);
+  factory StorageMedium.fromJson(Map<String, dynamic> json) => _$StorageMediumFromJson(json);
 
   /// Whether this medium is the mobile Kraków City Card (`cityCardCode == 8`).
   bool get isMkkm => cityCardCode == 8;
@@ -43,16 +42,13 @@ abstract class StorageMedium with _$StorageMedium {
 /// `GET storage-medium/list` — note the `items` key (not `list`).
 @freezed
 abstract class StorageMediumListResponse with _$StorageMediumListResponse {
-  const factory StorageMediumListResponse({
-    @Default(<StorageMedium>[]) List<StorageMedium> items,
-  }) = _StorageMediumListResponse;
+  const factory StorageMediumListResponse({@Default(<StorageMedium>[]) List<StorageMedium> items}) =
+      _StorageMediumListResponse;
 
   const StorageMediumListResponse._();
 
-  factory StorageMediumListResponse.fromJson(Map<String, dynamic> json) =>
-      _$StorageMediumListResponseFromJson(json);
+  factory StorageMediumListResponse.fromJson(Map<String, dynamic> json) => _$StorageMediumListResponseFromJson(json);
 
   /// All media that are the mobile Kraków City Card.
-  List<StorageMedium> get mkkmMedia =>
-      items.where((m) => m.isMkkm).toList(growable: false);
+  List<StorageMedium> get mkkmMedia => items.where((m) => m.isMkkm).toList(growable: false);
 }

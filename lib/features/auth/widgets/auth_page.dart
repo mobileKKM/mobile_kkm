@@ -16,10 +16,7 @@ class AuthPage extends StatelessWidget {
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
-              child: child,
-            ),
+            child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 480), child: child),
           ),
         ),
       ),

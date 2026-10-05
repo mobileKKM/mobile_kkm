@@ -17,9 +17,7 @@ class _DataNoticeState extends State<DataNotice> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final style = theme.textTheme.bodySmall?.copyWith(
-      color: theme.colorScheme.onSurfaceVariant,
-    );
+    final style = theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -37,12 +35,7 @@ class _DataNoticeState extends State<DataNotice> {
                     end: Alignment.bottomCenter,
                     colors: [Colors.black, Colors.transparent],
                   ).createShader(bounds),
-                  child: Text(
-                    informationObligation,
-                    style: style,
-                    maxLines: 3,
-                    overflow: TextOverflow.clip,
-                  ),
+                  child: Text(informationObligation, style: style, maxLines: 3, overflow: TextOverflow.clip),
                 ),
         ),
         TextButton(

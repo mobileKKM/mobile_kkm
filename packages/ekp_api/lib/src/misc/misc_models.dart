@@ -8,24 +8,17 @@ part 'misc_models.g.dart';
 /// `GET service-status`
 @freezed
 abstract class ServiceStatus with _$ServiceStatus {
-  const factory ServiceStatus({bool? isAvailable, String? customMessage}) =
-      _ServiceStatus;
+  const factory ServiceStatus({bool? isAvailable, String? customMessage}) = _ServiceStatus;
 
-  factory ServiceStatus.fromJson(Map<String, dynamic> json) =>
-      _$ServiceStatusFromJson(json);
+  factory ServiceStatus.fromJson(Map<String, dynamic> json) => _$ServiceStatusFromJson(json);
 }
 
 /// `salesViewAnnouncement` in the mobile app config.
 @freezed
 abstract class SalesAnnouncement with _$SalesAnnouncement {
-  const factory SalesAnnouncement({
-    String? text,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) = _SalesAnnouncement;
+  const factory SalesAnnouncement({String? text, DateTime? startDate, DateTime? endDate}) = _SalesAnnouncement;
 
-  factory SalesAnnouncement.fromJson(Map<String, dynamic> json) =>
-      _$SalesAnnouncementFromJson(json);
+  factory SalesAnnouncement.fromJson(Map<String, dynamic> json) => _$SalesAnnouncementFromJson(json);
 }
 
 /// `GET client/mobile-app/config` — feature flags, document URLs and the
@@ -53,6 +46,5 @@ abstract class MobileAppConfig with EkpCodeMessage, _$MobileAppConfig {
     String? message,
   }) = _MobileAppConfig;
 
-  factory MobileAppConfig.fromJson(Map<String, dynamic> json) =>
-      _$MobileAppConfigFromJson(json);
+  factory MobileAppConfig.fromJson(Map<String, dynamic> json) => _$MobileAppConfigFromJson(json);
 }

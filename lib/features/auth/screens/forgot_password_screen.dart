@@ -15,8 +15,7 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() =>
-      _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
@@ -77,10 +76,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           children: [
             Text(l10n.forgotBody),
             const SizedBox(height: 24),
-            if (_error != null) ...[
-              MessageBanner(_error!),
-              const SizedBox(height: 16),
-            ],
+            if (_error != null) ...[MessageBanner(_error!), const SizedBox(height: 16)],
             TextFormField(
               controller: _email,
               keyboardType: TextInputType.emailAddress,
@@ -92,11 +88,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               onFieldSubmitted: (_) => _submit(),
             ),
             const SizedBox(height: 24),
-            SubmitButton(
-              label: l10n.forgotSubmit,
-              loading: _submitting,
-              onPressed: _submit,
-            ),
+            SubmitButton(label: l10n.forgotSubmit, loading: _submitting, onPressed: _submit),
           ],
         ),
       ),

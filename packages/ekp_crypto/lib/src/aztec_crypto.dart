@@ -73,8 +73,7 @@ class EkpAztecCrypto {
       final key = parseRsaPublicKey(publicKeyPem);
       // PKCS#1 v1.5 with randomized type-2 padding: init() without an
       // explicit SecureRandom auto-seeds pointycastle's FortunaRandom.
-      final rsa = PKCS1Encoding(RSAEngine())
-        ..init(true, PublicKeyParameter<RSAPublicKey>(key));
+      final rsa = PKCS1Encoding(RSAEngine())..init(true, PublicKeyParameter<RSAPublicKey>(key));
       final block = rsa.process(Uint8List.fromList(plaintext));
       return encodeAndroidDefault(block);
     } on Object catch (e) {
@@ -94,16 +93,11 @@ class EkpAztecCrypto {
       if (blob.length < 32 || (blob.length - 16) % 16 != 0) return null;
       // AES-128-CBC + PKCS#7 — the crypto-js defaults the official client
       // relies on (PaddedBlockCipherImpl(PKCS7, CBC(AES)) == 'AES/CBC/PKCS7').
-      final aes = PaddedBlockCipherImpl(
-        PKCS7Padding(),
-        CBCBlockCipher(AESEngine()),
-      )..init(
+      final aes = PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()))
+        ..init(
           false,
           PaddedBlockCipherParameters(
-            ParametersWithIV(
-              KeyParameter(utf8.encode(environment.aesKeyOf(secret))),
-              blob.sublist(0, 16),
-            ),
+            ParametersWithIV(KeyParameter(utf8.encode(environment.aesKeyOf(secret))), blob.sublist(0, 16)),
             null,
           ),
         );
@@ -135,9 +129,7 @@ RSAPublicKey parseRsaPublicKey(String pem) {
     // SPKI: SEQUENCE { AlgorithmIdentifier, BIT STRING { SEQUENCE { n, e } } }
     final spki = _parseAsn1Sequence(rows);
     final bitString = spki.elements[1];
-    sequence = ASN1Parser(
-      Uint8List.fromList(bitString.valueBytes().sublist(1)),
-    ).nextObject() as ASN1Sequence;
+    sequence = ASN1Parser(Uint8List.fromList(bitString.valueBytes().sublist(1))).nextObject() as ASN1Sequence;
   } else {
     throw FormatException('Unable to parse key, invalid format.', header);
   }

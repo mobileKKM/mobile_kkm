@@ -9,10 +9,7 @@ class SectionHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: Semantics(
-        header: true,
-        child: Text(title, style: Theme.of(context).textTheme.titleMedium),
-      ),
+      child: Semantics(header: true, child: Text(title, style: Theme.of(context).textTheme.titleMedium)),
     );
   }
 }

@@ -10,22 +10,11 @@ const baseUrl = 'https://api.ekp.mpk.krakow.pl';
 const tokenA = 'aaa.payload-a.sig-a-1234567890abcdef12345678';
 const tokenB = 'bbb.payload-b.sig-b-1234567890abcdef12345678';
 
-final sessionA = AuthSession(
-  token: tokenA,
-  refresh: 'refresh-a',
-  expires: DateTime.utc(2030, 1, 1),
-);
+final sessionA = AuthSession(token: tokenA, refresh: 'refresh-a', expires: DateTime.utc(2030, 1, 1));
 
 /// A successful recover rotation to [tokenB].
 const recoverSuccessReplies = [
-  (
-    200,
-    {
-      'token': tokenB,
-      'refresh': 'refresh-b',
-      'expires': '2030-01-02T00:00:00Z',
-    },
-  ),
+  (200, {'token': tokenB, 'refresh': 'refresh-b', 'expires': '2030-01-02T00:00:00Z'}),
 ];
 
 void main() {
@@ -42,11 +31,7 @@ void main() {
     dio.httpClientAdapter = adapter;
 
     client = EkpClient(
-      device: const EkpDeviceIdentity(
-        deviceId: 'deadbeefdeadbeef',
-        platform: 'android 34',
-        deviceName: 'test device',
-      ),
+      device: const EkpDeviceIdentity(deviceId: 'deadbeefdeadbeef', platform: 'android 34', deviceName: 'test device'),
       tokenStore: store,
       dio: dio,
     );
@@ -61,8 +46,7 @@ void main() {
   Map<String, String?> headersOf(RequestOptions options) =>
       options.headers.map((k, v) => MapEntry(k.toLowerCase(), v?.toString()));
 
-  Iterable<RequestOptions> requestsTo(String fragment) =>
-      adapter.requestsTo(fragment);
+  Iterable<RequestOptions> requestsTo(String fragment) => adapter.requestsTo(fragment);
 
   group('login', () {
     test('stores session and emits authenticated event', () async {
@@ -79,26 +63,15 @@ void main() {
       await client.auth.login('test@example.com', 'pw');
 
       final req = requestsTo('/auth/login').single;
-      expect(
-        (req.data as Map<String, dynamic>)['deviceId'],
-        'deadbeefdeadbeef',
-      );
+      expect((req.data as Map<String, dynamic>)['deviceId'], 'deadbeefdeadbeef');
       expect((req.data as Map<String, dynamic>)['deviceName'], 'test device');
       final headers = headersOf(req);
       expect(headers['x-device-id'], 'deadbeefdeadbeef');
       expect(headers['x-platform'], 'android 34');
       expect(headers['x-client-version'], '1.6.10');
       expect(headers['accept'], 'application/json');
-      expect(
-        headers['user-agent'],
-        'okhttp/4.12.0',
-        reason: 'dart:io would advertise Dart/x.y — instant fingerprint',
-      );
-      expect(
-        headers.containsKey('authorization'),
-        isFalse,
-        reason: 'anonymous endpoint must not carry a Bearer token',
-      );
+      expect(headers['user-agent'], 'okhttp/4.12.0', reason: 'dart:io would advertise Dart/x.y — instant fingerprint');
+      expect(headers.containsKey('authorization'), isFalse, reason: 'anonymous endpoint must not carry a Bearer token');
     });
 
     test('wrong credentials map to EkpUnauthorizedException', () async {
@@ -107,23 +80,14 @@ void main() {
       ]);
       await expectLater(
         client.auth.login('x@y.z', 'bad'),
-        throwsA(
-          isA<EkpUnauthorizedException>().having(
-            (e) => e.message,
-            'message',
-            'Nieprawidłowy e-mail lub hasło.',
-          ),
-        ),
+        throwsA(isA<EkpUnauthorizedException>().having((e) => e.message, 'message', 'Nieprawidłowy e-mail lub hasło.')),
       );
       expect(await store.read(), isNull);
     });
 
     test('inactive account: login 400 surfaces as EkpHttpException', () async {
       adapter.onPost('/auth/login', [
-        (
-          400,
-          {'message': 'Konto jest nieaktywne', 'exceptionCode': 259, 'code': 1},
-        ),
+        (400, {'message': 'Konto jest nieaktywne', 'exceptionCode': 259, 'code': 1}),
       ]);
       await expectLater(
         client.auth.login('x@y.z', 'never-activated'),
@@ -149,13 +113,9 @@ void main() {
         password: 'Sup3rSecret!',
         birthDate: DateTime(1983, 9, 28),
       );
-      final body =
-          requestsTo('/auth/register').single.data as Map<String, dynamic>;
+      final body = requestsTo('/auth/register').single.data as Map<String, dynamic>;
       expect(body.containsKey('pesel'), isFalse);
-      expect(
-        body['birthDate'],
-        matches(RegExp(r'^1983-09-28T00:00:00[+-]\d{2}:\d{2}$')),
-      );
+      expect(body['birthDate'], matches(RegExp(r'^1983-09-28T00:00:00[+-]\d{2}:\d{2}$')));
       expect(body['repeat_email'], body['email']);
     });
 
@@ -173,13 +133,9 @@ void main() {
         // official app prefills birthDate from the PESEL and sends both).
         birthDate: DateTime(1990, 1, 1),
       );
-      final body =
-          requestsTo('/auth/register').single.data as Map<String, dynamic>;
+      final body = requestsTo('/auth/register').single.data as Map<String, dynamic>;
       expect(body['pesel'], '90010112345');
-      expect(
-        (body['birthDate'] as String).startsWith('1990-01-01T00:00:00'),
-        isTrue,
-      );
+      expect((body['birthDate'] as String).startsWith('1990-01-01T00:00:00'), isTrue);
     });
 
     test('register always sends a birthDate', () async {
@@ -193,80 +149,60 @@ void main() {
         password: 'x',
         birthDate: DateTime(1983, 9, 28),
       );
-      final body =
-          requestsTo('/auth/register').single.data as Map<String, dynamic>;
+      final body = requestsTo('/auth/register').single.data as Map<String, dynamic>;
       expect(body['pesel'], isNull);
       expect(body['birthDate'], startsWith('1983-09-28T00:00:00'));
     });
   });
 
   group('device headers on authenticated calls', () {
-    test(
-      'Bearer attached for non-auth endpoints when session exists',
-      () async {
-        await store.write(sessionA);
-        adapter.onGet('/account/user-data', [(200, fixture('user_data'))]);
-        await client.account.userData();
-        final req = requestsTo('/account/user-data').single;
-        final headers = headersOf(req);
-        expect(headers['authorization'], 'Bearer $tokenA');
-        expect(headers['x-device-name'], 'test device');
-        expect(headers['x-platform'], 'android 34');
-        expect(headers['user-agent'], 'okhttp/4.12.0');
-        expect(
-          headers['content-type'],
-          'application/json',
-          reason: 'okhttp sends content-type even on bodyless GETs',
-        );
-      },
-    );
+    test('Bearer attached for non-auth endpoints when session exists', () async {
+      await store.write(sessionA);
+      adapter.onGet('/account/user-data', [(200, fixture('user_data'))]);
+      await client.account.userData();
+      final req = requestsTo('/account/user-data').single;
+      final headers = headersOf(req);
+      expect(headers['authorization'], 'Bearer $tokenA');
+      expect(headers['x-device-name'], 'test device');
+      expect(headers['x-platform'], 'android 34');
+      expect(headers['user-agent'], 'okhttp/4.12.0');
+      expect(headers['content-type'], 'application/json', reason: 'okhttp sends content-type even on bodyless GETs');
+    });
 
-    test(
-      'token/recover travels the normal pipeline: x-headers, no Bearer',
-      () async {
-        await store.write(sessionA);
-        adapter.onPost('/auth/token/recover', [
-          (200, fixture('token_recover_response')),
-        ]);
-        final ok = await client.session.recover();
-        expect(ok, isTrue);
+    test('token/recover travels the normal pipeline: x-headers, no Bearer', () async {
+      await store.write(sessionA);
+      adapter.onPost('/auth/token/recover', [(200, fixture('token_recover_response'))]);
+      final ok = await client.session.recover();
+      expect(ok, isTrue);
 
-        final req = requestsTo('/auth/token/recover').single;
-        final body = req.data as Map<String, dynamic>;
-        expect(body['token'], 'refresh-a');
-        expect(body['deviceId'], 'deadbeefdeadbeef');
-        expect(body['deviceName'], 'test device');
-        final headers = headersOf(req);
-        expect(headers['x-device-id'], 'deadbeefdeadbeef');
-        expect(headers['x-client-version'], '1.6.10');
-        expect(
-          headers['authorization'],
-          isNull,
-          reason: 'token endpoints are exempt from Bearer injection',
-        );
-      },
-    );
+      final req = requestsTo('/auth/token/recover').single;
+      final body = req.data as Map<String, dynamic>;
+      expect(body['token'], 'refresh-a');
+      expect(body['deviceId'], 'deadbeefdeadbeef');
+      expect(body['deviceName'], 'test device');
+      final headers = headersOf(req);
+      expect(headers['x-device-id'], 'deadbeefdeadbeef');
+      expect(headers['x-client-version'], '1.6.10');
+      expect(headers['authorization'], isNull, reason: 'token endpoints are exempt from Bearer injection');
+    });
   });
 
   group('token transport', () {
-    test(
-      'logout sends Bearer + device id, clears store and emits logged out',
-      () async {
-        await store.write(sessionA);
-        adapter.onPost('/auth/logout', [(200, '"Successfully logged out."')]);
-        await client.auth.logout();
+    test('logout sends Bearer + device id, clears store and emits logged out', () async {
+      await store.write(sessionA);
+      adapter.onPost('/auth/logout', [(200, '"Successfully logged out."')]);
+      await client.auth.logout();
 
-        expect(await store.read(), isNull);
-        expect(events.whereType<EkpSessionLoggedOut>(), isNotEmpty);
-        final req = requestsTo('/auth/logout').single;
-        expect(req.queryParameters['id'], 'deadbeefdeadbeef');
-        expect(
-          headersOf(req)['authorization'],
-          'Bearer $tokenA',
-          reason: 'Bearer is the primary credential; cookies are not needed',
-        );
-      },
-    );
+      expect(await store.read(), isNull);
+      expect(events.whereType<EkpSessionLoggedOut>(), isNotEmpty);
+      final req = requestsTo('/auth/logout').single;
+      expect(req.queryParameters['id'], 'deadbeefdeadbeef');
+      expect(
+        headersOf(req)['authorization'],
+        'Bearer $tokenA',
+        reason: 'Bearer is the primary credential; cookies are not needed',
+      );
+    });
 
     test('recover rotates the session and emits updated', () async {
       await store.write(sessionA);
@@ -300,11 +236,7 @@ void main() {
       final tickets = await client.tickets.mkkmTickets();
       expect(tickets.tickets, hasLength(1));
       expect(requestsTo('/auth/token/recover'), hasLength(1));
-      expect(
-        requestsTo('mkkm/tickets'),
-        hasLength(2),
-        reason: 'original request + exactly one retry',
-      );
+      expect(requestsTo('mkkm/tickets'), hasLength(2), reason: 'original request + exactly one retry');
       expect((await store.read())!.token, tokenB);
       expect(
         headersOf(requestsTo('mkkm/tickets').last)['authorization'],
@@ -324,54 +256,30 @@ void main() {
         (200, fixture('service_status')),
       ]);
 
-      final results = await Future.wait(
-        List.generate(2, (_) => client.misc.serviceStatus()),
-      );
+      final results = await Future.wait(List.generate(2, (_) => client.misc.serviceStatus()));
       expect(results.map((r) => r.isAvailable), everyElement(isTrue));
-      expect(
-        requestsTo('/auth/token/recover'),
-        hasLength(1),
-        reason: 'one recovery shared by both failures',
-      );
-      expect(
-        requestsTo('service-status'),
-        hasLength(4),
-        reason: '2 original + 2 retried requests',
-      );
+      expect(requestsTo('/auth/token/recover'), hasLength(1), reason: 'one recovery shared by both failures');
+      expect(requestsTo('service-status'), hasLength(4), reason: '2 original + 2 retried requests');
     });
 
-    test(
-      'unrecoverable session surfaces as EkpSessionExpiredException',
-      () async {
-        await store.write(sessionA);
+    test('unrecoverable session surfaces as EkpSessionExpiredException', () async {
+      await store.write(sessionA);
 
-        adapter.onPost('/auth/token/recover', [(401, '')]);
-        adapter.onGet('/invoices', [(401, '')]);
+      adapter.onPost('/auth/token/recover', [(401, '')]);
+      adapter.onGet('/invoices', [(401, '')]);
 
-        await expectLater(
-          client.invoices.list(),
-          throwsA(isA<EkpSessionExpiredException>()),
-        );
-        expect(await store.read(), isNull);
-        expect(events.whereType<EkpSessionExpired>(), isNotEmpty);
-      },
-    );
+      await expectLater(client.invoices.list(), throwsA(isA<EkpSessionExpiredException>()));
+      expect(await store.read(), isNull);
+      expect(events.whereType<EkpSessionExpired>(), isNotEmpty);
+    });
 
     test('401 on auth endpoints never triggers recovery', () async {
       adapter.onPost('/auth/change-password', [(401, '')]);
       await expectLater(
-        client.auth.changePassword(
-          previousPassword: 'a',
-          newPassword: 'b',
-          repeatPassword: 'b',
-        ),
+        client.auth.changePassword(previousPassword: 'a', newPassword: 'b', repeatPassword: 'b'),
         throwsA(isA<EkpUnauthorizedException>()),
       );
-      expect(
-        requestsTo('token/recover'),
-        isEmpty,
-        reason: 'no recovery attempt for /auth/* paths',
-      );
+      expect(requestsTo('token/recover'), isEmpty, reason: 'no recovery attempt for /auth/* paths');
     });
   });
 
@@ -396,35 +304,27 @@ void main() {
       ],
     };
 
-    test(
-      'fresh jar sends no cookies; login stores the trio and replays it',
-      () async {
-        adapter.onPost('/auth/login', [
-          (200, fixture('login_response')),
-        ], responseHeaders: loginSetCookies);
-        adapter.onGet('/service-status', [
-          (200, fixture('service_status')),
-          (200, fixture('service_status')),
-        ]);
+    test('fresh jar sends no cookies; login stores the trio and replays it', () async {
+      adapter.onPost('/auth/login', [(200, fixture('login_response'))], responseHeaders: loginSetCookies);
+      adapter.onGet('/service-status', [(200, fixture('service_status')), (200, fixture('service_status'))]);
 
-        await client.misc.serviceStatus();
-        expect(
-          headersOf(requestsTo('service-status').first)['cookie'],
-          isNull,
-          reason: 'fresh jar → no cookie header (null-valued, dropped on wire)',
-        );
+      await client.misc.serviceStatus();
+      expect(
+        headersOf(requestsTo('service-status').first)['cookie'],
+        isNull,
+        reason: 'fresh jar → no cookie header (null-valued, dropped on wire)',
+      );
 
-        await client.auth.login('test@example.com', 'pw');
-        await client.misc.serviceStatus();
-        expect(
-          headersOf(requestsTo('service-status').last)['cookie'],
-          'access-token=aaa.payload-a; '
-          'access-signature=sig-a-1234567890abcdef12345678; '
-          'access-remember=refresh-a',
-          reason: 'Set-Cookie from the login response is replayed verbatim',
-        );
-      },
-    );
+      await client.auth.login('test@example.com', 'pw');
+      await client.misc.serviceStatus();
+      expect(
+        headersOf(requestsTo('service-status').last)['cookie'],
+        'access-token=aaa.payload-a; '
+        'access-signature=sig-a-1234567890abcdef12345678; '
+        'access-remember=refresh-a',
+        reason: 'Set-Cookie from the login response is replayed verbatim',
+      );
+    });
 
     test('recover rotates the stored cookies via its Set-Cookie', () async {
       await store.write(sessionA);
@@ -447,45 +347,34 @@ void main() {
       );
     });
 
-    test(
-      'logout blanks are stored and replayed, like the official client',
-      () async {
-        adapter.onPost('/auth/login', [
-          (200, fixture('login_response')),
-        ], responseHeaders: loginSetCookies);
-        adapter.onPost('/auth/logout', [
-          (200, '"Successfully logged out."'),
-        ], responseHeaders: logoutSetCookies);
-        adapter.onGet('/auth/password-policy', [
-          (200, fixture('password_policy')),
-        ]);
+    test('logout blanks are stored and replayed, like the official client', () async {
+      adapter.onPost('/auth/login', [(200, fixture('login_response'))], responseHeaders: loginSetCookies);
+      adapter.onPost('/auth/logout', [(200, '"Successfully logged out."')], responseHeaders: logoutSetCookies);
+      adapter.onGet('/auth/password-policy', [(200, fixture('password_policy'))]);
 
-        await client.auth.login('test@example.com', 'pw');
+      await client.auth.login('test@example.com', 'pw');
 
-        // The logout request itself still carries the live cookies.
-        await client.auth.logout();
-        expect(
-          headersOf(requestsTo('/auth/logout').single)['cookie'],
-          'access-token=aaa.payload-a; '
-          'access-signature=sig-a-1234567890abcdef12345678; '
-          'access-remember=refresh-a',
-        );
+      // The logout request itself still carries the live cookies.
+      await client.auth.logout();
+      expect(
+        headersOf(requestsTo('/auth/logout').single)['cookie'],
+        'access-token=aaa.payload-a; '
+        'access-signature=sig-a-1234567890abcdef12345678; '
+        'access-remember=refresh-a',
+      );
 
-        // Afterwards the jar replays the blank values the server set.
-        await client.auth.passwordPolicy();
-        expect(
-          headersOf(requestsTo('/auth/password-policy').single)['cookie'],
-          'access-token=; access-signature=; access-remember=',
-        );
-      },
-    );
+      // Afterwards the jar replays the blank values the server set.
+      await client.auth.passwordPolicy();
+      expect(
+        headersOf(requestsTo('/auth/password-policy').single)['cookie'],
+        'access-token=; access-signature=; access-remember=',
+      );
+    });
   });
 
   group('PaymentsApi.check', () {
     test('HTTP 400 with code 2 maps to pending', () async {
-      adapter.onPost('/payments/check', [
-        (400, fixture('payments_check_pending')),
-      ]);
+      adapter.onPost('/payments/check', [(400, fixture('payments_check_pending'))]);
       final result = await client.payments.check('guid');
       expect(result.status, PaymentCheckStatus.pending);
       expect(result.message, contains('Brak zaksięgowanej płatności'));
@@ -515,18 +404,11 @@ void main() {
       adapter.onPost('/payments/result', [
         (200, null), // the real endpoint answers 200 with an empty body
       ]);
-      await client.payments.result(
-        id: '0123456789abcdef0123456789abcdef',
-        type: '2',
-      );
+      await client.payments.result(id: '0123456789abcdef0123456789abcdef', type: '2');
 
       final req = requestsTo('/payments/result').single;
       final body = req.data as Map<String, dynamic>;
-      expect(body, {
-        'id': '0123456789abcdef0123456789abcdef',
-        'type': '2',
-        'result': 'Success',
-      });
+      expect(body, {'id': '0123456789abcdef0123456789abcdef', 'type': '2', 'result': 'Success'});
       expect(
         body.values.every((v) => v is String),
         isTrue,
@@ -536,14 +418,9 @@ void main() {
 
     test('reports the rejected-payment outcome with result: Error', () async {
       adapter.onPost('/payments/result', [(200, null)]);
-      await client.payments.result(
-        id: 'fedcba9876543210fedcba9876543210',
-        type: '2',
-        result: 'Error',
-      );
+      await client.payments.result(id: 'fedcba9876543210fedcba9876543210', type: '2', result: 'Error');
 
-      final body =
-          requestsTo('/payments/result').single.data as Map<String, dynamic>;
+      final body = requestsTo('/payments/result').single.data as Map<String, dynamic>;
       expect(body['result'], 'Error');
       expect(
         body['id'],
@@ -556,14 +433,10 @@ void main() {
   group('TicketsApi.returnTicket', () {
     test('executes the return with a UTC-instant returnDate', () async {
       adapter.onPost('/ticket-returns', [(200, fixture('ticket_return'))]);
-      final res = await client.tickets.returnTicket(
-        transactionId: 400004,
-        returnDate: DateTime.utc(2025, 6, 15),
-      );
+      final res = await client.tickets.returnTicket(transactionId: 400004, returnDate: DateTime.utc(2025, 6, 15));
       expect(res.success, isTrue);
 
-      final body =
-          requestsTo('/ticket-returns').single.data as Map<String, dynamic>;
+      final body = requestsTo('/ticket-returns').single.data as Map<String, dynamic>;
       expect(body['transactionId'], 400004);
       expect(
         body['returnDate'],
@@ -576,26 +449,17 @@ void main() {
   });
 
   group('AccountApi.anonymise', () {
-    test(
-      'sends PUT with password confirmation and parses the envelope',
-      () async {
-        await store.write(sessionA);
-        adapter.onPut('/account/anonymise', [
-          (200, fixture('anonymise_response')),
-        ]);
-        final res = await client.account.anonymise(password: 'Sup3rSecret!');
-        expect(res.code, isNull);
-        expect(res.message, contains('usunięte'));
+    test('sends PUT with password confirmation and parses the envelope', () async {
+      await store.write(sessionA);
+      adapter.onPut('/account/anonymise', [(200, fixture('anonymise_response'))]);
+      final res = await client.account.anonymise(password: 'Sup3rSecret!');
+      expect(res.code, isNull);
+      expect(res.message, contains('usunięte'));
 
-        final req = requestsTo('/account/anonymise').single;
-        expect(req.method, 'PUT');
-        expect((req.data as Map<String, dynamic>)['password'], 'Sup3rSecret!');
-        expect(
-          headersOf(req)['authorization'],
-          'Bearer $tokenA',
-          reason: 'anonymise is an authenticated call',
-        );
-      },
-    );
+      final req = requestsTo('/account/anonymise').single;
+      expect(req.method, 'PUT');
+      expect((req.data as Map<String, dynamic>)['password'], 'Sup3rSecret!');
+      expect(headersOf(req)['authorization'], 'Bearer $tokenA', reason: 'anonymise is an authenticated call');
+    });
   });
 }

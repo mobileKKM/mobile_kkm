@@ -5,12 +5,7 @@ import 'package:mobile_kkm/features/auth/models/password_rule.dart';
 void main() {
   test('only requirements with a positive count become rules', () {
     final rules = passwordRulesFor(
-      const PasswordPolicy(
-        minLength: 8,
-        requiredLowercase: 0,
-        requiredUppercase: 1,
-        requiredDigits: 1,
-      ),
+      const PasswordPolicy(minLength: 8, requiredLowercase: 0, requiredUppercase: 1, requiredDigits: 1),
     );
     expect(rules.map((rule) => rule.kind), [
       PasswordRuleKind.minLength,
@@ -42,13 +37,7 @@ void main() {
   });
 
   test('Polish letters count as upper/lowercase', () {
-    expect(
-      const PasswordRule(PasswordRuleKind.uppercase, 1).isSatisfiedBy('łódŹ'),
-      isTrue,
-    );
-    expect(
-      const PasswordRule(PasswordRuleKind.lowercase, 1).isSatisfiedBy('ŁÓDź'),
-      isTrue,
-    );
+    expect(const PasswordRule(PasswordRuleKind.uppercase, 1).isSatisfiedBy('łódŹ'), isTrue);
+    expect(const PasswordRule(PasswordRuleKind.lowercase, 1).isSatisfiedBy('ŁÓDź'), isTrue);
   });
 }

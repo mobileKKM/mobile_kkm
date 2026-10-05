@@ -11,12 +11,12 @@ environment:
 resolution: workspace
 
 dependencies:
-  # Crypto for the encrypted mkkm endpoints (assign-e / contract-e).
-  ekp_crypto:
-    path: ../ekp_crypto
   cookie_jar: ^4.0.0
   dio: ^5.7.0
   dio_cookie_manager: ^3.5.0
+  # Crypto for the encrypted mkkm endpoints (assign-e / contract-e).
+  ekp_crypto:
+    path: ../ekp_crypto
   freezed_annotation: ^3.1.0
   json_annotation: ^4.12.0
   meta: ^1.16.0

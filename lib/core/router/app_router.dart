@@ -16,63 +16,39 @@ import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
   ref.onDispose(refresh.dispose);
-  ref.listen(
-    authControllerProvider.select((state) => state.status),
-    (_, _) => refresh.value++,
-  );
+  ref.listen(authControllerProvider.select((state) => state.status), (_, _) => refresh.value++);
 
   final router = GoRouter(
     initialLocation: Routes.splash,
     refreshListenable: refresh,
-    redirect: (context, state) =>
-        redirectFor(state.uri, ref.read(authControllerProvider).status),
+    redirect: (context, state) => redirectFor(state.uri, ref.read(authControllerProvider).status),
     routes: [
-      GoRoute(
-        path: Routes.splash,
-        builder: (context, state) => const SplashScreen(),
-      ),
-      GoRoute(
-        path: Routes.home,
-        builder: (context, state) => const HomeScreen(),
-      ),
+      GoRoute(path: Routes.splash, builder: (context, state) => const SplashScreen()),
+      GoRoute(path: Routes.home, builder: (context, state) => const HomeScreen()),
       GoRoute(
         path: Routes.login,
-        builder: (context, state) => LoginScreen(
-          passwordResetDone:
-              state.uri.queryParameters['notice'] == 'password-reset',
-        ),
+        builder: (context, state) =>
+            LoginScreen(passwordResetDone: state.uri.queryParameters['notice'] == 'password-reset'),
       ),
-      GoRoute(
-        path: Routes.register,
-        builder: (context, state) => const RegisterScreen(),
-      ),
+      GoRoute(path: Routes.register, builder: (context, state) => const RegisterScreen()),
       GoRoute(
         path: Routes.registerSent,
-        builder: (context, state) => InboxScreen(
-          kind: InboxKind.registration,
-          email: state.uri.queryParameters['email'] ?? '',
-        ),
+        builder: (context, state) =>
+            InboxScreen(kind: InboxKind.registration, email: state.uri.queryParameters['email'] ?? ''),
       ),
-      GoRoute(
-        path: Routes.forgotPassword,
-        builder: (context, state) => const ForgotPasswordScreen(),
-      ),
+      GoRoute(path: Routes.forgotPassword, builder: (context, state) => const ForgotPasswordScreen()),
       GoRoute(
         path: Routes.forgotPasswordSent,
-        builder: (context, state) => InboxScreen(
-          kind: InboxKind.passwordReset,
-          email: state.uri.queryParameters['email'] ?? '',
-        ),
+        builder: (context, state) =>
+            InboxScreen(kind: InboxKind.passwordReset, email: state.uri.queryParameters['email'] ?? ''),
       ),
       GoRoute(
         path: '/activate/:token',
-        builder: (context, state) =>
-            ActivateScreen(token: state.pathParameters['token']!),
+        builder: (context, state) => ActivateScreen(token: state.pathParameters['token']!),
       ),
       GoRoute(
         path: '/reset-password/:token',
-        builder: (context, state) =>
-            ResetPasswordScreen(token: state.pathParameters['token']!),
+        builder: (context, state) => ResetPasswordScreen(token: state.pathParameters['token']!),
       ),
     ],
   );

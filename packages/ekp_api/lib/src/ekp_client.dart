@@ -26,25 +26,10 @@ import 'tickets/tickets_api.dart';
 /// final tickets = await client.tickets.mkkmTickets();
 /// ```
 class EkpClient {
-  EkpClient({
-    EkpDeviceIdentity? device,
-    TokenStore? tokenStore,
-    Dio? dio,
-    String baseUrl = EkpDefaults.baseUrl,
-  }) : device = device ?? EkpDeviceIdentity.test(),
-       dio =
-           dio ??
-           Dio(
-             BaseOptions(
-               baseUrl: baseUrl,
-               headers: {Headers.acceptHeader: 'application/json'},
-             ),
-           ) {
-    session = EkpSessionManager(
-      dio: this.dio,
-      device: this.device,
-      tokenStore: tokenStore,
-    );
+  EkpClient({EkpDeviceIdentity? device, TokenStore? tokenStore, Dio? dio, String baseUrl = EkpDefaults.baseUrl})
+    : device = device ?? EkpDeviceIdentity.test(),
+      dio = dio ?? Dio(BaseOptions(baseUrl: baseUrl, headers: {Headers.acceptHeader: 'application/json'})) {
+    session = EkpSessionManager(dio: this.dio, device: this.device, tokenStore: tokenStore);
 
     // Standard cookie jar: login/recover responses store the auth cookies
     // and the logout response overwrites them with blank values — exactly

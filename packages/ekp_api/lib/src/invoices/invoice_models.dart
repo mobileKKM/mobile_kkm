@@ -9,11 +9,7 @@ part 'invoice_models.g.dart';
 /// `rowCount: 0` in captures) — kept raw until real data becomes available.
 @freezed
 abstract class InvoiceListResponse with _$InvoiceListResponse {
-  const factory InvoiceListResponse({
-    @Default(<dynamic>[]) List<dynamic> list,
-    int? rowCount,
-  }) = _InvoiceListResponse;
+  const factory InvoiceListResponse({@Default(<dynamic>[]) List<dynamic> list, int? rowCount}) = _InvoiceListResponse;
 
-  factory InvoiceListResponse.fromJson(Map<String, dynamic> json) =>
-      _$InvoiceListResponseFromJson(json);
+  factory InvoiceListResponse.fromJson(Map<String, dynamic> json) => _$InvoiceListResponseFromJson(json);
 }

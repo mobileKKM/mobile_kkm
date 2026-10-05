@@ -19,8 +19,7 @@ abstract class Address with _$Address {
     String? apartmentNumber,
   }) = _Address;
 
-  factory Address.fromJson(Map<String, dynamic> json) =>
-      _$AddressFromJson(json);
+  factory Address.fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
 }
 
 /// Personal data of the logged in user (`userData` in `account/user-data`).
@@ -42,8 +41,7 @@ abstract class UserData with _$UserData {
     bool? hasStorageMediumWithCCCustomer,
   }) = _UserData;
 
-  factory UserData.fromJson(Map<String, dynamic> json) =>
-      _$UserDataFromJson(json);
+  factory UserData.fromJson(Map<String, dynamic> json) => _$UserDataFromJson(json);
 }
 
 /// mKKM specific data (`mkkmData` in `account/user-data`).
@@ -61,8 +59,7 @@ abstract class MkkmData with _$MkkmData {
     bool? detached,
   }) = _MkkmData;
 
-  factory MkkmData.fromJson(Map<String, dynamic> json) =>
-      _$MkkmDataFromJson(json);
+  factory MkkmData.fromJson(Map<String, dynamic> json) => _$MkkmDataFromJson(json);
 }
 
 /// `GET account/user-data`
@@ -81,8 +78,7 @@ abstract class UserDataResponse with EkpCodeMessage, _$UserDataResponse {
     String? message,
   }) = _UserDataResponse;
 
-  factory UserDataResponse.fromJson(Map<String, dynamic> json) =>
-      _$UserDataResponseFromJson(json);
+  factory UserDataResponse.fromJson(Map<String, dynamic> json) => _$UserDataResponseFromJson(json);
 }
 
 /// `GET account/inhabitant-status`
@@ -102,8 +98,7 @@ abstract class InhabitantStatus with EkpCodeMessage, _$InhabitantStatus {
     String? message,
   }) = _InhabitantStatus;
 
-  factory InhabitantStatus.fromJson(Map<String, dynamic> json) =>
-      _$InhabitantStatusFromJson(json);
+  factory InhabitantStatus.fromJson(Map<String, dynamic> json) => _$InhabitantStatusFromJson(json);
 }
 
 /// `GET account/inhabitant-contract` — the inhabitant (Karta Krakowska)
@@ -126,12 +121,10 @@ abstract class InhabitantContract with _$InhabitantContract {
 
   const InhabitantContract._();
 
-  factory InhabitantContract.fromJson(Map<String, dynamic> json) =>
-      _$InhabitantContractFromJson(json);
+  factory InhabitantContract.fromJson(Map<String, dynamic> json) => _$InhabitantContractFromJson(json);
 
   /// Decodes [contract] into PNG bytes (empty when absent).
-  List<int> decodeContractPng() =>
-      contract == null ? const <int>[] : base64Decode(contract!);
+  List<int> decodeContractPng() => contract == null ? const <int>[] : base64Decode(contract!);
 }
 
 /// `1790718445082` → UTC DateTime (tolerates a string just in case).
@@ -145,16 +138,11 @@ DateTime? _parseEpochMs(Object? value) => value is num
 
 /// `GET account/street-autocomplete/{cityId}/{query}`
 @freezed
-abstract class StreetAutocompleteResponse
-    with EkpCodeMessage, _$StreetAutocompleteResponse {
+abstract class StreetAutocompleteResponse with EkpCodeMessage, _$StreetAutocompleteResponse {
   const StreetAutocompleteResponse._();
 
-  const factory StreetAutocompleteResponse({
-    @Default(<String>[]) List<String> streets,
-    Object? code,
-    String? message,
-  }) = _StreetAutocompleteResponse;
+  const factory StreetAutocompleteResponse({@Default(<String>[]) List<String> streets, Object? code, String? message}) =
+      _StreetAutocompleteResponse;
 
-  factory StreetAutocompleteResponse.fromJson(Map<String, dynamic> json) =>
-      _$StreetAutocompleteResponseFromJson(json);
+  factory StreetAutocompleteResponse.fromJson(Map<String, dynamic> json) => _$StreetAutocompleteResponseFromJson(json);
 }

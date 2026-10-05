@@ -9,9 +9,7 @@ class MiscApi extends EkpApiService {
   /// `GET service-status` — whether sales are available at all.
   Future<ServiceStatus> serviceStatus() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.serviceStatus,
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.serviceStatus);
       return ServiceStatus.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
@@ -19,12 +17,8 @@ class MiscApi extends EkpApiService {
   /// `GET client/mobile-app/config`
   Future<MobileAppConfig> mobileAppConfig() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.mobileAppConfig,
-      );
-      return MobileAppConfig.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.mobileAppConfig);
+      return MobileAppConfig.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 }

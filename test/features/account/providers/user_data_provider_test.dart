@@ -21,18 +21,10 @@ Iterable<Object> _userDataRequests(FakeAdapter adapter) =>
     adapter.requests.where((r) => r.path.endsWith('/account/user-data'));
 
 void main() {
-  testWidgets('is fetched once after sign-in and written to the cache', (
-    tester,
-  ) async {
-    final adapter = FakeAdapter()
-      ..reply('GET', '/account/user-data', 200, _userData('Jan'));
+  testWidgets('is fetched once after sign-in and written to the cache', (tester) async {
+    final adapter = FakeAdapter()..reply('GET', '/account/user-data', 200, _userData('Jan'));
     final cache = InMemoryUserDataCache();
-    await pumpApp(
-      tester,
-      adapter,
-      session: signedInSession,
-      userDataCache: cache,
-    );
+    await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache);
 
     expect(find.text('Jan Testowy'), findsOneWidget);
     expect(find.text('jan@example.com'), findsOneWidget);
@@ -40,38 +32,19 @@ void main() {
     expect(cache.data?.userData?.firstName, 'Jan');
   });
 
-  testWidgets('the cached copy is used when the server is unreachable', (
-    tester,
-  ) async {
+  testWidgets('the cached copy is used when the server is unreachable', (tester) async {
     final adapter = FakeAdapter()..fail('GET', '/account/user-data');
-    final cache = InMemoryUserDataCache(
-      UserDataResponse.fromJson(_userData('Jan')),
-    );
-    await pumpApp(
-      tester,
-      adapter,
-      session: signedInSession,
-      userDataCache: cache,
-    );
+    final cache = InMemoryUserDataCache(UserDataResponse.fromJson(_userData('Jan')));
+    await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache);
 
     expect(find.text('Jan Testowy'), findsOneWidget);
     expect(cache.data?.userData?.firstName, 'Jan');
   });
 
-  testWidgets('a cached copy is refreshed once in the background', (
-    tester,
-  ) async {
-    final adapter = FakeAdapter()
-      ..reply('GET', '/account/user-data', 200, _userData('Janusz'));
-    final cache = InMemoryUserDataCache(
-      UserDataResponse.fromJson(_userData('Jan')),
-    );
-    await pumpApp(
-      tester,
-      adapter,
-      session: signedInSession,
-      userDataCache: cache,
-    );
+  testWidgets('a cached copy is refreshed once in the background', (tester) async {
+    final adapter = FakeAdapter()..reply('GET', '/account/user-data', 200, _userData('Janusz'));
+    final cache = InMemoryUserDataCache(UserDataResponse.fromJson(_userData('Jan')));
+    await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache);
 
     expect(find.text('Janusz Testowy'), findsOneWidget);
     expect(_userDataRequests(adapter), hasLength(1));
@@ -83,12 +56,7 @@ void main() {
       ..reply('GET', '/account/user-data', 200, _userData('Jan'))
       ..reply('POST', '/auth/logout', 200);
     final cache = InMemoryUserDataCache();
-    await pumpApp(
-      tester,
-      adapter,
-      session: signedInSession,
-      userDataCache: cache,
-    );
+    await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache);
     expect(cache.data, isNotNull);
 
     await tapVisible(tester, find.text('Sign out'));
@@ -100,9 +68,7 @@ void main() {
   test('the cached model survives a JSON round trip', () {
     final original = UserDataResponse.fromJson(_userData('Jan'));
     // Through a string, as the cache stores it.
-    final restored = UserDataResponse.fromJson(
-      jsonDecode(jsonEncode(original.toJson())) as Map<String, dynamic>,
-    );
+    final restored = UserDataResponse.fromJson(jsonDecode(jsonEncode(original.toJson())) as Map<String, dynamic>);
     expect(restored, original);
   });
 }

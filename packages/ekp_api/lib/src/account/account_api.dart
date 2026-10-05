@@ -13,12 +13,8 @@ class AccountApi extends EkpApiService {
   /// `GET account/user-data`
   Future<UserDataResponse> userData() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.userData,
-      );
-      return UserDataResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.userData);
+      return UserDataResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -39,8 +35,7 @@ class AccountApi extends EkpApiService {
           'phoneNumber': ?phoneNumber,
           'firstName': ?firstName,
           'lastName': ?lastName,
-          if (registeredAddress != null)
-            'registeredAddress': registeredAddress.toJson(),
+          if (registeredAddress != null) 'registeredAddress': registeredAddress.toJson(),
         },
         options: Options(responseType: ResponseType.plain),
       );
@@ -50,12 +45,8 @@ class AccountApi extends EkpApiService {
   /// `GET account/inhabitant-status`
   Future<InhabitantStatus> inhabitantStatus() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.inhabitantStatus,
-      );
-      return InhabitantStatus.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.inhabitantStatus);
+      return InhabitantStatus.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -64,49 +55,33 @@ class AccountApi extends EkpApiService {
   /// [InhabitantContract.decodeContractPng]).
   Future<InhabitantContract> inhabitantContract() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.inhabitantContract,
-      );
-      return InhabitantContract.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.inhabitantContract);
+      return InhabitantContract.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `GET account/street-autocomplete/{cityId}/{query}`.
   ///
   /// [cityId] `15` was observed for Kraków.
-  Future<StreetAutocompleteResponse> streetAutocomplete(
-    int cityId,
-    String query,
-  ) async {
+  Future<StreetAutocompleteResponse> streetAutocomplete(int cityId, String query) async {
     return guard(() async {
       final response = await dio.get<Map<String, dynamic>>(
         '${EkpApiPaths.streetAutocomplete}/$cityId'
         '/${Uri.encodeComponent(query)}',
       );
-      return StreetAutocompleteResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return StreetAutocompleteResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `POST account/photo` — multipart upload of the profile photo
   /// (form field `photo`, JPEG).
-  Future<void> uploadPhotoBytes(
-    List<int> bytes, {
-    String filename = 'photo.jpg',
-  }) async {
+  Future<void> uploadPhotoBytes(List<int> bytes, {String filename = 'photo.jpg'}) async {
     return guard(() async {
       final form = FormData();
       form.files.add(
         MapEntry(
           'photo',
-          MultipartFile.fromBytes(
-            bytes,
-            filename: filename,
-            contentType: DioMediaType.parse('image/jpeg'),
-          ),
+          MultipartFile.fromBytes(bytes, filename: filename, contentType: DioMediaType.parse('image/jpeg')),
         ),
       );
       await dio.post<dynamic>(
@@ -127,13 +102,8 @@ class AccountApi extends EkpApiService {
   /// session right after a successful call.
   Future<CodeMessageResponse> anonymise({required String password}) async {
     return guard(() async {
-      final response = await dio.put<Map<String, dynamic>>(
-        EkpApiPaths.accountAnonymise,
-        data: {'password': password},
-      );
-      return CodeMessageResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.put<Map<String, dynamic>>(EkpApiPaths.accountAnonymise, data: {'password': password});
+      return CodeMessageResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 }

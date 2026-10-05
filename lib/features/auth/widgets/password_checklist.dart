@@ -4,11 +4,7 @@ import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// Live checklist of the server's password policy.
 class PasswordChecklist extends StatelessWidget {
-  const PasswordChecklist({
-    super.key,
-    required this.rules,
-    required this.password,
-  });
+  const PasswordChecklist({super.key, required this.rules, required this.password});
 
   final List<PasswordRule> rules;
   final String password;
@@ -25,26 +21,15 @@ class PasswordChecklist extends StatelessWidget {
           Builder(
             builder: (context) {
               final met = rule.isSatisfiedBy(password);
-              final color = met
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurfaceVariant;
+              final color = met ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant;
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 2),
                 child: Row(
                   children: [
-                    Icon(
-                      met ? Icons.check_circle : Icons.radio_button_unchecked,
-                      size: 16,
-                      color: color,
-                    ),
+                    Icon(met ? Icons.check_circle : Icons.radio_button_unchecked, size: 16, color: color),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Text(
-                        _label(l10n, rule),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: color,
-                        ),
-                      ),
+                      child: Text(_label(l10n, rule), style: theme.textTheme.bodySmall?.copyWith(color: color)),
                     ),
                   ],
                 ),
@@ -55,11 +40,10 @@ class PasswordChecklist extends StatelessWidget {
     );
   }
 
-  static String _label(AppLocalizations l10n, PasswordRule rule) =>
-      switch (rule.kind) {
-        PasswordRuleKind.minLength => l10n.passwordRuleMinLength(rule.count),
-        PasswordRuleKind.lowercase => l10n.passwordRuleLowercase(rule.count),
-        PasswordRuleKind.uppercase => l10n.passwordRuleUppercase(rule.count),
-        PasswordRuleKind.digits => l10n.passwordRuleDigits(rule.count),
-      };
+  static String _label(AppLocalizations l10n, PasswordRule rule) => switch (rule.kind) {
+    PasswordRuleKind.minLength => l10n.passwordRuleMinLength(rule.count),
+    PasswordRuleKind.lowercase => l10n.passwordRuleLowercase(rule.count),
+    PasswordRuleKind.uppercase => l10n.passwordRuleUppercase(rule.count),
+    PasswordRuleKind.digits => l10n.passwordRuleDigits(rule.count),
+  };
 }

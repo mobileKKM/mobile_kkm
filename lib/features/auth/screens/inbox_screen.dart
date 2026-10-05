@@ -24,11 +24,7 @@ class InboxScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(
-            Icons.mark_email_unread_outlined,
-            size: 64,
-            color: theme.colorScheme.primary,
-          ),
+          Icon(Icons.mark_email_unread_outlined, size: 64, color: theme.colorScheme.primary),
           const SizedBox(height: 24),
           Text(switch (kind) {
             InboxKind.registration => l10n.inboxRegistrationBody(email),
@@ -37,10 +33,7 @@ class InboxScreen extends StatelessWidget {
           const SizedBox(height: 16),
           const LinkHint(),
           const SizedBox(height: 24),
-          FilledButton(
-            onPressed: () => context.go(Routes.login),
-            child: Text(l10n.backToLogin),
-          ),
+          FilledButton(onPressed: () => context.go(Routes.login), child: Text(l10n.backToLogin)),
         ],
       ),
     );

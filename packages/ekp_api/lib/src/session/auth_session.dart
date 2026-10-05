@@ -20,13 +20,11 @@ abstract class AuthSession with _$AuthSession {
     DateTime? expires,
   }) = _AuthSession;
 
-  factory AuthSession.fromJson(Map<String, dynamic> json) =>
-      _$AuthSessionFromJson(json);
+  factory AuthSession.fromJson(Map<String, dynamic> json) => _$AuthSessionFromJson(json);
 
   /// Whether the access token is past its expiry.
   ///
   /// Expired does not mean unusable — the server is the source of truth —
   /// but it is a good hint to trigger a proactive recovery.
-  bool get isExpired =>
-      expires != null && DateTime.now().toUtc().isAfter(expires!.toUtc());
+  bool get isExpired => expires != null && DateTime.now().toUtc().isAfter(expires!.toUtc());
 }

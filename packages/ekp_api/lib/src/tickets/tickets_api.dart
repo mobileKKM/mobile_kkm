@@ -10,8 +10,7 @@ import 'ticket_models.dart';
 /// configuration, price calculation, purchase initiation, returns and the
 /// encrypted assign/contract (AZTEC) endpoints.
 class TicketsApi extends EkpApiService {
-  TicketsApi(super.dio, this._device, {EkpAztecCrypto? crypto})
-    : _crypto = crypto ?? const EkpAztecCrypto();
+  TicketsApi(super.dio, this._device, {EkpAztecCrypto? crypto}) : _crypto = crypto ?? const EkpAztecCrypto();
 
   final EkpDeviceIdentity _device;
   final EkpAztecCrypto _crypto;
@@ -19,12 +18,8 @@ class TicketsApi extends EkpApiService {
   /// `GET mkkm/tickets/list` — the mobile tickets shown in the app.
   Future<MkkmTicketsResponse> mkkmTickets() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.mkkmTicketsList,
-      );
-      return MkkmTicketsResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.mkkmTicketsList);
+      return MkkmTicketsResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -45,10 +40,7 @@ class TicketsApi extends EkpApiService {
     return guard(() async {
       final response = await dio.get<List<dynamic>>(
         EkpApiPaths.tickets,
-        queryParameters: {
-          'customerCode': customerCode,
-          'validity': validity.wireValue,
-        },
+        queryParameters: {'customerCode': customerCode, 'validity': validity.wireValue},
       );
       return (response.data ?? const <dynamic>[])
           .whereType<Map<String, dynamic>>()
@@ -63,24 +55,16 @@ class TicketsApi extends EkpApiService {
       final response = await dio.get<Map<String, dynamic>>(
         '${EkpApiPaths.tickets}/${Uri.encodeComponent(transactionCode)}',
       );
-      return TicketDetailResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return TicketDetailResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `GET tickets/ticket-sales-configuration/{customerCode}` — the options
   /// the purchase wizard offers this customer.
-  Future<TicketSalesConfiguration> salesConfiguration(
-    String customerCode,
-  ) async {
+  Future<TicketSalesConfiguration> salesConfiguration(String customerCode) async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        '${EkpApiPaths.ticketSalesConfiguration}/$customerCode',
-      );
-      return TicketSalesConfiguration.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>('${EkpApiPaths.ticketSalesConfiguration}/$customerCode');
+      return TicketSalesConfiguration.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -137,9 +121,7 @@ class TicketsApi extends EkpApiService {
           specialTransportLine: specialTransportLine,
         ),
       );
-      return TicketCalculation.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return TicketCalculation.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -172,9 +154,7 @@ class TicketsApi extends EkpApiService {
           ),
         },
       );
-      return TicketPurchaseResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return TicketPurchaseResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -188,15 +168,9 @@ class TicketsApi extends EkpApiService {
     return guard(() async {
       final response = await dio.post<Map<String, dynamic>>(
         EkpApiPaths.ticketsPay,
-        data: {
-          'id': ticketGuid,
-          'ignoreWarnings': ignoreWarnings,
-          'tPayPaymentGroupId': tPayPaymentGroupId,
-        },
+        data: {'id': ticketGuid, 'ignoreWarnings': ignoreWarnings, 'tPayPaymentGroupId': tPayPaymentGroupId},
       );
-      return TicketPurchaseResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return TicketPurchaseResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -209,22 +183,11 @@ class TicketsApi extends EkpApiService {
   /// [deviceName] defaults to [EkpDeviceIdentity.deviceName]. Crypto
   /// failures throw [EkpCryptoException]; business errors surface via the
   /// `{code, message}` envelope on [TicketAssignResponse].
-  Future<TicketAssignResponse> assign(
-    String ticketGuid, {
-    String? deviceName,
-  }) async {
-    final message = _crypto.encryptJson({
-      'id': ticketGuid,
-      'device_name': deviceName ?? _device.deviceName,
-    });
+  Future<TicketAssignResponse> assign(String ticketGuid, {String? deviceName}) async {
+    final message = _crypto.encryptJson({'id': ticketGuid, 'device_name': deviceName ?? _device.deviceName});
     return guard(() async {
-      final response = await dio.post<Map<String, dynamic>>(
-        EkpApiPaths.mkkmTicketsAssignE,
-        data: {'message': message},
-      );
-      return TicketAssignResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.post<Map<String, dynamic>>(EkpApiPaths.mkkmTicketsAssignE, data: {'message': message});
+      return TicketAssignResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -242,9 +205,7 @@ class TicketsApi extends EkpApiService {
         EkpApiPaths.mkkmTicketsContractE,
         data: {'message': message},
       );
-      return TicketContractResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return TicketContractResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -255,41 +216,25 @@ class TicketsApi extends EkpApiService {
   /// local-midnight-labelled-as-UTC date while the execute call sends the
   /// true UTC instant — the server accepts both, so the same convention as
   /// [calculateReturn] (true UTC) is used.
-  Future<TicketReturnResult> returnTicket({
-    required int transactionId,
-    required DateTime returnDate,
-  }) async {
+  Future<TicketReturnResult> returnTicket({required int transactionId, required DateTime returnDate}) async {
     return guard(() async {
       final response = await dio.post<Map<String, dynamic>>(
         EkpApiPaths.ticketReturns,
-        data: {
-          'transactionId': transactionId,
-          'returnDate': returnDate.toUtc().toIso8601String(),
-        },
+        data: {'transactionId': transactionId, 'returnDate': returnDate.toUtc().toIso8601String()},
       );
-      return TicketReturnResult.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return TicketReturnResult.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
   /// `POST ticket-returns/calculate` — refund preview.
   /// (The actual return submission endpoint was never captured.)
-  Future<TicketReturnCalculation> calculateReturn({
-    required int transactionId,
-    required DateTime returnDate,
-  }) async {
+  Future<TicketReturnCalculation> calculateReturn({required int transactionId, required DateTime returnDate}) async {
     return guard(() async {
       final response = await dio.post<Map<String, dynamic>>(
         EkpApiPaths.ticketReturnsCalculate,
-        data: {
-          'transactionId': transactionId,
-          'returnDate': returnDate.toUtc().toIso8601String(),
-        },
+        data: {'transactionId': transactionId, 'returnDate': returnDate.toUtc().toIso8601String()},
       );
-      return TicketReturnCalculation.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return TicketReturnCalculation.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 }

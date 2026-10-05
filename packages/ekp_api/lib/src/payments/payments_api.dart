@@ -12,12 +12,8 @@ class PaymentsApi extends EkpApiService {
   /// `GET payments/banks`
   Future<BankListResponse> banks() async {
     return guard(() async {
-      final response = await dio.get<Map<String, dynamic>>(
-        EkpApiPaths.paymentsBanks,
-      );
-      return BankListResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      final response = await dio.get<Map<String, dynamic>>(EkpApiPaths.paymentsBanks);
+      return BankListResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -38,9 +34,7 @@ class PaymentsApi extends EkpApiService {
         // (its content-length is 4).
         data: 'null',
       );
-      return ChangePaymentCardResponse.fromJson(
-        response.data ?? const <String, dynamic>{},
-      );
+      return ChangePaymentCardResponse.fromJson(response.data ?? const <String, dynamic>{});
     });
   }
 
@@ -52,10 +46,7 @@ class PaymentsApi extends EkpApiService {
   /// * anything else → thrown as [EkpApiException]
   Future<PaymentCheckResult> check(String ticketGuid) async {
     try {
-      await dio.post<dynamic>(
-        EkpApiPaths.paymentsCheck,
-        data: {'id': ticketGuid},
-      );
+      await dio.post<dynamic>(EkpApiPaths.paymentsCheck, data: {'id': ticketGuid});
       return const PaymentCheckResult(status: PaymentCheckStatus.confirmed);
     } on DioException catch (e) {
       final response = e.response;
@@ -67,15 +58,9 @@ class PaymentsApi extends EkpApiService {
         num v => v.toInt(),
         _ => null,
       };
-      final message = fields['message'] is String
-          ? fields['message'] as String
-          : null;
+      final message = fields['message'] is String ? fields['message'] as String : null;
       if (response?.statusCode == 400 && codeInt == 2) {
-        return PaymentCheckResult(
-          status: PaymentCheckStatus.pending,
-          message: message,
-          code: code,
-        );
+        return PaymentCheckResult(status: PaymentCheckStatus.pending, message: message, code: code);
       }
       throw EkpApiException.fromDio(e);
     }
@@ -91,11 +76,7 @@ class PaymentsApi extends EkpApiService {
   /// field is a STRING on the wire
   /// (`{"id":"…","type":"2","result":"Success"|"Error"}`).
   /// Success is HTTP 200 with an empty body.
-  Future<void> result({
-    required String id,
-    required String type,
-    String result = 'Success',
-  }) async {
+  Future<void> result({required String id, required String type, String result = 'Success'}) async {
     return guard(() async {
       await dio.post<dynamic>(
         EkpApiPaths.paymentsResult,

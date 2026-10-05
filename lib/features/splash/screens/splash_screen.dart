@@ -30,10 +30,7 @@ class SplashScreen extends StatelessWidget {
             ),
             const Positioned(
               top: _logoSize + 32,
-              child: SizedBox.square(
-                dimension: 28,
-                child: CircularProgressIndicator(strokeWidth: 3),
-              ),
+              child: SizedBox.square(dimension: 28, child: CircularProgressIndicator(strokeWidth: 3)),
             ),
           ],
         ),

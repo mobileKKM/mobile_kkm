@@ -21,22 +21,15 @@ import 'package:pointycastle/export.dart';
 
 void main() {
   // Deterministic 512-char uppercase-hex token (the AZTEC plaintext shape).
-  final token = List<String>.generate(
-    512,
-    (i) => '0123456789ABCDEF'[(i * 7) % 16],
-  ).join();
+  final token = List<String>.generate(512, (i) => '0123456789ABCDEF'[(i * 7) % 16]).join();
 
   final iv = List<int>.generate(16, (i) => i);
-  final aes = PaddedBlockCipherImpl(
-    PKCS7Padding(),
-    CBCBlockCipher(AESEngine()),
-  )..init(
+  final aes = PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()))
+    ..init(
       true,
       PaddedBlockCipherParameters(
         ParametersWithIV(
-          KeyParameter(
-            utf8.encode(EkpCryptoEnvironment.production.aesKeyOf(cppSecret)),
-          ),
+          KeyParameter(utf8.encode(EkpCryptoEnvironment.production.aesKeyOf(cppSecret))),
           Uint8List.fromList(iv),
         ),
         null,
