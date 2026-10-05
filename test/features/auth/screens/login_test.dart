@@ -119,6 +119,23 @@ void main() {
     expect(find.byType(LoginScreen), findsNothing);
   });
 
+  testWidgets('the illustration stands above the system navigation bar', (tester) async {
+    // A 48dp navigation bar (the view is 3x).
+    tester.view.viewPadding = const FakeViewPadding(bottom: 144);
+    tester.view.padding = const FakeViewPadding(bottom: 144);
+    addTearDown(tester.view.resetViewPadding);
+    addTearDown(tester.view.resetPadding);
+    await pumpApp(tester, FakeAdapter());
+    final screen = tester.view.physicalSize / tester.view.devicePixelRatio;
+    final skyline = find.byType(SvgPicture);
+
+    expect(tester.getRect(skyline).bottom, moreOrLessEquals(screen.height - 48));
+    expect(
+      tester.getRect(find.widgetWithText(FilledButton, 'Sign in')).bottom,
+      lessThanOrEqualTo(tester.getRect(skyline).top),
+    );
+  });
+
   testWidgets('the keyboard covers the illustration, not the form', (tester) async {
     await pumpApp(tester, FakeAdapter());
     final screen = tester.view.physicalSize / tester.view.devicePixelRatio;

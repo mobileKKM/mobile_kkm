@@ -78,6 +78,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
     final skylineHeight = LoginSkyline.heightFor(MediaQuery.sizeOf(context));
+    // The app is edge to edge, so the system navigation bar overlaps the
+    // bottom of the screen: the illustration sits above it.
+    final navigationHeight = MediaQuery.viewPaddingOf(context).bottom;
 
     return Scaffold(
       // The illustration stays glued to the bottom edge so the keyboard
@@ -85,9 +88,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          if (skylineHeight > 0) Positioned(left: 0, right: 0, bottom: 0, child: LoginSkyline(height: skylineHeight)),
+          if (skylineHeight > 0)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: LoginSkyline(height: skylineHeight, bottomInset: navigationHeight),
+            ),
           Padding(
-            padding: EdgeInsets.only(bottom: math.max(keyboardHeight, skylineHeight)),
+            padding: EdgeInsets.only(bottom: math.max(keyboardHeight, skylineHeight + navigationHeight)),
             child: SafeArea(
               bottom: false,
               child: Center(
