@@ -12,11 +12,15 @@ abstract final class Pesel {
   /// The century is folded into the month: 01–12 → 1900s, 21–32 → 2000s,
   /// 41–52 → 2100s, 61–72 → 2200s, 81–92 → 1800s.
   static DateTime? birthDate(String value) {
-    if (value.length != 11) return null;
+    if (value.length != 11) {
+      return null;
+    }
     final digits = <int>[];
     for (final unit in value.codeUnits) {
       final digit = unit - 0x30;
-      if (digit < 0 || digit > 9) return null;
+      if (digit < 0 || digit > 9) {
+        return null;
+      }
       digits.add(digit);
     }
 
@@ -24,7 +28,9 @@ abstract final class Pesel {
     for (var i = 0; i < 10; i++) {
       sum += digits[i] * _weights[i];
     }
-    if ((10 - sum % 10) % 10 != digits[10]) return null;
+    if ((10 - sum % 10) % 10 != digits[10]) {
+      return null;
+    }
 
     final yy = digits[0] * 10 + digits[1];
     final mm = digits[2] * 10 + digits[3];
@@ -37,7 +43,9 @@ abstract final class Pesel {
       4 => 1800,
       _ => null,
     };
-    if (century == null) return null;
+    if (century == null) {
+      return null;
+    }
     final year = century + yy;
     final month = mm % 20;
 

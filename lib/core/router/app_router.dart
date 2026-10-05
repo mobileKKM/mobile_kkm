@@ -61,10 +61,14 @@ final routerProvider = Provider<GoRouter>((ref) {
 String? redirectFor(Uri uri, AuthStatus status) {
   // A link from an EKP e-mail, delivered by the platform's deep linking.
   final link = EmailLink.tryParse(uri);
-  if (link != null) return Routes.forEmailLink(link);
+  if (link != null) {
+    return Routes.forEmailLink(link);
+  }
 
   final path = uri.path;
-  if (Routes.isEmailLinkTarget(path)) return null;
+  if (Routes.isEmailLinkTarget(path)) {
+    return null;
+  }
 
   return switch (status) {
     AuthStatus.unknown => path == Routes.splash ? null : Routes.splash,

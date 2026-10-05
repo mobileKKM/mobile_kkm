@@ -24,7 +24,7 @@ void main() {
   late InMemoryTokenStore store;
   late EkpClient client;
 
-  setUp(() {
+  setUp(() async {
     store = InMemoryTokenStore();
     dio = Dio(BaseOptions(baseUrl: baseUrl));
     adapter = MockAdapter();
@@ -35,7 +35,7 @@ void main() {
       tokenStore: store,
       dio: dio,
     );
-    store.write(seededSession);
+    await store.write(seededSession);
   });
 
   tearDown(() => client.dispose());

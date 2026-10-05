@@ -78,7 +78,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   void _setNoPesel(bool value) {
     setState(() => _noPesel = value);
-    if (value) _pesel.clear();
+    if (value) {
+      _pesel.clear();
+    }
     // Either way the previous date no longer applies: a hand-picked one is
     // dropped when switching back, a derived one when switching away.
     _setBirthDate(value ? null : Pesel.birthDate(_pesel.text));
@@ -92,13 +94,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       firstDate: DateTime(1900),
       lastDate: now,
     );
-    if (picked != null && mounted) _setBirthDate(picked);
+    if (picked != null && mounted) {
+      _setBirthDate(picked);
+    }
   }
 
   bool _isChecked(MarketingConsent consent) => _consentChoices[consent.id] ?? consent.isChecked ?? false;
 
   Future<void> _submit(List<MarketingConsent> consents) async {
-    if (_submitting || !_formKey.currentState!.validate()) return;
+    if (_submitting || !_formKey.currentState!.validate()) {
+      return;
+    }
     final l10n = AppLocalizations.of(context);
     final email = _email.text.trim();
     setState(() {
@@ -118,11 +124,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             pesel: _noPesel ? null : _pesel.text,
             marketingConsents: [for (final consent in consents) consent.copyWith(isChecked: _isChecked(consent))],
           );
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       TextInput.finishAutofillContext();
       context.go(Routes.sent(Routes.registerSent, email));
     } catch (error) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _submitting = false;
         _error = describeError(l10n, error);

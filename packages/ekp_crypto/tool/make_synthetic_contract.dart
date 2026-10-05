@@ -13,6 +13,10 @@
 //
 // The IV is fixed (0..15) — this is test data, not a secret; the official
 // scheme's security is unaffected by a published test vector.
+
+// A command-line tool: stdout is its output.
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:typed_data';
 

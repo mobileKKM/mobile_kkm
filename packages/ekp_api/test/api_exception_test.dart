@@ -85,7 +85,7 @@ void main() {
     });
 
     test('embedded EkpApiException passes through unchanged', () {
-      final embedded = const EkpSessionExpiredException(message: 'x');
+      const embedded = EkpSessionExpiredException(message: 'x');
       final e = EkpApiException.fromDio(
         DioException(
           requestOptions: RequestOptions(path: '/x'),

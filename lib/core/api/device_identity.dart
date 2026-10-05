@@ -41,7 +41,9 @@ Future<EkpDeviceIdentity> loadDeviceIdentity(FlutterSecureStorage storage, {Devi
 Future<String> _loadOrCreateDeviceId(FlutterSecureStorage storage) async {
   try {
     final existing = await storage.read(key: _deviceIdKey);
-    if (existing != null && existing.length == 16) return existing;
+    if (existing != null && existing.length == 16) {
+      return existing;
+    }
   } catch (_) {
     // Unreadable entry — fall through and replace it.
   }

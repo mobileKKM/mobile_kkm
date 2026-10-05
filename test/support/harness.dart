@@ -73,7 +73,9 @@ Future<App> pumpApp(
   addTearDown(tester.view.reset);
 
   final store = InMemoryTokenStore();
-  if (session != null) await store.write(session);
+  if (session != null) {
+    await store.write(session);
+  }
   final client = EkpClient(
     dio: Dio(BaseOptions(baseUrl: 'https://ekp.test'))..httpClientAdapter = adapter,
     tokenStore: store,

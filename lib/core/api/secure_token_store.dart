@@ -20,7 +20,9 @@ class SecureTokenStore implements TokenStore {
 
   @override
   Future<AuthSession?> read() async {
-    if (_loaded) return _cached;
+    if (_loaded) {
+      return _cached;
+    }
     try {
       final raw = await _storage.read(key: _key);
       if (raw != null) {

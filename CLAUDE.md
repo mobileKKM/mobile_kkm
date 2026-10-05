@@ -18,7 +18,7 @@ Dependency direction: app → `ekp_api` → `ekp_crypto`.
 flutter pub get        # once, at the repo root — resolves all three members (single lockfile)
 dart analyze           # from the root — covers every workspace member; use this, not `flutter analyze`,
                        # which does not run the riverpod_lint analyzer plugin
-dart format .          # 120 columns (`formatter.page_width` in each analysis_options.yaml); must leave nothing changed
+dart format .          # 120 columns (`formatter.page_width` in analysis_options_shared.yaml); must leave nothing changed
 dart fix --apply       # auto-fixes most lint findings
 
 flutter test                                           # app suite, from the root
@@ -86,5 +86,5 @@ Widget tests pump the real `MobileKkmApp` through `pumpApp()` in `test/support/h
 - Code is `dart format`-clean and `dart analyze` reports no issues; keep both that way.
 - Generated files (`*.g.dart`, `*.freezed.dart`, `lib/l10n/app_localizations*.dart`) are excluded from analysis but not from `dart format`.
 - `riverpod_lint` runs as an analyzer plugin (`plugins:` in the root `analysis_options.yaml`), for the app only.
-- Lints are deliberately minimal: `flutter_lints` (app) / `lints/recommended` (packages) plus `directives_ordering`, `sort_pub_dependencies`, and in the app `always_use_package_imports` and three widget-performance rules. Don't grow the list without being asked.
+- Lint rules shared by all members (correctness, performance, style) and the formatter width live in `analysis_options_shared.yaml`; each member's `analysis_options.yaml` includes it on top of `flutter_lints` (app) or `lints/recommended` (packages). Flutter-only rules and `always_use_package_imports` stay in the root file. Two rules shape everyday code: `always_put_control_body_on_new_line` — the formatter joins a brace-less `if (x) return;` back onto one line, so every control body needs braces — and `discarded_futures` — wrap intentional fire-and-forget calls in `unawaited(...)`.
 - Commits follow Conventional Commits with a member scope: `feat(app): …`, `fix(ekp_api): …`, `chore: …`.

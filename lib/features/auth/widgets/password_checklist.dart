@@ -11,7 +11,9 @@ class PasswordChecklist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (rules.isEmpty) return const SizedBox.shrink();
+    if (rules.isEmpty) {
+      return const SizedBox.shrink();
+    }
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     return Column(

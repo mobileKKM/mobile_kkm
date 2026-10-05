@@ -121,7 +121,7 @@ ZwIDAQAB
   });
 
   group('encryptJson', () {
-    final crypto = const EkpAztecCrypto();
+    const crypto = EkpAztecCrypto();
 
     test('produces the server-expected wire shape', () {
       final message = crypto.encryptJson({'id': ticketGuid, 'device_name': deviceName});
@@ -184,7 +184,7 @@ ZwIDAQAB
   });
 
   group('decryptContract (synthetic vectors)', () {
-    final crypto = const EkpAztecCrypto();
+    const crypto = EkpAztecCrypto();
 
     test('decrypts a contract blob back into the AZTEC hex token', () {
       final hex = crypto.decryptContract(buildContractBlob(syntheticToken));

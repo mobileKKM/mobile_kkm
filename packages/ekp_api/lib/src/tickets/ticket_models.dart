@@ -403,7 +403,9 @@ abstract class TicketContractResponse with EkpCodeMessage, _$TicketContractRespo
     /// [EkpCryptoEnvironment]).
     EkpCryptoEnvironment environment = EkpCryptoEnvironment.production,
   }) {
-    if (contract == null) return null;
+    if (contract == null) {
+      return null;
+    }
     return EkpAztecCrypto(secret: secret ?? cppSecret, environment: environment).decryptContract(contract!);
   }
 }

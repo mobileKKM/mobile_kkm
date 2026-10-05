@@ -58,7 +58,7 @@ class MockAdapter implements HttpClientAdapter {
     final (status, body) = r.replies[index];
     final data = switch (body) {
       null => '',
-      String s => s,
+      final String s => s,
       _ => jsonEncode(body),
     };
     return ResponseBody.fromString(

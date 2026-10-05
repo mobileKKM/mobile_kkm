@@ -31,7 +31,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   }
 
   Future<void> _submit() async {
-    if (_submitting || !_formKey.currentState!.validate()) return;
+    if (_submitting || !_formKey.currentState!.validate()) {
+      return;
+    }
     final l10n = AppLocalizations.of(context);
     final email = _email.text.trim();
     setState(() {
@@ -52,12 +54,16 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       _fail(describeError(l10n, error));
       return;
     }
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
     context.go(Routes.sent(Routes.forgotPasswordSent, email));
   }
 
   void _fail(String message) {
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _submitting = false;
       _error = message;

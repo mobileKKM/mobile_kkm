@@ -24,18 +24,23 @@ sealed class EkpApiException implements Exception {
 
   /// [code] as int when it is numeric, otherwise null.
   int? get codeAsInt => switch (code) {
-    int v => v,
-    num v => v.toInt(),
+    final int v => v,
+    final num v => v.toInt(),
     _ => null,
   };
 
   /// [code] as String when it is a string, otherwise null.
-  String? get codeAsString => code is String ? code as String : null;
+  String? get codeAsString => switch (code) {
+    final String v => v,
+    _ => null,
+  };
 
   /// Translates a [DioException] into a typed exception.
   factory EkpApiException.fromDio(DioException e) {
     final embedded = e.error;
-    if (embedded is EkpApiException) return embedded;
+    if (embedded is EkpApiException) {
+      return embedded;
+    }
 
     final response = e.response;
     if (response == null) {
@@ -58,10 +63,18 @@ sealed class EkpApiException implements Exception {
   @override
   String toString() {
     final buffer = StringBuffer(runtimeType);
-    if (statusCode != null) buffer.write(' (HTTP $statusCode)');
-    if (code != null) buffer.write(' code=$code');
-    if (message != null) buffer.write(': $message');
-    if (errorToken != null) buffer.write(' [token: $errorToken]');
+    if (statusCode != null) {
+      buffer.write(' (HTTP $statusCode)');
+    }
+    if (code != null) {
+      buffer.write(' code=$code');
+    }
+    if (message != null) {
+      buffer.write(': $message');
+    }
+    if (errorToken != null) {
+      buffer.write(' [token: $errorToken]');
+    }
     return buffer.toString();
   }
 }

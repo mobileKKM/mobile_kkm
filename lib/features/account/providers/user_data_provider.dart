@@ -30,7 +30,9 @@ class UserDataController extends AsyncNotifier<UserDataResponse?> {
         return null;
       case AuthStatus.authenticated:
         final cached = await cache.read();
-        if (cached == null) return _fetch();
+        if (cached == null) {
+          return _fetch();
+        }
         unawaited(_revalidate());
         return cached;
     }
@@ -45,14 +47,18 @@ class UserDataController extends AsyncNotifier<UserDataResponse?> {
   Future<UserDataResponse> _fetch() async {
     final fresh = await ref.read(ekpClientProvider).account.userData();
     // Signed out while the request was in flight: do not resurrect the cache.
-    if (ref.mounted) await ref.read(userDataCacheProvider).write(fresh);
+    if (ref.mounted) {
+      await ref.read(userDataCacheProvider).write(fresh);
+    }
     return fresh;
   }
 
   Future<void> _revalidate() async {
     try {
       final fresh = await _fetch();
-      if (ref.mounted) state = AsyncData(fresh);
+      if (ref.mounted) {
+        state = AsyncData(fresh);
+      }
     } catch (_) {
       // Offline or server trouble: the cached copy stays in use.
     }

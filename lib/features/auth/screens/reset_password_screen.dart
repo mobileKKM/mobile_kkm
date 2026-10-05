@@ -40,7 +40,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   }
 
   Future<void> _submit() async {
-    if (_submitting || !_formKey.currentState!.validate()) return;
+    if (_submitting || !_formKey.currentState!.validate()) {
+      return;
+    }
     final l10n = AppLocalizations.of(context);
     setState(() {
       _submitting = true;
@@ -48,11 +50,15 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     });
     try {
       await ref.read(ekpClientProvider).auth.resetPassword(token: widget.token, newPassword: _password.text);
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       TextInput.finishAutofillContext();
       context.go(Routes.loginAfterPasswordReset());
     } catch (error) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _submitting = false;
         _error = describeError(l10n, error);

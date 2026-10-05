@@ -106,7 +106,9 @@ class EkpSessionManager {
     } on DioException catch (e) {
       // No response at all (offline, timeout): the refresh token was never
       // judged, so keep the session and let a later attempt try again.
-      if (e.response == null) return false;
+      if (e.response == null) {
+        return false;
+      }
       await publishExpired();
       return false;
     } on FormatException {
@@ -116,7 +118,9 @@ class EkpSessionManager {
   }
 
   static Map<String, dynamic> _asMap(Object? data) {
-    if (data is Map<String, dynamic>) return data;
+    if (data is Map<String, dynamic>) {
+      return data;
+    }
     throw const FormatException('Expected a JSON object response');
   }
 }

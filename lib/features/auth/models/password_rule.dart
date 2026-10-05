@@ -24,7 +24,9 @@ class PasswordRule {
 
 /// The rules of [policy] that actually require something.
 List<PasswordRule> passwordRulesFor(PasswordPolicy? policy) {
-  if (policy == null) return const [];
+  if (policy == null) {
+    return const [];
+  }
   return [
     for (final (kind, count) in [
       (PasswordRuleKind.minLength, policy.minLength),

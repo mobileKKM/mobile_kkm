@@ -7,11 +7,11 @@ import 'package:pointycastle/export.dart'
         AESEngine,
         CBCBlockCipher,
         KeyParameter,
-        ParametersWithIV,
-        PaddedBlockCipherImpl,
-        PaddedBlockCipherParameters,
         PKCS1Encoding,
         PKCS7Padding,
+        PaddedBlockCipherImpl,
+        PaddedBlockCipherParameters,
+        ParametersWithIV,
         PublicKeyParameter,
         RSAEngine,
         RSAPublicKey;
@@ -90,7 +90,9 @@ class EkpAztecCrypto {
     try {
       final blob = base64Decode(contractBase64.replaceAll(RegExp(r'\s'), ''));
       // 16 bytes IV + at least one AES block, block-aligned remainder.
-      if (blob.length < 32 || (blob.length - 16) % 16 != 0) return null;
+      if (blob.length < 32 || (blob.length - 16) % 16 != 0) {
+        return null;
+      }
       // AES-128-CBC + PKCS#7 — the crypto-js defaults the official client
       // relies on (PaddedBlockCipherImpl(PKCS7, CBC(AES)) == 'AES/CBC/PKCS7').
       final aes = PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()))

@@ -15,7 +15,9 @@ class EmailLink {
   /// linking only forwards path and query.
   static EmailLink? tryParse(Uri uri) {
     final match = _pattern.firstMatch(uri.path);
-    if (match == null) return null;
+    if (match == null) {
+      return null;
+    }
     final kind = match.group(1) == 'activate' ? EmailLinkKind.activate : EmailLinkKind.resetPassword;
     return EmailLink(kind, Uri.decodeComponent(match.group(2)!));
   }

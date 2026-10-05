@@ -43,7 +43,9 @@ class AuthController extends Notifier<AuthState> {
       await session.recover().timeout(_startupRecoveryTimeout, onTimeout: () => false);
       stored = await session.currentSession();
     }
-    if (!ref.mounted || state.status != AuthStatus.unknown) return;
+    if (!ref.mounted || state.status != AuthStatus.unknown) {
+      return;
+    }
     state = AuthState(stored == null ? AuthStatus.unauthenticated : AuthStatus.authenticated);
   }
 

@@ -13,11 +13,14 @@ mixin EkpCodeMessage {
 
   /// [code] as int when numeric, otherwise null.
   int? get codeAsInt => switch (code) {
-    int v => v,
-    num v => v.toInt(),
+    final int v => v,
+    final num v => v.toInt(),
     _ => null,
   };
 
   /// [code] as String when it is a string, otherwise null.
-  String? get codeAsString => code is String ? code as String : null;
+  String? get codeAsString => switch (code) {
+    final String v => v,
+    _ => null,
+  };
 }

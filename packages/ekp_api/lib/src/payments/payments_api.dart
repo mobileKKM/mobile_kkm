@@ -54,8 +54,8 @@ class PaymentsApi extends EkpApiService {
       final fields = body is Map<String, dynamic> ? body : <String, dynamic>{};
       final code = fields['code'];
       final codeInt = switch (code) {
-        int v => v,
-        num v => v.toInt(),
+        final int v => v,
+        final num v => v.toInt(),
         _ => null,
       };
       final message = fields['message'] is String ? fields['message'] as String : null;

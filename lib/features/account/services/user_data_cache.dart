@@ -24,7 +24,9 @@ class SecureUserDataCache implements UserDataCache {
   Future<UserDataResponse?> read() async {
     try {
       final raw = await _storage.read(key: _key);
-      if (raw == null) return null;
+      if (raw == null) {
+        return null;
+      }
       return UserDataResponse.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     } catch (_) {
       // Undecryptable or from an older model shape: behave as a cache miss.

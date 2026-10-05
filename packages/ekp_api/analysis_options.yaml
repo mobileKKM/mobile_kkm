@@ -1,15 +1,9 @@
-include: package:lints/recommended.yaml
+include:
+  - package:lints/recommended.yaml
+  - ../../analysis_options_shared.yaml
 
 analyzer:
   exclude:
     # Generated code (build_runner output).
     - "**/*.g.dart"
     - "**/*.freezed.dart"
-
-formatter:
-  page_width: 120
-
-linter:
-  rules:
-    directives_ordering: true
-    sort_pub_dependencies: true

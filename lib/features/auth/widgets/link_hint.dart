@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
@@ -20,7 +22,7 @@ class _LinkHintState extends ConsumerState<LinkHint> with WidgetsBindingObserver
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _refresh();
+    unawaited(_refresh());
   }
 
   @override
@@ -32,14 +34,20 @@ class _LinkHintState extends ConsumerState<LinkHint> with WidgetsBindingObserver
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Coming back from the system settings: the answer may have changed.
-    if (state == AppLifecycleState.resumed) _refresh();
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_refresh());
+    }
   }
 
   Future<void> _refresh() async {
     final settings = ref.read(linkSettingsProvider);
-    if (!settings.isSupported) return;
+    if (!settings.isSupported) {
+      return;
+    }
     final canOpen = await settings.canOpenLinks();
-    if (mounted) setState(() => _canOpenLinks = canOpen);
+    if (mounted) {
+      setState(() => _canOpenLinks = canOpen);
+    }
   }
 
   @override
@@ -49,7 +57,9 @@ class _LinkHintState extends ConsumerState<LinkHint> with WidgetsBindingObserver
     final style = Theme.of(context).textTheme.bodyMedium
         ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
 
-    if (!settings.isSupported) return Text(l10n.inboxBrowserHint, style: style);
+    if (!settings.isSupported) {
+      return Text(l10n.inboxBrowserHint, style: style);
+    }
     return switch (_canOpenLinks) {
       null => const SizedBox.shrink(),
       true => Text(l10n.inboxAppHint, style: style),

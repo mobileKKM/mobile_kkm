@@ -35,7 +35,7 @@ class AuthInterceptor extends Interceptor {
   Future<bool>? _recoveryInFlight;
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final session = await _session.currentSession();
     if (session != null && _wantsBearer(options)) {
       options.headers['authorization'] = 'Bearer ${session.token}';
@@ -44,7 +44,7 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     final status = err.response?.statusCode;
     final requestOptions = err.requestOptions;
 

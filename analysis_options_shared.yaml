@@ -1,0 +1,52 @@
+# Formatter and lint settings shared by every workspace member: included from
+# the root analysis_options.yaml (the app) and packages/*/analysis_options.yaml.
+# Flutter-only rules stay in the root file.
+
+formatter:
+  page_width: 120
+
+linter:
+  rules:
+    # Correctness
+    always_declare_return_types: true
+    avoid_type_to_string: true
+    avoid_unused_constructor_parameters: true
+    avoid_void_async: true
+    cancel_subscriptions: true
+    cast_nullable_to_non_nullable: true
+    close_sinks: true
+    collection_methods_unrelated_type: true
+    deprecated_consistency: true
+    deprecated_member_use_from_same_package: true
+    discarded_futures: true
+    no_adjacent_strings_in_list: true
+    no_self_assignments: true
+    noop_primitive_operations: true
+    only_throw_errors: true
+    parameter_assignments: true
+    throw_in_finally: true
+    tighten_type_of_initializing_formals: true
+    unawaited_futures: true
+    unnecessary_ignore: true
+    unnecessary_null_checks: true
+    unnecessary_statements: true
+    unrelated_type_equality_checks: true
+
+    # Performance
+    avoid_slow_async_io: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+
+    # Style
+    always_put_control_body_on_new_line: true
+    avoid_multiple_declarations_per_line: true
+    avoid_print: true
+    combinators_ordering: true
+    directives_ordering: true
+    no_leading_underscores_for_local_identifiers: true
+    prefer_final_locals: true
+    unnecessary_breaks: true
+    unnecessary_parenthesis: true
+    use_named_constants: true
+    use_super_parameters: true

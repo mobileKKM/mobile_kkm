@@ -17,7 +17,9 @@ class LinkSettings {
   bool get isSupported => defaultTargetPlatform == TargetPlatform.android;
 
   Future<bool> canOpenLinks() async {
-    if (!isSupported) return false;
+    if (!isSupported) {
+      return false;
+    }
     try {
       return await _channel.invokeMethod<bool>('canOpenLinks', ekpLinkHost) ?? false;
     } on PlatformException {
@@ -28,7 +30,9 @@ class LinkSettings {
   }
 
   Future<void> openSettings() async {
-    if (!isSupported) return;
+    if (!isSupported) {
+      return;
+    }
     await _channel.invokeMethod<void>('openLinkSettings');
   }
 }
