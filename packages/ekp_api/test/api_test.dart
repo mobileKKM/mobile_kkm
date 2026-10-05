@@ -337,11 +337,122 @@ void main() {
       });
     });
 
+    test('signIn sends birthDate instead of pesel for accounts without one', () async {
+      adapter.onPost('/subscriptions/sign-in', [(200, '')]);
+      await client.subscriptions.signIn(
+        firstName: 'JAN',
+        lastName: 'TESTOWY',
+        email: 'test@example.com',
+        birthDate: '1990-01-01',
+        ccCustomerId: 200001,
+      );
+      final body = bodyOf(requestsTo('/subscriptions/sign-in').single);
+      expect(body['birthDate'], '1990-01-01');
+      expect(body.containsKey('pesel'), isFalse);
+    });
+
+    test('signIn rejects both or neither of pesel and birthDate', () {
+      Future<void> signIn({String? pesel, String? birthDate}) => client.subscriptions.signIn(
+        firstName: 'JAN',
+        lastName: 'TESTOWY',
+        email: 'test@example.com',
+        pesel: pesel,
+        birthDate: birthDate,
+        ccCustomerId: 200001,
+      );
+      expect(signIn, throwsArgumentError);
+      expect(() => signIn(pesel: '90010112345', birthDate: '1990-01-01'), throwsArgumentError);
+    });
+
     test('cancel posts the literal null body', () async {
       adapter.onPost('/subscriptions/cancel', [(200, '')]);
       await client.subscriptions.cancel();
       final req = requestsTo('/subscriptions/cancel').single;
       expectBearer(req);
+      expect(req.data, 'null');
+    });
+
+    test('setCycleRefresh PUTs the flag alone', () async {
+      adapter.onPut('/subscriptions/edit', [(200, '')]);
+      await client.subscriptions.setCycleRefresh(enabled: true);
+      final req = requestsTo('/subscriptions/edit').single;
+      expectBearer(req);
+      expect(bodyOf(req), {'isCycleRefreshEnabled': true});
+    });
+
+    test('buyingTicketDetails GETs with the ticket kind as query', () async {
+      adapter.onGet('/subscriptions/tickets/buying-ticket-details', [
+        (200, fixture('subscriptions_buying_ticket_details')),
+      ]);
+      final res = await client.subscriptions.buyingTicketDetails(kind: SubscriptionTicketKind.halfPrice);
+      expect(res.price, 80.0);
+      final req = requestsTo('/subscriptions/tickets/buying-ticket-details').single;
+      expectBearer(req);
+      expect(req.queryParameters, {'ticketKind': 'halfPrice'});
+    });
+
+    test('buyTicket posts kind, debit consent and a UTC validFrom', () async {
+      adapter.onPost('/subscriptions/tickets/buy', [(200, fixture('subscriptions_ticket_buy'))]);
+      final res = await client.subscriptions.buyTicket(
+        kind: SubscriptionTicketKind.normal,
+        isAutomaticSubscriptionEnabled: true,
+        validFrom: DateTime.utc(2025, 10, 1, 22),
+      );
+      expect(res.tpayRedirectUrl, 'https://secure.tpay.com/?id=deadbeef');
+      expect(res.code, isNull);
+      final req = requestsTo('/subscriptions/tickets/buy').single;
+      expectBearer(req);
+      expect(bodyOf(req), {
+        'kind': 'normal',
+        'isAutomaticSubscriptionEnabled': true,
+        'validFrom': '2025-10-01T22:00:00.000Z',
+      });
+    });
+
+    test('payTicket posts the guid, parses the redirect', () async {
+      adapter.onPost('/subscriptions/tickets/pay', [(200, fixture('subscriptions_ticket_pay'))]);
+      final res = await client.subscriptions.payTicket(ticketGuid: 'feedfacefeedfacefeedfacefeedface');
+      expect(res.tpayRedirectUrl, 'https://secure.tpay.com/?id=deadbeef');
+      expect(res.needsRepaymentConfirmation, isFalse);
+      final req = requestsTo('/subscriptions/tickets/pay').single;
+      expectBearer(req);
+      expect(bodyOf(req), {'ticketGuid': 'feedfacefeedfacefeedfacefeedface', 'ignoreWarnings': false});
+    });
+
+    test('payTicket returns the repayment warning instead of throwing', () async {
+      adapter.onPost('/subscriptions/tickets/pay', [
+        (400, {'code': 2, 'message': 'System oczekuje na potwierdzenie poprzedniej płatności'}),
+        (200, fixture('subscriptions_ticket_pay')),
+      ]);
+      final warning = await client.subscriptions.payTicket(ticketGuid: 'feedfacefeedfacefeedfacefeedface');
+      expect(warning.needsRepaymentConfirmation, isTrue);
+      expect(warning.tpayRedirectUrl, isNull);
+      expect(warning.message, 'System oczekuje na potwierdzenie poprzedniej płatności');
+
+      final res = await client.subscriptions.payTicket(
+        ticketGuid: 'feedfacefeedfacefeedfacefeedface',
+        ignoreWarnings: true,
+      );
+      expect(res.tpayRedirectUrl, isNotNull);
+      expect(bodyOf(requestsTo('/subscriptions/tickets/pay').last)['ignoreWarnings'], isTrue);
+    });
+
+    test('payTicket throws on any other error code', () async {
+      adapter.onPost('/subscriptions/tickets/pay', [
+        (400, {'code': 5, 'message': 'Błąd'}),
+      ]);
+      await expectLater(
+        client.subscriptions.payTicket(ticketGuid: 'feedfacefeedfacefeedfacefeedface'),
+        throwsA(isA<EkpHttpException>().having((e) => e.codeAsInt, 'code', 5)),
+      );
+    });
+
+    test('removeTicket posts the literal null body to the ticket path', () async {
+      adapter.onPost('/remove', [(200, '')]);
+      await client.subscriptions.removeTicket('feedfacefeedfacefeedfacefeedface');
+      final req = requestsTo('/remove').single;
+      expectBearer(req);
+      expect(req.path, endsWith('/subscriptions/tickets/feedfacefeedfacefeedfacefeedface/remove'));
       expect(req.data, 'null');
     });
   });
@@ -424,6 +535,52 @@ void main() {
       });
     });
 
+    test('pay returns AlreadyPaid as a value, on HTTP 200 and on an error status', () async {
+      adapter.onPost('/tickets/pay', [
+        (200, {'code': 'AlreadyPaid', 'message': 'Bilet został już opłacony'}),
+        (400, {'code': 'AlreadyPaid', 'message': 'Bilet został już opłacony'}),
+      ]);
+      for (var i = 0; i < 2; i++) {
+        final res = await client.tickets.pay(ticketGuid: 'feedfacefeedfacefeedfacefeedface', tPayPaymentGroupId: '160');
+        expect(res.isAlreadyPaid, isTrue);
+        expect(res.needsRepaymentConfirmation, isFalse);
+        expect(res.message, 'Bilet został już opłacony');
+        expect(res.urls, isNull);
+      }
+    });
+
+    test('pay returns the repayment warning as a value', () async {
+      adapter.onPost('/tickets/pay', [
+        (400, {'code': 5, 'message': 'System oczekuje na potwierdzenie poprzedniej płatności'}),
+      ]);
+      final res = await client.tickets.pay(
+        ticketGuid: 'feedfacefeedfacefeedfacefeedface',
+        tPayPaymentGroupId: '160',
+        ignoreWarnings: false,
+      );
+      expect(res.needsRepaymentConfirmation, isTrue);
+      expect(res.isAlreadyPaid, isFalse);
+      expect(bodyOf(requestsTo('/tickets/pay').single)['ignoreWarnings'], isFalse);
+    });
+
+    test('pay throws on any other error code', () async {
+      adapter.onPost('/tickets/pay', [
+        (400, {'code': 2, 'message': 'Błąd'}),
+      ]);
+      await expectLater(
+        client.tickets.pay(ticketGuid: 'feedfacefeedfacefeedfacefeedface', tPayPaymentGroupId: '160'),
+        throwsA(isA<EkpHttpException>().having((e) => e.codeAsInt, 'code', 2)),
+      );
+    });
+
+    test('pay leaves both flags unset on a normal reply', () async {
+      adapter.onPost('/tickets/pay', [(200, fixture('pay_response'))]);
+      final res = await client.tickets.pay(ticketGuid: 'feedfacefeedfacefeedfacefeedface', tPayPaymentGroupId: '160');
+      expect(res.code, isNull);
+      expect(res.isAlreadyPaid, isFalse);
+      expect(res.needsRepaymentConfirmation, isFalse);
+    });
+
     test('calculateReturn posts transactionId + UTC returnDate', () async {
       adapter.onPost('/ticket-returns/calculate', [(200, fixture('ticket_returns_calculate'))]);
       final res = await client.tickets.calculateReturn(transactionId: 400004, returnDate: DateTime.utc(2025, 6, 15));
@@ -447,6 +604,15 @@ void main() {
       final res = await client.payments.changePaymentCard();
       expect(res.tPayRedirectUrl, 'https://secure.tpay.com/cards/?sale_auth=deadbeef');
       final req = requestsTo('/payments/change-payment-card').single;
+      expectBearer(req);
+      expect(req.data, 'null');
+    });
+
+    test('addPaymentCard posts literal null, parses redirect', () async {
+      adapter.onPost('/payments/add-payment-card', [(200, fixture('change_payment_card'))]);
+      final res = await client.payments.addPaymentCard();
+      expect(res.tPayRedirectUrl, 'https://secure.tpay.com/cards/?sale_auth=deadbeef');
+      final req = requestsTo('/payments/add-payment-card').single;
       expectBearer(req);
       expect(req.data, 'null');
     });

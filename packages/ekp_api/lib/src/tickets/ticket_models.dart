@@ -330,11 +330,29 @@ abstract class PurchaseUrls with _$PurchaseUrls {
 }
 
 /// `POST tickets/buy` and `POST tickets/pay`.
+///
+/// [code] and [message] were never captured on these endpoints: they are
+/// the envelope the official client reads from a `tickets/pay` reply
+/// before it looks at [urls].
 @freezed
-abstract class TicketPurchaseResponse with _$TicketPurchaseResponse {
-  const factory TicketPurchaseResponse({MkkmTicket? ticket, PurchaseUrls? urls}) = _TicketPurchaseResponse;
+abstract class TicketPurchaseResponse with EkpCodeMessage, _$TicketPurchaseResponse {
+  const TicketPurchaseResponse._();
+
+  const factory TicketPurchaseResponse({MkkmTicket? ticket, PurchaseUrls? urls, Object? code, String? message}) =
+      _TicketPurchaseResponse;
 
   factory TicketPurchaseResponse.fromJson(Map<String, dynamic> json) => _$TicketPurchaseResponseFromJson(json);
+
+  /// `tickets/pay` only: the ticket needs no payment any more
+  /// (`code: 'AlreadyPaid'`). There is nothing to open — reload the
+  /// ticket list.
+  bool get isAlreadyPaid => code == 'AlreadyPaid';
+
+  /// `tickets/pay` only: an earlier payment of this ticket is still
+  /// unconfirmed (`code: 5`). Only expected when the call was made with
+  /// `ignoreWarnings: false`; repeat it with `true` once the user agrees
+  /// to pay again.
+  bool get needsRepaymentConfirmation => codeAsInt == 5;
 }
 
 /// `POST ticket-returns/calculate`.

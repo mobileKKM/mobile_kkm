@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:ekp_crypto/ekp_crypto.dart';
 
+import '../common/api_exception.dart';
 import '../common/api_paths.dart';
 import '../common/api_service.dart';
 import '../dictionary/dictionary_models.dart';
@@ -159,19 +161,46 @@ class TicketsApi extends EkpApiService {
   }
 
   /// `POST tickets/pay` — re-initiates payment for an existing pending
-  /// ticket (same body as [buy] plus `id` = ticketGuid).
+  /// ticket. The body is `{id, ignoreWarnings, tPayPaymentGroupId}` with
+  /// `id` = ticketGuid.
+  ///
+  /// [ignoreWarnings] defaults to `true` because that is what the official
+  /// client sends from its only entry point, the pending ticket's pay
+  /// button (and the only value ever captured).
+  ///
+  /// Two business outcomes are returned, not thrown, whatever HTTP status
+  /// carries them (neither was ever captured, so the status is unknown):
+  /// * `code: 'AlreadyPaid'` → [TicketPurchaseResponse.isAlreadyPaid]; the
+  ///   official client just reloads the ticket list.
+  /// * `code: 5` → [TicketPurchaseResponse.needsRepaymentConfirmation]; the
+  ///   official client shows a "pay again?" dialog whose confirmation
+  ///   repeats the call with [ignoreWarnings] `true`.
+  ///
+  /// Anything else is thrown as [EkpApiException].
   Future<TicketPurchaseResponse> pay({
     required String ticketGuid,
     required String tPayPaymentGroupId,
     bool ignoreWarnings = true,
   }) async {
-    return guard(() async {
+    try {
       final response = await dio.post<Map<String, dynamic>>(
         EkpApiPaths.ticketsPay,
         data: {'id': ticketGuid, 'ignoreWarnings': ignoreWarnings, 'tPayPaymentGroupId': tPayPaymentGroupId},
       );
       return TicketPurchaseResponse.fromJson(response.data ?? const <String, dynamic>{});
-    });
+    } on DioException catch (e) {
+      final body = e.response?.data;
+      if (body is Map<String, dynamic>) {
+        final outcome = TicketPurchaseResponse(
+          code: body['code'],
+          message: body['message'] is String ? body['message'] as String : null,
+        );
+        if (outcome.isAlreadyPaid || outcome.needsRepaymentConfirmation) {
+          return outcome;
+        }
+      }
+      throw EkpApiException.fromDio(e);
+    }
   }
 
   /// `POST mkkm/tickets/assign-e` — binds [ticketGuid] to this device so it

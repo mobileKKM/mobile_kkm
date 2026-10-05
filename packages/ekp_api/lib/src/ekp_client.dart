@@ -72,7 +72,7 @@ class EkpClient {
   /// Payments (tpay): banks, payment status.
   late final PaymentsApi payments = PaymentsApi(dio);
 
-  /// Subscriptions (5+1) read endpoints.
+  /// Subscriptions (5+1): programme state, sign-in, tickets, cancellation.
   late final SubscriptionsApi subscriptions = SubscriptionsApi(dio);
 
   /// Invoice list.

@@ -38,6 +38,20 @@ class PaymentsApi extends EkpApiService {
     });
   }
 
+  /// `POST payments/add-payment-card` — starts a tpay card registration for
+  /// a subscription that has no card yet (available once
+  /// `subscriptions/available-actions` reports `newCard: true`).
+  ///
+  /// Never captured: the official client calls it exactly like
+  /// [changePaymentCard] and reads the same `tPayRedirectUrl` from the
+  /// response.
+  Future<ChangePaymentCardResponse> addPaymentCard() async {
+    return guard(() async {
+      final response = await dio.post<Map<String, dynamic>>(EkpApiPaths.paymentsAddPaymentCard, data: 'null');
+      return ChangePaymentCardResponse.fromJson(response.data ?? const <String, dynamic>{});
+    });
+  }
+
   /// `POST payments/check` with `{id: ticketGuid}`.
   ///
   /// * HTTP 200 → [PaymentCheckStatus.confirmed]

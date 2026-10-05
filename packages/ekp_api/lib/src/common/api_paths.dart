@@ -57,6 +57,7 @@ abstract final class EkpApiPaths {
   static const String paymentsCheck = '$apiRoot/payments/check';
   static const String paymentsResult = '$apiRoot/payments/result';
   static const String paymentsChangePaymentCard = '$apiRoot/payments/change-payment-card';
+  static const String paymentsAddPaymentCard = '$apiRoot/payments/add-payment-card';
 
   // -------------------------------------------------------- subscriptions
   static const String subscriptionsDetails = '$apiRoot/subscriptions/details';
@@ -64,6 +65,18 @@ abstract final class EkpApiPaths {
   static const String subscriptionsMarketingConsents = '$apiRoot/subscriptions/marketing-consents';
   static const String subscriptionsSignIn = '$apiRoot/subscriptions/sign-in';
   static const String subscriptionsCancel = '$apiRoot/subscriptions/cancel';
+  // The paths below were never captured: they come from the official
+  // client's path table and call sites.
+  static const String subscriptionsEdit = '$apiRoot/subscriptions/edit';
+
+  /// Base of `subscriptions/tickets/{ticketGuid}/remove`.
+  static const String subscriptionsTickets = '$apiRoot/subscriptions/tickets';
+  static const String subscriptionsTicketsBuyingDetails = '$apiRoot/subscriptions/tickets/buying-ticket-details';
+  static const String subscriptionsTicketsBuy = '$apiRoot/subscriptions/tickets/buy';
+  static const String subscriptionsTicketsPay = '$apiRoot/subscriptions/tickets/pay';
+  // Deliberately NOT implemented: `subscriptions/is_signed_in` and
+  // `subscriptions/tickets/return`. Both are in the official client's path
+  // table but nothing calls them, so their method and shapes are unknown.
 
   // ------------------------------------------------------------ invoices
   static const String invoices = '$apiRoot/invoices';

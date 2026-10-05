@@ -306,6 +306,45 @@ void main() {
       expect(detail.clientCode, 100001);
     });
 
+    test('SubscriptionDetails parses a pending ticket', () {
+      final res = SubscriptionDetails.fromJson(fixture('subscriptions_details_ticket'));
+      expect(res.activeTicket, isNull);
+      final ticket = res.pendingTicket!;
+      expect(ticket.ticketGuid, 'feedfacefeedfacefeedfacefeedface');
+      expect(ticket.transactionCode, isNull);
+      expect(ticket.startDate, DateTime(2025, 10, 2));
+      expect(ticket.endDate, DateTime(2025, 11, 1, 23, 59, 59));
+      expect(ticket.commodityName, 'Bilet 5+1 normalny');
+      expect(ticket.monthsPeriod, 1);
+      expect(ticket.price, 80.0);
+      expect(ticket.canBePaid, isTrue);
+      expect(ticket.canRemove, isTrue);
+    });
+
+    test('SubscriptionBuyingTicketDetails parses', () {
+      final res = SubscriptionBuyingTicketDetails.fromJson(fixture('subscriptions_buying_ticket_details'));
+      expect(res.commodityName, 'Bilet 5+1 normalny');
+      expect(res.price, 80.0);
+      expect(res.ticketSavedOnCard!.dateStart, DateTime(2025, 9));
+      expect(res.ticketSavedOnCard!.dateEnd, DateTime(2025, 9, 30, 23, 59, 59));
+    });
+
+    test('SubscriptionTicketBuyResponse parses', () {
+      final res = SubscriptionTicketBuyResponse.fromJson(fixture('subscriptions_ticket_buy'));
+      expect(res.commodityName, 'Bilet 5+1 normalny');
+      expect(res.ticketStartDate, DateTime(2025, 10, 2));
+      expect(res.ticketEndDate, DateTime(2025, 11, 1, 23, 59, 59));
+      expect(res.tpayRedirectUrl, 'https://secure.tpay.com/?id=deadbeef');
+      expect(res.codeAsInt, isNull);
+    });
+
+    test('SubscriptionTicketPayResponse flags the repayment warning on code 2 only', () {
+      final paid = SubscriptionTicketPayResponse.fromJson(fixture('subscriptions_ticket_pay'));
+      expect(paid.needsRepaymentConfirmation, isFalse);
+      expect(const SubscriptionTicketPayResponse(code: 2).needsRepaymentConfirmation, isTrue);
+      expect(const SubscriptionTicketPayResponse(code: '2').needsRepaymentConfirmation, isFalse);
+    });
+
     test('SubscriptionAvailableActions parses', () {
       final res = SubscriptionAvailableActions.fromJson(fixture('subscriptions_actions'));
       expect(res.buyTicket, isFalse);

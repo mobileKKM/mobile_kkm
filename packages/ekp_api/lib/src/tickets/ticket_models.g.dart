@@ -411,11 +411,15 @@ Map<String, dynamic> _$PurchaseUrlsToJson(_PurchaseUrls instance) => <String, dy
 _TicketPurchaseResponse _$TicketPurchaseResponseFromJson(Map<String, dynamic> json) => _TicketPurchaseResponse(
   ticket: json['ticket'] == null ? null : MkkmTicket.fromJson(json['ticket'] as Map<String, dynamic>),
   urls: json['urls'] == null ? null : PurchaseUrls.fromJson(json['urls'] as Map<String, dynamic>),
+  code: json['code'],
+  message: json['message'] as String?,
 );
 
 Map<String, dynamic> _$TicketPurchaseResponseToJson(_TicketPurchaseResponse instance) => <String, dynamic>{
   'ticket': instance.ticket,
   'urls': instance.urls,
+  'code': instance.code,
+  'message': instance.message,
 };
 
 _TicketReturnCalculation _$TicketReturnCalculationFromJson(Map<String, dynamic> json) => _TicketReturnCalculation(

@@ -1,0 +1,7 @@
+{
+  "commodityName": "Bilet 5+1 normalny",
+  "price": 80.0,
+  "ticketStartDate": "2025-10-02T00:00:00",
+  "ticketEndDate": "2025-11-01T23:59:59",
+  "tpayRedirectUrl": "https://secure.tpay.com/?id=deadbeef"
+}

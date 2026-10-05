@@ -1552,7 +1552,7 @@ mixin _$InhabitantContract {
 /// Epoch milliseconds — the only date in the whole API that is not an
 /// ISO-8601 string (json_serializable has no built-in epoch support,
 /// hence the local [_parseEpochMs] hook).
-@JsonKey(fromJson: _parseEpochMs) DateTime? get expirationDate;/// Base64 encoded PNG of the signed contract.
+@JsonKey(fromJson: _parseEpochMs) DateTime? get expirationDate;/// Base64-encoded PNG of the AZTEC barcode (signed server-side).
  String? get contract;
 /// Create a copy of InhabitantContract
 /// with the given fields replaced by the non-null parameter values.
@@ -1760,7 +1760,7 @@ class _InhabitantContract extends InhabitantContract {
 /// ISO-8601 string (json_serializable has no built-in epoch support,
 /// hence the local [_parseEpochMs] hook).
 @override@JsonKey(fromJson: _parseEpochMs) final  DateTime? expirationDate;
-/// Base64 encoded PNG of the signed contract.
+/// Base64-encoded PNG of the AZTEC barcode (signed server-side).
 @override final  String? contract;
 
 /// Create a copy of InhabitantContract

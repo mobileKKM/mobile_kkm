@@ -4079,7 +4079,7 @@ as String?,
 /// @nodoc
 mixin _$TicketPurchaseResponse {
 
- MkkmTicket? get ticket; PurchaseUrls? get urls;
+ MkkmTicket? get ticket; PurchaseUrls? get urls; Object? get code; String? get message;
 /// Create a copy of TicketPurchaseResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -4093,20 +4093,20 @@ $TicketPurchaseResponseCopyWith<TicketPurchaseResponse> get copyWith => _$Ticket
 @override
 bool operator ==(Object other) {
   final _this = this as TicketPurchaseResponse;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketPurchaseResponse&&(identical(other.ticket, _this.ticket) || other.ticket == _this.ticket)&&(identical(other.urls, _this.urls) || other.urls == _this.urls));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketPurchaseResponse&&(identical(other.ticket, _this.ticket) || other.ticket == _this.ticket)&&(identical(other.urls, _this.urls) || other.urls == _this.urls)&&const DeepCollectionEquality().equals(other.code, _this.code)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as TicketPurchaseResponse;
-  return Object.hash(runtimeType,_this.ticket,_this.urls);
+  return Object.hash(runtimeType,_this.ticket,_this.urls,const DeepCollectionEquality().hash(_this.code),_this.message);
 }
 
 @override
 String toString() {
   final _this = this as TicketPurchaseResponse;
-  return 'TicketPurchaseResponse(ticket: ${_this.ticket}, urls: ${_this.urls})';
+  return 'TicketPurchaseResponse(ticket: ${_this.ticket}, urls: ${_this.urls}, code: ${_this.code}, message: ${_this.message})';
 }
 
 
@@ -4117,7 +4117,7 @@ abstract mixin class $TicketPurchaseResponseCopyWith<$Res>  {
   factory $TicketPurchaseResponseCopyWith(TicketPurchaseResponse value, $Res Function(TicketPurchaseResponse) _then) = _$TicketPurchaseResponseCopyWithImpl;
 @useResult
 $Res call({
- MkkmTicket? ticket, PurchaseUrls? urls
+ MkkmTicket? ticket, PurchaseUrls? urls, Object? code, String? message
 });
 
 
@@ -4134,11 +4134,12 @@ class _$TicketPurchaseResponseCopyWithImpl<$Res>
 
 /// Create a copy of TicketPurchaseResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? ticket = freezed,Object? urls = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? ticket = freezed,Object? urls = freezed,Object? code = freezed,Object? message = freezed,}) {
   return _then(TicketPurchaseResponse(
 ticket: freezed == ticket ? _self.ticket : ticket // ignore: cast_nullable_to_non_nullable
 as MkkmTicket?,urls: freezed == urls ? _self.urls : urls // ignore: cast_nullable_to_non_nullable
-as PurchaseUrls?,
+as PurchaseUrls?,code: freezed == code ? _self.code : code ,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of TicketPurchaseResponse
@@ -4247,10 +4248,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( MkkmTicket? ticket,  PurchaseUrls? urls)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( MkkmTicket? ticket,  PurchaseUrls? urls,  Object? code,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TicketPurchaseResponse() when $default != null:
-return $default(_that.ticket,_that.urls);case _:
+return $default(_that.ticket,_that.urls,_that.code,_that.message);case _:
   return orElse();
 
 }
@@ -4268,10 +4269,10 @@ return $default(_that.ticket,_that.urls);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( MkkmTicket? ticket,  PurchaseUrls? urls)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( MkkmTicket? ticket,  PurchaseUrls? urls,  Object? code,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _TicketPurchaseResponse():
-return $default(_that.ticket,_that.urls);case _:
+return $default(_that.ticket,_that.urls,_that.code,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -4288,10 +4289,10 @@ return $default(_that.ticket,_that.urls);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( MkkmTicket? ticket,  PurchaseUrls? urls)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( MkkmTicket? ticket,  PurchaseUrls? urls,  Object? code,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _TicketPurchaseResponse() when $default != null:
-return $default(_that.ticket,_that.urls);case _:
+return $default(_that.ticket,_that.urls,_that.code,_that.message);case _:
   return null;
 
 }
@@ -4302,12 +4303,14 @@ return $default(_that.ticket,_that.urls);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _TicketPurchaseResponse implements TicketPurchaseResponse {
-  const _TicketPurchaseResponse({this.ticket, this.urls});
+class _TicketPurchaseResponse extends TicketPurchaseResponse {
+  const _TicketPurchaseResponse({this.ticket, this.urls, this.code, this.message}): super._();
   factory _TicketPurchaseResponse.fromJson(Map<String, dynamic> json) => _$TicketPurchaseResponseFromJson(json);
 
 @override final  MkkmTicket? ticket;
 @override final  PurchaseUrls? urls;
+@override final  Object? code;
+@override final  String? message;
 
 /// Create a copy of TicketPurchaseResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -4322,18 +4325,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketPurchaseResponse&&(identical(other.ticket, ticket) || other.ticket == ticket)&&(identical(other.urls, urls) || other.urls == urls));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketPurchaseResponse&&(identical(other.ticket, ticket) || other.ticket == ticket)&&(identical(other.urls, urls) || other.urls == urls)&&const DeepCollectionEquality().equals(other.code, code)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,ticket,urls);
+    return Object.hash(runtimeType,ticket,urls,const DeepCollectionEquality().hash(code),message);
 }
 
 @override
 String toString() {
-    return 'TicketPurchaseResponse(ticket: $ticket, urls: $urls)';
+    return 'TicketPurchaseResponse(ticket: $ticket, urls: $urls, code: $code, message: $message)';
 }
 
 
@@ -4344,7 +4347,7 @@ abstract mixin class _$TicketPurchaseResponseCopyWith<$Res> implements $TicketPu
   factory _$TicketPurchaseResponseCopyWith(_TicketPurchaseResponse value, $Res Function(_TicketPurchaseResponse) _then) = __$TicketPurchaseResponseCopyWithImpl;
 @override @useResult
 $Res call({
- MkkmTicket? ticket, PurchaseUrls? urls
+ MkkmTicket? ticket, PurchaseUrls? urls, Object? code, String? message
 });
 
 
@@ -4361,11 +4364,12 @@ class __$TicketPurchaseResponseCopyWithImpl<$Res>
 
 /// Create a copy of TicketPurchaseResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? ticket = freezed,Object? urls = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? ticket = freezed,Object? urls = freezed,Object? code = freezed,Object? message = freezed,}) {
   return _then(_TicketPurchaseResponse(
 ticket: freezed == ticket ? _self.ticket : ticket // ignore: cast_nullable_to_non_nullable
 as MkkmTicket?,urls: freezed == urls ? _self.urls : urls // ignore: cast_nullable_to_non_nullable
-as PurchaseUrls?,
+as PurchaseUrls?,code: freezed == code ? _self.code : code ,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

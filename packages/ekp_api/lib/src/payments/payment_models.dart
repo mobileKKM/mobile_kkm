@@ -48,8 +48,9 @@ abstract class PaymentCheckResult with _$PaymentCheckResult {
       _PaymentCheckResult;
 }
 
-/// `POST payments/change-payment-card` — initiates a tpay card change for
-/// the subscription's recurring payment. The URL opens in a webview and
+/// `POST payments/change-payment-card` and `POST payments/add-payment-card`
+/// — initiates a tpay card change (or first registration) for the
+/// subscription's recurring payment. The URL opens in a webview and
 /// completes through the same `/payment/{success,rejected}` →
 /// `payments/result` sequence as a ticket purchase.
 @freezed
