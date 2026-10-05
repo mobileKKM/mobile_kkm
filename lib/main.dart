@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,10 +11,17 @@ import 'package:mobile_kkm/core/api/secure_token_store.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
+import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _registerFontLicenses();
+  // Edge to edge on every Android version (15+ enforces it anyway): the
+  // native splash covers the whole screen, so the Flutter one has to as well
+  // or its centred logo sits higher. iOS always is.
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+  }
 
   const storage = FlutterSecureStorage(
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
@@ -20,6 +29,7 @@ Future<void> main() async {
   // The native splash stays up until the first frame, so resolving the
   // device identity here does not show a blank screen.
   final device = await loadDeviceIdentity(storage);
+  await _decodeSplashLogo();
 
   runApp(
     ProviderScope(
@@ -31,6 +41,23 @@ Future<void> main() async {
       child: const MobileKkmApp(),
     ),
   );
+}
+
+/// Puts the splash logo into the image cache. Without this the first frame
+/// is drawn before the logo is decoded, and it visibly drops out for a moment
+/// between the native splash and [SplashScreen].
+Future<void> _decodeSplashLogo() {
+  final done = Completer<void>();
+  void finish() {
+    if (!done.isCompleted) {
+      done.complete();
+    }
+  }
+
+  SplashScreen.logo
+      .resolve(ImageConfiguration.empty)
+      .addListener(ImageStreamListener((_, _) => finish(), onError: (_, _) => finish()));
+  return done.future;
 }
 
 void _registerFontLicenses() {

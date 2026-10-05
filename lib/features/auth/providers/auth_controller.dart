@@ -25,6 +25,10 @@ class AuthController extends Notifier<AuthState> {
   /// How long the splash waits for the renewal before going on regardless.
   static const _startupRecoveryTimeout = Duration(seconds: 10);
 
+  /// Holds the splash for this many seconds, to look at it while developing:
+  /// `flutter run --dart-define=SPLASH_DELAY_SECONDS=5`. Off by default.
+  static const _splashDelaySeconds = int.fromEnvironment('SPLASH_DELAY_SECONDS');
+
   @override
   AuthState build() {
     final session = ref.watch(ekpClientProvider).session;
@@ -42,6 +46,9 @@ class AuthController extends Notifier<AuthState> {
       // the event stream; being offline keeps the session as it is.
       await session.recover().timeout(_startupRecoveryTimeout, onTimeout: () => false);
       stored = await session.currentSession();
+    }
+    if (_splashDelaySeconds > 0) {
+      await Future<void>.delayed(const Duration(seconds: 1) * _splashDelaySeconds);
     }
     if (!ref.mounted || state.status != AuthStatus.unknown) {
       return;
