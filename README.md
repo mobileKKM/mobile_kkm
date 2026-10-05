@@ -16,8 +16,9 @@ with the long-term goal of a free and open replacement app.
 
 The project consists of the [`ekp-dart`](./packages/README.md)
 foundation — a pure-Dart API client for the EKP backend plus the crypto
-helpers for its encrypted endpoints — and a freshly scaffolded Flutter
-application at the repository root whose development is the next step.
+helpers for its encrypted endpoints — and the Flutter application at the
+repository root (Android and iOS). The app so far covers the brand theme
+and the signed-out flows: login, account registration and password reset.
 
 ## Packages
 
@@ -29,7 +30,11 @@ application at the repository root whose development is the next step.
 ## Repository layout
 
 ```
-lib/                  Flutter application (scaffold so far)
+lib/                  Flutter application
+  core/               shared code: api, platform, providers, router, theme, widgets
+  features/<name>/    one folder per feature, split by kind: screens/, providers/,
+                      widgets/, models/, utils/, constants/
+assets/branding/      icon sources (SVG) and render.sh, which rasterises them
 packages/ekp_api/     Dart API client package
 packages/ekp_crypto/  encrypted-endpoint crypto package
 ```

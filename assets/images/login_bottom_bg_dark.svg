@@ -1,0 +1,36 @@
+<svg width="620" height="187" viewBox="0 0 620 187" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_24_0)">
+<rect y="136" width="621" height="51" fill="#5460B0"/>
+<rect x="55" y="136" width="482" height="21" fill="#3E4992"/>
+<path d="M539 147L55 147" stroke="#5460B0" stroke-dasharray="5 5"/>
+<rect x="112" y="56" width="130" height="80" fill="#2A2E47"/>
+<rect x="457" y="20" width="80" height="167" fill="#828CCB"/>
+<rect x="442" y="20" width="15" height="167" fill="url(#paint0_linear_24_0)"/>
+<rect x="537" y="122" width="59" height="65" fill="#6872BA"/>
+<rect x="398" y="129" width="59" height="58" fill="#8E97D8"/>
+<path d="M377 129L387.5 109L398 129V187H377V129Z" fill="#7B86D8"/>
+<rect x="467" y="37" width="18" height="18" fill="#E7E9F7"/>
+<rect x="509" y="37" width="18" height="18" fill="#E7E9F7"/>
+<rect x="467" y="72" width="18" height="18" fill="#E7E9F7"/>
+<rect x="509" y="72" width="18" height="18" fill="#E7E9F7"/>
+<rect x="467" y="107" width="18" height="18" fill="#E7E9F7"/>
+<path d="M31 107.667L43 85L55 107.667V187H31V107.667Z" fill="#96A0E2"/>
+<rect x="55" y="108" width="39" height="79" fill="#868FCE"/>
+<rect x="509" y="107" width="18" height="18" fill="#E7E9F7"/>
+<rect x="467" y="141" width="18" height="18" fill="#E7E9F7"/>
+<rect x="509" y="141" width="18" height="18" fill="#E7E9F7"/>
+<rect x="38" y="126" width="9" height="17" fill="#E1E5FF"/>
+<path d="M387.5 109H446.998L456.998 129H397.998L387.5 109Z" fill="#6F78BA"/>
+<path d="M43 85H82.7357L94 108H54.5772L43 85Z" fill="#6870B8"/>
+<ellipse cx="387" cy="124" rx="3" ry="4" fill="#CFD3F7"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_24_0" x1="449.5" y1="20" x2="449.5" y2="187" gradientUnits="userSpaceOnUse">
+<stop stop-color="#6C76BE"/>
+<stop offset="1" stop-color="#5F68A9"/>
+</linearGradient>
+<clipPath id="clip0_24_0">
+<rect width="620" height="187" fill="white"/>
+</clipPath>
+</defs>
+</svg>
