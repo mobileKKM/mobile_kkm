@@ -38,7 +38,8 @@ Code generation (outputs are committed — regenerate and commit them with the s
 (cd packages/ekp_api && dart run build_runner build --delete-conflicting-outputs)  # *.freezed.dart / *.g.dart
 dart format .                                          # required after build_runner: it emits *.g.dart at 80 columns
 flutter gen-l10n                                       # lib/l10n/app_localizations*.dart from the .arb files
-sh assets/branding/render.sh && dart run flutter_launcher_icons   # icons from SVG (needs Google Chrome, macOS sips)
+sh tool/render_branding.sh                             # launcher icons, in-app logo and splash logo from the SVGs
+                                                       # (needs Google Chrome, macOS sips); run the next line after it
 dart run flutter_native_splash:create                  # native splash; colours must match SplashScreen
 ```
 

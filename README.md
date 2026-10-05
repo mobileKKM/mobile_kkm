@@ -34,7 +34,9 @@ lib/                  Flutter application
   core/               shared code: api, platform, providers, router, theme, widgets
   features/<name>/    one folder per feature, split by kind: screens/, providers/,
                       widgets/, models/, utils/, constants/
-assets/branding/      icon sources (SVG) and render.sh, which rasterises them
+assets/branding/      icon and logo sources (SVG)
+tool/                 render_branding.sh, which rasterises them into the Android/iOS
+                      launcher icons, in-app logo and splash logo
 packages/ekp_api/     Dart API client package
 packages/ekp_crypto/  encrypted-endpoint crypto package
 ```
