@@ -133,6 +133,9 @@ abstract class CityCardTypesResponse with _$CityCardTypesResponse {
     return CityCardTypesResponse(types: json.map((k, dynamic v) => MapEntry(k, (v ?? '').toString())));
   }
 
+  /// The wire shape again: the bare code → name map.
+  Map<String, dynamic> toJson() => Map<String, dynamic>.of(types);
+
   /// Name for a numeric card code (e.g. 8 → `mKKM`), trimmed; null unknown.
   String? nameForCode(int code) {
     final name = types[code.toString()]?.trim();

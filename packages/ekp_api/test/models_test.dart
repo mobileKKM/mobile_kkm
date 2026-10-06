@@ -138,6 +138,13 @@ void main() {
       expect(res.nameForCode(1), 'ELS');
       expect(res.nameForCode(999), isNull);
     });
+
+    test('CityCardTypesResponse serializes back to the raw map', () {
+      final json = fixture('city_card_types');
+      final res = CityCardTypesResponse.fromJson(json);
+      expect(res.toJson(), json);
+      expect(CityCardTypesResponse.fromJson(res.toJson()), res);
+    });
   });
 
   group('ticket models', () {
