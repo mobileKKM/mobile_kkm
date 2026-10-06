@@ -14,7 +14,10 @@ final ekpClientProvider = Provider<EkpClient>((ref) {
 });
 
 /// `client/mobile-app/config` — document URLs (regulations etc.).
-final mobileAppConfigProvider = FutureProvider.autoDispose<MobileAppConfig>(
+///
+/// Loaded once behind the splash (see `appStartupProvider`) and kept for the
+/// whole run; only a failed load is ever repeated.
+final mobileAppConfigProvider = FutureProvider<MobileAppConfig>(
   (ref) => ref.watch(ekpClientProvider).misc.mobileAppConfig(),
   retry: (_, _) => null,
 );

@@ -1,8 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 
-/// Shown while the stored session is read and, if it has expired, renewed.
-/// Mirrors the native splash
+/// Shown while the service status and the app config are fetched and the
+/// stored session is read and, if it has expired, renewed. Nothing else is
+/// loaded behind it. Mirrors the native splash
 /// (see `flutter_native_splash` in pubspec.yaml) so the hand-over is
 /// seamless.
 class SplashScreen extends StatelessWidget {
