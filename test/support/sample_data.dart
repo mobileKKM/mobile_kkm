@@ -50,7 +50,7 @@ Map<String, dynamic> ticketsReply(List<Map<String, dynamic>> tickets) => {
   'message': null,
 };
 
-Map<String, dynamic> userDataJson({bool? resident = true, String? photoUrl}) => {
+Map<String, dynamic> userDataJson({bool? resident = true, bool? activeSubscription, String? photoUrl}) => {
   'userData': {
     'firstName': 'Jan',
     'lastName': 'Testowy',
@@ -58,7 +58,11 @@ Map<String, dynamic> userDataJson({bool? resident = true, String? photoUrl}) => 
     'birthDate': '2000-01-03T00:00:00',
     'photoUrl': photoUrl,
   },
-  'mkkmData': {'customerCode': '100001', 'hasInhabitantPrivilege': resident},
+  'mkkmData': {
+    'customerCode': '100001',
+    'hasInhabitantPrivilege': resident,
+    'hasActiveSubscription': ?activeSubscription,
+  },
 };
 
 const appConfigJson = {

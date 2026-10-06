@@ -9,7 +9,7 @@ import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// The dashboard: greeting, the pinned ticket, shortcuts and, for Karta
-/// Krakowska holders, the way into the 5+1 programme.
+/// Krakowska holders and 5+1 subscribers, the way into the 5+1 programme.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -18,9 +18,13 @@ class HomeScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(userDataProvider).value;
     final firstName = user?.userData?.firstName;
-    // 5+1 is open to Karta Krakowska holders only. Unknown counts as no, so
-    // the row does not appear and vanish again while the data loads.
-    final resident = user?.mkkmData?.hasInhabitantPrivilege ?? false;
+    // As in the official client: 5+1 is offered to Karta Krakowska holders and
+    // to anyone with a running subscription. The client also requires an
+    // attached mKKM card; here that will be settled by the onboarding, before
+    // the user gets this far. Unknown counts as no, so the row does not appear
+    // and vanish again while the data loads.
+    final mkkm = user?.mkkmData;
+    final has5p1Access = mkkm?.hasInhabitantPrivilege == true || mkkm?.hasActiveSubscription == true;
 
     return Scaffold(
       body: SafeArea(
@@ -40,7 +44,7 @@ class HomeScreen extends ConsumerWidget {
               const PinnedTicketCard(),
               const SizedBox(height: 16),
               const QuickActions(),
-              if (resident) ...[const SizedBox(height: 16), const SubscriptionCta()],
+              if (has5p1Access) ...[const SizedBox(height: 16), const SubscriptionCta()],
             ],
           ),
         ),

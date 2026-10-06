@@ -13,9 +13,15 @@ import '../../../support/sample_data.dart';
 
 const _subscription = '5+1 half-year ticket';
 
-FakeAdapter _adapter(List<Map<String, dynamic>> tickets, {bool? resident = true}) => FakeAdapter()
-  ..reply('GET', '/mkkm/tickets/list', 200, ticketsReply(tickets))
-  ..reply('GET', '/account/user-data', 200, userDataJson(resident: resident));
+FakeAdapter _adapter(List<Map<String, dynamic>> tickets, {bool? resident = true, bool? activeSubscription}) =>
+    FakeAdapter()
+      ..reply('GET', '/mkkm/tickets/list', 200, ticketsReply(tickets))
+      ..reply(
+        'GET',
+        '/account/user-data',
+        200,
+        userDataJson(resident: resident, activeSubscription: activeSubscription),
+      );
 
 void main() {
   testWidgets('greets the user by first name', (tester) async {
@@ -172,6 +178,11 @@ void main() {
     testWidgets('is not shown without the inhabitant privilege', (tester) async {
       await pumpApp(tester, _adapter([], resident: false), session: signedInSession);
       expect(find.text(_subscription), findsNothing);
+    });
+
+    testWidgets('is offered to a subscriber without the inhabitant privilege', (tester) async {
+      await pumpApp(tester, _adapter([], resident: false, activeSubscription: true), session: signedInSession);
+      expect(find.text(_subscription), findsOneWidget);
     });
 
     testWidgets('is not shown while the privilege is unknown', (tester) async {
