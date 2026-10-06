@@ -26,13 +26,39 @@ class TicketsScreen extends StatefulWidget {
 }
 
 class _TicketsScreenState extends State<TicketsScreen> {
+  // Keeps the buttons' state (and their animation) when the app bar starts over.
+  final _segmentsKey = GlobalKey();
   bool _past = false;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.navTickets)),
+      appBar: AppBar(
+        // Its "scrolled under" tint only follows scrolling, and each list starts at the top: start over with the list.
+        key: ValueKey(_past),
+        title: Text(l10n.navTickets),
+        // Part of the bar, so that it takes the bar's tint when a list scrolls under it.
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(64),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<bool>(
+                key: _segmentsKey,
+                showSelectedIcon: false,
+                segments: [
+                  ButtonSegment(value: false, label: Text(l10n.ticketsActive)),
+                  ButtonSegment(value: true, label: Text(l10n.ticketsPast)),
+                ],
+                selected: {_past},
+                onSelectionChanged: (selection) => setState(() => _past = selection.single),
+              ),
+            ),
+          ),
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'buy-ticket',
@@ -45,19 +71,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: SegmentedButton<bool>(
-              showSelectedIcon: false,
-              segments: [
-                ButtonSegment(value: false, label: Text(l10n.ticketsActive)),
-                ButtonSegment(value: true, label: Text(l10n.ticketsPast)),
-              ],
-              selected: {_past},
-              onSelectionChanged: (selection) => setState(() => _past = selection.single),
-            ),
-          ),
-          const AppStatusBanner(padding: EdgeInsets.fromLTRB(16, 0, 16, 8)),
+          const AppStatusBanner(padding: EdgeInsets.fromLTRB(16, 8, 16, 0)),
           Expanded(child: _past ? const _PastTickets() : const _ActiveTickets()),
         ],
       ),
