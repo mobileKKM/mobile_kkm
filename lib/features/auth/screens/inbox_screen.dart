@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/features/auth/widgets/auth_page.dart';
@@ -24,7 +25,7 @@ class InboxScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(Icons.mark_email_unread_outlined, size: 64, color: theme.colorScheme.primary),
+          Icon(Symbols.mark_email_unread_rounded, size: 64, color: theme.colorScheme.primary),
           const SizedBox(height: 24),
           Text(switch (kind) {
             InboxKind.registration => l10n.inboxRegistrationBody(email),

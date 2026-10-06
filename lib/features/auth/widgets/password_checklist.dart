@@ -1,3 +1,4 @@
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/features/auth/models/password_rule.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
@@ -28,7 +29,12 @@ class PasswordChecklist extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 2),
                 child: Row(
                   children: [
-                    Icon(met ? Icons.check_circle : Icons.radio_button_unchecked, size: 16, color: color),
+                    Icon(
+                      met ? Symbols.check_circle_rounded : Symbols.radio_button_unchecked_rounded,
+                      size: 16,
+                      color: color,
+                      fill: met ? 1 : 0,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(_label(l10n, rule), style: theme.textTheme.bodySmall?.copyWith(color: color)),

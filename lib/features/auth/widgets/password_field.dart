@@ -1,3 +1,4 @@
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
@@ -45,7 +46,7 @@ class _PasswordFieldState extends State<PasswordField> {
         labelText: widget.label,
         suffixIcon: IconButton(
           tooltip: _obscured ? l10n.showPassword : l10n.hidePassword,
-          icon: Icon(_obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+          icon: Icon(_obscured ? Symbols.visibility_rounded : Symbols.visibility_off_rounded),
           onPressed: () => setState(() => _obscured = !_obscured),
         ),
       ),

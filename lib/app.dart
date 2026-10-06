@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/app_router.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
+import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 class MobileKkmApp extends ConsumerWidget {
@@ -10,6 +11,9 @@ class MobileKkmApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Alive in every auth state, not only behind the signed-in screens: it
+    // is also what empties the ticket store when the session ends.
+    ref.listen(ticketSyncProvider, (_, _) {});
     return MaterialApp.router(
       title: 'mobileKKM',
       theme: AppTheme.light(),

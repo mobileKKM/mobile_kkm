@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/app.dart';
 import 'package:mobile_kkm/core/api/device_identity.dart';
 import 'package:mobile_kkm/core/api/secure_token_store.dart';
+import 'package:mobile_kkm/core/database/app_database.dart';
+import 'package:mobile_kkm/core/providers/database_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
@@ -23,9 +26,11 @@ Future<void> main() async {
     unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
   }
 
+  // Kept out of iOS backups, like `allowBackup="false"` does on Android.
   const storage = FlutterSecureStorage(
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
   );
+
   // The native splash stays up until the first frame, so resolving the
   // device identity here does not show a blank screen.
   final device = await loadDeviceIdentity(storage);
@@ -37,6 +42,7 @@ Future<void> main() async {
         deviceIdentityProvider.overrideWithValue(device),
         tokenStoreProvider.overrideWithValue(SecureTokenStore(storage)),
         userDataCacheProvider.overrideWithValue(SecureUserDataCache(storage)),
+        appDatabaseProvider.overrideWithValue(AppDatabase(driftDatabase(name: 'mobile_kkm'))),
       ],
       child: const MobileKkmApp(),
     ),

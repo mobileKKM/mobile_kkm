@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
+import 'package:mobile_kkm/core/widgets/coming_soon_screen.dart';
+import 'package:mobile_kkm/features/account/screens/account_screen.dart';
 import 'package:mobile_kkm/features/auth/models/email_link.dart';
 import 'package:mobile_kkm/features/auth/providers/auth_controller.dart';
 import 'package:mobile_kkm/features/auth/screens/activate_screen.dart';
@@ -11,20 +14,61 @@ import 'package:mobile_kkm/features/auth/screens/login_screen.dart';
 import 'package:mobile_kkm/features/auth/screens/register_screen.dart';
 import 'package:mobile_kkm/features/auth/screens/reset_password_screen.dart';
 import 'package:mobile_kkm/features/home/screens/home_screen.dart';
+import 'package:mobile_kkm/features/map/screens/map_screen.dart';
+import 'package:mobile_kkm/features/shell/widgets/main_shell.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
+import 'package:mobile_kkm/features/tickets/screens/tickets_screen.dart';
+import 'package:mobile_kkm/features/update/screens/update_required_screen.dart';
+import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
   ref.onDispose(refresh.dispose);
   ref.listen(authControllerProvider.select((state) => state.status), (_, _) => refresh.value++);
+  // Also starts the start-up check.
+  ref.listen(appStartupProvider, (_, _) => refresh.value++);
+  ref.listen(appStatusProvider.select((status) => status.mode == AppMode.outdated), (_, _) => refresh.value++);
 
   final router = GoRouter(
     initialLocation: Routes.splash,
     refreshListenable: refresh,
-    redirect: (context, state) => redirectFor(state.uri, ref.read(authControllerProvider).status),
+    redirect: (context, state) {
+      // The splash stays up until the service check and the app config are
+      // through, whatever the session says.
+      final started = !ref.read(appStartupProvider).isLoading;
+      return redirectFor(
+        state.uri,
+        started ? ref.read(authControllerProvider).status : AuthStatus.unknown,
+        outdated: ref.read(appStatusProvider).mode == AppMode.outdated,
+      );
+    },
     routes: [
       GoRoute(path: Routes.splash, builder: (context, state) => const SplashScreen()),
-      GoRoute(path: Routes.home, builder: (context, state) => const HomeScreen()),
+      GoRoute(path: Routes.updateRequired, builder: (context, state) => const UpdateRequiredScreen()),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => MainShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [GoRoute(path: Routes.home, builder: (context, state) => const HomeScreen())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: Routes.tickets, builder: (context, state) => const TicketsScreen())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: Routes.map, builder: (context, state) => const MapScreen())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: Routes.account, builder: (context, state) => const AccountScreen())],
+          ),
+        ],
+      ),
+      // Not built yet. Full screen, above the navigation bar.
+      _comingSoon(Routes.accountEdit, (l10n) => l10n.accountEdit),
+      _comingSoon(Routes.accountChangePassword, (l10n) => l10n.accountChangePassword),
+      _comingSoon(Routes.accountDelete, (l10n) => l10n.accountDelete),
+      _comingSoon(Routes.cityCard, (l10n) => l10n.cityCardTitle),
+      _comingSoon(Routes.buy, (l10n) => l10n.navBuy),
+      _comingSoon(Routes.subscription, (l10n) => l10n.subscriptionTitle),
       GoRoute(
         path: Routes.login,
         builder: (context, state) =>
@@ -56,9 +100,21 @@ final routerProvider = Provider<GoRouter>((ref) {
   return router;
 });
 
+GoRoute _comingSoon(String path, String Function(AppLocalizations l10n) title) => GoRoute(
+  path: path,
+  builder: (context, state) => ComingSoonScreen(title: title(AppLocalizations.of(context))),
+);
+
 /// Where [uri] should go instead, or null to stay.
+///
+/// [outdated]: the server no longer serves this client. Then there is one
+/// screen, in every auth state and for every link.
 @visibleForTesting
-String? redirectFor(Uri uri, AuthStatus status) {
+String? redirectFor(Uri uri, AuthStatus status, {bool outdated = false}) {
+  if (outdated) {
+    return uri.path == Routes.updateRequired ? null : Routes.updateRequired;
+  }
+
   // A link from an EKP e-mail, delivered by the platform's deep linking.
   final link = EmailLink.tryParse(uri);
   if (link != null) {
@@ -72,7 +128,7 @@ String? redirectFor(Uri uri, AuthStatus status) {
 
   return switch (status) {
     AuthStatus.unknown => path == Routes.splash ? null : Routes.splash,
-    AuthStatus.authenticated => path == Routes.home ? null : Routes.home,
+    AuthStatus.authenticated => Routes.isSignedIn(path) ? null : Routes.home,
     AuthStatus.unauthenticated => Routes.isPublic(path) ? null : Routes.login,
   };
 }

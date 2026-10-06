@@ -249,7 +249,236 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueToLogin => 'Go to sign in';
 
   @override
-  String get homePlaceholder => 'You are signed in. Tickets are coming soon.';
+  String get updateRequiredTitle => 'Update required';
+
+  @override
+  String get updateRequiredBody =>
+      'This version of mobileKKM is no longer supported by the EKP service. Install the latest version to keep using the app.';
+
+  @override
+  String get updateRequiredAction => 'Get the latest version';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navTickets => 'Tickets';
+
+  @override
+  String get navMap => 'Map';
+
+  @override
+  String get navBuy => 'Buy ticket';
+
+  @override
+  String get navAccount => 'Account';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get comingSoonBody => 'This part of the app is not ready yet.';
+
+  @override
+  String get offlineNotice => 'You\'re offline. Showing saved data.';
+
+  @override
+  String get serviceUnavailableNotice => 'The service is currently unavailable.';
+
+  @override
+  String get linkOpenFailed => 'Could not open this link.';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Hello, $name!';
+  }
+
+  @override
+  String get homeGreetingAnonymous => 'Hello!';
+
+  @override
+  String get homeNoTicketTitle => 'No active ticket';
+
+  @override
+  String get homeNoTicketBody => 'Your current ticket will show up here.';
+
+  @override
+  String get quickActionDepartures => 'Departures';
+
+  @override
+  String get mapSearchHint => 'Search for a stop';
+
+  @override
+  String get mapMyLocation => 'My location';
+
+  @override
+  String get mapCredits => 'Map data';
+
+  @override
+  String get mapFilters => 'Filters';
+
+  @override
+  String get mapLocationDenied => 'Allow access to your location to see where you are.';
+
+  @override
+  String get mapLocationServiceOff => 'Location is turned off on this device.';
+
+  @override
+  String get mapLocationSettings => 'Settings';
+
+  @override
+  String get cityCardTitle => 'Karta Krakowska';
+
+  @override
+  String get subscriptionTitle => '5+1 half-year ticket';
+
+  @override
+  String get subscriptionCtaBody => 'See the offer and sign up';
+
+  @override
+  String get ticketsActive => 'Active';
+
+  @override
+  String get ticketsPast => 'Past';
+
+  @override
+  String get ticketsEmptyActive => 'You have no tickets yet.';
+
+  @override
+  String get ticketsEmptyPast => 'No past tickets.';
+
+  @override
+  String get ticketsLoadError => 'Your tickets could not be loaded.';
+
+  @override
+  String get ticketTitleMetropolitan => 'Metropolitan ticket';
+
+  @override
+  String get ticketTitleNetwork => 'Network ticket';
+
+  @override
+  String ticketTitleLines(int count, String lines) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Lines $lines', one: 'Line $lines');
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketTitleGeneric => 'Ticket';
+
+  @override
+  String get ticketStatusPending => 'Awaiting payment';
+
+  @override
+  String get ticketStatusReturned => 'Returned';
+
+  @override
+  String ticketStatusValidFrom(String date) {
+    return 'Valid from $date';
+  }
+
+  @override
+  String get ticketStatusUpcoming => 'Not valid yet';
+
+  @override
+  String get ticketStatusValid => 'Valid';
+
+  @override
+  String get ticketStatusExpired => 'Expired';
+
+  @override
+  String get ticketOptions => 'Ticket options';
+
+  @override
+  String get ticketPin => 'Pin to Home';
+
+  @override
+  String get ticketUnpin => 'Unpin';
+
+  @override
+  String get ticketPinned => 'Pinned';
+
+  @override
+  String get accountCustomerCode => 'Customer code';
+
+  @override
+  String get accountSectionProfile => 'My account';
+
+  @override
+  String get cityCardActive => 'Active';
+
+  @override
+  String get cityCardInactive => 'Inactive';
+
+  @override
+  String get accountRegulationsHint => 'Terms, purchases, 5+1';
+
+  @override
+  String get accountContactMpkHint => 'Tickets, payments, Karta Krakowska';
+
+  @override
+  String get accountContactDeveloperHint => 'Bugs and suggestions about the app';
+
+  @override
+  String get accountSectionHelp => 'Help';
+
+  @override
+  String get accountSectionSecurity => 'Security';
+
+  @override
+  String get accountEdit => 'Edit account';
+
+  @override
+  String get accountRegulations => 'Regulations';
+
+  @override
+  String get regulationsAccount => 'EKP account regulations';
+
+  @override
+  String get regulationsPurchase => 'Online ticket sales regulations';
+
+  @override
+  String get regulationsSubscription => 'Half-year ticket regulations';
+
+  @override
+  String get regulationsLoadError => 'The regulations could not be loaded.';
+
+  @override
+  String get accountContactMpk => 'Contact MPK Kraków';
+
+  @override
+  String get accountContactDeveloper => 'Contact app developer';
+
+  @override
+  String get contactCall => 'Call the helpline';
+
+  @override
+  String get contactEmail => 'Send an e-mail';
+
+  @override
+  String get contactReportIssue => 'Report an issue on GitHub';
+
+  @override
+  String get accountChangePassword => 'Change password';
+
+  @override
+  String get accountDelete => 'Delete account';
+
+  @override
+  String appVersion(String version) {
+    return 'mobileKKM $version';
+  }
+
+  @override
+  String get logoutConfirmTitle => 'Sign out?';
+
+  @override
+  String get logoutConfirmBody => 'Tickets assigned to this device will be available again after you sign back in.';
+
+  @override
+  String get logoutConfirmAction => 'Sign out';
+
+  @override
+  String get cancel => 'Cancel';
 
   @override
   String get logout => 'Sign out';

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
@@ -70,7 +71,7 @@ class _LinkHintState extends ConsumerState<LinkHint> with WidgetsBindingObserver
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: settings.openSettings,
-            icon: const Icon(Icons.open_in_new, size: 18),
+            icon: const Icon(Symbols.open_in_new_rounded, size: 18),
             label: Text(l10n.openLinkSettings),
           ),
         ],

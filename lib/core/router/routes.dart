@@ -3,6 +3,18 @@ import 'package:mobile_kkm/features/auth/models/email_link.dart';
 abstract final class Routes {
   static const splash = '/';
   static const home = '/home';
+  static const tickets = '/tickets';
+  static const map = '/map';
+  static const account = '/account';
+  static const accountEdit = '/account/edit';
+  static const accountChangePassword = '/account/change-password';
+  static const accountDelete = '/account/delete';
+  static const cityCard = '/karta-krakowska';
+  static const buy = '/buy';
+  static const subscription = '/subscription';
+
+  /// Where everything leads once the server has stopped serving this client.
+  static const updateRequired = '/update-required';
   static const login = '/login';
   static const register = '/register';
   static const registerSent = '/register/sent';
@@ -32,4 +44,18 @@ abstract final class Routes {
   /// Screens available without a session.
   static bool isPublic(String path) =>
       path == login || path == register || path == registerSent || path == forgotPassword || path == forgotPasswordSent;
+
+  /// Screens of the signed-in area.
+  static bool isSignedIn(String path) => const {
+    home,
+    tickets,
+    map,
+    account,
+    accountEdit,
+    accountChangePassword,
+    accountDelete,
+    cityCard,
+    buy,
+    subscription,
+  }.contains(path);
 }

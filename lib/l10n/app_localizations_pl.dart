@@ -256,7 +256,236 @@ class AppLocalizationsPl extends AppLocalizations {
   String get continueToLogin => 'Przejdź do logowania';
 
   @override
-  String get homePlaceholder => 'Zalogowano. Bilety pojawią się wkrótce.';
+  String get updateRequiredTitle => 'Wymagana aktualizacja';
+
+  @override
+  String get updateRequiredBody =>
+      'Ta wersja mobileKKM nie jest już obsługiwana przez system EKP. Zainstaluj najnowszą wersję, aby dalej korzystać z aplikacji.';
+
+  @override
+  String get updateRequiredAction => 'Pobierz najnowszą wersję';
+
+  @override
+  String get navHome => 'Start';
+
+  @override
+  String get navTickets => 'Bilety';
+
+  @override
+  String get navMap => 'Mapa';
+
+  @override
+  String get navBuy => 'Kup bilet';
+
+  @override
+  String get navAccount => 'Konto';
+
+  @override
+  String get comingSoon => 'Już wkrótce';
+
+  @override
+  String get comingSoonBody => 'Ta część aplikacji nie jest jeszcze gotowa.';
+
+  @override
+  String get offlineNotice => 'Brak połączenia. Wyświetlamy zapisane dane.';
+
+  @override
+  String get serviceUnavailableNotice => 'Usługa jest obecnie niedostępna.';
+
+  @override
+  String get linkOpenFailed => 'Nie udało się otworzyć linku.';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Cześć, $name!';
+  }
+
+  @override
+  String get homeGreetingAnonymous => 'Cześć!';
+
+  @override
+  String get homeNoTicketTitle => 'Brak aktywnego biletu';
+
+  @override
+  String get homeNoTicketBody => 'Tutaj pojawi się Twój aktualny bilet.';
+
+  @override
+  String get quickActionDepartures => 'Odjazdy';
+
+  @override
+  String get mapSearchHint => 'Szukaj przystanku';
+
+  @override
+  String get mapMyLocation => 'Moja lokalizacja';
+
+  @override
+  String get mapCredits => 'Dane mapy';
+
+  @override
+  String get mapFilters => 'Filtry';
+
+  @override
+  String get mapLocationDenied => 'Zezwól na dostęp do lokalizacji, aby zobaczyć, gdzie jesteś.';
+
+  @override
+  String get mapLocationServiceOff => 'Lokalizacja jest wyłączona na tym urządzeniu.';
+
+  @override
+  String get mapLocationSettings => 'Ustawienia';
+
+  @override
+  String get cityCardTitle => 'Karta Krakowska';
+
+  @override
+  String get subscriptionTitle => 'Bilet półroczny 5+1';
+
+  @override
+  String get subscriptionCtaBody => 'Sprawdź ofertę i dołącz';
+
+  @override
+  String get ticketsActive => 'Aktywne';
+
+  @override
+  String get ticketsPast => 'Minione';
+
+  @override
+  String get ticketsEmptyActive => 'Nie masz jeszcze biletów.';
+
+  @override
+  String get ticketsEmptyPast => 'Brak minionych biletów.';
+
+  @override
+  String get ticketsLoadError => 'Nie udało się wczytać biletów.';
+
+  @override
+  String get ticketTitleMetropolitan => 'Bilet metropolitalny';
+
+  @override
+  String get ticketTitleNetwork => 'Bilet sieciowy';
+
+  @override
+  String ticketTitleLines(int count, String lines) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Linie $lines', one: 'Linia $lines');
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketTitleGeneric => 'Bilet';
+
+  @override
+  String get ticketStatusPending => 'Oczekuje na płatność';
+
+  @override
+  String get ticketStatusReturned => 'Zwrócony';
+
+  @override
+  String ticketStatusValidFrom(String date) {
+    return 'Ważny od $date';
+  }
+
+  @override
+  String get ticketStatusUpcoming => 'Jeszcze nieważny';
+
+  @override
+  String get ticketStatusValid => 'Ważny';
+
+  @override
+  String get ticketStatusExpired => 'Wygasł';
+
+  @override
+  String get ticketOptions => 'Opcje biletu';
+
+  @override
+  String get ticketPin => 'Przypnij na ekranie głównym';
+
+  @override
+  String get ticketUnpin => 'Odepnij';
+
+  @override
+  String get ticketPinned => 'Przypięty';
+
+  @override
+  String get accountCustomerCode => 'Kod klienta';
+
+  @override
+  String get accountSectionProfile => 'Moje konto';
+
+  @override
+  String get cityCardActive => 'Aktywna';
+
+  @override
+  String get cityCardInactive => 'Nieaktywna';
+
+  @override
+  String get accountRegulationsHint => 'Regulamin, zakupy, 5+1';
+
+  @override
+  String get accountContactMpkHint => 'Bilety, płatności, Karta Krakowska';
+
+  @override
+  String get accountContactDeveloperHint => 'Błędy i sugestie dotyczące aplikacji';
+
+  @override
+  String get accountSectionHelp => 'Pomoc';
+
+  @override
+  String get accountSectionSecurity => 'Bezpieczeństwo';
+
+  @override
+  String get accountEdit => 'Edytuj konto';
+
+  @override
+  String get accountRegulations => 'Regulaminy';
+
+  @override
+  String get regulationsAccount => 'Regulamin Elektronicznego Konta Pasażera';
+
+  @override
+  String get regulationsPurchase => 'Regulamin internetowej sprzedaży biletów';
+
+  @override
+  String get regulationsSubscription => 'Regulamin Biletu Półrocznego';
+
+  @override
+  String get regulationsLoadError => 'Nie udało się wczytać regulaminów.';
+
+  @override
+  String get accountContactMpk => 'Kontakt z MPK Kraków';
+
+  @override
+  String get accountContactDeveloper => 'Kontakt z twórcą aplikacji';
+
+  @override
+  String get contactCall => 'Zadzwoń na infolinię';
+
+  @override
+  String get contactEmail => 'Napisz e-mail';
+
+  @override
+  String get contactReportIssue => 'Zgłoś problem na GitHubie';
+
+  @override
+  String get accountChangePassword => 'Zmień hasło';
+
+  @override
+  String get accountDelete => 'Usuń konto';
+
+  @override
+  String appVersion(String version) {
+    return 'mobileKKM $version';
+  }
+
+  @override
+  String get logoutConfirmTitle => 'Wylogować się?';
+
+  @override
+  String get logoutConfirmBody => 'Bilety przypisane do tego urządzenia pozostaną dostępne po ponownym zalogowaniu.';
+
+  @override
+  String get logoutConfirmAction => 'Wyloguj';
+
+  @override
+  String get cancel => 'Anuluj';
 
   @override
   String get logout => 'Wyloguj się';

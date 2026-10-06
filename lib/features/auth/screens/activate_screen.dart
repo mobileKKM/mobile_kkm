@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
@@ -53,7 +54,7 @@ class _ActivateScreenState extends ConsumerState<ActivateScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (error == null) ...[
-                Icon(Icons.check_circle_outline, size: 64, color: theme.colorScheme.primary),
+                Icon(Symbols.check_circle_rounded, size: 64, color: theme.colorScheme.primary),
                 const SizedBox(height: 24),
                 Text(l10n.activateSuccess, style: theme.textTheme.bodyLarge, textAlign: TextAlign.center),
               ] else ...[

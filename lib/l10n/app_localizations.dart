@@ -494,11 +494,449 @@ abstract class AppLocalizations {
   /// **'Go to sign in'**
   String get continueToLogin;
 
-  /// No description provided for @homePlaceholder.
+  /// No description provided for @updateRequiredTitle.
   ///
   /// In en, this message translates to:
-  /// **'You are signed in. Tickets are coming soon.'**
-  String get homePlaceholder;
+  /// **'Update required'**
+  String get updateRequiredTitle;
+
+  /// No description provided for @updateRequiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This version of mobileKKM is no longer supported by the EKP service. Install the latest version to keep using the app.'**
+  String get updateRequiredBody;
+
+  /// No description provided for @updateRequiredAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Get the latest version'**
+  String get updateRequiredAction;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets'**
+  String get navTickets;
+
+  /// No description provided for @navMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get navMap;
+
+  /// No description provided for @navBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy ticket'**
+  String get navBuy;
+
+  /// No description provided for @navAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get navAccount;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @comingSoonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This part of the app is not ready yet.'**
+  String get comingSoonBody;
+
+  /// No description provided for @offlineNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Showing saved data.'**
+  String get offlineNotice;
+
+  /// No description provided for @serviceUnavailableNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'The service is currently unavailable.'**
+  String get serviceUnavailableNotice;
+
+  /// No description provided for @linkOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open this link.'**
+  String get linkOpenFailed;
+
+  /// No description provided for @homeGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}!'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeGreetingAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello!'**
+  String get homeGreetingAnonymous;
+
+  /// No description provided for @homeNoTicketTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No active ticket'**
+  String get homeNoTicketTitle;
+
+  /// No description provided for @homeNoTicketBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current ticket will show up here.'**
+  String get homeNoTicketBody;
+
+  /// No description provided for @quickActionDepartures.
+  ///
+  /// In en, this message translates to:
+  /// **'Departures'**
+  String get quickActionDepartures;
+
+  /// No description provided for @mapSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a stop'**
+  String get mapSearchHint;
+
+  /// No description provided for @mapMyLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'My location'**
+  String get mapMyLocation;
+
+  /// No description provided for @mapCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Map data'**
+  String get mapCredits;
+
+  /// No description provided for @mapFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get mapFilters;
+
+  /// No description provided for @mapLocationDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow access to your location to see where you are.'**
+  String get mapLocationDenied;
+
+  /// No description provided for @mapLocationServiceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is turned off on this device.'**
+  String get mapLocationServiceOff;
+
+  /// No description provided for @mapLocationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get mapLocationSettings;
+
+  /// No description provided for @cityCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Karta Krakowska'**
+  String get cityCardTitle;
+
+  /// No description provided for @subscriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'5+1 half-year ticket'**
+  String get subscriptionTitle;
+
+  /// No description provided for @subscriptionCtaBody.
+  ///
+  /// In en, this message translates to:
+  /// **'See the offer and sign up'**
+  String get subscriptionCtaBody;
+
+  /// No description provided for @ticketsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get ticketsActive;
+
+  /// No description provided for @ticketsPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get ticketsPast;
+
+  /// No description provided for @ticketsEmptyActive.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no tickets yet.'**
+  String get ticketsEmptyActive;
+
+  /// No description provided for @ticketsEmptyPast.
+  ///
+  /// In en, this message translates to:
+  /// **'No past tickets.'**
+  String get ticketsEmptyPast;
+
+  /// No description provided for @ticketsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tickets could not be loaded.'**
+  String get ticketsLoadError;
+
+  /// No description provided for @ticketTitleMetropolitan.
+  ///
+  /// In en, this message translates to:
+  /// **'Metropolitan ticket'**
+  String get ticketTitleMetropolitan;
+
+  /// No description provided for @ticketTitleNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network ticket'**
+  String get ticketTitleNetwork;
+
+  /// No description provided for @ticketTitleLines.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Line {lines}} other{Lines {lines}}}'**
+  String ticketTitleLines(int count, String lines);
+
+  /// No description provided for @ticketTitleGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
+  String get ticketTitleGeneric;
+
+  /// No description provided for @ticketStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting payment'**
+  String get ticketStatusPending;
+
+  /// No description provided for @ticketStatusReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get ticketStatusReturned;
+
+  /// No description provided for @ticketStatusValidFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid from {date}'**
+  String ticketStatusValidFrom(String date);
+
+  /// No description provided for @ticketStatusUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Not valid yet'**
+  String get ticketStatusUpcoming;
+
+  /// No description provided for @ticketStatusValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid'**
+  String get ticketStatusValid;
+
+  /// No description provided for @ticketStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get ticketStatusExpired;
+
+  /// No description provided for @ticketOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket options'**
+  String get ticketOptions;
+
+  /// No description provided for @ticketPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin to Home'**
+  String get ticketPin;
+
+  /// No description provided for @ticketUnpin.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get ticketUnpin;
+
+  /// No description provided for @ticketPinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get ticketPinned;
+
+  /// No description provided for @accountCustomerCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer code'**
+  String get accountCustomerCode;
+
+  /// No description provided for @accountSectionProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My account'**
+  String get accountSectionProfile;
+
+  /// No description provided for @cityCardActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get cityCardActive;
+
+  /// No description provided for @cityCardInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get cityCardInactive;
+
+  /// No description provided for @accountRegulationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms, purchases, 5+1'**
+  String get accountRegulationsHint;
+
+  /// No description provided for @accountContactMpkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets, payments, Karta Krakowska'**
+  String get accountContactMpkHint;
+
+  /// No description provided for @accountContactDeveloperHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Bugs and suggestions about the app'**
+  String get accountContactDeveloperHint;
+
+  /// No description provided for @accountSectionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get accountSectionHelp;
+
+  /// No description provided for @accountSectionSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get accountSectionSecurity;
+
+  /// No description provided for @accountEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit account'**
+  String get accountEdit;
+
+  /// No description provided for @accountRegulations.
+  ///
+  /// In en, this message translates to:
+  /// **'Regulations'**
+  String get accountRegulations;
+
+  /// No description provided for @regulationsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'EKP account regulations'**
+  String get regulationsAccount;
+
+  /// No description provided for @regulationsPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Online ticket sales regulations'**
+  String get regulationsPurchase;
+
+  /// No description provided for @regulationsSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Half-year ticket regulations'**
+  String get regulationsSubscription;
+
+  /// No description provided for @regulationsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'The regulations could not be loaded.'**
+  String get regulationsLoadError;
+
+  /// No description provided for @accountContactMpk.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact MPK Kraków'**
+  String get accountContactMpk;
+
+  /// No description provided for @accountContactDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact app developer'**
+  String get accountContactDeveloper;
+
+  /// No description provided for @contactCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call the helpline'**
+  String get contactCall;
+
+  /// No description provided for @contactEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send an e-mail'**
+  String get contactEmail;
+
+  /// No description provided for @contactReportIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report an issue on GitHub'**
+  String get contactReportIssue;
+
+  /// No description provided for @accountChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get accountChangePassword;
+
+  /// No description provided for @accountDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get accountDelete;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'mobileKKM {version}'**
+  String appVersion(String version);
+
+  /// No description provided for @logoutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out?'**
+  String get logoutConfirmTitle;
+
+  /// No description provided for @logoutConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets assigned to this device will be available again after you sign back in.'**
+  String get logoutConfirmBody;
+
+  /// No description provided for @logoutConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get logoutConfirmAction;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 
   /// No description provided for @logout.
   ///

@@ -29,7 +29,7 @@ void main() {
 
   testWidgets('starts on home when a session is stored', (tester) async {
     await pumpApp(tester, FakeAdapter(), session: signedInSession);
-    expect(find.text('Sign out'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsOneWidget);
   });
 
   group('an expired stored session', () {
@@ -43,7 +43,7 @@ void main() {
       final adapter = FakeAdapter()..reply('POST', '/auth/token/recover', 200, _loginReply);
       final app = await pumpApp(tester, adapter, session: expired);
 
-      expect(find.text('Sign out'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsOneWidget);
       expect((await app.client.session.currentSession())!.token, 'aaa.bbb.ccc');
     });
 
@@ -58,7 +58,7 @@ void main() {
       final adapter = FakeAdapter()..fail('POST', '/auth/token/recover');
       final app = await pumpApp(tester, adapter, session: expired);
 
-      expect(find.text('Sign out'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsOneWidget);
       expect((await app.client.session.currentSession())!.token, 'old.old.old');
     });
   });
@@ -69,7 +69,7 @@ void main() {
 
     await _signIn(tester);
 
-    expect(find.text('Sign out'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsOneWidget);
     final body = adapter.requestTo('/auth/login').data as Map<String, dynamic>;
     expect(body['username'], 'user@example.com');
     expect(body['password'], 'Secret123');
@@ -101,7 +101,7 @@ void main() {
     await tapVisible(tester, find.widgetWithText(FilledButton, 'Sign in'));
 
     expect(find.text('This field is required'), findsNWidgets(2));
-    expect(adapter.requests, isEmpty);
+    expect(adapter.requests.where((request) => request.path.endsWith('/auth/login')), isEmpty);
   });
 
   testWidgets('opening another screen runs a page transition', (tester) async {
@@ -164,7 +164,7 @@ void main() {
     final adapter = FakeAdapter()..reply('POST', '/auth/logout', 200);
     await pumpApp(tester, adapter, session: signedInSession);
 
-    await tapVisible(tester, find.text('Sign out'));
+    await signOut(tester);
 
     expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
   });

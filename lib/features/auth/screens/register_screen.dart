@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
@@ -200,7 +201,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 decoration: InputDecoration(
                   labelText: l10n.birthDateLabel,
                   helperText: _noPesel ? null : l10n.birthDateFromPeselHelper,
-                  suffixIcon: const Icon(Icons.calendar_today_outlined),
+                  suffixIcon: const Icon(Symbols.calendar_today_rounded),
                 ),
                 validator: (_) => _noPesel && _birthDate == null ? l10n.birthDateRequired : null,
               ),
