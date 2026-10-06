@@ -10,9 +10,11 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/app.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
+import 'package:mobile_kkm/core/dictionaries/dictionary_cache.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
 import 'package:mobile_kkm/core/providers/database_provider.dart';
+import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/router/app_router.dart';
@@ -54,6 +56,23 @@ class InMemoryUserDataCache implements UserDataCache {
 
   @override
   Future<void> clear() async => data = null;
+}
+
+/// Keeps the dictionaries as the JSON text a file would hold.
+class InMemoryDictionaryCache implements DictionaryCache {
+  final _stored = <String, (String, DateTime)>{};
+
+  Iterable<String> get names => _stored.keys;
+
+  @override
+  Future<CachedDictionary?> read(String name) async {
+    final stored = _stored[name];
+    return stored == null ? null : CachedDictionary(jsonDecode(stored.$1) as Map<String, dynamic>, stored.$2);
+  }
+
+  @override
+  Future<void> write(String name, Map<String, dynamic> json, DateTime fetchedAt) async =>
+      _stored[name] = (jsonEncode(json), fetchedAt);
 }
 
 /// Serves a one-pixel image for any URL and notes what was asked of it.
@@ -144,7 +163,7 @@ final signedInSession = AuthSession(
 );
 
 class App {
-  App(this.client, this.router, this.database, this.map);
+  App(this.client, this.router, this.database, this.map, this.container);
 
   /// The path of the screen on top.
   String get location => router.state.uri.path;
@@ -153,6 +172,9 @@ class App {
   final GoRouter router;
   final AppDatabase database;
   final FakeMapView map;
+
+  /// For providers that no screen shows.
+  final ProviderContainer container;
 }
 
 /// Pumps the whole app on a phone-sized surface, backed by [adapter].
@@ -163,6 +185,7 @@ Future<App> pumpApp(
   LinkSettings? linkSettings,
   List<Uri>? openedUrls,
   UserDataCache? userDataCache,
+  DictionaryCache? dictionaryCache,
   AppDatabase? database,
   PhotoCache? photoCache,
   LocationService? location,
@@ -194,6 +217,7 @@ Future<App> pumpApp(
       linkSettingsProvider.overrideWithValue(linkSettings ?? FakeLinkSettings()),
       userDataCacheProvider.overrideWithValue(userDataCache ?? InMemoryUserDataCache()),
       appDatabaseProvider.overrideWithValue(db),
+      dictionaryCacheProvider.overrideWithValue(dictionaryCache ?? InMemoryDictionaryCache()),
       photoCacheProvider.overrideWithValue(photoCache ?? FakePhotoCache()),
       mapViewProvider.overrideWithValue(map.build),
       locationServiceProvider.overrideWithValue(location ?? FakeLocationService()),
@@ -218,7 +242,7 @@ Future<App> pumpApp(
     await tester.pumpAndSettle();
   }
 
-  return App(client, container.read(routerProvider), db, map);
+  return App(client, container.read(routerProvider), db, map, container);
 }
 
 /// Scrolls [finder] into view, then taps it.
