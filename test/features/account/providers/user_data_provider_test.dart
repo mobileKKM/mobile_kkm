@@ -26,8 +26,8 @@ void main() {
     final cache = InMemoryUserDataCache();
     await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache);
 
+    await openTab(tester, 'Account');
     expect(find.text('Jan Testowy'), findsOneWidget);
-    expect(find.text('jan@example.com'), findsOneWidget);
     expect(_userDataRequests(adapter), hasLength(1));
     expect(cache.data?.userData?.firstName, 'Jan');
   });
@@ -37,7 +37,7 @@ void main() {
     final cache = InMemoryUserDataCache(UserDataResponse.fromJson(_userData('Jan')));
     await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache);
 
-    expect(find.text('Jan Testowy'), findsOneWidget);
+    expect(find.text('Hello, Jan!'), findsOneWidget);
     expect(cache.data?.userData?.firstName, 'Jan');
   });
 
@@ -46,23 +46,26 @@ void main() {
     final cache = InMemoryUserDataCache(UserDataResponse.fromJson(_userData('Jan')));
     await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache);
 
-    expect(find.text('Janusz Testowy'), findsOneWidget);
+    expect(find.text('Hello, Janusz!'), findsOneWidget);
     expect(_userDataRequests(adapter), hasLength(1));
     expect(cache.data?.userData?.firstName, 'Janusz');
   });
 
-  testWidgets('signing out clears the cached copy', (tester) async {
+  testWidgets('signing out clears the cached copy and the stored photo', (tester) async {
     final adapter = FakeAdapter()
       ..reply('GET', '/account/user-data', 200, _userData('Jan'))
       ..reply('POST', '/auth/logout', 200);
     final cache = InMemoryUserDataCache();
-    await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache);
+    final photos = FakePhotoCache();
+    await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache, photoCache: photos);
     expect(cache.data, isNotNull);
+    expect(photos.cleared, 0);
 
-    await tapVisible(tester, find.text('Sign out'));
+    await signOut(tester);
 
     expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
     expect(cache.data, isNull);
+    expect(photos.cleared, 1);
   });
 
   test('the cached model survives a JSON round trip', () {

@@ -1,3 +1,4 @@
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 enum BannerKind { error, info }
@@ -12,8 +13,8 @@ class MessageBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final (background, foreground, icon) = switch (kind) {
-      BannerKind.error => (scheme.errorContainer, scheme.onErrorContainer, Icons.error_outline),
-      BannerKind.info => (scheme.secondaryContainer, scheme.onSecondaryContainer, Icons.info_outline),
+      BannerKind.error => (scheme.errorContainer, scheme.onErrorContainer, Symbols.error_rounded),
+      BannerKind.info => (scheme.secondaryContainer, scheme.onSecondaryContainer, Symbols.info_rounded),
     };
     return Semantics(
       liveRegion: true,
