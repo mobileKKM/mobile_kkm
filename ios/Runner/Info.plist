@@ -71,6 +71,8 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Your location is used to show your position on the map. It does not leave your device.</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 	</dict>
