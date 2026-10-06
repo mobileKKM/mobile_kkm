@@ -373,6 +373,28 @@ void main() {
       expect(res.customMessage, '');
     });
 
+    test('MobileAppConfig.supportsClient compares dotted versions numerically', () {
+      bool supports(String? minimum, [String client = '1.6.10']) =>
+          MobileAppConfig(minAppVersion: minimum).supportsClient(client);
+
+      expect(supports('1.6.10'), isTrue);
+      expect(supports('1.6.9'), isTrue);
+      expect(supports('1.5.99'), isTrue);
+      expect(supports('1.6'), isTrue);
+      expect(supports('1.6.11'), isFalse);
+      expect(supports('1.7'), isFalse);
+      expect(supports('1.10.0', '1.9.0'), isFalse);
+      expect(supports('2.0.0'), isFalse);
+      // Nothing to compare against gates nothing.
+      expect(supports(null), isTrue);
+      expect(supports(''), isTrue);
+      expect(supports('latest'), isTrue);
+    });
+
+    test('the mimicked client version passes the captured minimum', () {
+      expect(MobileAppConfig.fromJson(fixture('app_config')).supportsClient(), isTrue);
+    });
+
     test('MobileAppConfig parses urls and announcement', () {
       final res = MobileAppConfig.fromJson(fixture('app_config'));
       expect(res.minAppVersion, '1.6.10');
