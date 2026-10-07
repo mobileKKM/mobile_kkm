@@ -12,6 +12,8 @@ mobileKKM: an unofficial, GPL-3.0 Flutter client (Android + iOS) for the mKKM / 
 
 Dependency direction: app → `ekp_api` → `ekp_crypto`.
 
+`docs/official-app/` describes the official client's screens and flows (navigation, every button's rule, the request behind each step), reconstructed from its decompiled bundle in `.dumps/react/`. Read the relevant document before building a feature the official app already has; its README has a module map for finding the original code.
+
 ## Commands
 
 ```bash

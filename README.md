@@ -39,6 +39,8 @@ tool/                 render_branding.sh, which rasterises them into the Android
                       launcher icons, in-app logo and splash logo
 packages/ekp_api/     Dart API client package
 packages/ekp_crypto/  encrypted-endpoint crypto package
+docs/official-app/    how the official app's screens and flows work, as a reference
+                      for building or redesigning the same features
 ```
 
 The raw network captures this project's knowledge derives from are
