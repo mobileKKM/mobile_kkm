@@ -205,7 +205,7 @@ void main() {
   testWidgets('buying a ticket starts from a button on both lists', (tester) async {
     final app = await pumpApp(tester, _adapter([validTicket()]), session: signedInSession);
     await openTab(tester, 'Tickets');
-    await tester.tap(find.text('Past'));
+    await tester.tap(find.text('History'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.widgetWithText(FloatingActionButton, 'Buy ticket'));
@@ -231,14 +231,14 @@ void main() {
     expect(await app.database.select(app.database.tickets).get(), isEmpty);
   });
 
-  group('the past list', () {
+  group('the history list', () {
     testWidgets('asks for the history of the customer and shows it', (tester) async {
       final adapter = _adapter([])..reply('GET', _history, 200, historyJson);
       await pumpApp(tester, adapter, session: signedInSession);
       await openTab(tester, 'Tickets');
       expect(adapter.requestsTo(_history), isEmpty);
 
-      await tester.tap(find.text('Past'));
+      await tester.tap(find.text('History'));
       await tester.pumpAndSettle();
 
       expect(adapter.requestTo(_history).queryParameters, {'customerCode': '100001', 'validity': 'Past'});
@@ -250,17 +250,17 @@ void main() {
       final adapter = _adapter([])..reply('GET', _history, 200, const <Object>[]);
       await pumpApp(tester, adapter, session: signedInSession);
       await openTab(tester, 'Tickets');
-      await tester.tap(find.text('Past'));
+      await tester.tap(find.text('History'));
       await tester.pumpAndSettle();
 
-      expect(find.text('No past tickets.'), findsOneWidget);
+      expect(find.text('No tickets in your history.'), findsOneWidget);
     });
 
     testWidgets('a failed load can be retried', (tester) async {
       final adapter = _adapter([])..fail('GET', _history);
       await pumpApp(tester, adapter, session: signedInSession);
       await openTab(tester, 'Tickets');
-      await tester.tap(find.text('Past'));
+      await tester.tap(find.text('History'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Could not reach the server'), findsOneWidget);
 
@@ -270,5 +270,128 @@ void main() {
 
       expect(find.widgetWithText(TicketCard, 'Bilet norm. 1-mies. sieciowy'), findsOneWidget);
     });
+  });
+
+  group('a card offers what can be done with the ticket', () {
+    testWidgets('the code of an assigned ticket, once it has started', (tester) async {
+      final adapter = _adapter([
+        validTicket(assigned: true),
+        {...upcomingTicket(), 'assigned': true},
+      ]);
+      await pumpApp(tester, adapter, session: signedInSession);
+      await openTab(tester, 'Tickets');
+
+      final buttons = tester.widgetList<FilledButton>(find.widgetWithText(FilledButton, 'Ticket control')).toList();
+      expect(buttons, hasLength(2));
+      expect(buttons.first.onPressed, isNotNull);
+      expect(buttons.last.onPressed, isNull);
+    });
+
+    testWidgets('nothing for a ticket that other devices hold, or a returned one', (tester) async {
+      final adapter = _adapter([
+        validTicket(assigned: false, canAssign: false),
+        {...upcomingTicket(), 'status': 'returned'},
+      ]);
+      await pumpApp(tester, adapter, session: signedInSession);
+      await openTab(tester, 'Tickets');
+
+      expect(find.text('Assigned to other devices'), findsOneWidget);
+      expect(find.text('Returned'), findsOneWidget);
+      expect(find.byType(FilledButton), findsNothing);
+      expect(find.byType(OutlinedButton), findsNothing);
+    });
+
+    testWidgets('assigning it to this device, after which the list is fetched again', (tester) async {
+      final adapter = _adapter([validTicket(canAssign: true)])
+        ..reply('POST', '/mkkm/tickets/assign-e', 200, {'assigned': true});
+      await pumpApp(tester, adapter, session: signedInSession);
+      await openTab(tester, 'Tickets');
+
+      adapter.reply('GET', _list, 200, ticketsReply([validTicket(assigned: true)]));
+      await tester.tap(find.widgetWithText(FilledButton, 'Assign to device'));
+      await tester.pumpAndSettle();
+
+      expect(adapter.requestTo('/mkkm/tickets/assign-e').data, contains('message'));
+      expect(adapter.requestsTo(_list), hasLength(2));
+      expect(find.text('Ticket assigned to this device.'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Ticket control'), findsOneWidget);
+    });
+
+    testWidgets('the server says why a ticket could not be assigned', (tester) async {
+      final adapter = _adapter([validTicket(canAssign: true)])
+        ..reply('POST', '/mkkm/tickets/assign-e', 200, {'code': 3, 'message': 'Bilet jest już powiązany.'});
+      await pumpApp(tester, adapter, session: signedInSession);
+      await openTab(tester, 'Tickets');
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Assign to device'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bilet jest już powiązany.'), findsOneWidget);
+      expect(adapter.requestsTo(_list), hasLength(1));
+    });
+
+    testWidgets('paying for an unpaid one, or asking whether the payment has arrived', (tester) async {
+      final pending = ticketJson(
+        status: 'pending',
+        start: DateTime.now().add(const Duration(days: 1)),
+        end: DateTime.now().add(const Duration(days: 31)),
+      );
+      final adapter = _adapter([pending])
+        ..reply('POST', '/payments/check', 400, {'code': 2, 'message': 'Brak zaksięgowanej płatności.'});
+      final app = await pumpApp(tester, adapter, session: signedInSession);
+      await openTab(tester, 'Tickets');
+
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Check payment'));
+      await tester.pumpAndSettle();
+      expect(adapter.requestTo('/payments/check').data, {'id': networkGuid});
+      expect(find.text('Brak zaksięgowanej płatności.'), findsOneWidget);
+      expect(adapter.requestsTo(_list), hasLength(1));
+
+      adapter
+        ..reply('POST', '/payments/check', 200)
+        ..reply('GET', _list, 200, ticketsReply([validTicket(canAssign: true)]));
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Check payment'));
+      await tester.pumpAndSettle();
+      expect(find.text('Payment confirmed.'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Assign to device'), findsOneWidget);
+
+      // Not built yet.
+      adapter.reply('GET', _list, 200, ticketsReply([pending]));
+      await pullToRefresh(tester);
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Continue payment'));
+      await tester.pumpAndSettle();
+      expect(app.location, '/buy');
+    });
+  });
+
+  testWidgets('the zone is named once its dictionary is there', (tester) async {
+    final ticket = {...validTicket(), 'ticketNumberOfLineCode': 3};
+    final adapter = _adapter([ticket])..reply('GET', '/dictionary/ticket-number-of-line-list', 200, lineScopesJson);
+    await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Tickets');
+
+    expect(find.widgetWithText(TicketCard, 'Network ticket · Strefa I'), findsOneWidget);
+  });
+
+  testWidgets('a ticket and a history entry open their details', (tester) async {
+    final ticket = validTicket();
+    final adapter = _adapter([ticket])
+      ..reply('GET', _history, 200, historyJson)
+      ..reply('GET', '/tickets/$transactionCode', 200, ticketDetailJson(ticket));
+    final app = await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Tickets');
+
+    await tester.tap(find.text('Network ticket'));
+    await tester.pumpAndSettle();
+    expect(app.location, '/ticket/$transactionCode');
+    expect(find.text('Ticket details'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Bilet norm. 1-mies. sieciowy'));
+    await tester.pumpAndSettle();
+    expect(app.location, '/ticket/$transactionCode');
   });
 }

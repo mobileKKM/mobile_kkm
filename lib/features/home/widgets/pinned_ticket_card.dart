@@ -11,7 +11,7 @@ import 'package:mobile_kkm/core/widgets/load_problem.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
-import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
+import 'package:mobile_kkm/features/tickets/widgets/mkkm_ticket_card.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// The home screen's ticket: the one the user pinned, or else the current
@@ -24,16 +24,11 @@ class PinnedTicketCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final stored = ref.watch(homeTicketProvider);
     if (stored != null) {
-      final ticket = stored.ticket;
-      final phase = phaseOf(ticket, DateTime.now());
-      return TicketCard(
-        title: ticketTitle(l10n, ticket),
-        start: ticket.startDate,
-        end: ticket.endDate,
-        price: ticket.price,
-        statusLabel: phaseLabel(l10n, phase, ticket),
-        tone: toneOf(phase),
+      return MkkmTicketCard(
+        stored.ticket,
         pinned: stored.pinned,
+        // Here only the way to the code; the rest is on the Tickets screen.
+        showActions: actionOf(stored.ticket) == TicketAction.control,
         onTap: () => context.go(Routes.tickets),
       );
     }

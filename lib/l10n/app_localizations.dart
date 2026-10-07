@@ -668,11 +668,11 @@ abstract class AppLocalizations {
   /// **'Active'**
   String get ticketsActive;
 
-  /// No description provided for @ticketsPast.
+  /// No description provided for @ticketsHistory.
   ///
   /// In en, this message translates to:
-  /// **'Past'**
-  String get ticketsPast;
+  /// **'History'**
+  String get ticketsHistory;
 
   /// No description provided for @ticketsEmptyActive.
   ///
@@ -680,11 +680,11 @@ abstract class AppLocalizations {
   /// **'You have no tickets yet.'**
   String get ticketsEmptyActive;
 
-  /// No description provided for @ticketsEmptyPast.
+  /// No description provided for @ticketsEmptyHistory.
   ///
   /// In en, this message translates to:
-  /// **'No past tickets.'**
-  String get ticketsEmptyPast;
+  /// **'No tickets in your history.'**
+  String get ticketsEmptyHistory;
 
   /// No description provided for @ticketsLoadError.
   ///
@@ -775,6 +775,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pinned'**
   String get ticketPinned;
+
+  /// No description provided for @ticketStatusProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing payment'**
+  String get ticketStatusProcessing;
+
+  /// No description provided for @ticketStatusAssignedElsewhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to other devices'**
+  String get ticketStatusAssignedElsewhere;
+
+  /// No description provided for @ticketActionControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket control'**
+  String get ticketActionControl;
+
+  /// No description provided for @ticketActionAssign.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to device'**
+  String get ticketActionAssign;
+
+  /// No description provided for @ticketActionContinuePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue payment'**
+  String get ticketActionContinuePayment;
+
+  /// No description provided for @ticketActionCheckPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Check payment'**
+  String get ticketActionCheckPayment;
+
+  /// No description provided for @ticketActionReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Return ticket'**
+  String get ticketActionReturn;
+
+  /// No description provided for @ticketActionBuySimilar.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy similar'**
+  String get ticketActionBuySimilar;
+
+  /// No description provided for @ticketActionExtend.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend ticket'**
+  String get ticketActionExtend;
+
+  /// No description provided for @ticketAssignDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket assigned to this device.'**
+  String get ticketAssignDone;
+
+  /// No description provided for @ticketAssignError.
+  ///
+  /// In en, this message translates to:
+  /// **'The ticket could not be assigned. Try again.'**
+  String get ticketAssignError;
+
+  /// No description provided for @ticketPaymentConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment confirmed.'**
+  String get ticketPaymentConfirmed;
+
+  /// No description provided for @ticketPaymentPending.
+  ///
+  /// In en, this message translates to:
+  /// **'No payment has been booked yet.'**
+  String get ticketPaymentPending;
+
+  /// No description provided for @ticketCantAssign.
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket is already assigned to two browsers or devices and cannot be assigned to this one. Use one of those, or call the MPK S.A. helpline: 12 19 150.'**
+  String get ticketCantAssign;
+
+  /// No description provided for @ticketDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket details'**
+  String get ticketDetailsTitle;
+
+  /// No description provided for @ticketDetailsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'The ticket could not be loaded.'**
+  String get ticketDetailsLoadError;
+
+  /// No description provided for @ticketSectionPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get ticketSectionPurchase;
+
+  /// No description provided for @ticketSectionReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get ticketSectionReturn;
+
+  /// No description provided for @ticketFieldPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchased'**
+  String get ticketFieldPurchased;
+
+  /// No description provided for @ticketFieldPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get ticketFieldPaid;
+
+  /// No description provided for @ticketFieldPaymentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment type'**
+  String get ticketFieldPaymentType;
+
+  /// No description provided for @ticketFieldPaymentState.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment state'**
+  String get ticketFieldPaymentState;
+
+  /// No description provided for @ticketFieldTransactionState.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction state'**
+  String get ticketFieldTransactionState;
+
+  /// No description provided for @ticketFieldPromotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion'**
+  String get ticketFieldPromotion;
+
+  /// No description provided for @ticketFieldPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get ticketFieldPrice;
+
+  /// No description provided for @ticketFieldReturnOrdered.
+  ///
+  /// In en, this message translates to:
+  /// **'Return ordered'**
+  String get ticketFieldReturnOrdered;
+
+  /// No description provided for @ticketFieldReturnedDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Days returned'**
+  String get ticketFieldReturnedDays;
+
+  /// No description provided for @ticketFieldRefundAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund amount'**
+  String get ticketFieldRefundAmount;
+
+  /// No description provided for @ticketFieldRefundMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund method'**
+  String get ticketFieldRefundMethod;
+
+  /// No description provided for @ticketHistoryTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction history'**
+  String get ticketHistoryTransaction;
+
+  /// No description provided for @ticketHistoryPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment history'**
+  String get ticketHistoryPayment;
+
+  /// No description provided for @ticketHistoryRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund history'**
+  String get ticketHistoryRefund;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// No description provided for @ticketReturnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Return ticket'**
+  String get ticketReturnTitle;
+
+  /// No description provided for @ticketReturnNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'The ticket stays valid until the end of the day before the chosen date; if it has already started, at least until the end of today.'**
+  String get ticketReturnNotice;
+
+  /// No description provided for @ticketReturnDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Return date'**
+  String get ticketReturnDate;
+
+  /// No description provided for @ticketReturnChooseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get ticketReturnChooseDate;
+
+  /// No description provided for @ticketReturnNewEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'New end of validity'**
+  String get ticketReturnNewEnd;
+
+  /// No description provided for @ticketReturnConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Return this ticket?'**
+  String get ticketReturnConfirmTitle;
+
+  /// No description provided for @ticketReturnConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You will get {amount} back. This cannot be undone.'**
+  String ticketReturnConfirmBody(String amount);
+
+  /// No description provided for @ticketReturnDone.
+  ///
+  /// In en, this message translates to:
+  /// **'The ticket was returned.'**
+  String get ticketReturnDone;
+
+  /// No description provided for @ticketReturnError.
+  ///
+  /// In en, this message translates to:
+  /// **'The ticket could not be returned.'**
+  String get ticketReturnError;
+
+  /// No description provided for @ticketControlCustomerCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer number (mKKM)'**
+  String get ticketControlCustomerCode;
+
+  /// No description provided for @ticketControlError.
+  ///
+  /// In en, this message translates to:
+  /// **'The ticket code could not be loaded. Try again.'**
+  String get ticketControlError;
+
+  /// No description provided for @ticketControlTimeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Code valid for {time}'**
+  String ticketControlTimeLeft(String time);
 
   /// No description provided for @accountCustomerCode.
   ///

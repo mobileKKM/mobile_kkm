@@ -17,6 +17,9 @@ import 'package:mobile_kkm/features/home/screens/home_screen.dart';
 import 'package:mobile_kkm/features/map/screens/map_screen.dart';
 import 'package:mobile_kkm/features/shell/widgets/main_shell.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
+import 'package:mobile_kkm/features/tickets/screens/ticket_control_screen.dart';
+import 'package:mobile_kkm/features/tickets/screens/ticket_details_screen.dart';
+import 'package:mobile_kkm/features/tickets/screens/ticket_return_screen.dart';
 import 'package:mobile_kkm/features/tickets/screens/tickets_screen.dart';
 import 'package:mobile_kkm/features/update/screens/update_required_screen.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
@@ -62,7 +65,22 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-      // Not built yet. Full screen, above the navigation bar.
+      // Full screen, above the navigation bar.
+      GoRoute(
+        path: '/ticket/:transactionCode',
+        builder: (context, state) => TicketDetailsScreen(transactionCode: state.pathParameters['transactionCode']!),
+        routes: [
+          GoRoute(
+            path: 'return',
+            builder: (context, state) => TicketReturnScreen(transactionCode: state.pathParameters['transactionCode']!),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/ticket-control/:ticketGuid',
+        builder: (context, state) => TicketControlScreen(ticketGuid: state.pathParameters['ticketGuid']!),
+      ),
+      // Not built yet.
       _comingSoon(Routes.accountEdit, (l10n) => l10n.accountEdit),
       _comingSoon(Routes.accountChangePassword, (l10n) => l10n.accountChangePassword),
       _comingSoon(Routes.accountDelete, (l10n) => l10n.accountDelete),

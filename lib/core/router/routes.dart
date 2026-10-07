@@ -21,6 +21,16 @@ abstract final class Routes {
   static const forgotPassword = '/forgot-password';
   static const forgotPasswordSent = '/forgot-password/sent';
 
+  static const _ticketPrefix = '/ticket/';
+  static const _ticketControlPrefix = '/ticket-control/';
+
+  /// One purchase in full. Transaction codes are Base64.
+  static String ticket(String transactionCode) => '$_ticketPrefix${Uri.encodeComponent(transactionCode)}';
+  static String ticketReturn(String transactionCode) => '${ticket(transactionCode)}/return';
+
+  /// The ticket's code, for an inspector.
+  static String ticketControl(String ticketGuid) => '$_ticketControlPrefix${Uri.encodeComponent(ticketGuid)}';
+
   static const _activatePrefix = '/activate/';
   static const _resetPasswordPrefix = '/reset-password/';
 
@@ -46,16 +56,19 @@ abstract final class Routes {
       path == login || path == register || path == registerSent || path == forgotPassword || path == forgotPasswordSent;
 
   /// Screens of the signed-in area.
-  static bool isSignedIn(String path) => const {
-    home,
-    tickets,
-    map,
-    account,
-    accountEdit,
-    accountChangePassword,
-    accountDelete,
-    cityCard,
-    buy,
-    subscription,
-  }.contains(path);
+  static bool isSignedIn(String path) =>
+      const {
+        home,
+        tickets,
+        map,
+        account,
+        accountEdit,
+        accountChangePassword,
+        accountDelete,
+        cityCard,
+        buy,
+        subscription,
+      }.contains(path) ||
+      path.startsWith(_ticketPrefix) ||
+      path.startsWith(_ticketControlPrefix);
 }

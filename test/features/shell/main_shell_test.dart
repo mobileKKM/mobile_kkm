@@ -23,7 +23,7 @@ void main() {
   testWidgets('a section keeps its state while another one is open', (tester) async {
     await pumpApp(tester, FakeAdapter(), session: signedInSession);
     await openTab(tester, 'Tickets');
-    await tester.tap(find.text('Past'));
+    await tester.tap(find.text('History'));
     await tester.pumpAndSettle();
 
     await openTab(tester, 'Home');

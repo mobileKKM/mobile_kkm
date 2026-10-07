@@ -13,7 +13,7 @@ import 'package:mobile_kkm/core/widgets/load_problem.dart';
 import 'package:mobile_kkm/features/tickets/models/stored_ticket.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
-import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
+import 'package:mobile_kkm/features/tickets/widgets/mkkm_ticket_card.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
@@ -47,10 +47,9 @@ class _TicketsScreenState extends State<TicketsScreen> {
               width: double.infinity,
               child: SegmentedButton<bool>(
                 key: _segmentsKey,
-                showSelectedIcon: false,
                 segments: [
                   ButtonSegment(value: false, label: Text(l10n.ticketsActive)),
-                  ButtonSegment(value: true, label: Text(l10n.ticketsPast)),
+                  ButtonSegment(value: true, label: Text(l10n.ticketsHistory)),
                 ],
                 selected: {_past},
                 onSelectionChanged: (selection) => setState(() => _past = selection.single),
@@ -72,7 +71,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const AppStatusBanner(padding: EdgeInsets.fromLTRB(16, 8, 16, 0)),
-          Expanded(child: _past ? const _PastTickets() : const _ActiveTickets()),
+          Expanded(child: _past ? const _TicketHistory() : const _ActiveTickets()),
         ],
       ),
     );
@@ -152,15 +151,11 @@ class _ActiveTicketCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final ticket = stored.ticket;
-    final phase = phaseOf(ticket, DateTime.now());
-    return TicketCard(
-      title: ticketTitle(l10n, ticket),
-      start: ticket.startDate,
-      end: ticket.endDate,
-      price: ticket.price,
-      statusLabel: phaseLabel(l10n, phase, ticket),
-      tone: toneOf(phase),
+    final code = ticket.transactionCode;
+    return MkkmTicketCard(
+      ticket,
       pinned: stored.pinned,
+      onTap: code == null ? null : () => context.push(Routes.ticket(code)),
       trailing: PopupMenuButton<bool>(
         tooltip: l10n.ticketOptions,
         icon: const Icon(Symbols.more_vert_rounded),
@@ -173,13 +168,13 @@ class _ActiveTicketCard extends ConsumerWidget {
   }
 }
 
-class _PastTickets extends ConsumerWidget {
-  const _PastTickets();
+class _TicketHistory extends ConsumerWidget {
+  const _TicketHistory();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final history = ref.watch(pastTicketsProvider);
+    final history = ref.watch(ticketHistoryProvider);
 
     final Widget content = switch (history) {
       AsyncValue(value: final entries?) when entries.isNotEmpty => ListView.separated(
@@ -187,30 +182,31 @@ class _PastTickets extends ConsumerWidget {
         padding: _listPadding,
         itemCount: entries.length,
         separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) => _PastTicketCard(entries[index]),
+        itemBuilder: (context, index) => _HistoryCard(entries[index]),
       ),
-      AsyncValue(hasValue: true) => _Placeholder(child: Text(l10n.ticketsEmptyPast)),
+      AsyncValue(hasValue: true) => _Placeholder(child: Text(l10n.ticketsEmptyHistory)),
       AsyncError(:final error) => _Placeholder(
-        child: LoadProblem(message: describeError(l10n, error), onRetry: () => ref.invalidate(pastTicketsProvider)),
+        child: LoadProblem(message: describeError(l10n, error), onRetry: () => ref.invalidate(ticketHistoryProvider)),
       ),
       _ => const _Placeholder(child: CircularProgressIndicator()),
     };
     return RefreshIndicator(
       // A failure shows in the list's place, not here.
-      onRefresh: () => ref.refresh(pastTicketsProvider.future).then<void>((_) {}, onError: (_) {}),
+      onRefresh: () => ref.refresh(ticketHistoryProvider.future).then<void>((_) {}, onError: (_) {}),
       child: content,
     );
   }
 }
 
-class _PastTicketCard extends StatelessWidget {
-  const _PastTicketCard(this.entry);
+class _HistoryCard extends StatelessWidget {
+  const _HistoryCard(this.entry);
 
   final TicketHistoryEntry entry;
 
   @override
   Widget build(BuildContext context) {
     final name = entry.productName;
+    final code = entry.transactionCode;
     return TicketCard(
       title: name == null || name.isEmpty ? AppLocalizations.of(context).ticketTitleGeneric : name,
       start: entry.ticketStartDate,
@@ -218,6 +214,7 @@ class _PastTicketCard extends StatelessWidget {
       price: entry.price,
       // The server's own wording (Polish only), like its error messages.
       note: entry.transactionStateDescription,
+      onTap: code == null ? null : () => context.push(Routes.ticket(code)),
     );
   }
 }

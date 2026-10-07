@@ -339,13 +339,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketsActive => 'Active';
 
   @override
-  String get ticketsPast => 'Past';
+  String get ticketsHistory => 'History';
 
   @override
   String get ticketsEmptyActive => 'You have no tickets yet.';
 
   @override
-  String get ticketsEmptyPast => 'No past tickets.';
+  String get ticketsEmptyHistory => 'No tickets in your history.';
 
   @override
   String get ticketsLoadError => 'Your tickets could not be loaded.';
@@ -396,6 +396,150 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ticketPinned => 'Pinned';
+
+  @override
+  String get ticketStatusProcessing => 'Processing payment';
+
+  @override
+  String get ticketStatusAssignedElsewhere => 'Assigned to other devices';
+
+  @override
+  String get ticketActionControl => 'Ticket control';
+
+  @override
+  String get ticketActionAssign => 'Assign to device';
+
+  @override
+  String get ticketActionContinuePayment => 'Continue payment';
+
+  @override
+  String get ticketActionCheckPayment => 'Check payment';
+
+  @override
+  String get ticketActionReturn => 'Return ticket';
+
+  @override
+  String get ticketActionBuySimilar => 'Buy similar';
+
+  @override
+  String get ticketActionExtend => 'Extend ticket';
+
+  @override
+  String get ticketAssignDone => 'Ticket assigned to this device.';
+
+  @override
+  String get ticketAssignError => 'The ticket could not be assigned. Try again.';
+
+  @override
+  String get ticketPaymentConfirmed => 'Payment confirmed.';
+
+  @override
+  String get ticketPaymentPending => 'No payment has been booked yet.';
+
+  @override
+  String get ticketCantAssign =>
+      'This ticket is already assigned to two browsers or devices and cannot be assigned to this one. Use one of those, or call the MPK S.A. helpline: 12 19 150.';
+
+  @override
+  String get ticketDetailsTitle => 'Ticket details';
+
+  @override
+  String get ticketDetailsLoadError => 'The ticket could not be loaded.';
+
+  @override
+  String get ticketSectionPurchase => 'Purchase';
+
+  @override
+  String get ticketSectionReturn => 'Return';
+
+  @override
+  String get ticketFieldPurchased => 'Purchased';
+
+  @override
+  String get ticketFieldPaid => 'Paid';
+
+  @override
+  String get ticketFieldPaymentType => 'Payment type';
+
+  @override
+  String get ticketFieldPaymentState => 'Payment state';
+
+  @override
+  String get ticketFieldTransactionState => 'Transaction state';
+
+  @override
+  String get ticketFieldPromotion => 'Promotion';
+
+  @override
+  String get ticketFieldPrice => 'Price';
+
+  @override
+  String get ticketFieldReturnOrdered => 'Return ordered';
+
+  @override
+  String get ticketFieldReturnedDays => 'Days returned';
+
+  @override
+  String get ticketFieldRefundAmount => 'Refund amount';
+
+  @override
+  String get ticketFieldRefundMethod => 'Refund method';
+
+  @override
+  String get ticketHistoryTransaction => 'Transaction history';
+
+  @override
+  String get ticketHistoryPayment => 'Payment history';
+
+  @override
+  String get ticketHistoryRefund => 'Refund history';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get ticketReturnTitle => 'Return ticket';
+
+  @override
+  String get ticketReturnNotice =>
+      'The ticket stays valid until the end of the day before the chosen date; if it has already started, at least until the end of today.';
+
+  @override
+  String get ticketReturnDate => 'Return date';
+
+  @override
+  String get ticketReturnChooseDate => 'Choose';
+
+  @override
+  String get ticketReturnNewEnd => 'New end of validity';
+
+  @override
+  String get ticketReturnConfirmTitle => 'Return this ticket?';
+
+  @override
+  String ticketReturnConfirmBody(String amount) {
+    return 'You will get $amount back. This cannot be undone.';
+  }
+
+  @override
+  String get ticketReturnDone => 'The ticket was returned.';
+
+  @override
+  String get ticketReturnError => 'The ticket could not be returned.';
+
+  @override
+  String get ticketControlCustomerCode => 'Customer number (mKKM)';
+
+  @override
+  String get ticketControlError => 'The ticket code could not be loaded. Try again.';
+
+  @override
+  String ticketControlTimeLeft(String time) {
+    return 'Code valid for $time';
+  }
 
   @override
   String get accountCustomerCode => 'Customer code';

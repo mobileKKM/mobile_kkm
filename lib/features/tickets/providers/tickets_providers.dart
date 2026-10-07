@@ -27,10 +27,17 @@ final homeTicketProvider = Provider<StoredTicket?>((ref) {
 
 /// `GET /tickets?validity=Past` — the purchase history. Not stored: it is
 /// fetched whenever the list is opened.
-final pastTicketsProvider = FutureProvider.autoDispose<List<TicketHistoryEntry>>((ref) async {
+final ticketHistoryProvider = FutureProvider.autoDispose<List<TicketHistoryEntry>>((ref) async {
   final customerCode = await ref.watch(userDataProvider.selectAsync((data) => data?.mkkmData?.customerCode));
   if (customerCode == null) {
     return const [];
   }
   return ref.watch(ekpClientProvider).tickets.history(customerCode, validity: TicketValidity.past);
 }, retry: (_, _) => null);
+
+/// `GET /tickets/{transactionCode}` — everything about one purchase. Fetched
+/// whenever its screen is opened.
+final ticketDetailProvider = FutureProvider.autoDispose.family<TicketDetailResponse, String>(
+  (ref, transactionCode) => ref.watch(ekpClientProvider).tickets.detail(transactionCode),
+  retry: (_, _) => null,
+);

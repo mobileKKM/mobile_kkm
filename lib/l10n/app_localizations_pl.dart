@@ -346,13 +346,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketsActive => 'Aktywne';
 
   @override
-  String get ticketsPast => 'Minione';
+  String get ticketsHistory => 'Historia';
 
   @override
   String get ticketsEmptyActive => 'Nie masz jeszcze biletów.';
 
   @override
-  String get ticketsEmptyPast => 'Brak minionych biletów.';
+  String get ticketsEmptyHistory => 'Brak biletów w historii.';
 
   @override
   String get ticketsLoadError => 'Nie udało się wczytać biletów.';
@@ -403,6 +403,150 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get ticketPinned => 'Przypięty';
+
+  @override
+  String get ticketStatusProcessing => 'Trwa przetwarzanie płatności';
+
+  @override
+  String get ticketStatusAssignedElsewhere => 'Powiązany z innymi urządzeniami';
+
+  @override
+  String get ticketActionControl => 'Kontrola biletów';
+
+  @override
+  String get ticketActionAssign => 'Powiąż bilet';
+
+  @override
+  String get ticketActionContinuePayment => 'Kontynuuj płatność';
+
+  @override
+  String get ticketActionCheckPayment => 'Sprawdź płatność';
+
+  @override
+  String get ticketActionReturn => 'Zwróć bilet';
+
+  @override
+  String get ticketActionBuySimilar => 'Kup podobny';
+
+  @override
+  String get ticketActionExtend => 'Przedłuż bilet';
+
+  @override
+  String get ticketAssignDone => 'Bilet powiązano z tym urządzeniem.';
+
+  @override
+  String get ticketAssignError => 'Wystąpił błąd podczas powiązywania biletu, spróbuj ponownie.';
+
+  @override
+  String get ticketPaymentConfirmed => 'Płatność została zrealizowana.';
+
+  @override
+  String get ticketPaymentPending => 'Brak zaksięgowanej płatności.';
+
+  @override
+  String get ticketCantAssign =>
+      'Bilet jest już powiązany z dwiema przeglądarkami/urządzeniami. Brak możliwości powiązania obecnego urządzenia. Użyj poprzednio powiązanych przeglądarek/urządzeń lub skontaktuj się z Infolinią MPK S.A. tel. 12 19 150.';
+
+  @override
+  String get ticketDetailsTitle => 'Szczegóły biletu';
+
+  @override
+  String get ticketDetailsLoadError => 'Nie udało się wczytać biletu.';
+
+  @override
+  String get ticketSectionPurchase => 'Zakup';
+
+  @override
+  String get ticketSectionReturn => 'Zwrot';
+
+  @override
+  String get ticketFieldPurchased => 'Zakupiony';
+
+  @override
+  String get ticketFieldPaid => 'Bilet opłacony';
+
+  @override
+  String get ticketFieldPaymentType => 'Typ płatności';
+
+  @override
+  String get ticketFieldPaymentState => 'Stan płatności';
+
+  @override
+  String get ticketFieldTransactionState => 'Stan transakcji';
+
+  @override
+  String get ticketFieldPromotion => 'Promocja';
+
+  @override
+  String get ticketFieldPrice => 'Cena';
+
+  @override
+  String get ticketFieldReturnOrdered => 'Data dyspozycji zwrotu';
+
+  @override
+  String get ticketFieldReturnedDays => 'Ilość zwróconych dni';
+
+  @override
+  String get ticketFieldRefundAmount => 'Kwota zwrotu';
+
+  @override
+  String get ticketFieldRefundMethod => 'Sposób zwrotu';
+
+  @override
+  String get ticketHistoryTransaction => 'Historia stanów transakcji';
+
+  @override
+  String get ticketHistoryPayment => 'Historia stanów płatności';
+
+  @override
+  String get ticketHistoryRefund => 'Historia stanów zwrotu płatności';
+
+  @override
+  String get yes => 'Tak';
+
+  @override
+  String get no => 'Nie';
+
+  @override
+  String get ticketReturnTitle => 'Zwrot biletu';
+
+  @override
+  String get ticketReturnNotice =>
+      'Bilet jest ważny do końca dnia poprzedzającego wybraną datę, a jeśli jego ważność już się rozpoczęła, to co najmniej do końca bieżącego dnia.';
+
+  @override
+  String get ticketReturnDate => 'Data zwrotu';
+
+  @override
+  String get ticketReturnChooseDate => 'Wskaż';
+
+  @override
+  String get ticketReturnNewEnd => 'Nowa data końca ważności';
+
+  @override
+  String get ticketReturnConfirmTitle => 'Zwrócić bilet?';
+
+  @override
+  String ticketReturnConfirmBody(String amount) {
+    return 'Otrzymasz zwrot $amount. Tej operacji nie można cofnąć.';
+  }
+
+  @override
+  String get ticketReturnDone => 'Bilet został pomyślnie zwrócony.';
+
+  @override
+  String get ticketReturnError => 'Nie udało się zwrócić biletu.';
+
+  @override
+  String get ticketControlCustomerCode => 'Numer klienta (mKKM)';
+
+  @override
+  String get ticketControlError => 'Wystąpił błąd podczas pobierania klucza, spróbuj ponownie.';
+
+  @override
+  String ticketControlTimeLeft(String time) {
+    return 'Kod ważny jeszcze $time';
+  }
 
   @override
   String get accountCustomerCode => 'Kod klienta';

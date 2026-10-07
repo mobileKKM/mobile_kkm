@@ -4,6 +4,7 @@ library;
 
 const networkGuid = 'feedfacefeedfacefeedfacefeedface';
 const metropolitanGuid = 'cafebabecafebabecafebabecafebabe';
+const transactionCode = 'NDAwMDAxIzE';
 
 Map<String, dynamic> ticketJson({
   String guid = networkGuid,
@@ -13,10 +14,18 @@ Map<String, dynamic> ticketJson({
   double price = 99,
   bool metropolitan = false,
   List<int> lines = const [],
+  bool? assigned,
+  bool? canAssign,
+  String? productName,
+  int? lineScope,
 }) => {
   'ticketGuid': guid,
-  'transactionCode': 'NDAwMDAxIzE',
+  'transactionCode': transactionCode,
   'status': status,
+  'assigned': ?assigned,
+  'canAssign': ?canAssign,
+  'productName': ?productName,
+  'ticketNumberOfLineCode': ?lineScope,
   'startDate': start.toUtc().toIso8601String(),
   'endDate': end.toUtc().toIso8601String(),
   'price': price,
@@ -28,9 +37,22 @@ Map<String, dynamic> ticketJson({
 };
 
 /// A ticket that started [daysAgo] days ago and runs for 30 days.
-Map<String, dynamic> validTicket({String guid = networkGuid, int daysAgo = 3, bool metropolitan = false}) {
+Map<String, dynamic> validTicket({
+  String guid = networkGuid,
+  int daysAgo = 3,
+  bool metropolitan = false,
+  bool? assigned,
+  bool? canAssign,
+}) {
   final start = DateTime.now().subtract(Duration(days: daysAgo));
-  return ticketJson(guid: guid, start: start, end: start.add(const Duration(days: 30)), metropolitan: metropolitan);
+  return ticketJson(
+    guid: guid,
+    start: start,
+    end: start.add(const Duration(days: 30)),
+    metropolitan: metropolitan,
+    assigned: assigned,
+    canAssign: canAssign,
+  );
 }
 
 /// A paid ticket that starts in [inDays] days.
@@ -85,3 +107,49 @@ const historyJson = [
     'productName': 'Bilet norm. 1-mies. sieciowy',
   },
 ];
+
+/// `GET /tickets/{transactionCode}` for [ticket], a ticket from above.
+Map<String, dynamic> ticketDetailJson(
+  Map<String, dynamic> ticket, {
+  bool canReturn = false,
+  bool canBuyTheSame = false,
+  bool paid = true,
+  List<Map<String, dynamic>>? returns,
+}) => {
+  'ticket': {
+    'transactionId': 400001,
+    'transactionCode': ticket['transactionCode'],
+    'transactionDate': '2025-03-01T10:15:00Z',
+    'ticketStartDate': ticket['startDate'],
+    'ticketExpiryDate': ticket['endDate'],
+    'price': ticket['price'],
+    'transactionStateDescription': 'Transakcja zakończona pomyślnie',
+    'paymentDescription': 'ePłatność - przelew elektroniczny',
+    'paymentStateDescription': paid ? 'Płatność potwierdzona i zakończona' : 'Płatność niezrealizowana',
+    'productName': 'Bilet norm. 1-mies. sieciowy',
+    'promotionName': null,
+    'isPayed': paid,
+  },
+  'ticketEkp': {...ticket, 'productName': 'Bilet norm. 1-mies. sieciowy'},
+  'canReturn': canReturn,
+  'canBuyTheSame': canBuyTheSame,
+  'minExpireReturnDate': null,
+  'transactionStateList': [
+    {'nextNumber': 2, 'createDate': '2025-03-01T10:16:00Z', 'stateDescription': 'Transakcja zapłacona'},
+    {'nextNumber': 1, 'createDate': '2025-03-01T10:15:00Z', 'stateDescription': 'Transakcja dodana'},
+  ],
+  'paymentStateList': [
+    {'nextNumber': 1, 'createDate': '2025-03-01T10:15:00Z', 'stateDescription': 'Płatność rozpoczęta'},
+  ],
+  'refundStateList': [
+    if (returns != null)
+      {'nextNumber': 1, 'createDate': '2025-03-10T09:00:00Z', 'stateDescription': 'Zwrot rozpoczęty'},
+  ],
+  'ticketReturns': returns,
+};
+
+const lineScopesJson = {
+  'list': [
+    {'code': 3, 'description': 'Wszystkie linie - Strefa I'},
+  ],
+};

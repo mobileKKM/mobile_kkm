@@ -41,6 +41,7 @@ void main() {
       expect(go('/home', AuthStatus.unauthenticated), '/login');
       expect(go('/tickets', AuthStatus.unauthenticated), '/login');
       expect(go('/account/edit', AuthStatus.unauthenticated), '/login');
+      expect(go('/ticket/NDAwMDAxIzE', AuthStatus.unauthenticated), '/login');
       expect(go('/nope', AuthStatus.unauthenticated), '/login');
       expect(go('/login', AuthStatus.unauthenticated), isNull);
       expect(go('/login?notice=password-reset', AuthStatus.unauthenticated), isNull);
@@ -66,6 +67,9 @@ void main() {
         '/karta-krakowska',
         '/buy',
         '/subscription',
+        '/ticket/NDAwMDAxIzE',
+        '/ticket/NDAwMDAxIzE/return',
+        '/ticket-control/feedfacefeedfacefeedfacefeedface',
       ]) {
         expect(go(path, AuthStatus.authenticated), isNull, reason: path);
       }
