@@ -1306,10 +1306,290 @@ as String?,
 
 
 /// @nodoc
+mixin _$TicketReturn {
+
+ DateTime? get returnDate; int? get returnQty; double? get unitPriceReturn; String? get paymentTypeDescription;
+/// Create a copy of TicketReturn
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TicketReturnCopyWith<TicketReturn> get copyWith => _$TicketReturnCopyWithImpl<TicketReturn>(this as TicketReturn, _$identity);
+
+  /// Serializes this TicketReturn to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as TicketReturn;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketReturn&&(identical(other.returnDate, _this.returnDate) || other.returnDate == _this.returnDate)&&(identical(other.returnQty, _this.returnQty) || other.returnQty == _this.returnQty)&&(identical(other.unitPriceReturn, _this.unitPriceReturn) || other.unitPriceReturn == _this.unitPriceReturn)&&(identical(other.paymentTypeDescription, _this.paymentTypeDescription) || other.paymentTypeDescription == _this.paymentTypeDescription));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as TicketReturn;
+  return Object.hash(runtimeType,_this.returnDate,_this.returnQty,_this.unitPriceReturn,_this.paymentTypeDescription);
+}
+
+@override
+String toString() {
+  final _this = this as TicketReturn;
+  return 'TicketReturn(returnDate: ${_this.returnDate}, returnQty: ${_this.returnQty}, unitPriceReturn: ${_this.unitPriceReturn}, paymentTypeDescription: ${_this.paymentTypeDescription})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TicketReturnCopyWith<$Res>  {
+  factory $TicketReturnCopyWith(TicketReturn value, $Res Function(TicketReturn) _then) = _$TicketReturnCopyWithImpl;
+@useResult
+$Res call({
+ DateTime? returnDate, int? returnQty, double? unitPriceReturn, String? paymentTypeDescription
+});
+
+
+
+
+}
+/// @nodoc
+class _$TicketReturnCopyWithImpl<$Res>
+    implements $TicketReturnCopyWith<$Res> {
+  _$TicketReturnCopyWithImpl(this._self, this._then);
+
+  final TicketReturn _self;
+  final $Res Function(TicketReturn) _then;
+
+/// Create a copy of TicketReturn
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? returnDate = freezed,Object? returnQty = freezed,Object? unitPriceReturn = freezed,Object? paymentTypeDescription = freezed,}) {
+  return _then(TicketReturn(
+returnDate: freezed == returnDate ? _self.returnDate : returnDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,returnQty: freezed == returnQty ? _self.returnQty : returnQty // ignore: cast_nullable_to_non_nullable
+as int?,unitPriceReturn: freezed == unitPriceReturn ? _self.unitPriceReturn : unitPriceReturn // ignore: cast_nullable_to_non_nullable
+as double?,paymentTypeDescription: freezed == paymentTypeDescription ? _self.paymentTypeDescription : paymentTypeDescription // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [TicketReturn].
+extension TicketReturnPatterns on TicketReturn {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TicketReturn value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _TicketReturn() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TicketReturn value)  $default,){
+final _that = this;
+switch (_that) {
+case _TicketReturn():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TicketReturn value)?  $default,){
+final _that = this;
+switch (_that) {
+case _TicketReturn() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime? returnDate,  int? returnQty,  double? unitPriceReturn,  String? paymentTypeDescription)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _TicketReturn() when $default != null:
+return $default(_that.returnDate,_that.returnQty,_that.unitPriceReturn,_that.paymentTypeDescription);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime? returnDate,  int? returnQty,  double? unitPriceReturn,  String? paymentTypeDescription)  $default,) {final _that = this;
+switch (_that) {
+case _TicketReturn():
+return $default(_that.returnDate,_that.returnQty,_that.unitPriceReturn,_that.paymentTypeDescription);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime? returnDate,  int? returnQty,  double? unitPriceReturn,  String? paymentTypeDescription)?  $default,) {final _that = this;
+switch (_that) {
+case _TicketReturn() when $default != null:
+return $default(_that.returnDate,_that.returnQty,_that.unitPriceReturn,_that.paymentTypeDescription);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _TicketReturn implements TicketReturn {
+  const _TicketReturn({this.returnDate, this.returnQty, this.unitPriceReturn, this.paymentTypeDescription});
+  factory _TicketReturn.fromJson(Map<String, dynamic> json) => _$TicketReturnFromJson(json);
+
+@override final  DateTime? returnDate;
+@override final  int? returnQty;
+@override final  double? unitPriceReturn;
+@override final  String? paymentTypeDescription;
+
+/// Create a copy of TicketReturn
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$TicketReturnCopyWith<_TicketReturn> get copyWith => __$TicketReturnCopyWithImpl<_TicketReturn>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$TicketReturnToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketReturn&&(identical(other.returnDate, returnDate) || other.returnDate == returnDate)&&(identical(other.returnQty, returnQty) || other.returnQty == returnQty)&&(identical(other.unitPriceReturn, unitPriceReturn) || other.unitPriceReturn == unitPriceReturn)&&(identical(other.paymentTypeDescription, paymentTypeDescription) || other.paymentTypeDescription == paymentTypeDescription));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,returnDate,returnQty,unitPriceReturn,paymentTypeDescription);
+}
+
+@override
+String toString() {
+    return 'TicketReturn(returnDate: $returnDate, returnQty: $returnQty, unitPriceReturn: $unitPriceReturn, paymentTypeDescription: $paymentTypeDescription)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$TicketReturnCopyWith<$Res> implements $TicketReturnCopyWith<$Res> {
+  factory _$TicketReturnCopyWith(_TicketReturn value, $Res Function(_TicketReturn) _then) = __$TicketReturnCopyWithImpl;
+@override @useResult
+$Res call({
+ DateTime? returnDate, int? returnQty, double? unitPriceReturn, String? paymentTypeDescription
+});
+
+
+
+
+}
+/// @nodoc
+class __$TicketReturnCopyWithImpl<$Res>
+    implements _$TicketReturnCopyWith<$Res> {
+  __$TicketReturnCopyWithImpl(this._self, this._then);
+
+  final _TicketReturn _self;
+  final $Res Function(_TicketReturn) _then;
+
+/// Create a copy of TicketReturn
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? returnDate = freezed,Object? returnQty = freezed,Object? unitPriceReturn = freezed,Object? paymentTypeDescription = freezed,}) {
+  return _then(_TicketReturn(
+returnDate: freezed == returnDate ? _self.returnDate : returnDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,returnQty: freezed == returnQty ? _self.returnQty : returnQty // ignore: cast_nullable_to_non_nullable
+as int?,unitPriceReturn: freezed == unitPriceReturn ? _self.unitPriceReturn : unitPriceReturn // ignore: cast_nullable_to_non_nullable
+as double?,paymentTypeDescription: freezed == paymentTypeDescription ? _self.paymentTypeDescription : paymentTypeDescription // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$TicketDetailResponse {
 
- int? get customerId; TicketHistoryEntry? get ticket; MkkmTicket? get ticketEkp; bool? get canChangeLine; bool? get canReturn; bool? get canEditByInternet; bool? get canChangeStorageMedium; bool? get canGenerateInvoice; bool? get canBuyTheSame; bool? get possibleRefundViaTpay; DateTime? get minExpireReturnDate; int? get invoiceHeaderId; List<TicketStateChange>? get transactionStateList; List<TicketStateChange>? get paymentStateList; List<TicketStateChange>? get refundStateList; List<TicketStateChange>? get changeLineList;/// Shapes never observed (always null in captures) — kept raw.
- dynamic get ticketReturns; dynamic get storageMediumChanges; dynamic get downloads;
+ int? get customerId; TicketHistoryEntry? get ticket; MkkmTicket? get ticketEkp; bool? get canChangeLine; bool? get canReturn; bool? get canEditByInternet; bool? get canChangeStorageMedium; bool? get canGenerateInvoice; bool? get canBuyTheSame; bool? get possibleRefundViaTpay; DateTime? get minExpireReturnDate; int? get invoiceHeaderId; List<TicketStateChange>? get transactionStateList; List<TicketStateChange>? get paymentStateList; List<TicketStateChange>? get refundStateList; List<TicketStateChange>? get changeLineList;/// Null unless the ticket was returned; one entry in every capture.
+ List<TicketReturn>? get ticketReturns;/// Shapes never observed (always null in captures) — kept raw.
+ dynamic get storageMediumChanges; dynamic get downloads;
 /// Create a copy of TicketDetailResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1347,7 +1627,7 @@ abstract mixin class $TicketDetailResponseCopyWith<$Res>  {
   factory $TicketDetailResponseCopyWith(TicketDetailResponse value, $Res Function(TicketDetailResponse) _then) = _$TicketDetailResponseCopyWithImpl;
 @useResult
 $Res call({
- int? customerId, TicketHistoryEntry? ticket, MkkmTicket? ticketEkp, bool? canChangeLine, bool? canReturn, bool? canEditByInternet, bool? canChangeStorageMedium, bool? canGenerateInvoice, bool? canBuyTheSame, bool? possibleRefundViaTpay, DateTime? minExpireReturnDate, int? invoiceHeaderId, List<TicketStateChange>? transactionStateList, List<TicketStateChange>? paymentStateList, List<TicketStateChange>? refundStateList, List<TicketStateChange>? changeLineList, dynamic ticketReturns, dynamic storageMediumChanges, dynamic downloads
+ int? customerId, TicketHistoryEntry? ticket, MkkmTicket? ticketEkp, bool? canChangeLine, bool? canReturn, bool? canEditByInternet, bool? canChangeStorageMedium, bool? canGenerateInvoice, bool? canBuyTheSame, bool? possibleRefundViaTpay, DateTime? minExpireReturnDate, int? invoiceHeaderId, List<TicketStateChange>? transactionStateList, List<TicketStateChange>? paymentStateList, List<TicketStateChange>? refundStateList, List<TicketStateChange>? changeLineList, List<TicketReturn>? ticketReturns, dynamic storageMediumChanges, dynamic downloads
 });
 
 
@@ -1383,7 +1663,7 @@ as List<TicketStateChange>?,paymentStateList: freezed == paymentStateList ? _sel
 as List<TicketStateChange>?,refundStateList: freezed == refundStateList ? _self.refundStateList : refundStateList // ignore: cast_nullable_to_non_nullable
 as List<TicketStateChange>?,changeLineList: freezed == changeLineList ? _self.changeLineList : changeLineList // ignore: cast_nullable_to_non_nullable
 as List<TicketStateChange>?,ticketReturns: freezed == ticketReturns ? _self.ticketReturns : ticketReturns // ignore: cast_nullable_to_non_nullable
-as dynamic,storageMediumChanges: freezed == storageMediumChanges ? _self.storageMediumChanges : storageMediumChanges // ignore: cast_nullable_to_non_nullable
+as List<TicketReturn>?,storageMediumChanges: freezed == storageMediumChanges ? _self.storageMediumChanges : storageMediumChanges // ignore: cast_nullable_to_non_nullable
 as dynamic,downloads: freezed == downloads ? _self.downloads : downloads // ignore: cast_nullable_to_non_nullable
 as dynamic,
   ));
@@ -1494,7 +1774,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  dynamic ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  List<TicketReturn>? ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TicketDetailResponse() when $default != null:
 return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLine,_that.canReturn,_that.canEditByInternet,_that.canChangeStorageMedium,_that.canGenerateInvoice,_that.canBuyTheSame,_that.possibleRefundViaTpay,_that.minExpireReturnDate,_that.invoiceHeaderId,_that.transactionStateList,_that.paymentStateList,_that.refundStateList,_that.changeLineList,_that.ticketReturns,_that.storageMediumChanges,_that.downloads);case _:
@@ -1515,7 +1795,7 @@ return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLin
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  dynamic ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  List<TicketReturn>? ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)  $default,) {final _that = this;
 switch (_that) {
 case _TicketDetailResponse():
 return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLine,_that.canReturn,_that.canEditByInternet,_that.canChangeStorageMedium,_that.canGenerateInvoice,_that.canBuyTheSame,_that.possibleRefundViaTpay,_that.minExpireReturnDate,_that.invoiceHeaderId,_that.transactionStateList,_that.paymentStateList,_that.refundStateList,_that.changeLineList,_that.ticketReturns,_that.storageMediumChanges,_that.downloads);case _:
@@ -1535,7 +1815,7 @@ return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLin
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  dynamic ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  List<TicketReturn>? ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)?  $default,) {final _that = this;
 switch (_that) {
 case _TicketDetailResponse() when $default != null:
 return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLine,_that.canReturn,_that.canEditByInternet,_that.canChangeStorageMedium,_that.canGenerateInvoice,_that.canBuyTheSame,_that.possibleRefundViaTpay,_that.minExpireReturnDate,_that.invoiceHeaderId,_that.transactionStateList,_that.paymentStateList,_that.refundStateList,_that.changeLineList,_that.ticketReturns,_that.storageMediumChanges,_that.downloads);case _:
@@ -1550,7 +1830,7 @@ return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLin
 @JsonSerializable()
 
 class _TicketDetailResponse implements TicketDetailResponse {
-  const _TicketDetailResponse({this.customerId, this.ticket, this.ticketEkp, this.canChangeLine, this.canReturn, this.canEditByInternet, this.canChangeStorageMedium, this.canGenerateInvoice, this.canBuyTheSame, this.possibleRefundViaTpay, this.minExpireReturnDate, this.invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList, this.ticketReturns, this.storageMediumChanges, this.downloads}): _transactionStateList = transactionStateList,_paymentStateList = paymentStateList,_refundStateList = refundStateList,_changeLineList = changeLineList;
+  const _TicketDetailResponse({this.customerId, this.ticket, this.ticketEkp, this.canChangeLine, this.canReturn, this.canEditByInternet, this.canChangeStorageMedium, this.canGenerateInvoice, this.canBuyTheSame, this.possibleRefundViaTpay, this.minExpireReturnDate, this.invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  List<TicketReturn>? ticketReturns, this.storageMediumChanges, this.downloads}): _transactionStateList = transactionStateList,_paymentStateList = paymentStateList,_refundStateList = refundStateList,_changeLineList = changeLineList,_ticketReturns = ticketReturns;
   factory _TicketDetailResponse.fromJson(Map<String, dynamic> json) => _$TicketDetailResponseFromJson(json);
 
 @override final  int? customerId;
@@ -1601,8 +1881,18 @@ class _TicketDetailResponse implements TicketDetailResponse {
   return EqualUnmodifiableListView(value);
 }
 
+/// Null unless the ticket was returned; one entry in every capture.
+ final  List<TicketReturn>? _ticketReturns;
+/// Null unless the ticket was returned; one entry in every capture.
+@override List<TicketReturn>? get ticketReturns {
+  final value = _ticketReturns;
+  if (value == null) return null;
+  if (_ticketReturns is EqualUnmodifiableListView) return _ticketReturns;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
+}
+
 /// Shapes never observed (always null in captures) — kept raw.
-@override final  dynamic ticketReturns;
 @override final  dynamic storageMediumChanges;
 @override final  dynamic downloads;
 
@@ -1619,13 +1909,13 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketDetailResponse&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.ticket, ticket) || other.ticket == ticket)&&(identical(other.ticketEkp, ticketEkp) || other.ticketEkp == ticketEkp)&&(identical(other.canChangeLine, canChangeLine) || other.canChangeLine == canChangeLine)&&(identical(other.canReturn, canReturn) || other.canReturn == canReturn)&&(identical(other.canEditByInternet, canEditByInternet) || other.canEditByInternet == canEditByInternet)&&(identical(other.canChangeStorageMedium, canChangeStorageMedium) || other.canChangeStorageMedium == canChangeStorageMedium)&&(identical(other.canGenerateInvoice, canGenerateInvoice) || other.canGenerateInvoice == canGenerateInvoice)&&(identical(other.canBuyTheSame, canBuyTheSame) || other.canBuyTheSame == canBuyTheSame)&&(identical(other.possibleRefundViaTpay, possibleRefundViaTpay) || other.possibleRefundViaTpay == possibleRefundViaTpay)&&(identical(other.minExpireReturnDate, minExpireReturnDate) || other.minExpireReturnDate == minExpireReturnDate)&&(identical(other.invoiceHeaderId, invoiceHeaderId) || other.invoiceHeaderId == invoiceHeaderId)&&const DeepCollectionEquality().equals(other.transactionStateList, _transactionStateList)&&const DeepCollectionEquality().equals(other.paymentStateList, _paymentStateList)&&const DeepCollectionEquality().equals(other.refundStateList, _refundStateList)&&const DeepCollectionEquality().equals(other.changeLineList, _changeLineList)&&const DeepCollectionEquality().equals(other.ticketReturns, ticketReturns)&&const DeepCollectionEquality().equals(other.storageMediumChanges, storageMediumChanges)&&const DeepCollectionEquality().equals(other.downloads, downloads));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketDetailResponse&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.ticket, ticket) || other.ticket == ticket)&&(identical(other.ticketEkp, ticketEkp) || other.ticketEkp == ticketEkp)&&(identical(other.canChangeLine, canChangeLine) || other.canChangeLine == canChangeLine)&&(identical(other.canReturn, canReturn) || other.canReturn == canReturn)&&(identical(other.canEditByInternet, canEditByInternet) || other.canEditByInternet == canEditByInternet)&&(identical(other.canChangeStorageMedium, canChangeStorageMedium) || other.canChangeStorageMedium == canChangeStorageMedium)&&(identical(other.canGenerateInvoice, canGenerateInvoice) || other.canGenerateInvoice == canGenerateInvoice)&&(identical(other.canBuyTheSame, canBuyTheSame) || other.canBuyTheSame == canBuyTheSame)&&(identical(other.possibleRefundViaTpay, possibleRefundViaTpay) || other.possibleRefundViaTpay == possibleRefundViaTpay)&&(identical(other.minExpireReturnDate, minExpireReturnDate) || other.minExpireReturnDate == minExpireReturnDate)&&(identical(other.invoiceHeaderId, invoiceHeaderId) || other.invoiceHeaderId == invoiceHeaderId)&&const DeepCollectionEquality().equals(other.transactionStateList, _transactionStateList)&&const DeepCollectionEquality().equals(other.paymentStateList, _paymentStateList)&&const DeepCollectionEquality().equals(other.refundStateList, _refundStateList)&&const DeepCollectionEquality().equals(other.changeLineList, _changeLineList)&&const DeepCollectionEquality().equals(other.ticketReturns, _ticketReturns)&&const DeepCollectionEquality().equals(other.storageMediumChanges, storageMediumChanges)&&const DeepCollectionEquality().equals(other.downloads, downloads));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hashAll([runtimeType,customerId,ticket,ticketEkp,canChangeLine,canReturn,canEditByInternet,canChangeStorageMedium,canGenerateInvoice,canBuyTheSame,possibleRefundViaTpay,minExpireReturnDate,invoiceHeaderId,const DeepCollectionEquality().hash(_transactionStateList),const DeepCollectionEquality().hash(_paymentStateList),const DeepCollectionEquality().hash(_refundStateList),const DeepCollectionEquality().hash(_changeLineList),const DeepCollectionEquality().hash(ticketReturns),const DeepCollectionEquality().hash(storageMediumChanges),const DeepCollectionEquality().hash(downloads)]);
+    return Object.hashAll([runtimeType,customerId,ticket,ticketEkp,canChangeLine,canReturn,canEditByInternet,canChangeStorageMedium,canGenerateInvoice,canBuyTheSame,possibleRefundViaTpay,minExpireReturnDate,invoiceHeaderId,const DeepCollectionEquality().hash(_transactionStateList),const DeepCollectionEquality().hash(_paymentStateList),const DeepCollectionEquality().hash(_refundStateList),const DeepCollectionEquality().hash(_changeLineList),const DeepCollectionEquality().hash(_ticketReturns),const DeepCollectionEquality().hash(storageMediumChanges),const DeepCollectionEquality().hash(downloads)]);
 }
 
 @override
@@ -1641,7 +1931,7 @@ abstract mixin class _$TicketDetailResponseCopyWith<$Res> implements $TicketDeta
   factory _$TicketDetailResponseCopyWith(_TicketDetailResponse value, $Res Function(_TicketDetailResponse) _then) = __$TicketDetailResponseCopyWithImpl;
 @override @useResult
 $Res call({
- int? customerId, TicketHistoryEntry? ticket, MkkmTicket? ticketEkp, bool? canChangeLine, bool? canReturn, bool? canEditByInternet, bool? canChangeStorageMedium, bool? canGenerateInvoice, bool? canBuyTheSame, bool? possibleRefundViaTpay, DateTime? minExpireReturnDate, int? invoiceHeaderId, List<TicketStateChange>? transactionStateList, List<TicketStateChange>? paymentStateList, List<TicketStateChange>? refundStateList, List<TicketStateChange>? changeLineList, dynamic ticketReturns, dynamic storageMediumChanges, dynamic downloads
+ int? customerId, TicketHistoryEntry? ticket, MkkmTicket? ticketEkp, bool? canChangeLine, bool? canReturn, bool? canEditByInternet, bool? canChangeStorageMedium, bool? canGenerateInvoice, bool? canBuyTheSame, bool? possibleRefundViaTpay, DateTime? minExpireReturnDate, int? invoiceHeaderId, List<TicketStateChange>? transactionStateList, List<TicketStateChange>? paymentStateList, List<TicketStateChange>? refundStateList, List<TicketStateChange>? changeLineList, List<TicketReturn>? ticketReturns, dynamic storageMediumChanges, dynamic downloads
 });
 
 
@@ -1676,8 +1966,8 @@ as int?,transactionStateList: freezed == transactionStateList ? _self._transacti
 as List<TicketStateChange>?,paymentStateList: freezed == paymentStateList ? _self._paymentStateList : paymentStateList // ignore: cast_nullable_to_non_nullable
 as List<TicketStateChange>?,refundStateList: freezed == refundStateList ? _self._refundStateList : refundStateList // ignore: cast_nullable_to_non_nullable
 as List<TicketStateChange>?,changeLineList: freezed == changeLineList ? _self._changeLineList : changeLineList // ignore: cast_nullable_to_non_nullable
-as List<TicketStateChange>?,ticketReturns: freezed == ticketReturns ? _self.ticketReturns : ticketReturns // ignore: cast_nullable_to_non_nullable
-as dynamic,storageMediumChanges: freezed == storageMediumChanges ? _self.storageMediumChanges : storageMediumChanges // ignore: cast_nullable_to_non_nullable
+as List<TicketStateChange>?,ticketReturns: freezed == ticketReturns ? _self._ticketReturns : ticketReturns // ignore: cast_nullable_to_non_nullable
+as List<TicketReturn>?,storageMediumChanges: freezed == storageMediumChanges ? _self.storageMediumChanges : storageMediumChanges // ignore: cast_nullable_to_non_nullable
 as dynamic,downloads: freezed == downloads ? _self.downloads : downloads // ignore: cast_nullable_to_non_nullable
 as dynamic,
   ));

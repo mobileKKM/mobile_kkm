@@ -20,12 +20,17 @@ enum TicketValidity {
 enum MkkmTicketStatus {
   active,
   pending,
+
+  /// A payment is being booked. Never captured: the official client checks
+  /// for it and shows a disabled "processing payment" button.
+  processing,
   returned,
   unknown;
 
   static MkkmTicketStatus fromWire(String? value) => switch (value) {
     'active' => MkkmTicketStatus.active,
     'pending' => MkkmTicketStatus.pending,
+    'processing' => MkkmTicketStatus.processing,
     'returned' => MkkmTicketStatus.returned,
     _ => MkkmTicketStatus.unknown,
   };
@@ -157,6 +162,22 @@ abstract class TicketStateChange with _$TicketStateChange {
   factory TicketStateChange.fromJson(Map<String, dynamic> json) => _$TicketStateChangeFromJson(json);
 }
 
+/// Entry of `ticketReturns` in ticket detail: one return of the ticket.
+///
+/// [returnQty] is the number of days given back, [unitPriceReturn] the
+/// amount refunded for them. Only tpay refunds were ever captured.
+@freezed
+abstract class TicketReturn with _$TicketReturn {
+  const factory TicketReturn({
+    DateTime? returnDate,
+    int? returnQty,
+    double? unitPriceReturn,
+    String? paymentTypeDescription,
+  }) = _TicketReturn;
+
+  factory TicketReturn.fromJson(Map<String, dynamic> json) => _$TicketReturnFromJson(json);
+}
+
 /// `GET /tickets/{transactionCode}` — note: no `{code, message}` envelope.
 @freezed
 abstract class TicketDetailResponse with _$TicketDetailResponse {
@@ -178,8 +199,10 @@ abstract class TicketDetailResponse with _$TicketDetailResponse {
     List<TicketStateChange>? refundStateList,
     List<TicketStateChange>? changeLineList,
 
+    /// Null unless the ticket was returned; one entry in every capture.
+    List<TicketReturn>? ticketReturns,
+
     /// Shapes never observed (always null in captures) — kept raw.
-    dynamic ticketReturns,
     dynamic storageMediumChanges,
     dynamic downloads,
   }) = _TicketDetailResponse;

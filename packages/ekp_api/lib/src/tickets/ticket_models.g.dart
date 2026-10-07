@@ -168,6 +168,20 @@ Map<String, dynamic> _$TicketStateChangeToJson(_TicketStateChange instance) => <
   'stateDescription': instance.stateDescription,
 };
 
+_TicketReturn _$TicketReturnFromJson(Map<String, dynamic> json) => _TicketReturn(
+  returnDate: json['returnDate'] == null ? null : DateTime.parse(json['returnDate'] as String),
+  returnQty: (json['returnQty'] as num?)?.toInt(),
+  unitPriceReturn: (json['unitPriceReturn'] as num?)?.toDouble(),
+  paymentTypeDescription: json['paymentTypeDescription'] as String?,
+);
+
+Map<String, dynamic> _$TicketReturnToJson(_TicketReturn instance) => <String, dynamic>{
+  'returnDate': instance.returnDate?.toIso8601String(),
+  'returnQty': instance.returnQty,
+  'unitPriceReturn': instance.unitPriceReturn,
+  'paymentTypeDescription': instance.paymentTypeDescription,
+};
+
 _TicketDetailResponse _$TicketDetailResponseFromJson(Map<String, dynamic> json) => _TicketDetailResponse(
   customerId: (json['customerId'] as num?)?.toInt(),
   ticket: json['ticket'] == null ? null : TicketHistoryEntry.fromJson(json['ticket'] as Map<String, dynamic>),
@@ -195,7 +209,9 @@ _TicketDetailResponse _$TicketDetailResponseFromJson(Map<String, dynamic> json) 
   changeLineList: (json['changeLineList'] as List<dynamic>?)
       ?.map((e) => TicketStateChange.fromJson(e as Map<String, dynamic>))
       .toList(),
-  ticketReturns: json['ticketReturns'],
+  ticketReturns: (json['ticketReturns'] as List<dynamic>?)
+      ?.map((e) => TicketReturn.fromJson(e as Map<String, dynamic>))
+      .toList(),
   storageMediumChanges: json['storageMediumChanges'],
   downloads: json['downloads'],
 );

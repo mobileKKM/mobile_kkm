@@ -207,6 +207,7 @@ void main() {
       expect(res.tickets.first.statusEnum, MkkmTicketStatus.active);
       final pending = res.tickets.last;
       expect(pending.statusEnum, MkkmTicketStatus.pending);
+      expect(pending.copyWith(status: 'processing').statusEnum, MkkmTicketStatus.processing);
       expect(pending.canAssign, isFalse); // awaiting payment
       // Line-scoped ticket: full TransportLine objects, snake_case wire.
       expect(pending.lines, hasLength(1));
@@ -226,6 +227,17 @@ void main() {
       expect(res.transactionStateList!.first.stateDescription, contains('zakończona'));
       expect(res.paymentStateList, hasLength(2));
       expect(res.downloads, isNull);
+    });
+
+    test('TicketDetailResponse parses the return of a returned ticket', () {
+      final res = TicketDetailResponse.fromJson(fixture('ticket_detail_returned'));
+      final entry = res.ticketReturns!.single;
+      expect(entry.returnDate, DateTime.utc(2025, 9, 20, 21, 45, 49));
+      expect(entry.returnQty, 28);
+      expect(entry.unitPriceReturn, 92.4);
+      expect(entry.paymentTypeDescription, contains('TPay'));
+
+      expect(TicketDetailResponse.fromJson(fixture('ticket_detail_active')).ticketReturns, isNull);
     });
 
     test('TicketDetailResponse parses active ticket as returnable', () {
