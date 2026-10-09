@@ -1306,6 +1306,300 @@ as String?,
 
 
 /// @nodoc
+mixin _$TicketLineChange {
+
+ DateTime? get changeDate; int? get oldCityLine1; int? get oldZoneLine1; int? get oldCityLine2; int? get oldZoneLine2; int? get newCityLine1; int? get newZoneLine1; int? get newCityLine2; int? get newZoneLine2;
+/// Create a copy of TicketLineChange
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TicketLineChangeCopyWith<TicketLineChange> get copyWith => _$TicketLineChangeCopyWithImpl<TicketLineChange>(this as TicketLineChange, _$identity);
+
+  /// Serializes this TicketLineChange to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as TicketLineChange;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketLineChange&&(identical(other.changeDate, _this.changeDate) || other.changeDate == _this.changeDate)&&(identical(other.oldCityLine1, _this.oldCityLine1) || other.oldCityLine1 == _this.oldCityLine1)&&(identical(other.oldZoneLine1, _this.oldZoneLine1) || other.oldZoneLine1 == _this.oldZoneLine1)&&(identical(other.oldCityLine2, _this.oldCityLine2) || other.oldCityLine2 == _this.oldCityLine2)&&(identical(other.oldZoneLine2, _this.oldZoneLine2) || other.oldZoneLine2 == _this.oldZoneLine2)&&(identical(other.newCityLine1, _this.newCityLine1) || other.newCityLine1 == _this.newCityLine1)&&(identical(other.newZoneLine1, _this.newZoneLine1) || other.newZoneLine1 == _this.newZoneLine1)&&(identical(other.newCityLine2, _this.newCityLine2) || other.newCityLine2 == _this.newCityLine2)&&(identical(other.newZoneLine2, _this.newZoneLine2) || other.newZoneLine2 == _this.newZoneLine2));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as TicketLineChange;
+  return Object.hash(runtimeType,_this.changeDate,_this.oldCityLine1,_this.oldZoneLine1,_this.oldCityLine2,_this.oldZoneLine2,_this.newCityLine1,_this.newZoneLine1,_this.newCityLine2,_this.newZoneLine2);
+}
+
+@override
+String toString() {
+  final _this = this as TicketLineChange;
+  return 'TicketLineChange(changeDate: ${_this.changeDate}, oldCityLine1: ${_this.oldCityLine1}, oldZoneLine1: ${_this.oldZoneLine1}, oldCityLine2: ${_this.oldCityLine2}, oldZoneLine2: ${_this.oldZoneLine2}, newCityLine1: ${_this.newCityLine1}, newZoneLine1: ${_this.newZoneLine1}, newCityLine2: ${_this.newCityLine2}, newZoneLine2: ${_this.newZoneLine2})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TicketLineChangeCopyWith<$Res>  {
+  factory $TicketLineChangeCopyWith(TicketLineChange value, $Res Function(TicketLineChange) _then) = _$TicketLineChangeCopyWithImpl;
+@useResult
+$Res call({
+ DateTime? changeDate, int? oldCityLine1, int? oldZoneLine1, int? oldCityLine2, int? oldZoneLine2, int? newCityLine1, int? newZoneLine1, int? newCityLine2, int? newZoneLine2
+});
+
+
+
+
+}
+/// @nodoc
+class _$TicketLineChangeCopyWithImpl<$Res>
+    implements $TicketLineChangeCopyWith<$Res> {
+  _$TicketLineChangeCopyWithImpl(this._self, this._then);
+
+  final TicketLineChange _self;
+  final $Res Function(TicketLineChange) _then;
+
+/// Create a copy of TicketLineChange
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? changeDate = freezed,Object? oldCityLine1 = freezed,Object? oldZoneLine1 = freezed,Object? oldCityLine2 = freezed,Object? oldZoneLine2 = freezed,Object? newCityLine1 = freezed,Object? newZoneLine1 = freezed,Object? newCityLine2 = freezed,Object? newZoneLine2 = freezed,}) {
+  return _then(TicketLineChange(
+changeDate: freezed == changeDate ? _self.changeDate : changeDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,oldCityLine1: freezed == oldCityLine1 ? _self.oldCityLine1 : oldCityLine1 // ignore: cast_nullable_to_non_nullable
+as int?,oldZoneLine1: freezed == oldZoneLine1 ? _self.oldZoneLine1 : oldZoneLine1 // ignore: cast_nullable_to_non_nullable
+as int?,oldCityLine2: freezed == oldCityLine2 ? _self.oldCityLine2 : oldCityLine2 // ignore: cast_nullable_to_non_nullable
+as int?,oldZoneLine2: freezed == oldZoneLine2 ? _self.oldZoneLine2 : oldZoneLine2 // ignore: cast_nullable_to_non_nullable
+as int?,newCityLine1: freezed == newCityLine1 ? _self.newCityLine1 : newCityLine1 // ignore: cast_nullable_to_non_nullable
+as int?,newZoneLine1: freezed == newZoneLine1 ? _self.newZoneLine1 : newZoneLine1 // ignore: cast_nullable_to_non_nullable
+as int?,newCityLine2: freezed == newCityLine2 ? _self.newCityLine2 : newCityLine2 // ignore: cast_nullable_to_non_nullable
+as int?,newZoneLine2: freezed == newZoneLine2 ? _self.newZoneLine2 : newZoneLine2 // ignore: cast_nullable_to_non_nullable
+as int?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [TicketLineChange].
+extension TicketLineChangePatterns on TicketLineChange {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TicketLineChange value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _TicketLineChange() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TicketLineChange value)  $default,){
+final _that = this;
+switch (_that) {
+case _TicketLineChange():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TicketLineChange value)?  $default,){
+final _that = this;
+switch (_that) {
+case _TicketLineChange() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime? changeDate,  int? oldCityLine1,  int? oldZoneLine1,  int? oldCityLine2,  int? oldZoneLine2,  int? newCityLine1,  int? newZoneLine1,  int? newCityLine2,  int? newZoneLine2)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _TicketLineChange() when $default != null:
+return $default(_that.changeDate,_that.oldCityLine1,_that.oldZoneLine1,_that.oldCityLine2,_that.oldZoneLine2,_that.newCityLine1,_that.newZoneLine1,_that.newCityLine2,_that.newZoneLine2);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime? changeDate,  int? oldCityLine1,  int? oldZoneLine1,  int? oldCityLine2,  int? oldZoneLine2,  int? newCityLine1,  int? newZoneLine1,  int? newCityLine2,  int? newZoneLine2)  $default,) {final _that = this;
+switch (_that) {
+case _TicketLineChange():
+return $default(_that.changeDate,_that.oldCityLine1,_that.oldZoneLine1,_that.oldCityLine2,_that.oldZoneLine2,_that.newCityLine1,_that.newZoneLine1,_that.newCityLine2,_that.newZoneLine2);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime? changeDate,  int? oldCityLine1,  int? oldZoneLine1,  int? oldCityLine2,  int? oldZoneLine2,  int? newCityLine1,  int? newZoneLine1,  int? newCityLine2,  int? newZoneLine2)?  $default,) {final _that = this;
+switch (_that) {
+case _TicketLineChange() when $default != null:
+return $default(_that.changeDate,_that.oldCityLine1,_that.oldZoneLine1,_that.oldCityLine2,_that.oldZoneLine2,_that.newCityLine1,_that.newZoneLine1,_that.newCityLine2,_that.newZoneLine2);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _TicketLineChange implements TicketLineChange {
+  const _TicketLineChange({this.changeDate, this.oldCityLine1, this.oldZoneLine1, this.oldCityLine2, this.oldZoneLine2, this.newCityLine1, this.newZoneLine1, this.newCityLine2, this.newZoneLine2});
+  factory _TicketLineChange.fromJson(Map<String, dynamic> json) => _$TicketLineChangeFromJson(json);
+
+@override final  DateTime? changeDate;
+@override final  int? oldCityLine1;
+@override final  int? oldZoneLine1;
+@override final  int? oldCityLine2;
+@override final  int? oldZoneLine2;
+@override final  int? newCityLine1;
+@override final  int? newZoneLine1;
+@override final  int? newCityLine2;
+@override final  int? newZoneLine2;
+
+/// Create a copy of TicketLineChange
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$TicketLineChangeCopyWith<_TicketLineChange> get copyWith => __$TicketLineChangeCopyWithImpl<_TicketLineChange>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$TicketLineChangeToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketLineChange&&(identical(other.changeDate, changeDate) || other.changeDate == changeDate)&&(identical(other.oldCityLine1, oldCityLine1) || other.oldCityLine1 == oldCityLine1)&&(identical(other.oldZoneLine1, oldZoneLine1) || other.oldZoneLine1 == oldZoneLine1)&&(identical(other.oldCityLine2, oldCityLine2) || other.oldCityLine2 == oldCityLine2)&&(identical(other.oldZoneLine2, oldZoneLine2) || other.oldZoneLine2 == oldZoneLine2)&&(identical(other.newCityLine1, newCityLine1) || other.newCityLine1 == newCityLine1)&&(identical(other.newZoneLine1, newZoneLine1) || other.newZoneLine1 == newZoneLine1)&&(identical(other.newCityLine2, newCityLine2) || other.newCityLine2 == newCityLine2)&&(identical(other.newZoneLine2, newZoneLine2) || other.newZoneLine2 == newZoneLine2));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,changeDate,oldCityLine1,oldZoneLine1,oldCityLine2,oldZoneLine2,newCityLine1,newZoneLine1,newCityLine2,newZoneLine2);
+}
+
+@override
+String toString() {
+    return 'TicketLineChange(changeDate: $changeDate, oldCityLine1: $oldCityLine1, oldZoneLine1: $oldZoneLine1, oldCityLine2: $oldCityLine2, oldZoneLine2: $oldZoneLine2, newCityLine1: $newCityLine1, newZoneLine1: $newZoneLine1, newCityLine2: $newCityLine2, newZoneLine2: $newZoneLine2)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$TicketLineChangeCopyWith<$Res> implements $TicketLineChangeCopyWith<$Res> {
+  factory _$TicketLineChangeCopyWith(_TicketLineChange value, $Res Function(_TicketLineChange) _then) = __$TicketLineChangeCopyWithImpl;
+@override @useResult
+$Res call({
+ DateTime? changeDate, int? oldCityLine1, int? oldZoneLine1, int? oldCityLine2, int? oldZoneLine2, int? newCityLine1, int? newZoneLine1, int? newCityLine2, int? newZoneLine2
+});
+
+
+
+
+}
+/// @nodoc
+class __$TicketLineChangeCopyWithImpl<$Res>
+    implements _$TicketLineChangeCopyWith<$Res> {
+  __$TicketLineChangeCopyWithImpl(this._self, this._then);
+
+  final _TicketLineChange _self;
+  final $Res Function(_TicketLineChange) _then;
+
+/// Create a copy of TicketLineChange
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? changeDate = freezed,Object? oldCityLine1 = freezed,Object? oldZoneLine1 = freezed,Object? oldCityLine2 = freezed,Object? oldZoneLine2 = freezed,Object? newCityLine1 = freezed,Object? newZoneLine1 = freezed,Object? newCityLine2 = freezed,Object? newZoneLine2 = freezed,}) {
+  return _then(_TicketLineChange(
+changeDate: freezed == changeDate ? _self.changeDate : changeDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,oldCityLine1: freezed == oldCityLine1 ? _self.oldCityLine1 : oldCityLine1 // ignore: cast_nullable_to_non_nullable
+as int?,oldZoneLine1: freezed == oldZoneLine1 ? _self.oldZoneLine1 : oldZoneLine1 // ignore: cast_nullable_to_non_nullable
+as int?,oldCityLine2: freezed == oldCityLine2 ? _self.oldCityLine2 : oldCityLine2 // ignore: cast_nullable_to_non_nullable
+as int?,oldZoneLine2: freezed == oldZoneLine2 ? _self.oldZoneLine2 : oldZoneLine2 // ignore: cast_nullable_to_non_nullable
+as int?,newCityLine1: freezed == newCityLine1 ? _self.newCityLine1 : newCityLine1 // ignore: cast_nullable_to_non_nullable
+as int?,newZoneLine1: freezed == newZoneLine1 ? _self.newZoneLine1 : newZoneLine1 // ignore: cast_nullable_to_non_nullable
+as int?,newCityLine2: freezed == newCityLine2 ? _self.newCityLine2 : newCityLine2 // ignore: cast_nullable_to_non_nullable
+as int?,newZoneLine2: freezed == newZoneLine2 ? _self.newZoneLine2 : newZoneLine2 // ignore: cast_nullable_to_non_nullable
+as int?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$TicketReturn {
 
  DateTime? get returnDate; int? get returnQty; double? get unitPriceReturn; String? get paymentTypeDescription;
@@ -1587,7 +1881,7 @@ as String?,
 /// @nodoc
 mixin _$TicketDetailResponse {
 
- int? get customerId; TicketHistoryEntry? get ticket; MkkmTicket? get ticketEkp; bool? get canChangeLine; bool? get canReturn; bool? get canEditByInternet; bool? get canChangeStorageMedium; bool? get canGenerateInvoice; bool? get canBuyTheSame; bool? get possibleRefundViaTpay; DateTime? get minExpireReturnDate; int? get invoiceHeaderId; List<TicketStateChange>? get transactionStateList; List<TicketStateChange>? get paymentStateList; List<TicketStateChange>? get refundStateList; List<TicketStateChange>? get changeLineList;/// Null unless the ticket was returned; one entry in every capture.
+ int? get customerId; TicketHistoryEntry? get ticket; MkkmTicket? get ticketEkp; bool? get canChangeLine; bool? get canReturn; bool? get canEditByInternet; bool? get canChangeStorageMedium; bool? get canGenerateInvoice; bool? get canBuyTheSame; bool? get possibleRefundViaTpay; DateTime? get minExpireReturnDate; int? get invoiceHeaderId; List<TicketStateChange>? get transactionStateList; List<TicketStateChange>? get paymentStateList; List<TicketStateChange>? get refundStateList; List<TicketLineChange>? get changeLineList;/// Null unless the ticket was returned; one entry in every capture.
  List<TicketReturn>? get ticketReturns;/// Shapes never observed (always null in captures) — kept raw.
  dynamic get storageMediumChanges; dynamic get downloads;
 /// Create a copy of TicketDetailResponse
@@ -1627,7 +1921,7 @@ abstract mixin class $TicketDetailResponseCopyWith<$Res>  {
   factory $TicketDetailResponseCopyWith(TicketDetailResponse value, $Res Function(TicketDetailResponse) _then) = _$TicketDetailResponseCopyWithImpl;
 @useResult
 $Res call({
- int? customerId, TicketHistoryEntry? ticket, MkkmTicket? ticketEkp, bool? canChangeLine, bool? canReturn, bool? canEditByInternet, bool? canChangeStorageMedium, bool? canGenerateInvoice, bool? canBuyTheSame, bool? possibleRefundViaTpay, DateTime? minExpireReturnDate, int? invoiceHeaderId, List<TicketStateChange>? transactionStateList, List<TicketStateChange>? paymentStateList, List<TicketStateChange>? refundStateList, List<TicketStateChange>? changeLineList, List<TicketReturn>? ticketReturns, dynamic storageMediumChanges, dynamic downloads
+ int? customerId, TicketHistoryEntry? ticket, MkkmTicket? ticketEkp, bool? canChangeLine, bool? canReturn, bool? canEditByInternet, bool? canChangeStorageMedium, bool? canGenerateInvoice, bool? canBuyTheSame, bool? possibleRefundViaTpay, DateTime? minExpireReturnDate, int? invoiceHeaderId, List<TicketStateChange>? transactionStateList, List<TicketStateChange>? paymentStateList, List<TicketStateChange>? refundStateList, List<TicketLineChange>? changeLineList, List<TicketReturn>? ticketReturns, dynamic storageMediumChanges, dynamic downloads
 });
 
 
@@ -1662,7 +1956,7 @@ as int?,transactionStateList: freezed == transactionStateList ? _self.transactio
 as List<TicketStateChange>?,paymentStateList: freezed == paymentStateList ? _self.paymentStateList : paymentStateList // ignore: cast_nullable_to_non_nullable
 as List<TicketStateChange>?,refundStateList: freezed == refundStateList ? _self.refundStateList : refundStateList // ignore: cast_nullable_to_non_nullable
 as List<TicketStateChange>?,changeLineList: freezed == changeLineList ? _self.changeLineList : changeLineList // ignore: cast_nullable_to_non_nullable
-as List<TicketStateChange>?,ticketReturns: freezed == ticketReturns ? _self.ticketReturns : ticketReturns // ignore: cast_nullable_to_non_nullable
+as List<TicketLineChange>?,ticketReturns: freezed == ticketReturns ? _self.ticketReturns : ticketReturns // ignore: cast_nullable_to_non_nullable
 as List<TicketReturn>?,storageMediumChanges: freezed == storageMediumChanges ? _self.storageMediumChanges : storageMediumChanges // ignore: cast_nullable_to_non_nullable
 as dynamic,downloads: freezed == downloads ? _self.downloads : downloads // ignore: cast_nullable_to_non_nullable
 as dynamic,
@@ -1774,7 +2068,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  List<TicketReturn>? ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketLineChange>? changeLineList,  List<TicketReturn>? ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TicketDetailResponse() when $default != null:
 return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLine,_that.canReturn,_that.canEditByInternet,_that.canChangeStorageMedium,_that.canGenerateInvoice,_that.canBuyTheSame,_that.possibleRefundViaTpay,_that.minExpireReturnDate,_that.invoiceHeaderId,_that.transactionStateList,_that.paymentStateList,_that.refundStateList,_that.changeLineList,_that.ticketReturns,_that.storageMediumChanges,_that.downloads);case _:
@@ -1795,7 +2089,7 @@ return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLin
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  List<TicketReturn>? ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketLineChange>? changeLineList,  List<TicketReturn>? ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)  $default,) {final _that = this;
 switch (_that) {
 case _TicketDetailResponse():
 return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLine,_that.canReturn,_that.canEditByInternet,_that.canChangeStorageMedium,_that.canGenerateInvoice,_that.canBuyTheSame,_that.possibleRefundViaTpay,_that.minExpireReturnDate,_that.invoiceHeaderId,_that.transactionStateList,_that.paymentStateList,_that.refundStateList,_that.changeLineList,_that.ticketReturns,_that.storageMediumChanges,_that.downloads);case _:
@@ -1815,7 +2109,7 @@ return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLin
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  List<TicketReturn>? ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? customerId,  TicketHistoryEntry? ticket,  MkkmTicket? ticketEkp,  bool? canChangeLine,  bool? canReturn,  bool? canEditByInternet,  bool? canChangeStorageMedium,  bool? canGenerateInvoice,  bool? canBuyTheSame,  bool? possibleRefundViaTpay,  DateTime? minExpireReturnDate,  int? invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketLineChange>? changeLineList,  List<TicketReturn>? ticketReturns,  dynamic storageMediumChanges,  dynamic downloads)?  $default,) {final _that = this;
 switch (_that) {
 case _TicketDetailResponse() when $default != null:
 return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLine,_that.canReturn,_that.canEditByInternet,_that.canChangeStorageMedium,_that.canGenerateInvoice,_that.canBuyTheSame,_that.possibleRefundViaTpay,_that.minExpireReturnDate,_that.invoiceHeaderId,_that.transactionStateList,_that.paymentStateList,_that.refundStateList,_that.changeLineList,_that.ticketReturns,_that.storageMediumChanges,_that.downloads);case _:
@@ -1830,7 +2124,7 @@ return $default(_that.customerId,_that.ticket,_that.ticketEkp,_that.canChangeLin
 @JsonSerializable()
 
 class _TicketDetailResponse implements TicketDetailResponse {
-  const _TicketDetailResponse({this.customerId, this.ticket, this.ticketEkp, this.canChangeLine, this.canReturn, this.canEditByInternet, this.canChangeStorageMedium, this.canGenerateInvoice, this.canBuyTheSame, this.possibleRefundViaTpay, this.minExpireReturnDate, this.invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketStateChange>? changeLineList,  List<TicketReturn>? ticketReturns, this.storageMediumChanges, this.downloads}): _transactionStateList = transactionStateList,_paymentStateList = paymentStateList,_refundStateList = refundStateList,_changeLineList = changeLineList,_ticketReturns = ticketReturns;
+  const _TicketDetailResponse({this.customerId, this.ticket, this.ticketEkp, this.canChangeLine, this.canReturn, this.canEditByInternet, this.canChangeStorageMedium, this.canGenerateInvoice, this.canBuyTheSame, this.possibleRefundViaTpay, this.minExpireReturnDate, this.invoiceHeaderId,  List<TicketStateChange>? transactionStateList,  List<TicketStateChange>? paymentStateList,  List<TicketStateChange>? refundStateList,  List<TicketLineChange>? changeLineList,  List<TicketReturn>? ticketReturns, this.storageMediumChanges, this.downloads}): _transactionStateList = transactionStateList,_paymentStateList = paymentStateList,_refundStateList = refundStateList,_changeLineList = changeLineList,_ticketReturns = ticketReturns;
   factory _TicketDetailResponse.fromJson(Map<String, dynamic> json) => _$TicketDetailResponseFromJson(json);
 
 @override final  int? customerId;
@@ -1872,8 +2166,8 @@ class _TicketDetailResponse implements TicketDetailResponse {
   return EqualUnmodifiableListView(value);
 }
 
- final  List<TicketStateChange>? _changeLineList;
-@override List<TicketStateChange>? get changeLineList {
+ final  List<TicketLineChange>? _changeLineList;
+@override List<TicketLineChange>? get changeLineList {
   final value = _changeLineList;
   if (value == null) return null;
   if (_changeLineList is EqualUnmodifiableListView) return _changeLineList;
@@ -1931,7 +2225,7 @@ abstract mixin class _$TicketDetailResponseCopyWith<$Res> implements $TicketDeta
   factory _$TicketDetailResponseCopyWith(_TicketDetailResponse value, $Res Function(_TicketDetailResponse) _then) = __$TicketDetailResponseCopyWithImpl;
 @override @useResult
 $Res call({
- int? customerId, TicketHistoryEntry? ticket, MkkmTicket? ticketEkp, bool? canChangeLine, bool? canReturn, bool? canEditByInternet, bool? canChangeStorageMedium, bool? canGenerateInvoice, bool? canBuyTheSame, bool? possibleRefundViaTpay, DateTime? minExpireReturnDate, int? invoiceHeaderId, List<TicketStateChange>? transactionStateList, List<TicketStateChange>? paymentStateList, List<TicketStateChange>? refundStateList, List<TicketStateChange>? changeLineList, List<TicketReturn>? ticketReturns, dynamic storageMediumChanges, dynamic downloads
+ int? customerId, TicketHistoryEntry? ticket, MkkmTicket? ticketEkp, bool? canChangeLine, bool? canReturn, bool? canEditByInternet, bool? canChangeStorageMedium, bool? canGenerateInvoice, bool? canBuyTheSame, bool? possibleRefundViaTpay, DateTime? minExpireReturnDate, int? invoiceHeaderId, List<TicketStateChange>? transactionStateList, List<TicketStateChange>? paymentStateList, List<TicketStateChange>? refundStateList, List<TicketLineChange>? changeLineList, List<TicketReturn>? ticketReturns, dynamic storageMediumChanges, dynamic downloads
 });
 
 
@@ -1966,7 +2260,7 @@ as int?,transactionStateList: freezed == transactionStateList ? _self._transacti
 as List<TicketStateChange>?,paymentStateList: freezed == paymentStateList ? _self._paymentStateList : paymentStateList // ignore: cast_nullable_to_non_nullable
 as List<TicketStateChange>?,refundStateList: freezed == refundStateList ? _self._refundStateList : refundStateList // ignore: cast_nullable_to_non_nullable
 as List<TicketStateChange>?,changeLineList: freezed == changeLineList ? _self._changeLineList : changeLineList // ignore: cast_nullable_to_non_nullable
-as List<TicketStateChange>?,ticketReturns: freezed == ticketReturns ? _self._ticketReturns : ticketReturns // ignore: cast_nullable_to_non_nullable
+as List<TicketLineChange>?,ticketReturns: freezed == ticketReturns ? _self._ticketReturns : ticketReturns // ignore: cast_nullable_to_non_nullable
 as List<TicketReturn>?,storageMediumChanges: freezed == storageMediumChanges ? _self.storageMediumChanges : storageMediumChanges // ignore: cast_nullable_to_non_nullable
 as dynamic,downloads: freezed == downloads ? _self.downloads : downloads // ignore: cast_nullable_to_non_nullable
 as dynamic,

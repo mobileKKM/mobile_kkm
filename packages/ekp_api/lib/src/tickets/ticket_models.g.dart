@@ -168,6 +168,30 @@ Map<String, dynamic> _$TicketStateChangeToJson(_TicketStateChange instance) => <
   'stateDescription': instance.stateDescription,
 };
 
+_TicketLineChange _$TicketLineChangeFromJson(Map<String, dynamic> json) => _TicketLineChange(
+  changeDate: json['changeDate'] == null ? null : DateTime.parse(json['changeDate'] as String),
+  oldCityLine1: (json['oldCityLine1'] as num?)?.toInt(),
+  oldZoneLine1: (json['oldZoneLine1'] as num?)?.toInt(),
+  oldCityLine2: (json['oldCityLine2'] as num?)?.toInt(),
+  oldZoneLine2: (json['oldZoneLine2'] as num?)?.toInt(),
+  newCityLine1: (json['newCityLine1'] as num?)?.toInt(),
+  newZoneLine1: (json['newZoneLine1'] as num?)?.toInt(),
+  newCityLine2: (json['newCityLine2'] as num?)?.toInt(),
+  newZoneLine2: (json['newZoneLine2'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$TicketLineChangeToJson(_TicketLineChange instance) => <String, dynamic>{
+  'changeDate': instance.changeDate?.toIso8601String(),
+  'oldCityLine1': instance.oldCityLine1,
+  'oldZoneLine1': instance.oldZoneLine1,
+  'oldCityLine2': instance.oldCityLine2,
+  'oldZoneLine2': instance.oldZoneLine2,
+  'newCityLine1': instance.newCityLine1,
+  'newZoneLine1': instance.newZoneLine1,
+  'newCityLine2': instance.newCityLine2,
+  'newZoneLine2': instance.newZoneLine2,
+};
+
 _TicketReturn _$TicketReturnFromJson(Map<String, dynamic> json) => _TicketReturn(
   returnDate: json['returnDate'] == null ? null : DateTime.parse(json['returnDate'] as String),
   returnQty: (json['returnQty'] as num?)?.toInt(),
@@ -207,7 +231,7 @@ _TicketDetailResponse _$TicketDetailResponseFromJson(Map<String, dynamic> json) 
       ?.map((e) => TicketStateChange.fromJson(e as Map<String, dynamic>))
       .toList(),
   changeLineList: (json['changeLineList'] as List<dynamic>?)
-      ?.map((e) => TicketStateChange.fromJson(e as Map<String, dynamic>))
+      ?.map((e) => TicketLineChange.fromJson(e as Map<String, dynamic>))
       .toList(),
   ticketReturns: (json['ticketReturns'] as List<dynamic>?)
       ?.map((e) => TicketReturn.fromJson(e as Map<String, dynamic>))

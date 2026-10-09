@@ -1,0 +1,142 @@
+{
+  "customerId": 200001,
+  "ticket": {
+    "transactionId": 400005,
+    "transactionCode": "NDAwMDA1IzE",
+    "imported": true,
+    "transactionDate": "2025-10-08T16:57:18.74Z",
+    "ticketStartDate": "2025-10-08T22:00:00Z",
+    "ticketExpiryDate": "2025-11-08T22:59:59Z",
+    "specialTransportLine": "253",
+    "isNetwork": false,
+    "isMetropolitan": false,
+    "cityLine1": 253,
+    "zoneLine1": 128,
+    "cityLine2": 0,
+    "zoneLine2": 0,
+    "price": 36.0,
+    "transactionStateId": 9,
+    "transactionStateDescription": "Transakcja zakończona pomyślnie - nie wymaga zapisu na nośniku plastikowym",
+    "paymentTypeCode": null,
+    "paymentDescription": "ePłatność - przelew elektroniczny",
+    "paymentStateId": 3,
+    "paymentStateDescription": "Płatność potwierdzona i zakończona",
+    "paymentAccepted": "2025-10-08T16:57:51.35Z",
+    "productIndex": "369230081",
+    "productName": "Bilet ulg. mieszk. 1-mies. 1 linia st. I",
+    "productType": 1,
+    "productTypeName": "Bilet okresowy",
+    "promotionName": null,
+    "isPayed": true,
+    "ticketKindCode": 22,
+    "ticketPeriodCode": 1,
+    "ticketNumberOfLineCode": 1
+  },
+  "ticketEkp": {
+    "ticketGuid": "feedfacefeedfacefeedfacefeedface",
+    "transactionCode": "NDAwMDA1IzE",
+    "status": "active",
+    "datePurchase": "2025-10-08T16:57:18.7393589Z",
+    "startDate": "2025-10-08T22:00:00Z",
+    "endDate": "2025-11-08T22:59:59Z",
+    "monthsPeriod": 1,
+    "daysPeriod": 7,
+    "price": 36.0,
+    "isAnyAssigned": false,
+    "assigned": false,
+    "canAssign": true,
+    "forCitizen": true,
+    "ticketKindCode": 22,
+    "ticketNumberOfLineCode": 1,
+    "ticketPeriodCode": 1,
+    "specialTransportLine": null,
+    "isNetwork": false,
+    "isMetropolitan": false,
+    "lines": [
+      {
+        "line": 253,
+        "second_zone": false,
+        "has_second_zone": false,
+        "is_tram": true,
+        "is_bus": false
+      }
+    ],
+    "fivePlusOneTicket": false,
+    "customerId": 300001,
+    "customerCode": 100001,
+    "cityCardTypeCode": 8,
+    "productName": "Bilet ulg. mieszk. 1-mies. 1 linia st. I",
+    "paymentStateId": null,
+    "paymentStateDescription": null,
+    "paymentTypeCode": null,
+    "paymentDescription": null,
+    "promotionName": null,
+    "cityCardTypeName": "mobilna Krakowska Karta Miejska"
+  },
+  "canChangeLine": false,
+  "canReturn": true,
+  "canEditByInternet": true,
+  "canChangeStorageMedium": true,
+  "canGenerateInvoice": false,
+  "canBuyTheSame": false,
+  "possibleRefundViaTpay": true,
+  "minExpireReturnDate": "2025-10-24T23:00:00Z",
+  "invoiceHeaderId": null,
+  "transactionStateList": [
+    {
+      "nextNumber": 1,
+      "createDate": "2025-10-08T16:57:18.74Z",
+      "stateDescription": "Transakcja dodana"
+    },
+    {
+      "nextNumber": 2,
+      "createDate": "2025-10-08T16:57:51.35Z",
+      "stateDescription": "Transakcja zapłacona"
+    },
+    {
+      "nextNumber": 4,
+      "createDate": "2025-10-08T16:57:51.35Z",
+      "stateDescription": "Transakcja zakończona pomyślnie - nie wymaga zapisu na nośniku plastikowym"
+    }
+  ],
+  "paymentStateList": [
+    {
+      "nextNumber": 1,
+      "createDate": "2025-10-08T16:57:18.74Z",
+      "stateDescription": "Płatność rozpoczęta"
+    },
+    {
+      "nextNumber": 2,
+      "createDate": "2025-10-08T16:57:51.35Z",
+      "stateDescription": "Płatność potwierdzona i zakończona"
+    }
+  ],
+  "refundStateList": null,
+  "changeLineList": [
+    {
+      "changeDate": "2025-10-08T17:07:16Z",
+      "oldCityLine1": 1,
+      "oldZoneLine1": 128,
+      "oldCityLine2": 0,
+      "oldZoneLine2": 0,
+      "newCityLine1": 260,
+      "newZoneLine1": 128,
+      "newCityLine2": 0,
+      "newZoneLine2": 0
+    },
+    {
+      "changeDate": "2025-10-08T17:08:49Z",
+      "oldCityLine1": 260,
+      "oldZoneLine1": 128,
+      "oldCityLine2": 0,
+      "oldZoneLine2": 0,
+      "newCityLine1": 253,
+      "newZoneLine1": 128,
+      "newCityLine2": 0,
+      "newZoneLine2": 0
+    }
+  ],
+  "ticketReturns": null,
+  "storageMediumChanges": null,
+  "downloads": null
+}

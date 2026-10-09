@@ -153,13 +153,33 @@ abstract class TicketHistoryEntry with _$TicketHistoryEntry {
 }
 
 /// Entry of the `transactionStateList` / `paymentStateList` /
-/// `refundStateList` / `changeLineList` history arrays in ticket detail.
+/// `refundStateList` history arrays in ticket detail.
 @freezed
 abstract class TicketStateChange with _$TicketStateChange {
   const factory TicketStateChange({int? nextNumber, DateTime? createDate, String? stateDescription}) =
       _TicketStateChange;
 
   factory TicketStateChange.fromJson(Map<String, dynamic> json) => _$TicketStateChangeFromJson(json);
+}
+
+/// Entry of the `changeLineList` history array in ticket detail: one
+/// completed line change. Its shape differs from the state lists — the
+/// lines before and after the change, not a `stateDescription`.
+@freezed
+abstract class TicketLineChange with _$TicketLineChange {
+  const factory TicketLineChange({
+    DateTime? changeDate,
+    int? oldCityLine1,
+    int? oldZoneLine1,
+    int? oldCityLine2,
+    int? oldZoneLine2,
+    int? newCityLine1,
+    int? newZoneLine1,
+    int? newCityLine2,
+    int? newZoneLine2,
+  }) = _TicketLineChange;
+
+  factory TicketLineChange.fromJson(Map<String, dynamic> json) => _$TicketLineChangeFromJson(json);
 }
 
 /// Entry of `ticketReturns` in ticket detail: one return of the ticket.
@@ -197,7 +217,7 @@ abstract class TicketDetailResponse with _$TicketDetailResponse {
     List<TicketStateChange>? transactionStateList,
     List<TicketStateChange>? paymentStateList,
     List<TicketStateChange>? refundStateList,
-    List<TicketStateChange>? changeLineList,
+    List<TicketLineChange>? changeLineList,
 
     /// Null unless the ticket was returned; one entry in every capture.
     List<TicketReturn>? ticketReturns,
@@ -381,7 +401,10 @@ abstract class TicketPurchaseResponse with EkpCodeMessage, _$TicketPurchaseRespo
 /// `POST ticket-returns/calculate`.
 ///
 /// Note the suspicious `ticketStartDate` (holds the *expiry of the returned
-/// period*) vs `newTicketExpiryDate` naming in the raw response.
+/// period*) vs `newTicketExpiryDate` naming in the raw response — observed
+/// identically on a ticket whose validity had already started and on one
+/// starting in the future, so it is a consistent mislabel, not a state
+/// variant.
 @freezed
 abstract class TicketReturnCalculation with EkpCodeMessage, _$TicketReturnCalculation {
   const TicketReturnCalculation._();

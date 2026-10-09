@@ -48,6 +48,7 @@ abstract final class EkpApiPaths {
   static const String ticketsCalculate = '$apiRoot/tickets/calculate';
   static const String ticketsBuy = '$apiRoot/tickets/buy';
   static const String ticketsPay = '$apiRoot/tickets/pay';
+  static const String ticketsLineChangeEdit = '$apiRoot/tickets/line-change/edit';
   static const String ticketSalesConfiguration = '$apiRoot/tickets/ticket-sales-configuration';
   static const String ticketReturns = '$apiRoot/ticket-returns';
   static const String ticketReturnsCalculate = '$apiRoot/ticket-returns/calculate';

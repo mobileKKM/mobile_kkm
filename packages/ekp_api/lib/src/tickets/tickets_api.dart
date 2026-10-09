@@ -238,6 +238,29 @@ class TicketsApi extends EkpApiService {
     });
   }
 
+  /// `POST tickets/line-change/edit` — changes the transport line(s) of a
+  /// line-scoped ticket. Body: `{"ccTransaction": …, "lines": [{"number":
+  /// …, "secondZone": …}]}` — exactly one entry; the official client's
+  /// LineChange screen picks a single line.
+  ///
+  /// The 200 response body is a bare number (a new id, ignored by the
+  /// official client); errors arrive as the usual `{code, message}`
+  /// envelope via [EkpApiException].
+  Future<int> changeLine({required int transactionId, required TransportLine line}) async {
+    return guard(() async {
+      final response = await dio.post<int>(
+        EkpApiPaths.ticketsLineChangeEdit,
+        data: {
+          'ccTransaction': transactionId,
+          'lines': [
+            {'number': line.line, 'secondZone': line.secondZone},
+          ],
+        },
+      );
+      return response.data ?? 0;
+    });
+  }
+
   /// `POST ticket-returns` — executes the return previewed by
   /// [calculateReturn].
   ///

@@ -590,6 +590,21 @@ void main() {
         'returnDate': '2025-06-15T00:00:00.000Z',
       });
     });
+
+    test('changeLine posts ccTransaction + one {number, secondZone} entry', () async {
+      adapter.onPost('/tickets/line-change/edit', [(200, 3170)]);
+      final res = await client.tickets.changeLine(
+        transactionId: 400005,
+        line: const TransportLine(line: 253, secondZone: false),
+      );
+      expect(res, 3170);
+      expect(bodyOf(requestsTo('/tickets/line-change/edit').single), {
+        'ccTransaction': 400005,
+        'lines': [
+          {'number': 253, 'secondZone': false},
+        ],
+      });
+    });
   });
 
   group('PaymentsApi', () {

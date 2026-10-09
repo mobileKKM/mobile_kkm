@@ -248,6 +248,19 @@ void main() {
       expect(res.minExpireReturnDate, isNotNull);
     });
 
+    test('TicketDetailResponse parses the line-change history of a line-scoped ticket', () {
+      final res = TicketDetailResponse.fromJson(fixture('ticket_detail_line_changed'));
+      expect(res.canChangeLine, isFalse, reason: 'this ticket cannot be changed again');
+      final changes = res.changeLineList!;
+      expect(changes, hasLength(2));
+      expect(changes.first.changeDate, DateTime.utc(2025, 10, 8, 17, 7, 16));
+      expect(changes.first.oldCityLine1, 1);
+      expect(changes.first.newCityLine1, 260);
+      expect(changes.last.oldCityLine1, 260, reason: 'server chains: the second change starts from the first\'s result');
+      expect(changes.last.newCityLine1, 253);
+      expect(changes.every((c) => c.oldZoneLine1 == 128 && c.newZoneLine1 == 128), isTrue);
+    });
+
     test('TicketSalesConfiguration parses with non-null success code', () {
       final res = TicketSalesConfiguration.fromJson(fixture('sales_config'));
       expect(res.codeAsInt, 1, reason: 'code 1 on HTTP 200 success!');
