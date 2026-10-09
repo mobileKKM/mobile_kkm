@@ -27,6 +27,7 @@ abstract final class Routes {
   /// One purchase in full. Transaction codes are Base64.
   static String ticket(String transactionCode) => '$_ticketPrefix${Uri.encodeComponent(transactionCode)}';
   static String ticketReturn(String transactionCode) => '${ticket(transactionCode)}/return';
+  static String ticketChangeLine(String transactionCode) => '${ticket(transactionCode)}/change-line';
 
   /// The ticket's code, for an inspector.
   static String ticketControl(String ticketGuid) => '$_ticketControlPrefix${Uri.encodeComponent(ticketGuid)}';

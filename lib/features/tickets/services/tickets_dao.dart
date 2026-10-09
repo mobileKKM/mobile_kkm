@@ -17,6 +17,14 @@ class TicketsDao {
     return query.watch().map((rows) => [for (final row in rows) _fromRow(row)]);
   }
 
+  /// When the stored tickets last matched the server; null while there are
+  /// none. Unlike the sync's own state this outlives the app run.
+  Stream<DateTime?> watchLastSyncedAt() {
+    final latest = _db.tickets.syncedAt.max();
+    final query = _db.selectOnly(_db.tickets)..addColumns([latest]);
+    return query.map((row) => row.read(latest)).watchSingle();
+  }
+
   /// Makes the stored set match [tickets], the server's current list.
   ///
   /// A ticket that is still there keeps its pin; one the server no longer

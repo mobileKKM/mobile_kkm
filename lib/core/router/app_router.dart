@@ -74,6 +74,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'return',
             builder: (context, state) => TicketReturnScreen(transactionCode: state.pathParameters['transactionCode']!),
           ),
+          // Not built yet.
+          _comingSoon('change-line', (l10n) => l10n.ticketActionChangeLine),
         ],
       ),
       GoRoute(

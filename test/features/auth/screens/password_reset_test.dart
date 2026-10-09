@@ -60,8 +60,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Set new password'), findsOneWidget);
 
+    FilledButton button() => tester.widget(find.widgetWithText(FilledButton, 'Change password'));
+    // Off until the password is one the server will take.
+    await tester.enterText(field('New password'), 'secret');
+    await tester.enterText(field('Repeat password'), 'secret');
+    await tester.pump();
+    expect(button().onPressed, isNull);
+
     await tester.enterText(field('New password'), 'Secret123');
     await tester.enterText(field('Repeat password'), 'Secret124');
+    await tester.pump();
+    expect(button().onPressed, isNotNull);
     await tapVisible(tester, find.widgetWithText(FilledButton, 'Change password'));
     expect(find.text('The passwords do not match'), findsOneWidget);
 
@@ -80,7 +89,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(adapter.requestTo('/auth/activate').data, {'token': '0a1b2c'});
-    expect(find.text('Your account is active. You can sign in now.'), findsOneWidget);
+    expect(find.text('Your account is active'), findsOneWidget);
+    expect(find.text('You can sign in now.'), findsOneWidget);
 
     await tapVisible(tester, find.text('Go to sign in'));
     expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
@@ -94,7 +104,12 @@ void main() {
     app.router.go('/konto-uzytkownika/activate,0a1b2c.html');
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('could not be activated'), findsOneWidget);
+    expect(find.text('The account couldn’t be activated'), findsOneWidget);
     expect(find.text('Link aktywacyjny wygasł'), findsOneWidget);
+
+    // Asked again on request, and the way to the sign-in stays.
+    await tapVisible(tester, find.text('Try again'));
+    expect(adapter.requestsTo('/auth/activate'), hasLength(2));
+    expect(find.text('Go to sign in'), findsOneWidget);
   });
 }

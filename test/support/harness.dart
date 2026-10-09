@@ -13,6 +13,7 @@ import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/dictionaries/dictionary_cache.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/providers/database_provider.dart';
 import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
@@ -156,6 +157,25 @@ class FakeLocationService extends LocationService {
   Future<void> openSettings() async => openedSettings++;
 }
 
+/// Notes when the screen was protected, and plays a screen recording.
+class FakeScreenSecurity extends ScreenSecurity {
+  final _captured = StreamController<bool>.broadcast();
+
+  /// Every change asked for, in order.
+  final changes = <bool>[];
+
+  bool get secure => changes.isNotEmpty && changes.last;
+
+  /// A recording starts or stops (iOS).
+  void capture(bool capturing) => _captured.add(capturing);
+
+  @override
+  Future<void> setSecure(bool secure) async => changes.add(secure);
+
+  @override
+  Stream<bool> get captured => _captured.stream;
+}
+
 final signedInSession = AuthSession(
   token: 'aaa.bbb.ccc',
   refresh: 'feedfacefeedfacefeedfacefeedface',
@@ -163,7 +183,7 @@ final signedInSession = AuthSession(
 );
 
 class App {
-  App(this.client, this.router, this.database, this.map, this.container);
+  App(this.client, this.router, this.database, this.map, this.screen, this.container);
 
   /// The path of the screen on top.
   String get location => router.state.uri.path;
@@ -172,6 +192,7 @@ class App {
   final GoRouter router;
   final AppDatabase database;
   final FakeMapView map;
+  final FakeScreenSecurity screen;
 
   /// For providers that no screen shows.
   final ProviderContainer container;
@@ -190,8 +211,10 @@ Future<App> pumpApp(
   PhotoCache? photoCache,
   LocationService? location,
   bool settle = true,
+  bool tall = false,
 }) async {
-  tester.view.physicalSize = const Size(1080, 2400);
+  // [tall]: room for a whole list, where a test is about all of its entries.
+  tester.view.physicalSize = tall ? const Size(1080, 9000) : const Size(1080, 2400);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
 
@@ -211,6 +234,7 @@ Future<App> pumpApp(
   // providers with the tree would cancel drift's stream queries, which
   // schedules a timer that the test framework then reports as pending.
   final map = FakeMapView();
+  final screen = FakeScreenSecurity();
   final container = ProviderContainer(
     overrides: [
       ekpClientProvider.overrideWithValue(client),
@@ -221,6 +245,7 @@ Future<App> pumpApp(
       photoCacheProvider.overrideWithValue(photoCache ?? FakePhotoCache()),
       mapViewProvider.overrideWithValue(map.build),
       locationServiceProvider.overrideWithValue(location ?? FakeLocationService()),
+      screenSecurityProvider.overrideWithValue(screen),
       appVersionProvider.overrideWith((ref) => '1.2.3 (45)'),
       // Records instead of launching a browser.
       urlOpenerProvider.overrideWithValue((url) async {
@@ -242,7 +267,7 @@ Future<App> pumpApp(
     await tester.pumpAndSettle();
   }
 
-  return App(client, container.read(routerProvider), db, map, container);
+  return App(client, container.read(routerProvider), db, map, screen, container);
 }
 
 /// Scrolls [finder] into view, then taps it.
@@ -273,7 +298,7 @@ Future<void> pullToRefresh(WidgetTester tester) async {
 Future<void> signOut(WidgetTester tester) async {
   await openTab(tester, 'Account');
   await tapVisible(tester, find.widgetWithText(OutlinedButton, 'Sign out'));
-  await tester.tap(find.widgetWithText(TextButton, 'Sign out'));
+  await tester.tap(find.widgetWithText(FilledButton, 'Sign out'));
   await tester.pumpAndSettle();
 }
 

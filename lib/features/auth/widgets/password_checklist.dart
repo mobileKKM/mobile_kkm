@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/features/auth/models/password_rule.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
-/// Live checklist of the server's password policy.
+/// Live checklist of the server's password policy, two rules to a row.
 class PasswordChecklist extends StatelessWidget {
   const PasswordChecklist({super.key, required this.rules, required this.password});
 
@@ -17,32 +17,50 @@ class PasswordChecklist extends StatelessWidget {
     }
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (final rule in rules)
-          Builder(
-            builder: (context) {
-              final met = rule.isSatisfiedBy(password);
-              final color = met ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
-                  children: [
-                    Icon(
-                      met ? Symbols.check_circle_rounded : Symbols.radio_button_unchecked_rounded,
-                      size: 16,
-                      color: color,
-                      fill: met ? 1 : 0,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(_label(l10n, rule), style: theme.textTheme.bodySmall?.copyWith(color: color)),
-                    ),
-                  ],
+    final scheme = theme.colorScheme;
+
+    Widget item(PasswordRule rule) {
+      final met = rule.isSatisfiedBy(password);
+      final color = met ? scheme.primary : scheme.onSurfaceVariant;
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Ticked as well as coloured: never the colour alone.
+            Icon(
+              met ? Symbols.check_circle_rounded : Symbols.radio_button_unchecked_rounded,
+              size: 18,
+              color: color,
+              fill: met ? 1 : 0,
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                _label(l10n, rule),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontSize: 13,
+                  height: 18 / 13,
+                  fontWeight: met ? FontWeight.w600 : FontWeight.w500,
+                  color: color,
                 ),
-              );
-            },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        for (var row = 0; row < rules.length; row += 2)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 6,
+            children: [
+              Expanded(child: item(rules[row])),
+              Expanded(child: row + 1 < rules.length ? item(rules[row + 1]) : const SizedBox.shrink()),
+            ],
           ),
       ],
     );

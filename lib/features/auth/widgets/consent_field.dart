@@ -46,7 +46,9 @@ class ConsentField extends StatelessWidget {
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () => toggle(!(field.value ?? false)),
-                        child: ExcludeSemantics(child: Text(label, style: theme.textTheme.bodyLarge)),
+                        child: ExcludeSemantics(
+                          child: Text(label, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15)),
+                        ),
                       ),
                       if (onOpenRegulations != null)
                         TextButton(onPressed: onOpenRegulations, child: Text(l10n.regulationsLink)),
@@ -57,7 +59,7 @@ class ConsentField extends StatelessWidget {
             ),
             if (field.hasError)
               Padding(
-                padding: const EdgeInsetsDirectional.only(start: 16),
+                padding: const EdgeInsetsDirectional.only(start: 36),
                 child: Text(
                   field.errorText!,
                   style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error),

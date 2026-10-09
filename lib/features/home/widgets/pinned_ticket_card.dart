@@ -7,7 +7,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
-import 'package:mobile_kkm/core/widgets/load_problem.dart';
+import 'package:mobile_kkm/core/widgets/empty_state_card.dart';
+import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
@@ -24,11 +25,15 @@ class PinnedTicketCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final stored = ref.watch(homeTicketProvider);
     if (stored != null) {
+      final action = actionOf(stored.ticket);
       return MkkmTicketCard(
         stored.ticket,
+        // In full colour only while it can be shown: this is the one place
+        // where the ticket is the screen's subject.
+        calm: toneOf(stored.ticket, DateTime.now()) != TicketTone.valid,
         pinned: stored.pinned,
         // Here only the way to the code; the rest is on the Tickets screen.
-        showActions: actionOf(stored.ticket) == TicketAction.control,
+        showActions: action == TicketAction.control || action == TicketAction.assignedElsewhere,
         onTap: () => context.go(Routes.tickets),
       );
     }
@@ -37,57 +42,102 @@ class PinnedTicketCard extends ConsumerWidget {
     final sync = ref.watch(ticketSyncProvider);
     final nothingStored = tickets == null || tickets.isEmpty;
     final online = ref.watch(appStatusProvider.select((status) => status.mode == AppMode.online));
+    void retry() => unawaited(ref.read(ticketSyncProvider.notifier).refresh());
 
-    final Widget content;
     if (nothingStored && sync.status == TicketSyncStatus.failed) {
-      content = LoadProblem(
+      return _Failed(
         message: sync.error == null ? l10n.ticketsLoadError : describeError(l10n, sync.error!),
-        onRetry: () => unawaited(ref.read(ticketSyncProvider.notifier).refresh()),
+        onRetry: retry,
       );
-    } else if (nothingStored && !online) {
-      // No list is asked for while the service is away; the banner says why.
-      content = LoadProblem(
-        message: l10n.ticketsLoadError,
-        onRetry: () => unawaited(ref.read(ticketSyncProvider.notifier).refresh()),
-      );
-    } else if (nothingStored && sync.lastSyncedAt == null) {
-      // Nothing stored and the first sync has not come back yet.
-      content = const Padding(padding: EdgeInsets.all(24), child: CircularProgressIndicator());
-    } else {
-      content = const _NoTicket();
     }
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Center(child: content),
-      ),
+    if (nothingStored && !online) {
+      // No list is asked for while the service is away; the banner says why.
+      return _Failed(message: l10n.ticketsLoadError, onRetry: retry);
+    }
+    if (nothingStored && sync.lastSyncedAt == null) {
+      // Nothing stored and the first sync has not come back yet.
+      return const _Loading();
+    }
+    return EmptyStateCard(
+      icon: Symbols.confirmation_number_rounded,
+      title: l10n.homeNoTicketTitle,
+      body: l10n.homeNoTicketBody,
+      actionIcon: Symbols.add_shopping_cart_rounded,
+      actionLabel: l10n.navBuy,
+      onAction: () => context.push(Routes.buy),
     );
   }
 }
 
-class _NoTicket extends StatelessWidget {
-  const _NoTicket();
+class _Failed extends StatelessWidget {
+  const _Failed({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) => EmptyStateCard(
+    icon: Symbols.cloud_off_rounded,
+    title: message,
+    actionIcon: Symbols.refresh_rounded,
+    actionLabel: AppLocalizations.of(context).retry,
+    onAction: onRetry,
+    tonal: true,
+  );
+}
+
+/// The outline of a ticket card while the first list is on its way.
+class _Loading extends StatelessWidget {
+  const _Loading();
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Icon(Symbols.confirmation_number_rounded, size: 40, color: theme.colorScheme.onSurfaceVariant),
-        const SizedBox(height: 12),
-        Text(l10n.homeNoTicketTitle, textAlign: TextAlign.center, style: theme.textTheme.titleMedium),
-        const SizedBox(height: 4),
-        Text(
-          l10n.homeNoTicketBody,
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+    final scheme = Theme.of(context).colorScheme;
+    return Semantics(
+      label: MaterialLocalizations.of(context).refreshIndicatorSemanticLabel,
+      child: Material(
+        color: scheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(28),
+        clipBehavior: Clip.antiAlias,
+        child: SizedBox(
+          height: 340,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              LinearProgressIndicator(minHeight: 4, backgroundColor: Colors.transparent, color: scheme.primary),
+              const Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          SkeletonBox(width: 44, height: 44, radius: 16),
+                          SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 8,
+                            children: [SkeletonBox(width: 180, height: 14), SkeletonBox(width: 130, height: 12)],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 14),
+                      SkeletonBox(width: 90, height: 32, radius: 10),
+                      SizedBox(height: 14),
+                      SkeletonBox(width: 200, height: 52, radius: 14),
+                      SizedBox(height: 14),
+                      SkeletonBox(height: 10),
+                      Spacer(),
+                      SkeletonBox(height: 56),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 16),
-        FilledButton.tonal(onPressed: () => context.push(Routes.buy), child: Text(l10n.navBuy)),
-      ],
+      ),
     );
   }
 }

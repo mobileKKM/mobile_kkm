@@ -39,7 +39,7 @@ void main() {
         price: 54.5,
       ),
     ]);
-    await pumpApp(tester, adapter, session: signedInSession);
+    await pumpApp(tester, adapter, session: signedInSession, tall: true);
     await openTab(tester, 'Tickets');
 
     expect(find.byType(TicketCard), findsNWidgets(3));
@@ -57,6 +57,40 @@ void main() {
     await openTab(tester, 'Tickets');
 
     expect(find.text('You have no tickets yet.'), findsOneWidget);
+    // The way to buy one is in the list's place, not floating over it.
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(find.widgetWithText(FilledButton, 'Buy ticket'), findsOneWidget);
+  });
+
+  testWidgets('the active list starts with what can be shown, then payments, then what is waiting', (tester) async {
+    final soon = DateTime.now().add(const Duration(days: 1));
+    Map<String, dynamic> ticket(
+      String guid, {
+      String status = 'active',
+      bool started = true,
+      bool? assigned,
+      bool? canAssign,
+    }) => ticketJson(
+      guid: guid,
+      status: status,
+      start: started ? soon.subtract(const Duration(days: 5)) : soon,
+      end: soon.add(const Duration(days: 30)),
+      assigned: assigned,
+      canAssign: canAssign,
+      lines: [guid.length],
+    );
+    final adapter = _adapter([
+      ticket('elsewhere', canAssign: false),
+      ticket('toAssign', canAssign: true),
+      ticket('upcoming.', started: false, assigned: true),
+      ticket('unpaid', status: 'pending', started: false),
+      ticket('now', assigned: true),
+    ]);
+    await pumpApp(tester, adapter, session: signedInSession, tall: true);
+    await openTab(tester, 'Tickets');
+
+    final titles = [for (final card in tester.widgetList<TicketCard>(find.byType(TicketCard))) card.title];
+    expect(titles, ['Line 3', 'Line 6', 'Line 9', 'Line 8', 'Line 9']);
   });
 
   testWidgets('a failed load can be retried', (tester) async {
@@ -81,7 +115,8 @@ void main() {
     await openTab(tester, 'Tickets');
 
     expect(find.widgetWithText(TicketCard, 'Network ticket'), findsOneWidget);
-    expect(find.text("You're offline. Showing saved data."), findsOneWidget);
+    // With how old the copy is.
+    expect(find.textContaining("You're offline. Showing saved data. Saved "), findsOneWidget);
   });
 
   testWidgets('a ticket the server no longer returns disappears', (tester) async {
@@ -242,8 +277,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(adapter.requestTo(_history).queryParameters, {'customerCode': '100001', 'validity': 'Past'});
-      expect(find.widgetWithText(TicketCard, 'Bilet norm. 1-mies. sieciowy'), findsOneWidget);
+      expect(find.text('Bilet norm. 1-mies. sieciowy'), findsOneWidget);
       expect(find.text('Transakcja zakończona pomyślnie'), findsOneWidget);
+      // Receipts, grouped by the month the ticket started in; not cards.
+      expect(find.text('March 2025'), findsOneWidget);
+      expect(find.textContaining('80.00'), findsOneWidget);
+      expect(find.byType(TicketCard), findsNothing);
     });
 
     testWidgets('says when there is none', (tester) async {
@@ -268,7 +307,7 @@ void main() {
       await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
 
-      expect(find.widgetWithText(TicketCard, 'Bilet norm. 1-mies. sieciowy'), findsOneWidget);
+      expect(find.text('Bilet norm. 1-mies. sieciowy'), findsOneWidget);
     });
   });
 
@@ -278,27 +317,31 @@ void main() {
         validTicket(assigned: true),
         {...upcomingTicket(), 'assigned': true},
       ]);
-      await pumpApp(tester, adapter, session: signedInSession);
+      await pumpApp(tester, adapter, session: signedInSession, tall: true);
       await openTab(tester, 'Tickets');
 
       final buttons = tester.widgetList<FilledButton>(find.widgetWithText(FilledButton, 'Ticket control')).toList();
       expect(buttons, hasLength(2));
       expect(buttons.first.onPressed, isNotNull);
       expect(buttons.last.onPressed, isNull);
+      // When the second one becomes of use.
+      expect(find.textContaining('Available from '), findsOneWidget);
     });
 
     testWidgets('nothing for a ticket that other devices hold, or a returned one', (tester) async {
       final adapter = _adapter([
         validTicket(assigned: false, canAssign: false),
-        {...upcomingTicket(), 'status': 'returned'},
+        {...expiredTicket(), 'status': 'returned'},
       ]);
-      await pumpApp(tester, adapter, session: signedInSession);
+      await pumpApp(tester, adapter, session: signedInSession, tall: true);
       await openTab(tester, 'Tickets');
 
       expect(find.text('Assigned to other devices'), findsOneWidget);
       expect(find.text('Returned'), findsOneWidget);
       expect(find.byType(FilledButton), findsNothing);
       expect(find.byType(OutlinedButton), findsNothing);
+      // Neither has a place on the home screen.
+      expect(find.byTooltip('Pin to Home'), findsNothing);
     });
 
     testWidgets('assigning it to this device, after which the list is fetched again', (tester) async {
@@ -358,10 +401,39 @@ void main() {
       // Not built yet.
       adapter.reply('GET', _list, 200, ticketsReply([pending]));
       await pullToRefresh(tester);
-      await tester.tap(find.widgetWithText(OutlinedButton, 'Continue payment'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Continue payment'));
       await tester.pumpAndSettle();
       expect(app.location, '/buy');
     });
+  });
+
+  testWidgets('a returned ticket is valid, and its code can be shown, until the end the return left it', (
+    tester,
+  ) async {
+    final adapter = _adapter([
+      {...validTicket(assigned: true), 'status': 'returned'},
+    ]);
+    await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Tickets');
+
+    expect(find.widgetWithText(TicketCard, 'Valid'), findsOneWidget);
+    expect(find.text('Returned'), findsNothing);
+    expect(find.textContaining('days left'), findsOneWidget);
+    expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Ticket control')).onPressed, isNotNull);
+    expect(find.byTooltip('Pin to Home'), findsOneWidget);
+  });
+
+  testWidgets('the product is named from the fare and period dictionaries, which the list leaves out', (tester) async {
+    final ticket = {...validTicket(assigned: true), ...productCodes};
+    final adapter = _adapter([ticket])
+      ..reply('GET', '/dictionary/ticket-kind-list', 200, ticketKindsJson)
+      ..reply('GET', '/dictionary/ticket-period-list', 200, ticketPeriodsJson);
+    await pumpApp(tester, adapter, session: signedInSession);
+
+    // On Home too.
+    expect(find.widgetWithText(TicketCard, 'Normalny · Jeden miesiąc'), findsOneWidget);
+    await openTab(tester, 'Tickets');
+    expect(find.widgetWithText(TicketCard, 'Normalny · Jeden miesiąc'), findsOneWidget);
   });
 
   testWidgets('the zone is named once its dictionary is there', (tester) async {

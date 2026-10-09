@@ -464,29 +464,35 @@ abstract class AppLocalizations {
   /// **'Change password'**
   String get resetSubmit;
 
-  /// No description provided for @activateTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Account activation'**
-  String get activateTitle;
-
   /// No description provided for @activateInProgress.
   ///
   /// In en, this message translates to:
   /// **'Activating your account…'**
   String get activateInProgress;
 
-  /// No description provided for @activateSuccess.
+  /// No description provided for @activateSuccessTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your account is active. You can sign in now.'**
-  String get activateSuccess;
+  /// **'Your account is active'**
+  String get activateSuccessTitle;
 
-  /// No description provided for @activateFailure.
+  /// No description provided for @activateSuccessBody.
   ///
   /// In en, this message translates to:
-  /// **'The account could not be activated. The link may have expired or already been used.'**
-  String get activateFailure;
+  /// **'You can sign in now.'**
+  String get activateSuccessBody;
+
+  /// No description provided for @activateFailureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The account couldn’t be activated'**
+  String get activateFailureTitle;
+
+  /// No description provided for @activateFailureBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The link may have expired or already been used.'**
+  String get activateFailureBody;
 
   /// No description provided for @continueToLogin.
   ///
@@ -752,12 +758,6 @@ abstract class AppLocalizations {
   /// **'Expired'**
   String get ticketStatusExpired;
 
-  /// No description provided for @ticketOptions.
-  ///
-  /// In en, this message translates to:
-  /// **'Ticket options'**
-  String get ticketOptions;
-
   /// No description provided for @ticketPin.
   ///
   /// In en, this message translates to:
@@ -950,22 +950,28 @@ abstract class AppLocalizations {
   /// **'Refund method'**
   String get ticketFieldRefundMethod;
 
+  /// No description provided for @ticketHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get ticketHistoryTitle;
+
   /// No description provided for @ticketHistoryTransaction.
   ///
   /// In en, this message translates to:
-  /// **'Transaction history'**
+  /// **'Transaction'**
   String get ticketHistoryTransaction;
 
   /// No description provided for @ticketHistoryPayment.
   ///
   /// In en, this message translates to:
-  /// **'Payment history'**
+  /// **'Payment'**
   String get ticketHistoryPayment;
 
   /// No description provided for @ticketHistoryRefund.
   ///
   /// In en, this message translates to:
-  /// **'Refund history'**
+  /// **'Refund'**
   String get ticketHistoryRefund;
 
   /// No description provided for @yes.
@@ -989,26 +995,50 @@ abstract class AppLocalizations {
   /// No description provided for @ticketReturnNotice.
   ///
   /// In en, this message translates to:
-  /// **'The ticket stays valid until the end of the day before the chosen date; if it has already started, at least until the end of today.'**
+  /// **'The ticket stays valid until the end of the day before the date you choose, and if it has already started, at least until the end of today.'**
   String get ticketReturnNotice;
 
-  /// No description provided for @ticketReturnDate.
+  /// No description provided for @ticketReturnFrom.
   ///
   /// In en, this message translates to:
-  /// **'Return date'**
-  String get ticketReturnDate;
+  /// **'Return from'**
+  String get ticketReturnFrom;
 
   /// No description provided for @ticketReturnChooseDate.
   ///
   /// In en, this message translates to:
-  /// **'Choose'**
+  /// **'Choose a date'**
   String get ticketReturnChooseDate;
 
-  /// No description provided for @ticketReturnNewEnd.
+  /// No description provided for @ticketReturnPickerTitle.
   ///
   /// In en, this message translates to:
-  /// **'New end of validity'**
-  String get ticketReturnNewEnd;
+  /// **'Select return date'**
+  String get ticketReturnPickerTitle;
+
+  /// No description provided for @ticketReturnKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Still valid until {date}'**
+  String ticketReturnKeep(String date);
+
+  /// No description provided for @ticketReturnDaysBack.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day returned} other{{count} days returned}}'**
+  String ticketReturnDaysBack(int count);
+
+  /// No description provided for @ticketReturnYouGet.
+  ///
+  /// In en, this message translates to:
+  /// **'You get back'**
+  String get ticketReturnYouGet;
+
+  /// No description provided for @ticketReturnCalculating.
+  ///
+  /// In en, this message translates to:
+  /// **'Working out your refund…'**
+  String get ticketReturnCalculating;
 
   /// No description provided for @ticketReturnConfirmTitle.
   ///
@@ -1019,8 +1049,14 @@ abstract class AppLocalizations {
   /// No description provided for @ticketReturnConfirmBody.
   ///
   /// In en, this message translates to:
-  /// **'You will get {amount} back. This cannot be undone.'**
-  String ticketReturnConfirmBody(String amount);
+  /// **'{amount} will be refunded. The ticket stays valid until {date}.'**
+  String ticketReturnConfirmBody(String amount, String date);
+
+  /// No description provided for @ticketReturnConfirmBodyPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} will be refunded. This cannot be undone.'**
+  String ticketReturnConfirmBodyPlain(String amount);
 
   /// No description provided for @ticketReturnDone.
   ///
@@ -1187,8 +1223,212 @@ abstract class AppLocalizations {
   /// No description provided for @appVersion.
   ///
   /// In en, this message translates to:
-  /// **'mobileKKM {version}'**
-  String appVersion(String version);
+  /// **'Version {version} · eKP API {api}'**
+  String appVersion(String version, String api);
+
+  /// No description provided for @ticketDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{day left} other{days left}}'**
+  String ticketDaysLeft(int count);
+
+  /// No description provided for @ticketDaysUntilStart.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{day until start} other{days until start}}'**
+  String ticketDaysUntilStart(int count);
+
+  /// No description provided for @ticketToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get ticketToday;
+
+  /// No description provided for @ticketEndsAt.
+  ///
+  /// In en, this message translates to:
+  /// **'ends at {time}'**
+  String ticketEndsAt(String time);
+
+  /// No description provided for @ticketStartsAt.
+  ///
+  /// In en, this message translates to:
+  /// **'starts at {time}'**
+  String ticketStartsAt(String time);
+
+  /// No description provided for @ticketUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'until {date}'**
+  String ticketUntil(String date);
+
+  /// No description provided for @ticketFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'from {date}'**
+  String ticketFrom(String date);
+
+  /// No description provided for @ticketControlAvailableFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Available from {date}'**
+  String ticketControlAvailableFrom(String date);
+
+  /// No description provided for @ticketControlFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket control from {date}'**
+  String ticketControlFrom(String date);
+
+  /// No description provided for @ticketPinDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned to Home'**
+  String get ticketPinDone;
+
+  /// No description provided for @ticketUnpinDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpinned'**
+  String get ticketUnpinDone;
+
+  /// No description provided for @homeTicketsAwaitingPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 ticket awaiting payment} other{{count} tickets awaiting payment}}'**
+  String homeTicketsAwaitingPayment(int count);
+
+  /// No description provided for @homeCustomerCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer code {code}'**
+  String homeCustomerCode(String code);
+
+  /// No description provided for @offlineSavedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {time}'**
+  String offlineSavedAt(String time);
+
+  /// No description provided for @ticketsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets you buy show up here.'**
+  String get ticketsEmptyBody;
+
+  /// No description provided for @ticketDetailsManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get ticketDetailsManage;
+
+  /// No description provided for @ticketActionChangeLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Change line'**
+  String get ticketActionChangeLine;
+
+  /// No description provided for @ticketActionChangeLineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a different line for this ticket'**
+  String get ticketActionChangeLineHint;
+
+  /// No description provided for @ticketActionExtendHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The same ticket again, from {date}'**
+  String ticketActionExtendHint(String date);
+
+  /// No description provided for @ticketActionReturnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Money back for the days you don’t use'**
+  String get ticketActionReturnHint;
+
+  /// No description provided for @ticketActionBuySimilarHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a purchase with this ticket filled in'**
+  String get ticketActionBuySimilarHint;
+
+  /// No description provided for @ticketControlGettingCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting a new code…'**
+  String get ticketControlGettingCode;
+
+  /// No description provided for @ticketControlCodeFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Code valid for'**
+  String get ticketControlCodeFor;
+
+  /// No description provided for @ticketControlFare.
+  ///
+  /// In en, this message translates to:
+  /// **'Fare'**
+  String get ticketControlFare;
+
+  /// No description provided for @ticketControlZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Zone'**
+  String get ticketControlZone;
+
+  /// No description provided for @ticketControlValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until'**
+  String get ticketControlValidUntil;
+
+  /// No description provided for @ticketControlCaptureHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'The code is hidden while the screen is being recorded.'**
+  String get ticketControlCaptureHidden;
+
+  /// No description provided for @loginSubmitting.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in…'**
+  String get loginSubmitting;
+
+  /// No description provided for @forgotSubmitting.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get forgotSubmitting;
+
+  /// No description provided for @registerSubmitting.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating account…'**
+  String get registerSubmitting;
+
+  /// No description provided for @resetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a new password for your account.'**
+  String get resetBody;
+
+  /// No description provided for @under16Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish on the website'**
+  String get under16Title;
+
+  /// No description provided for @under16Body.
+  ///
+  /// In en, this message translates to:
+  /// **'People under 16 can only register on the EKP website. It opens with your details filled in.'**
+  String get under16Body;
+
+  /// No description provided for @under16Action.
+  ///
+  /// In en, this message translates to:
+  /// **'Open website'**
+  String get under16Action;
 
   /// No description provided for @logoutConfirmTitle.
   ///

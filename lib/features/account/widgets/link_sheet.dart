@@ -7,12 +7,14 @@ import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
+import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/load_problem.dart';
+import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// One destination in a [LinkSheet].
 class SheetLink {
-  const SheetLink({required this.icon, required this.label, required this.uri, this.subtitle});
+  const SheetLink({required this.icon, required this.label, required this.uri, this.subtitle, this.external = false});
 
   final IconData icon;
   final String label;
@@ -20,6 +22,9 @@ class SheetLink {
   /// The address or number itself, readable even if nothing can open it.
   final String? subtitle;
   final Uri uri;
+
+  /// Leaves the app for a web page, and is marked as such.
+  final bool external;
 }
 
 Future<void> showLinkSheet(BuildContext context, {required String title, required List<SheetLink> links}) {
@@ -62,11 +67,14 @@ class LinkSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
               child: Text(title, style: Theme.of(context).textTheme.titleLarge),
             ),
-            ...children,
-            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: RowGroup(children: children),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -98,11 +106,15 @@ class LinkTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-      leading: Icon(link.icon),
-      title: Text(link.label),
-      subtitle: link.subtitle == null ? null : Text(link.subtitle!),
+    final scheme = Theme.of(context).colorScheme;
+    return GroupRow(
+      minHeight: 64,
+      color: scheme.surfaceContainerHigh,
+      leading: IconTile(link.icon, size: 40, background: scheme.surfaceContainerLow),
+      label: link.label,
+      subtitle: link.subtitle,
+      showChevron: false,
+      trailing: link.external ? Icon(Symbols.open_in_new_rounded, size: 20, color: scheme.onSurfaceVariant) : null,
       onTap: () => unawaited(_open(context, ref)),
     );
   }
@@ -119,7 +131,12 @@ class _RegulationsSheet extends ConsumerWidget {
     SheetLink? link(String label, String? url) => url == null || url.isEmpty
         ? null
         // The server's URLs contain raw spaces.
-        : SheetLink(icon: Symbols.description_rounded, label: label, uri: Uri.parse(Uri.encodeFull(url)));
+        : SheetLink(
+            icon: Symbols.description_rounded,
+            label: label,
+            uri: Uri.parse(Uri.encodeFull(url)),
+            external: true,
+          );
 
     return LinkSheet(
       title: l10n.accountRegulations,

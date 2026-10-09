@@ -4,10 +4,12 @@ import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
+import 'package:mobile_kkm/core/widgets/lead_header.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/submit_button.dart';
 import 'package:mobile_kkm/features/auth/providers/auth_controller.dart';
@@ -68,13 +70,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
     final sessionExpired = ref.watch(authControllerProvider.select((state) => state.sessionExpired));
-    final notice = widget.passwordResetDone
-        ? l10n.passwordResetDoneNotice
-        : sessionExpired
-        ? l10n.sessionExpiredNotice
-        : null;
 
     final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
     final skylineHeight = LoginSkyline.heightFor(MediaQuery.sizeOf(context));
@@ -101,7 +97,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               bottom: false,
               child: Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 420),
                     child: AutofillGroup(
@@ -111,21 +107,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const BrandHeader(),
-                            const SizedBox(height: 32),
-                            Text(l10n.loginTitle, style: theme.textTheme.headlineSmall),
-                            const SizedBox(height: 4),
-                            Text(
-                              l10n.loginSubtitle,
-                              style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                            ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 16),
+                            LeadHeader(title: l10n.loginTitle, body: l10n.loginSubtitle),
+                            const SizedBox(height: 16),
+                            // The server's answer first; else why the user is here.
                             if (_error != null) ...[
                               MessageBanner(_error!),
                               const SizedBox(height: 16),
-                            ] else if (notice != null) ...[
-                              MessageBanner(notice, kind: BannerKind.info),
+                            ] else if (widget.passwordResetDone) ...[
+                              MessageBanner(l10n.passwordResetDoneNotice, kind: BannerKind.success),
+                              const SizedBox(height: 16),
+                            ] else if (sessionExpired) ...[
+                              MessageBanner(
+                                l10n.sessionExpiredNotice,
+                                kind: BannerKind.info,
+                                icon: Symbols.schedule_rounded,
+                              ),
                               const SizedBox(height: 16),
                             ],
+                            const SizedBox(height: 8),
                             TextFormField(
                               controller: _email,
                               keyboardType: TextInputType.emailAddress,
@@ -135,7 +135,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               decoration: InputDecoration(labelText: l10n.emailLabel),
                               validator: (value) => validateEmail(l10n, value),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 20),
                             PasswordField(
                               controller: _password,
                               label: l10n.passwordLabel,
@@ -152,13 +152,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            SubmitButton(label: l10n.loginSubmit, loading: _submitting, onPressed: _submit),
+                            SubmitButton(
+                              label: l10n.loginSubmit,
+                              icon: Symbols.login_rounded,
+                              loading: _submitting,
+                              loadingLabel: l10n.loginSubmitting,
+                              onPressed: _submit,
+                            ),
                             const SizedBox(height: 16),
                             Wrap(
                               alignment: WrapAlignment.center,
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                Text(l10n.noAccountPrompt),
+                                Text(
+                                  l10n.noAccountPrompt,
+                                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
                                 TextButton(
                                   onPressed: () => context.push(Routes.register),
                                   child: Text(l10n.registerLink),

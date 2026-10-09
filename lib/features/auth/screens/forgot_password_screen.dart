@@ -1,10 +1,12 @@
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
+import 'package:mobile_kkm/core/widgets/lead_header.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/submit_button.dart';
 import 'package:mobile_kkm/features/auth/utils/validators.dart';
@@ -74,27 +76,35 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return AuthPage(
-      title: l10n.forgotTitle,
+      centered: true,
+      bottom: SubmitButton(
+        label: l10n.forgotSubmit,
+        icon: Symbols.send_rounded,
+        loading: _submitting,
+        loadingLabel: l10n.forgotSubmitting,
+        onPressed: _submit,
+      ),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 16,
           children: [
-            Text(l10n.forgotBody),
-            const SizedBox(height: 24),
-            if (_error != null) ...[MessageBanner(_error!), const SizedBox(height: 16)],
-            TextFormField(
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.done,
-              autocorrect: false,
-              autofillHints: const [AutofillHints.email],
-              decoration: InputDecoration(labelText: l10n.emailLabel),
-              validator: (value) => validateEmail(l10n, value),
-              onFieldSubmitted: (_) => _submit(),
+            LeadHeader(icon: Symbols.lock_reset_rounded, title: l10n.forgotTitle, body: l10n.forgotBody),
+            if (_error != null) MessageBanner(_error!),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: TextFormField(
+                controller: _email,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.done,
+                autocorrect: false,
+                autofillHints: const [AutofillHints.email],
+                decoration: InputDecoration(labelText: l10n.emailLabel),
+                validator: (value) => validateEmail(l10n, value),
+                onFieldSubmitted: (_) => _submit(),
+              ),
             ),
-            const SizedBox(height: 24),
-            SubmitButton(label: l10n.forgotSubmit, loading: _submitting, onPressed: _submit),
           ],
         ),
       ),

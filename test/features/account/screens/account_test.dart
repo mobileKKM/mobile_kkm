@@ -1,6 +1,9 @@
+import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/widgets/row_group.dart';
+import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
 import 'package:mobile_kkm/features/account/services/photo_cache.dart';
 import 'package:mobile_kkm/features/account/widgets/link_sheet.dart';
 
@@ -25,7 +28,7 @@ Future<App> _openAccount(
 
 /// Opens the sheet behind [row] and taps [entry] in it.
 Future<void> _follow(WidgetTester tester, String row, String entry) async {
-  await tapVisible(tester, find.widgetWithText(ListTile, row));
+  await tapVisible(tester, find.widgetWithText(GroupRow, row));
   await tester.tap(find.text(entry));
   await tester.pumpAndSettle();
 }
@@ -37,6 +40,21 @@ void main() {
     expect(find.text('Jan Testowy'), findsOneWidget);
     expect(find.text('Customer code 100001', findRichText: true), findsOneWidget);
     expect(find.widgetWithText(CircleAvatar, 'JT'), findsOneWidget);
+  });
+
+  testWidgets('the header waits for the user data instead of guessing', (tester) async {
+    final adapter = _adapter();
+    final release = adapter.hold('GET', '/account/user-data');
+    await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Account');
+
+    expect(find.text('Jan Testowy'), findsNothing);
+    expect(find.byType(SkeletonBox), findsNWidgets(2));
+
+    release();
+    await tester.pumpAndSettle();
+    expect(find.text('Jan Testowy'), findsOneWidget);
+    expect(find.byType(SkeletonBox), findsNothing);
   });
 
   testWidgets('the photo comes from the photo cache, not through the API client', (tester) async {
@@ -67,7 +85,7 @@ void main() {
       testWidgets('with the inhabitant privilege $resident', (tester) async {
         await _openAccount(tester, _adapter(resident: resident));
 
-        final row = find.widgetWithText(ListTile, 'Karta Krakowska');
+        final row = find.widgetWithText(GroupRow, 'Karta Krakowska');
         for (final label in shown) {
           expect(find.descendant(of: row, matching: find.text(label)), findsOneWidget);
         }
@@ -89,7 +107,7 @@ void main() {
 
   testWidgets('a sheet covers the navigation bar', (tester) async {
     await _openAccount(tester, _adapter());
-    await tapVisible(tester, find.widgetWithText(ListTile, 'Contact MPK Kraków'));
+    await tapVisible(tester, find.widgetWithText(GroupRow, 'Contact MPK Kraków'));
 
     final sheet = tester.getRect(find.byType(BottomSheet));
     final bar = tester.getRect(find.byType(NavigationBar));
@@ -113,16 +131,20 @@ void main() {
     await _openAccount(tester, _adapter());
 
     Finder chevronIn(String row) =>
-        find.descendant(of: find.widgetWithText(ListTile, row), matching: find.byIcon(Symbols.chevron_right_rounded));
+        find.descendant(of: find.widgetWithText(GroupRow, row), matching: find.byIcon(Symbols.chevron_right_rounded));
     expect(chevronIn('Change password'), findsOneWidget);
     expect(chevronIn('Delete account'), findsNothing);
+    // And the one row in the error colour.
+    final scheme = Theme.of(tester.element(find.text('Delete account'))).colorScheme;
+    expect(tester.widget<Text>(find.text('Delete account')).style?.color, scheme.error);
+    expect(tester.widget<Text>(find.text('Change password')).style?.color, isNot(scheme.error));
   });
 
   testWidgets('Regulations lists the three regulations from the app config', (tester) async {
     final opened = <Uri>[];
     await _openAccount(tester, _adapter(), openedUrls: opened);
 
-    await tapVisible(tester, find.widgetWithText(ListTile, 'Regulations'));
+    await tapVisible(tester, find.widgetWithText(GroupRow, 'Regulations'));
     expect(find.byType(LinkTile), findsNWidgets(3));
     await tester.tap(find.text('EKP account regulations'));
     await tester.pumpAndSettle();
@@ -139,7 +161,7 @@ void main() {
   testWidgets('Regulations can be retried when the config did not load', (tester) async {
     final adapter = FakeAdapter()..fail('GET', '/client/mobile-app/config');
     await _openAccount(tester, adapter);
-    await tapVisible(tester, find.widgetWithText(ListTile, 'Regulations'));
+    await tapVisible(tester, find.widgetWithText(GroupRow, 'Regulations'));
     expect(find.textContaining('The regulations could not be loaded.'), findsOneWidget);
 
     adapter.reply('GET', '/client/mobile-app/config', 200, appConfigJson);
@@ -153,7 +175,7 @@ void main() {
     final opened = <Uri>[];
     await _openAccount(tester, _adapter(), openedUrls: opened);
 
-    await tapVisible(tester, find.widgetWithText(ListTile, 'Contact MPK Kraków'));
+    await tapVisible(tester, find.widgetWithText(GroupRow, 'Contact MPK Kraków'));
     expect(find.text('12 19 150'), findsOneWidget);
     expect(find.text('ekp@mpk.krakow.pl'), findsOneWidget);
     await tester.tap(find.text('Call the helpline'));
@@ -179,7 +201,7 @@ void main() {
     testWidgets('$row is announced as coming soon', (tester) async {
       final app = await _openAccount(tester, _adapter());
 
-      await tapVisible(tester, find.widgetWithText(ListTile, row));
+      await tapVisible(tester, find.widgetWithText(GroupRow, row));
 
       expect(app.location, location);
       expect(find.text('Coming soon'), findsOneWidget);
@@ -219,6 +241,7 @@ void main() {
 
   testWidgets('the app version is at the bottom', (tester) async {
     await _openAccount(tester, _adapter());
-    expect(find.text('mobileKKM 1.2.3 (45)'), findsOneWidget);
+    // With the official client's version, which the app speaks to the server as.
+    expect(find.text('Version 1.2.3 (45) · eKP API ${EkpDefaults.clientVersion}'), findsOneWidget);
   });
 }

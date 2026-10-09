@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../support/fake_adapter.dart';
@@ -29,7 +30,13 @@ void main() {
     await openTab(tester, 'Home');
     await openTab(tester, 'Tickets');
 
-    expect(tester.widget<SegmentedButton<bool>>(find.byType(SegmentedButton<bool>)).selected, {true});
+    // The chosen list is the ticked one.
+    Finder tickBeside(String label) => find.descendant(
+      of: find.ancestor(of: find.text(label), matching: find.byType(InkWell)),
+      matching: find.byIcon(Symbols.check_rounded),
+    );
+    expect(tickBeside('History'), findsOneWidget);
+    expect(tickBeside('Active'), findsNothing);
   });
 
   testWidgets('a screen that is not built yet opens above the navigation bar and can be left', (tester) async {

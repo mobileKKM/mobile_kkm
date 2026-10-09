@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
+import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// Explains where the e-mailed link will open. On Android the app can take
@@ -55,26 +56,19 @@ class _LinkHintState extends ConsumerState<LinkHint> with WidgetsBindingObserver
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final settings = ref.watch(linkSettingsProvider);
-    final style = Theme.of(context).textTheme.bodyMedium
-        ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
 
     if (!settings.isSupported) {
-      return Text(l10n.inboxBrowserHint, style: style);
+      return MessageBanner(l10n.inboxBrowserHint, kind: BannerKind.info, icon: Symbols.open_in_browser_rounded);
     }
     return switch (_canOpenLinks) {
       null => const SizedBox.shrink(),
-      true => Text(l10n.inboxAppHint, style: style),
-      false => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.inboxEnableLinksHint, style: style),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: settings.openSettings,
-            icon: const Icon(Symbols.open_in_new_rounded, size: 18),
-            label: Text(l10n.openLinkSettings),
-          ),
-        ],
+      true => MessageBanner(l10n.inboxAppHint, kind: BannerKind.info, icon: Symbols.phone_android_rounded),
+      false => MessageBanner(
+        l10n.inboxEnableLinksHint,
+        kind: BannerKind.info,
+        icon: Symbols.link_rounded,
+        actionLabel: l10n.openLinkSettings,
+        onAction: settings.openSettings,
       ),
     };
   }

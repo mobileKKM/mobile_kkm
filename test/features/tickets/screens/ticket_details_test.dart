@@ -1,7 +1,11 @@
+import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
+import 'package:mobile_kkm/core/widgets/row_group.dart';
+import 'package:mobile_kkm/features/tickets/screens/ticket_details_screen.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
+import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';
@@ -15,7 +19,8 @@ FakeAdapter _adapter(Map<String, dynamic> ticket, {bool canReturn = false, bool 
   ..reply('GET', _detail, 200, ticketDetailJson(ticket, canReturn: canReturn, canBuyTheSame: canBuyTheSame));
 
 Future<App> _open(WidgetTester tester, FakeAdapter adapter) async {
-  final app = await pumpApp(tester, adapter, session: signedInSession);
+  // Tall: the screen is one lazily built list, and the tests look at all of it.
+  final app = await pumpApp(tester, adapter, session: signedInSession, tall: true);
   await openTab(tester, 'Tickets');
   await tester.tap(find.byType(TicketCard));
   await tester.pumpAndSettle();
@@ -24,9 +29,14 @@ Future<App> _open(WidgetTester tester, FakeAdapter adapter) async {
 
 void main() {
   testWidgets('shows the purchase and what happened to it', (tester) async {
-    await _open(tester, _adapter(validTicket(assigned: true)));
+    final adapter = _adapter({...validTicket(assigned: true), ...productCodes})
+      ..reply('GET', '/dictionary/ticket-kind-list', 200, ticketKindsJson)
+      ..reply('GET', '/dictionary/ticket-period-list', 200, ticketPeriodsJson);
+    await _open(tester, adapter);
 
-    expect(find.widgetWithText(TicketCard, 'Bilet norm. 1-mies. sieciowy'), findsOneWidget);
+    // The product as the list names it, not by the name only the details carry.
+    expect(find.widgetWithText(TicketCard, 'Normalny · Jeden miesiąc'), findsOneWidget);
+    expect(find.text('Bilet norm. 1-mies. sieciowy'), findsNothing);
     expect(find.widgetWithText(FilledButton, 'Ticket control'), findsOneWidget);
     expect(find.text('Paid'), findsOneWidget);
     expect(find.text('Yes'), findsOneWidget);
@@ -35,12 +45,75 @@ void main() {
     // No promotion.
     expect(find.text('–'), findsOneWidget);
 
-    await tester.scrollUntilVisible(find.text('Payment history'), 200, scrollable: find.byType(Scrollable).first);
-    expect(find.text('Transaction history'), findsOneWidget);
+    // One history out of the server's three lists, each entry saying which.
+    await tester.scrollUntilVisible(find.text('Płatność rozpoczęta'), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.text('History'), findsOneWidget);
     expect(find.text('Transakcja dodana'), findsOneWidget);
-    expect(find.text('Płatność rozpoczęta'), findsOneWidget);
+    expect(find.textContaining(' · Transaction'), findsNWidgets(2));
+    expect(find.textContaining(' · Payment'), findsOneWidget);
     // Nothing was refunded.
-    expect(find.text('Refund history'), findsNothing);
+    expect(find.textContaining(' · Refund'), findsNothing);
+  });
+
+  test('the history is one list, newest first, in the server\'s order where the time is the same', () {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    TicketStateChange at(int minute, String state) =>
+        TicketStateChange(createDate: DateTime.utc(2025, 3, 1, 10, minute), stateDescription: state);
+    final timeline = timelineOf(
+      l10n,
+      TicketDetailResponse(
+        transactionStateList: [at(16, 'paid'), at(15, 'added')],
+        paymentStateList: [
+          at(15, 'started'),
+          const TicketStateChange(stateDescription: 'undated'),
+        ],
+        refundStateList: [at(40, 'refunded')],
+      ),
+    );
+
+    expect(
+      [for (final entry in timeline) '${entry.change.stateDescription} (${entry.kind})'],
+      ['refunded (Refund)', 'paid (Transaction)', 'added (Transaction)', 'started (Payment)', 'undated (Payment)'],
+    );
+  });
+
+  group('a line can be changed', () {
+    MkkmTicket ticket({List<int> lines = const [], bool network = false}) => MkkmTicket(
+      isNetwork: network,
+      lines: [for (final line in lines) TransportLine(line: line)],
+    );
+
+    test('on a ticket for lines, when the server allows it', () {
+      expect(canChangeLineOf(TicketDetailResponse(canChangeLine: true, ticketEkp: ticket(lines: [52]))), isTrue);
+      expect(canChangeLineOf(TicketDetailResponse(canChangeLine: false, ticketEkp: ticket(lines: [52]))), isFalse);
+      expect(canChangeLineOf(TicketDetailResponse(ticketEkp: ticket(lines: [52]))), isFalse);
+    });
+
+    test('never on a ticket for all lines, whatever the server says', () {
+      expect(canChangeLineOf(TicketDetailResponse(canChangeLine: true, ticketEkp: ticket(network: true))), isFalse);
+      expect(canChangeLineOf(TicketDetailResponse(canChangeLine: true, ticketEkp: ticket(lines: [1000]))), isFalse);
+      expect(canChangeLineOf(const TicketDetailResponse(canChangeLine: true)), isFalse);
+    });
+
+    testWidgets('from a row that leads to the screen for it', (tester) async {
+      final lines = ticketJson(
+        start: DateTime.now().subtract(const Duration(days: 3)),
+        end: DateTime.now().add(const Duration(days: 27)),
+        lines: [52],
+        assigned: true,
+      );
+      final adapter = FakeAdapter()
+        ..reply('GET', '/mkkm/tickets/list', 200, ticketsReply([lines]))
+        ..reply('GET', '/account/user-data', 200, userDataJson())
+        ..reply('GET', _detail, 200, ticketDetailJson(lines, canChangeLine: true));
+      final app = await _open(tester, adapter);
+
+      await tapVisible(tester, find.widgetWithText(GroupRow, 'Change line'));
+
+      // Not built yet.
+      expect(app.location, Routes.ticketChangeLine(transactionCode));
+      expect(find.text('Coming soon'), findsOneWidget);
+    });
   });
 
   testWidgets('offers neither a return nor another purchase unless the server allows them', (tester) async {
@@ -49,14 +122,17 @@ void main() {
     expect(find.text('Return ticket'), findsNothing);
     expect(find.text('Extend ticket'), findsNothing);
     expect(find.text('Buy similar'), findsNothing);
+    expect(find.text('Change line'), findsNothing);
+    // With nothing to offer there is no heading for it either.
+    expect(find.text('Manage'), findsNothing);
   });
 
   testWidgets('a running ticket can be extended, an expired one bought again', (tester) async {
     final app = await _open(tester, _adapter(validTicket(), canBuyTheSame: true));
     expect(find.text('Buy similar'), findsNothing);
 
-    await tester.tap(find.widgetWithText(TextButton, 'Extend ticket'));
-    await tester.pumpAndSettle();
+    expect(find.text('Manage'), findsOneWidget);
+    await tapVisible(tester, find.widgetWithText(GroupRow, 'Extend ticket'));
     // Not built yet.
     expect(app.location, '/buy');
   });
@@ -64,7 +140,7 @@ void main() {
   testWidgets('an expired ticket can be bought again', (tester) async {
     await _open(tester, _adapter(expiredTicket(), canBuyTheSame: true));
 
-    expect(find.widgetWithText(TextButton, 'Buy similar'), findsOneWidget);
+    expect(find.widgetWithText(GroupRow, 'Buy similar'), findsOneWidget);
     expect(find.text('Extend ticket'), findsNothing);
   });
 
@@ -96,8 +172,6 @@ void main() {
     await _open(tester, adapter);
 
     await tester.scrollUntilVisible(find.text('Refund method'), 200, scrollable: find.byType(Scrollable).first);
-    expect(find.text('Refund history'), findsOneWidget);
-    expect(find.text('Zwrot rozpoczęty'), findsOneWidget);
     expect(find.text('Days returned'), findsOneWidget);
     expect(find.text('28'), findsOneWidget);
     expect(find.textContaining('92.40'), findsOneWidget);
@@ -105,6 +179,9 @@ void main() {
     // Neither a button nor the two-devices notice on a returned ticket.
     expect(find.byType(FilledButton), findsNothing);
     expect(find.textContaining('already assigned to two'), findsNothing);
+
+    await tester.scrollUntilVisible(find.text('Zwrot rozpoczęty'), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.textContaining(' · Refund'), findsOneWidget);
   });
 
   testWidgets('a failed load can be retried', (tester) async {
@@ -123,8 +200,7 @@ void main() {
   testWidgets('the return starts from here', (tester) async {
     final app = await _open(tester, _adapter(validTicket(), canReturn: true));
 
-    await tester.tap(find.widgetWithText(OutlinedButton, 'Return ticket'));
-    await tester.pumpAndSettle();
+    await tapVisible(tester, find.widgetWithText(GroupRow, 'Return ticket'));
 
     expect(app.location, Routes.ticketReturn(transactionCode));
   });

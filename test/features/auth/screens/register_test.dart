@@ -40,6 +40,18 @@ Future<void> _fillBasics(WidgetTester tester) async {
 
 Future<void> _submit(WidgetTester tester) => tapVisible(tester, find.widgetWithText(FilledButton, 'Create account'));
 
+/// A valid PESEL for someone born on [date], in this century.
+String _peselFor(DateTime date) {
+  String two(int value) => value.toString().padLeft(2, '0');
+  final digits = '${two(date.year % 100)}${two(date.month + 20)}${two(date.day)}0135';
+  const weights = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3];
+  var sum = 0;
+  for (var i = 0; i < 10; i++) {
+    sum += int.parse(digits[i]) * weights[i];
+  }
+  return '$digits${(10 - sum % 10) % 10}';
+}
+
 Iterable<Object?> _registerRequests(FakeAdapter adapter) =>
     adapter.requests.where((r) => r.path.endsWith('/auth/register'));
 
@@ -127,6 +139,44 @@ void main() {
     ]);
     expect(find.text('Check your inbox'), findsOneWidget);
     expect(find.textContaining('jan@example.com'), findsOneWidget);
+  });
+
+  testWidgets('someone under 16 is sent to the website, with what they typed; nothing is registered here', (
+    tester,
+  ) async {
+    final opened = <Uri>[];
+    final adapter = _adapter()
+      ..reply('GET', '/client/mobile-app/config', 200, {'customerPageUrl': 'https://ekp.test/'});
+    await _openRegister(tester, adapter, openedUrls: opened);
+    final now = DateTime.now();
+    final pesel = _peselFor(DateTime(now.year - 10, 5, 14));
+
+    await _fillBasics(tester);
+    await tester.enterText(field('PESEL number'), pesel);
+    await tapVisible(tester, find.text(_consent));
+    await _submit(tester);
+
+    expect(find.text('Finish on the website'), findsOneWidget);
+    expect(_registerRequests(adapter), isEmpty);
+    expect(opened, isEmpty);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Open website'));
+    await tester.pumpAndSettle();
+
+    expect(_registerRequests(adapter), isEmpty);
+    final url = opened.single;
+    expect('${url.origin}${url.path}', 'https://ekp.test/auth/register');
+    expect(url.queryParameters, {
+      'firstName': 'Jan',
+      'lastName': 'Kowalski',
+      'email': 'jan@example.com',
+      'repeatEmail': 'jan@example.com',
+      'isNoPesel': 'false',
+      'pesel': pesel,
+      'birthDate': '${now.year - 10}-05-14',
+    });
+    // Still on the form: the website takes it from here.
+    expect(find.text('Check your inbox'), findsNothing);
   });
 
   testWidgets('submits a hand-picked birth date without a PESEL', (tester) async {

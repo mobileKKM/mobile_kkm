@@ -9,71 +9,140 @@ import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_actions.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
+import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
-/// The buttons for what can be done with a mobile ticket next: show its
-/// code, assign it to this device, or see to its payment.
+/// The stub of a mobile ticket's card: what can be done with the ticket
+/// next (show its code, assign it to this device, see to its payment), or
+/// why nothing can.
 class TicketActions extends ConsumerWidget {
   const TicketActions(this.ticket, {super.key});
 
   final MkkmTicket ticket;
 
-  /// Whether there is any button to show for [ticket].
+  /// Whether there is anything to put on the stub of [ticket]'s card.
   static bool appliesTo(MkkmTicket ticket) =>
       ticket.ticketGuid != null &&
       switch (actionOf(ticket)) {
-        TicketAction.control || TicketAction.processing || TicketAction.payment || TicketAction.assign => true,
-        TicketAction.assignedElsewhere || TicketAction.none => false,
+        TicketAction.control || TicketAction.payment || TicketAction.assign || TicketAction.assignedElsewhere => true,
+        // Nothing to do but wait; the card's label says so.
+        TicketAction.processing || TicketAction.none => false,
       };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final palette = TicketCardColors.of(context);
     final guid = ticket.ticketGuid;
     if (guid == null) {
       return const SizedBox.shrink();
     }
     final busy = ref.watch(ticketActionsProvider.select((running) => running.contains(guid)));
+    final now = DateTime.now();
+    final start = ticket.startDate;
+    final startsLater = start != null && now.isBefore(start);
+    final startText = start == null ? '' : formatDateTime(l10n.localeName, start);
+
+    final main = FilledButton.styleFrom(
+      minimumSize: const Size.fromHeight(56),
+      iconSize: 24,
+      backgroundColor: palette.button,
+      foregroundColor: palette.onButton,
+      disabledBackgroundColor: palette.high.withValues(alpha: 0.12),
+      disabledForegroundColor: palette.high.withValues(alpha: 0.45),
+    );
 
     switch (actionOf(ticket)) {
       case TicketAction.control:
-        return FilledButton.tonalIcon(
-          onPressed: canControl(ticket, DateTime.now()) ? () => context.push(Routes.ticketControl(guid)) : null,
-          icon: const Icon(Symbols.qr_code_2_rounded),
-          label: Text(l10n.ticketActionControl),
-        );
-      case TicketAction.assign:
-        return FilledButton.tonalIcon(
-          onPressed: busy ? null : () => unawaited(_assign(context, ref, guid)),
-          icon: busy ? const _Spinner() : const Icon(Symbols.add_link_rounded),
-          label: Text(l10n.ticketActionAssign),
-        );
-      case TicketAction.processing:
-        return FilledButton.tonalIcon(
-          onPressed: null,
-          icon: const Icon(Symbols.hourglass_top_rounded),
-          label: Text(l10n.ticketStatusProcessing),
-        );
-      case TicketAction.payment:
-        return Row(
+        final available = canControl(ticket, now);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 8,
           children: [
-            Expanded(
-              child: OutlinedButton(
-                // The payment itself belongs to the purchase flow.
-                onPressed: () => context.push(Routes.buy),
-                child: Text(l10n.ticketActionContinuePayment, textAlign: TextAlign.center),
-              ),
+            FilledButton.icon(
+              style: main,
+              onPressed: available ? () => context.push(Routes.ticketControl(guid)) : null,
+              icon: const Icon(Symbols.qr_code_2_rounded),
+              label: Text(l10n.ticketActionControl),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: OutlinedButton(
-                onPressed: busy ? null : () => unawaited(_checkPayment(context, ref, guid)),
-                child: busy ? const _Spinner() : Text(l10n.ticketActionCheckPayment, textAlign: TextAlign.center),
-              ),
-            ),
+            if (!available && start != null) _Helper(l10n.ticketControlAvailableFrom(startText)),
           ],
         );
-      case TicketAction.assignedElsewhere || TicketAction.none:
+      case TicketAction.assign:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 8,
+          children: [
+            FilledButton.icon(
+              style: main,
+              onPressed: busy ? null : () => unawaited(_assign(context, ref, guid)),
+              icon: busy ? const _Spinner() : const Icon(Symbols.add_to_home_screen_rounded),
+              label: Text(l10n.ticketActionAssign),
+            ),
+            // Assigning works ahead of time; the code only from the start on.
+            if (startsLater) _Helper(l10n.ticketControlFrom(startText)),
+          ],
+        );
+      case TicketAction.payment:
+        // From the theme, for its font; a bare style would fall back to the system's.
+        final text = Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 15);
+        const padding = EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+        final pay = FilledButton.icon(
+          style: main.copyWith(
+            iconSize: const WidgetStatePropertyAll(22),
+            textStyle: WidgetStatePropertyAll(text),
+            padding: const WidgetStatePropertyAll(padding),
+          ),
+          // The payment itself belongs to the purchase flow.
+          onPressed: () => context.push(Routes.buy),
+          icon: const Icon(Symbols.payments_rounded),
+          label: Text(l10n.ticketActionContinuePayment, textAlign: TextAlign.center),
+        );
+        final check = OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(56),
+            padding: padding,
+            textStyle: text,
+            foregroundColor: palette.high,
+            side: BorderSide(color: palette.medium, width: 1.5),
+          ),
+          onPressed: busy ? null : () => unawaited(_checkPayment(context, ref, guid)),
+          icon: busy ? const _Spinner() : const Icon(Symbols.refresh_rounded),
+          label: Text(l10n.ticketActionCheckPayment, textAlign: TextAlign.center),
+        );
+        // Side by side where both fit, one above the other where not.
+        return LayoutBuilder(
+          builder: (context, constraints) => constraints.maxWidth >= 308
+              ? IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    spacing: 8,
+                    children: [
+                      Expanded(child: pay),
+                      Expanded(child: check),
+                    ],
+                  ),
+                )
+              : Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [pay, check]),
+        );
+      case TicketAction.assignedElsewhere:
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Symbols.devices_off_rounded, size: 20, color: palette.medium),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l10n.ticketStatusAssignedElsewhere,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: palette.high),
+                ),
+              ),
+            ],
+          ),
+        );
+      case TicketAction.processing || TicketAction.none:
         return const SizedBox.shrink();
     }
   }
@@ -117,6 +186,32 @@ class TicketActions extends ConsumerWidget {
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
+  }
+}
+
+/// When a button under it becomes of use.
+class _Helper extends StatelessWidget {
+  const _Helper(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = TicketCardColors.of(context).medium;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Symbols.schedule_rounded, size: 18, color: color),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 13, height: 18 / 13, color: color),
+          ),
+        ),
+      ],
+    );
   }
 }
 

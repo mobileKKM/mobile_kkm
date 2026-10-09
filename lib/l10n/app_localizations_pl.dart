@@ -241,16 +241,19 @@ class AppLocalizationsPl extends AppLocalizations {
   String get resetSubmit => 'Zmień hasło';
 
   @override
-  String get activateTitle => 'Aktywacja konta';
-
-  @override
   String get activateInProgress => 'Aktywujemy Twoje konto…';
 
   @override
-  String get activateSuccess => 'Konto jest aktywne. Możesz się zalogować.';
+  String get activateSuccessTitle => 'Konto jest aktywne';
 
   @override
-  String get activateFailure => 'Nie udało się aktywować konta. Link mógł wygasnąć lub został już użyty.';
+  String get activateSuccessBody => 'Możesz się zalogować.';
+
+  @override
+  String get activateFailureTitle => 'Nie udało się aktywować konta';
+
+  @override
+  String get activateFailureBody => 'Link mógł wygasnąć lub został już użyty.';
 
   @override
   String get continueToLogin => 'Przejdź do logowania';
@@ -393,9 +396,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketStatusExpired => 'Wygasł';
 
   @override
-  String get ticketOptions => 'Opcje biletu';
-
-  @override
   String get ticketPin => 'Przypnij na ekranie głównym';
 
   @override
@@ -493,13 +493,16 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketFieldRefundMethod => 'Sposób zwrotu';
 
   @override
-  String get ticketHistoryTransaction => 'Historia stanów transakcji';
+  String get ticketHistoryTitle => 'Historia';
 
   @override
-  String get ticketHistoryPayment => 'Historia stanów płatności';
+  String get ticketHistoryTransaction => 'Transakcja';
 
   @override
-  String get ticketHistoryRefund => 'Historia stanów zwrotu płatności';
+  String get ticketHistoryPayment => 'Płatność';
+
+  @override
+  String get ticketHistoryRefund => 'Zwrot';
 
   @override
   String get yes => 'Tak';
@@ -515,20 +518,47 @@ class AppLocalizationsPl extends AppLocalizations {
       'Bilet jest ważny do końca dnia poprzedzającego wybraną datę, a jeśli jego ważność już się rozpoczęła, to co najmniej do końca bieżącego dnia.';
 
   @override
-  String get ticketReturnDate => 'Data zwrotu';
+  String get ticketReturnFrom => 'Zwrot od dnia';
 
   @override
-  String get ticketReturnChooseDate => 'Wskaż';
+  String get ticketReturnChooseDate => 'Wybierz datę';
 
   @override
-  String get ticketReturnNewEnd => 'Nowa data końca ważności';
+  String get ticketReturnPickerTitle => 'Wybierz datę zwrotu';
+
+  @override
+  String ticketReturnKeep(String date) {
+    return 'Nadal ważny do $date';
+  }
+
+  @override
+  String ticketReturnDaysBack(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dni do zwrotu',
+      one: '1 dzień do zwrotu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketReturnYouGet => 'Otrzymasz zwrot';
+
+  @override
+  String get ticketReturnCalculating => 'Obliczamy kwotę zwrotu…';
 
   @override
   String get ticketReturnConfirmTitle => 'Zwrócić bilet?';
 
   @override
-  String ticketReturnConfirmBody(String amount) {
-    return 'Otrzymasz zwrot $amount. Tej operacji nie można cofnąć.';
+  String ticketReturnConfirmBody(String amount, String date) {
+    return 'Zwrócimy $amount. Bilet pozostanie ważny do $date.';
+  }
+
+  @override
+  String ticketReturnConfirmBodyPlain(String amount) {
+    return 'Zwrócimy $amount. Tej operacji nie można cofnąć.';
   }
 
   @override
@@ -615,9 +645,151 @@ class AppLocalizationsPl extends AppLocalizations {
   String get accountDelete => 'Usuń konto';
 
   @override
-  String appVersion(String version) {
-    return 'mobileKKM $version';
+  String appVersion(String version, String api) {
+    return 'Wersja $version · eKP API $api';
   }
+
+  @override
+  String ticketDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'dni do końca', one: 'dzień do końca');
+    return '$_temp0';
+  }
+
+  @override
+  String ticketDaysUntilStart(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'dni do rozpoczęcia',
+      one: 'dzień do rozpoczęcia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketToday => 'Dziś';
+
+  @override
+  String ticketEndsAt(String time) {
+    return 'kończy się o $time';
+  }
+
+  @override
+  String ticketStartsAt(String time) {
+    return 'zaczyna się o $time';
+  }
+
+  @override
+  String ticketUntil(String date) {
+    return 'do $date';
+  }
+
+  @override
+  String ticketFrom(String date) {
+    return 'od $date';
+  }
+
+  @override
+  String ticketControlAvailableFrom(String date) {
+    return 'Dostępna od $date';
+  }
+
+  @override
+  String ticketControlFrom(String date) {
+    return 'Kontrola biletów od $date';
+  }
+
+  @override
+  String get ticketPinDone => 'Przypięto na ekranie Start';
+
+  @override
+  String get ticketUnpinDone => 'Odpięto';
+
+  @override
+  String homeTicketsAwaitingPayment(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count biletu oczekuje na płatność',
+      many: '$count biletów oczekuje na płatność',
+      few: '$count bilety oczekują na płatność',
+      one: '1 bilet oczekuje na płatność',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeCustomerCode(String code) {
+    return 'Kod klienta $code';
+  }
+
+  @override
+  String offlineSavedAt(String time) {
+    return 'Zapisano $time';
+  }
+
+  @override
+  String get ticketsEmptyBody => 'Tutaj pojawią się kupione bilety.';
+
+  @override
+  String get ticketDetailsManage => 'Zarządzaj';
+
+  @override
+  String get ticketActionChangeLine => 'Zmień linię';
+
+  @override
+  String get ticketActionChangeLineHint => 'Wybierz inną linię dla tego biletu';
+
+  @override
+  String ticketActionExtendHint(String date) {
+    return 'Ten sam bilet ponownie, od $date';
+  }
+
+  @override
+  String get ticketActionReturnHint => 'Zwrot pieniędzy za niewykorzystane dni';
+
+  @override
+  String get ticketActionBuySimilarHint => 'Rozpocznij zakup z tym biletem';
+
+  @override
+  String get ticketControlGettingCode => 'Pobieramy nowy kod…';
+
+  @override
+  String get ticketControlCodeFor => 'Kod ważny jeszcze';
+
+  @override
+  String get ticketControlFare => 'Ulga';
+
+  @override
+  String get ticketControlZone => 'Strefa';
+
+  @override
+  String get ticketControlValidUntil => 'Ważny do';
+
+  @override
+  String get ticketControlCaptureHidden => 'Kod jest ukryty podczas nagrywania ekranu.';
+
+  @override
+  String get loginSubmitting => 'Logowanie…';
+
+  @override
+  String get forgotSubmitting => 'Wysyłamy…';
+
+  @override
+  String get registerSubmitting => 'Zakładamy konto…';
+
+  @override
+  String get resetBody => 'Wybierz nowe hasło do swojego konta.';
+
+  @override
+  String get under16Title => 'Dokończ na stronie';
+
+  @override
+  String get under16Body =>
+      'Osoby poniżej 16 roku życia mogą założyć konto tylko na stronie EKP. Otworzy się z uzupełnionymi danymi.';
+
+  @override
+  String get under16Action => 'Otwórz stronę';
 
   @override
   String get logoutConfirmTitle => 'Wylogować się?';

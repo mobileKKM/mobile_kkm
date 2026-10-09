@@ -234,16 +234,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetSubmit => 'Change password';
 
   @override
-  String get activateTitle => 'Account activation';
-
-  @override
   String get activateInProgress => 'Activating your account…';
 
   @override
-  String get activateSuccess => 'Your account is active. You can sign in now.';
+  String get activateSuccessTitle => 'Your account is active';
 
   @override
-  String get activateFailure => 'The account could not be activated. The link may have expired or already been used.';
+  String get activateSuccessBody => 'You can sign in now.';
+
+  @override
+  String get activateFailureTitle => 'The account couldn’t be activated';
+
+  @override
+  String get activateFailureBody => 'The link may have expired or already been used.';
 
   @override
   String get continueToLogin => 'Go to sign in';
@@ -386,9 +389,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketStatusExpired => 'Expired';
 
   @override
-  String get ticketOptions => 'Ticket options';
-
-  @override
   String get ticketPin => 'Pin to Home';
 
   @override
@@ -486,13 +486,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketFieldRefundMethod => 'Refund method';
 
   @override
-  String get ticketHistoryTransaction => 'Transaction history';
+  String get ticketHistoryTitle => 'History';
 
   @override
-  String get ticketHistoryPayment => 'Payment history';
+  String get ticketHistoryTransaction => 'Transaction';
 
   @override
-  String get ticketHistoryRefund => 'Refund history';
+  String get ticketHistoryPayment => 'Payment';
+
+  @override
+  String get ticketHistoryRefund => 'Refund';
 
   @override
   String get yes => 'Yes';
@@ -505,23 +508,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ticketReturnNotice =>
-      'The ticket stays valid until the end of the day before the chosen date; if it has already started, at least until the end of today.';
+      'The ticket stays valid until the end of the day before the date you choose, and if it has already started, at least until the end of today.';
 
   @override
-  String get ticketReturnDate => 'Return date';
+  String get ticketReturnFrom => 'Return from';
 
   @override
-  String get ticketReturnChooseDate => 'Choose';
+  String get ticketReturnChooseDate => 'Choose a date';
 
   @override
-  String get ticketReturnNewEnd => 'New end of validity';
+  String get ticketReturnPickerTitle => 'Select return date';
+
+  @override
+  String ticketReturnKeep(String date) {
+    return 'Still valid until $date';
+  }
+
+  @override
+  String ticketReturnDaysBack(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days returned',
+      one: '1 day returned',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketReturnYouGet => 'You get back';
+
+  @override
+  String get ticketReturnCalculating => 'Working out your refund…';
 
   @override
   String get ticketReturnConfirmTitle => 'Return this ticket?';
 
   @override
-  String ticketReturnConfirmBody(String amount) {
-    return 'You will get $amount back. This cannot be undone.';
+  String ticketReturnConfirmBody(String amount, String date) {
+    return '$amount will be refunded. The ticket stays valid until $date.';
+  }
+
+  @override
+  String ticketReturnConfirmBodyPlain(String amount) {
+    return '$amount will be refunded. This cannot be undone.';
   }
 
   @override
@@ -608,9 +638,144 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountDelete => 'Delete account';
 
   @override
-  String appVersion(String version) {
-    return 'mobileKKM $version';
+  String appVersion(String version, String api) {
+    return 'Version $version · eKP API $api';
   }
+
+  @override
+  String ticketDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'days left', one: 'day left');
+    return '$_temp0';
+  }
+
+  @override
+  String ticketDaysUntilStart(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'days until start', one: 'day until start');
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketToday => 'Today';
+
+  @override
+  String ticketEndsAt(String time) {
+    return 'ends at $time';
+  }
+
+  @override
+  String ticketStartsAt(String time) {
+    return 'starts at $time';
+  }
+
+  @override
+  String ticketUntil(String date) {
+    return 'until $date';
+  }
+
+  @override
+  String ticketFrom(String date) {
+    return 'from $date';
+  }
+
+  @override
+  String ticketControlAvailableFrom(String date) {
+    return 'Available from $date';
+  }
+
+  @override
+  String ticketControlFrom(String date) {
+    return 'Ticket control from $date';
+  }
+
+  @override
+  String get ticketPinDone => 'Pinned to Home';
+
+  @override
+  String get ticketUnpinDone => 'Unpinned';
+
+  @override
+  String homeTicketsAwaitingPayment(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tickets awaiting payment',
+      one: '1 ticket awaiting payment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeCustomerCode(String code) {
+    return 'Customer code $code';
+  }
+
+  @override
+  String offlineSavedAt(String time) {
+    return 'Saved $time';
+  }
+
+  @override
+  String get ticketsEmptyBody => 'Tickets you buy show up here.';
+
+  @override
+  String get ticketDetailsManage => 'Manage';
+
+  @override
+  String get ticketActionChangeLine => 'Change line';
+
+  @override
+  String get ticketActionChangeLineHint => 'Pick a different line for this ticket';
+
+  @override
+  String ticketActionExtendHint(String date) {
+    return 'The same ticket again, from $date';
+  }
+
+  @override
+  String get ticketActionReturnHint => 'Money back for the days you don’t use';
+
+  @override
+  String get ticketActionBuySimilarHint => 'Start a purchase with this ticket filled in';
+
+  @override
+  String get ticketControlGettingCode => 'Getting a new code…';
+
+  @override
+  String get ticketControlCodeFor => 'Code valid for';
+
+  @override
+  String get ticketControlFare => 'Fare';
+
+  @override
+  String get ticketControlZone => 'Zone';
+
+  @override
+  String get ticketControlValidUntil => 'Valid until';
+
+  @override
+  String get ticketControlCaptureHidden => 'The code is hidden while the screen is being recorded.';
+
+  @override
+  String get loginSubmitting => 'Signing in…';
+
+  @override
+  String get forgotSubmitting => 'Sending…';
+
+  @override
+  String get registerSubmitting => 'Creating account…';
+
+  @override
+  String get resetBody => 'Choose a new password for your account.';
+
+  @override
+  String get under16Title => 'Finish on the website';
+
+  @override
+  String get under16Body =>
+      'People under 16 can only register on the EKP website. It opens with your details filled in.';
+
+  @override
+  String get under16Action => 'Open website';
 
   @override
   String get logoutConfirmTitle => 'Sign out?';

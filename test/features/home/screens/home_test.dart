@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
+import 'package:mobile_kkm/features/home/widgets/quick_actions.dart';
 import 'package:mobile_kkm/features/tickets/services/tickets_dao.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
 
@@ -80,29 +81,60 @@ void main() {
     });
   });
 
+  testWidgets('says who is signed in next to the greeting', (tester) async {
+    await pumpApp(tester, _adapter([]), session: signedInSession);
+    expect(find.text('Customer code 100001'), findsOneWidget);
+    expect(find.widgetWithText(CircleAvatar, 'JT'), findsOneWidget);
+  });
+
+  group('tickets awaiting payment', () {
+    Map<String, dynamic> unpaid(String guid) => ticketJson(
+      guid: guid,
+      status: 'pending',
+      start: DateTime.now().add(const Duration(days: 1)),
+      end: DateTime.now().add(const Duration(days: 31)),
+    );
+
+    testWidgets('are counted under the ticket and lead to the list', (tester) async {
+      final app = await pumpApp(
+        tester,
+        _adapter([validTicket(), unpaid('unpaid-1'), unpaid('unpaid-2')]),
+        session: signedInSession,
+      );
+
+      await tapVisible(tester, find.text('2 tickets awaiting payment'));
+
+      expect(app.location, '/tickets');
+    });
+
+    testWidgets('are not mentioned when there are none', (tester) async {
+      await pumpApp(tester, _adapter([validTicket()]), session: signedInSession);
+      expect(find.textContaining('awaiting payment'), findsNothing);
+    });
+  });
+
   group('a pinned ticket', () {
     testWidgets('replaces the automatic choice and is kept for the next start', (tester) async {
       final db = AppDatabase(NativeDatabase.memory());
       addTearDown(db.close);
-      final tickets = [validTicket(), upcomingTicket()];
+      final tickets = [validTicket(assigned: true), upcomingTicket(assigned: true)];
       await pumpApp(tester, _adapter(tickets), session: signedInSession, database: db);
       expect(find.widgetWithText(TicketCard, 'Network ticket'), findsOneWidget);
 
       await openTab(tester, 'Tickets');
-      await tester.tap(
+      await tapVisible(
+        tester,
         find.descendant(
           of: find.widgetWithText(TicketCard, 'Metropolitan ticket'),
-          matching: find.byTooltip('Ticket options'),
+          matching: find.byTooltip('Pin to Home'),
         ),
       );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Pin to Home'));
-      await tester.pumpAndSettle();
+      expect(find.text('Pinned to Home'), findsOneWidget);
       await openTab(tester, 'Home');
 
       expect(find.widgetWithText(TicketCard, 'Metropolitan ticket'), findsOneWidget);
       expect(find.widgetWithText(TicketCard, 'Network ticket'), findsNothing);
-      expect(find.byIcon(Symbols.push_pin_rounded), findsOneWidget);
+      expect(find.byIcon(Symbols.keep_rounded), findsOneWidget);
 
       // A fresh start of the app on the same database.
       await pumpApp(tester, _adapter(tickets), session: signedInSession, database: db);
@@ -113,22 +145,18 @@ void main() {
     testWidgets('can be unpinned again', (tester) async {
       final db = AppDatabase(NativeDatabase.memory());
       addTearDown(db.close);
-      final tickets = [validTicket(), upcomingTicket()];
+      final tickets = [validTicket(assigned: true), upcomingTicket(assigned: true)];
       await TicketsDao(db).replaceWith([for (final ticket in tickets) MkkmTicket.fromJson(ticket)]);
       await TicketsDao(db).setPinned(metropolitanGuid);
       await pumpApp(tester, _adapter(tickets), session: signedInSession, database: db);
       expect(find.widgetWithText(TicketCard, 'Metropolitan ticket'), findsOneWidget);
 
       await openTab(tester, 'Tickets');
-      await tester.tap(
-        find.descendant(
-          of: find.widgetWithText(TicketCard, 'Metropolitan ticket'),
-          matching: find.byTooltip('Ticket options'),
-        ),
+      await tapVisible(
+        tester,
+        find.descendant(of: find.widgetWithText(TicketCard, 'Metropolitan ticket'), matching: find.byTooltip('Unpin')),
       );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Unpin'));
-      await tester.pumpAndSettle();
+      expect(find.text('Unpinned'), findsOneWidget);
       await openTab(tester, 'Home');
 
       expect(find.widgetWithText(TicketCard, 'Network ticket'), findsOneWidget);
@@ -157,8 +185,7 @@ void main() {
       testWidgets('$label opens $location', (tester) async {
         final app = await pumpApp(tester, _adapter([validTicket()]), session: signedInSession);
 
-        await tester.tap(find.descendant(of: find.byType(InkWell), matching: find.text(label)).last);
-        await tester.pumpAndSettle();
+        await tapVisible(tester, find.descendant(of: find.byType(QuickActions), matching: find.text(label)));
 
         expect(app.location, location);
         expect(find.text(lands), findsOneWidget);

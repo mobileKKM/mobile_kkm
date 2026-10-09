@@ -17,33 +17,37 @@ class _DataNoticeState extends State<DataNotice> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final style = theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(l10n.dataNoticeTitle, style: theme.textTheme.titleSmall),
-        const SizedBox(height: 8),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 200),
-          alignment: Alignment.topCenter,
-          child: _expanded
-              ? Text(informationObligation, style: style)
-              : ShaderMask(
-                  blendMode: BlendMode.dstIn,
-                  shaderCallback: (bounds) => const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.black, Colors.transparent],
-                  ).createShader(bounds),
-                  child: Text(informationObligation, style: style, maxLines: 3, overflow: TextOverflow.clip),
-                ),
-        ),
-        TextButton(
-          style: TextButton.styleFrom(padding: EdgeInsets.zero),
-          onPressed: () => setState(() => _expanded = !_expanded),
-          child: Text(_expanded ? l10n.showLess : l10n.showMore),
-        ),
-      ],
+    final style = theme.textTheme.bodySmall?.copyWith(height: 17 / 12, color: theme.colorScheme.onSurfaceVariant);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.dataNoticeTitle, style: theme.textTheme.titleSmall),
+          const SizedBox(height: 6),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 200),
+            alignment: Alignment.topCenter,
+            child: _expanded
+                ? Text(informationObligation, style: style)
+                : ShaderMask(
+                    blendMode: BlendMode.dstIn,
+                    shaderCallback: (bounds) => const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.black, Colors.black, Colors.transparent],
+                      stops: [0, 0.3, 1],
+                    ).createShader(bounds),
+                    child: Text(informationObligation, style: style, maxLines: 3, overflow: TextOverflow.clip),
+                  ),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(padding: EdgeInsets.zero, alignment: AlignmentDirectional.centerStart),
+            onPressed: () => setState(() => _expanded = !_expanded),
+            child: Text(_expanded ? l10n.showLess : l10n.showMore),
+          ),
+        ],
+      ),
     );
   }
 }

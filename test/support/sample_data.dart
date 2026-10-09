@@ -56,9 +56,22 @@ Map<String, dynamic> validTicket({
 }
 
 /// A paid ticket that starts in [inDays] days.
-Map<String, dynamic> upcomingTicket({String guid = metropolitanGuid, int inDays = 10, bool metropolitan = true}) {
+Map<String, dynamic> upcomingTicket({
+  String guid = metropolitanGuid,
+  int inDays = 10,
+  bool metropolitan = true,
+  bool? assigned,
+  bool? canAssign,
+}) {
   final start = DateTime.now().add(Duration(days: inDays));
-  return ticketJson(guid: guid, start: start, end: start.add(const Duration(days: 30)), metropolitan: metropolitan);
+  return ticketJson(
+    guid: guid,
+    start: start,
+    end: start.add(const Duration(days: 30)),
+    metropolitan: metropolitan,
+    assigned: assigned,
+    canAssign: canAssign,
+  );
 }
 
 Map<String, dynamic> expiredTicket({String guid = metropolitanGuid, bool metropolitan = true}) {
@@ -113,6 +126,7 @@ Map<String, dynamic> ticketDetailJson(
   Map<String, dynamic> ticket, {
   bool canReturn = false,
   bool canBuyTheSame = false,
+  bool canChangeLine = false,
   bool paid = true,
   List<Map<String, dynamic>>? returns,
 }) => {
@@ -132,6 +146,7 @@ Map<String, dynamic> ticketDetailJson(
   },
   'ticketEkp': {...ticket, 'productName': 'Bilet norm. 1-mies. sieciowy'},
   'canReturn': canReturn,
+  'canChangeLine': canChangeLine,
   'canBuyTheSame': canBuyTheSame,
   'minExpireReturnDate': null,
   'transactionStateList': [
@@ -147,6 +162,23 @@ Map<String, dynamic> ticketDetailJson(
   ],
   'ticketReturns': returns,
 };
+
+/// `dictionary/ticket-kind-list` and `…/ticket-period-list`, for a ticket
+/// with [productCodes].
+const ticketKindsJson = {
+  'kinds': [
+    {'code': 2, 'description': 'Normalny'},
+  ],
+};
+
+const ticketPeriodsJson = {
+  'list': [
+    {'code': 1, 'description': 'Jeden miesiąc'},
+  ],
+};
+
+/// Added to a ticket: the fare and period the dictionaries above name.
+const productCodes = {'ticketKindCode': 2, 'ticketPeriodCode': 1};
 
 const lineScopesJson = {
   'list': [

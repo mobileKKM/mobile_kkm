@@ -1,30 +1,40 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:mobile_kkm/core/theme/app_theme.dart';
 
-/// How much a state should stand out.
-enum StatusTone { positive, neutral, warning }
-
-/// A short state label on a tinted background.
+/// A short state label on a tinted background, with the icon that says the
+/// same thing: the colour never carries the state alone.
 class StatusChip extends StatelessWidget {
-  const StatusChip(this.label, {super.key, this.tone = StatusTone.neutral});
+  const StatusChip(
+    this.label, {
+    super.key,
+    required this.icon,
+    required this.background,
+    required this.foreground,
+    this.compact = false,
+  });
 
   final String label;
-  final StatusTone tone;
+  final IconData icon;
+  final Color background;
+  final Color foreground;
+
+  /// The smaller size, for a row's trailing end; its icon is filled.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final colors = AppColors.of(context);
-    final (background, foreground) = switch (tone) {
-      StatusTone.positive => (colors.successContainer, colors.onSuccessContainer),
-      StatusTone.warning => (scheme.tertiaryContainer, scheme.onTertiaryContainer),
-      StatusTone.neutral => (scheme.surfaceContainerHighest, scheme.onSurfaceVariant),
-    };
-    return DecoratedBox(
-      decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(8)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        child: Text(label, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: foreground)),
+    final style = Theme.of(context).textTheme.labelLarge
+        ?.copyWith(color: foreground, fontSize: compact ? 13 : 14, height: compact ? 18 / 13 : 20 / 14);
+    return Container(
+      constraints: BoxConstraints(minHeight: compact ? 28 : 32),
+      padding: EdgeInsetsDirectional.only(start: 8, end: compact ? 10 : 12, top: 2, bottom: 2),
+      decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(compact ? 8 : 10)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: compact ? 16 : 20, fill: compact ? 1 : 0, color: foreground),
+          SizedBox(width: compact ? 4 : 6),
+          Flexible(child: Text(label, style: style)),
+        ],
       ),
     );
   }

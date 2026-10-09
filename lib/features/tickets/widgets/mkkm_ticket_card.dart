@@ -13,6 +13,7 @@ class MkkmTicketCard extends ConsumerWidget {
   const MkkmTicketCard(
     this.ticket, {
     super.key,
+    this.calm = true,
     this.pinned = false,
     this.trailing,
     this.onTap,
@@ -20,6 +21,12 @@ class MkkmTicketCard extends ConsumerWidget {
   });
 
   final MkkmTicket ticket;
+
+  /// A neutral card; see [TicketCard.calm].
+  final bool calm;
+
+  /// Marks the ticket the user pinned to the home screen, unless [trailing]
+  /// says so itself.
   final bool pinned;
   final Widget? trailing;
   final VoidCallback? onTap;
@@ -28,25 +35,88 @@ class MkkmTicketCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final locale = l10n.localeName;
     // The zone's name comes from a dictionary; the card does without it
     // until that is there.
     final zone = ticketZone(ticket.ticketNumberOfLineCode, ref.watch(ticketLineScopesProvider).value);
-    final phase = phaseOf(ticket, DateTime.now());
-    final name = ticket.productName;
+    final now = DateTime.now();
+    final phase = phaseOf(ticket, now);
+    final tone = toneOf(ticket, now);
+    final countdown = countdownOf(ticket, now);
+    // Likewise the product: its fare and its period.
+    final product = ticketProduct(
+      ticket,
+      kinds: ref.watch(ticketKindsProvider).value,
+      periods: ref.watch(ticketPeriodsProvider).value,
+    );
+    final price = ticket.price;
+
+    final TicketHero? hero;
+    if (countdown == null) {
+      hero = null;
+    } else if (countdown.isToday) {
+      final time = formatTime(locale, countdown.moment);
+      hero = TicketHero(
+        big: l10n.ticketToday,
+        unit: countdown.upcoming ? l10n.ticketStartsAt(time) : l10n.ticketEndsAt(time),
+      );
+    } else {
+      final moment = formatDateTime(locale, countdown.moment);
+      hero = TicketHero(
+        big: '${countdown.days}',
+        unit: countdown.upcoming ? l10n.ticketDaysUntilStart(countdown.days) : l10n.ticketDaysLeft(countdown.days),
+        sub: countdown.upcoming ? l10n.ticketFrom(moment) : l10n.ticketUntil(moment),
+      );
+    }
+
     return TicketCard(
       title: ticketScope(l10n, ticket, zone: zone),
-      subtitle: name == null || name.isEmpty ? null : name,
+      subtitle: product,
       icon: isTramTicket(ticket) ? Symbols.tram_rounded : Symbols.directions_bus_rounded,
-      start: ticket.startDate,
-      end: ticket.endDate,
-      price: ticket.price,
-      statusLabel: phaseLabel(l10n, phase, ticket),
-      tone: toneOf(phase),
-      note: actionOf(ticket) == TicketAction.assignedElsewhere ? l10n.ticketStatusAssignedElsewhere : null,
-      pinned: pinned,
-      trailing: trailing,
-      actions: showActions && TicketActions.appliesTo(ticket) ? TicketActions(ticket) : null,
+      tone: tone,
+      calm: calm,
+      pill: TicketPill(phaseLabel(l10n, phase, ticket), _pillIcon(phase), switch (phase) {
+        TicketPhase.valid => tone == TicketTone.valid ? TicketPillKind.validOnTone : TicketPillKind.valid,
+        TicketPhase.pending => TicketPillKind.emphasis,
+        _ => TicketPillKind.plain,
+      }),
+      hero: hero,
+      range: hero == null ? formatValidity(locale, ticket.startDate, ticket.endDate) : null,
+      left: validityLeft(ticket, now),
+      meta: hero == null ? null : formatShortRange(locale, ticket.startDate, ticket.endDate),
+      price: price == null ? null : formatPrice(locale, price),
+      trailing: trailing ?? (pinned ? const PinnedMark() : null),
+      stub: showActions && TicketActions.appliesTo(ticket) ? TicketActions(ticket) : null,
       onTap: onTap,
     );
   }
+
+  static IconData _pillIcon(TicketPhase phase) => switch (phase) {
+    TicketPhase.valid => Symbols.check_circle_rounded,
+    TicketPhase.upcoming => Symbols.event_upcoming_rounded,
+    TicketPhase.pending => Symbols.payments_rounded,
+    TicketPhase.processing => Symbols.hourglass_top_rounded,
+    TicketPhase.returned => Symbols.undo_rounded,
+    TicketPhase.expired => Symbols.event_busy_rounded,
+    TicketPhase.unknown => Symbols.info_rounded,
+  };
+}
+
+/// Says that a card's ticket is the one on the home screen, where that
+/// cannot be changed.
+class PinnedMark extends StatelessWidget {
+  const PinnedMark({super.key});
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: 32,
+    height: 48,
+    child: Icon(
+      Symbols.keep_rounded,
+      size: 20,
+      fill: 1,
+      color: TicketCardColors.of(context).high,
+      semanticLabel: AppLocalizations.of(context).ticketPinned,
+    ),
+  );
 }
