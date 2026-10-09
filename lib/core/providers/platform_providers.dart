@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/platform/url_opener.dart';
 import 'package:mobile_kkm/features/account/services/photo_cache.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -11,6 +12,10 @@ final linkSettingsProvider = Provider<LinkSettings>((ref) => const LinkSettings(
 /// The device's position and the permission for it. A provider so tests need
 /// neither.
 final locationServiceProvider = Provider<LocationService>((ref) => const LocationService());
+
+/// Screenshot and recording protection for the ticket code. A provider so
+/// tests can see it switched on and off.
+final screenSecurityProvider = Provider<ScreenSecurity>((ref) => const ScreenSecurity());
 
 /// Opens a web page in the system browser. A provider so tests can capture
 /// the URL instead of launching anything.

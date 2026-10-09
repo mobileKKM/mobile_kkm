@@ -104,3 +104,26 @@ scale splash 512 ../images/splash_logo.png
 # and the other native splashes draw it at, so the hand-over does not jump.
 master splash_android12 2304 "$(splash 2304 1024)"
 scale splash_android12 1152 splash_android12.png
+
+# Cover for the app switcher while the ticket code is on the screen
+# (no_screenshot's image overlay; see ScreenSecurity): the launch screen, i.e.
+# the splash logo at its 128dp on the splash background. The plugin stretches
+# the image to fill the screen, so it is a whole phone screen (390x844dp at
+# 3x), rendered at twice that like the other masters.
+cover() { # <name> <background> <out>...
+  printf '<body style="margin:0"><div style="width:2340px;height:5064px;background:%s;display:flex;align-items:center;justify-content:center">%s</div></body>' \
+    "$2" "$(splash 768 768)" > "$TMP/$1.html"
+  "$CHROME" --headless=new --disable-gpu --hide-scrollbars \
+    --force-device-scale-factor=1 --window-size=2340,5064 \
+    --screenshot="$TMP/$1.png" "file://$TMP/$1.html" >/dev/null 2>&1
+  name="$1"
+  shift 2
+  for out in "$@"; do
+    mkdir -p "$(dirname "$out")"
+    sips -z 2532 1170 "$TMP/$name.png" --out "$out" >/dev/null
+  done
+}
+COVER=../../ios/Runner/Assets.xcassets/NoScreenshotImage.imageset
+# Colours as in flutter_native_splash (pubspec.yaml).
+cover cover '#FFFFFF' "$COVER/NoScreenshotImage@3x.png" "$RES/drawable-nodpi/no_screenshot_image.png"
+cover cover_dark '#121318' "$COVER/NoScreenshotImageDark@3x.png" "$RES/drawable-night-nodpi/no_screenshot_image.png"

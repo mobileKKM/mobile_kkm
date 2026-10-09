@@ -35,8 +35,6 @@ workspace:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   barcode_widget: ^2.0.4
   cached_network_image: ^4.0.4
   cupertino_icons: ^1.0.8
@@ -59,6 +57,7 @@ dependencies:
   maplibre_gl: ^0.27.1
   material_symbols_icons: ^4.2960.0
   material_ui: ^1.5.0
+  no_screenshot: ^2.0.1
   package_info_plus: ^10.2.2
   path_provider: ^2.1.6
   url_launcher: ^6.3.3

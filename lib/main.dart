@@ -12,6 +12,7 @@ import 'package:mobile_kkm/core/api/device_identity.dart';
 import 'package:mobile_kkm/core/api/secure_token_store.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/dictionaries/dictionary_cache.dart';
+import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/providers/database_provider.dart';
 import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
@@ -29,6 +30,10 @@ Future<void> main() async {
   if (defaultTargetPlatform == TargetPlatform.android) {
     unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
   }
+
+  // The screenshot protection of the ticket code outlives the app in the
+  // plugin's own storage: lift it in case the app was killed with it on.
+  unawaited(const ScreenSecurity().reset());
 
   // Kept out of iOS backups, like `allowBackup="false"` does on Android.
   const storage = FlutterSecureStorage(
