@@ -256,7 +256,11 @@ void main() {
       expect(changes.first.changeDate, DateTime.utc(2025, 10, 8, 17, 7, 16));
       expect(changes.first.oldCityLine1, 1);
       expect(changes.first.newCityLine1, 260);
-      expect(changes.last.oldCityLine1, 260, reason: 'server chains: the second change starts from the first\'s result');
+      expect(
+        changes.last.oldCityLine1,
+        260,
+        reason: 'server chains: the second change starts from the first\'s result',
+      );
       expect(changes.last.newCityLine1, 253);
       expect(changes.every((c) => c.oldZoneLine1 == 128 && c.newZoneLine1 == 128), isTrue);
     });
