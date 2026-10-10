@@ -11,6 +11,7 @@ import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/load_problem.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
+import 'package:mobile_kkm/core/widgets/system_bar_scrim.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
 import 'package:mobile_kkm/features/tickets/widgets/mkkm_ticket_card.dart';
@@ -71,7 +72,8 @@ class TicketDetailsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.ticketDetailsTitle)),
       body: switch (detail) {
-        AsyncValue(value: final detail?) => _Details(detail, transactionCode: transactionCode),
+        // The list runs on under the system's navigation bar.
+        AsyncValue(value: final detail?) => SystemBarScrim(child: _Details(detail, transactionCode: transactionCode)),
         AsyncError(:final error) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
