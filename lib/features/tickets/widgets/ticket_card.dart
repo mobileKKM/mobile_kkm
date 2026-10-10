@@ -201,6 +201,7 @@ class TicketCard extends StatelessWidget {
     super.key,
     required this.title,
     this.subtitle,
+    this.subtitleLoading = false,
     this.icon = Symbols.directions_bus_rounded,
     this.tone = TicketTone.over,
     this.calm = true,
@@ -219,6 +220,10 @@ class TicketCard extends StatelessWidget {
 
   /// The product's name, under what it covers.
   final String? subtitle;
+
+  /// A grey bar in the place of a [subtitle] still on its way, so that the
+  /// card does not jump when it arrives.
+  final bool subtitleLoading;
   final IconData icon;
   final TicketTone tone;
 
@@ -303,7 +308,24 @@ class TicketCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(title, style: theme.textTheme.titleMedium?.copyWith(color: palette.high)),
-                                  if (subtitle != null) ...[const SizedBox(height: 2), Text(subtitle!, style: quiet)],
+                                  if (subtitle != null) ...[
+                                    const SizedBox(height: 2),
+                                    Text(subtitle!, style: quiet),
+                                  ] else if (subtitleLoading)
+                                    Container(
+                                      key: const Key('ticket-subtitle-loading'),
+                                      height: 20,
+                                      margin: const EdgeInsets.only(top: 2),
+                                      alignment: AlignmentDirectional.centerStart,
+                                      child: Container(
+                                        width: 148,
+                                        height: 12,
+                                        decoration: BoxDecoration(
+                                          color: palette.pill,
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),

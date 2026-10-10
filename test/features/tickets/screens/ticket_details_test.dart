@@ -34,9 +34,12 @@ void main() {
       ..reply('GET', '/dictionary/ticket-period-list', 200, ticketPeriodsJson);
     await _open(tester, adapter);
 
-    // The product as the list names it, not by the name only the details carry.
+    // The card names the product as the list does; the name only the details
+    // carry is a field of the purchase.
     expect(find.widgetWithText(TicketCard, 'Normalny · Jeden miesiąc'), findsOneWidget);
-    expect(find.text('Bilet norm. 1-mies. sieciowy'), findsNothing);
+    expect(find.widgetWithText(TicketCard, 'Bilet norm. 1-mies. sieciowy'), findsNothing);
+    expect(find.text('Product'), findsOneWidget);
+    expect(find.text('Bilet norm. 1-mies. sieciowy'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, 'Ticket control'), findsOneWidget);
     expect(find.text('Paid'), findsOneWidget);
     expect(find.text('Yes'), findsOneWidget);
@@ -144,6 +147,24 @@ void main() {
     expect(find.text('Extend ticket'), findsNothing);
   });
 
+  testWidgets('a purchase cancelled for want of a payment can only be bought again', (tester) async {
+    final ticket = validTicket(assigned: true);
+    final detail = ticketDetailJson(ticket, canReturn: true, canBuyTheSame: true, canChangeLine: true, paid: false);
+    (detail['ticket'] as Map<String, dynamic>)['transactionStateId'] = 5;
+    final adapter = FakeAdapter()
+      ..reply('GET', '/mkkm/tickets/list', 200, ticketsReply([ticket]))
+      ..reply('GET', '/account/user-data', 200, userDataJson())
+      ..reply('GET', _detail, 200, detail);
+    await _open(tester, adapter);
+
+    expect(find.widgetWithText(TicketCard, 'Cancelled'), findsOneWidget);
+    expect(find.text('The payment wasn’t finished in time, so this purchase was cancelled.'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Ticket control'), findsNothing);
+    expect(find.widgetWithText(GroupRow, 'Buy again'), findsOneWidget);
+    expect(find.widgetWithText(GroupRow, 'Return ticket'), findsNothing);
+    expect(find.widgetWithText(GroupRow, 'Extend ticket'), findsNothing);
+  });
+
   testWidgets('says why a ticket held by other devices cannot be assigned', (tester) async {
     await _open(tester, _adapter(validTicket(assigned: false, canAssign: false)));
 
@@ -174,7 +195,7 @@ void main() {
     await tester.scrollUntilVisible(find.text('Refund method'), 200, scrollable: find.byType(Scrollable).first);
     expect(find.text('Days returned'), findsOneWidget);
     expect(find.text('28'), findsOneWidget);
-    expect(find.textContaining('92.40'), findsOneWidget);
+    expect(find.textContaining('92,40'), findsOneWidget);
     expect(find.text('Zwrot przelewu elektronicznego za pośrednictwem TPay'), findsOneWidget);
     // Neither a button nor the two-devices notice on a returned ticket.
     expect(find.byType(FilledButton), findsNothing);

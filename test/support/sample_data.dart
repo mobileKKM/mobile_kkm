@@ -116,6 +116,7 @@ const historyJson = [
     'ticketStartDate': '2025-03-01T00:00:00Z',
     'ticketExpiryDate': '2025-03-30T22:59:59Z',
     'price': 80.0,
+    'transactionStateId': 9,
     'transactionStateDescription': 'Transakcja zakończona pomyślnie',
     'productName': 'Bilet norm. 1-mies. sieciowy',
   },

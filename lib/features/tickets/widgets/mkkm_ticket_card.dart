@@ -14,6 +14,7 @@ class MkkmTicketCard extends ConsumerWidget {
     this.ticket, {
     super.key,
     this.calm = true,
+    this.cancelled = false,
     this.pinned = false,
     this.trailing,
     this.onTap,
@@ -24,6 +25,11 @@ class MkkmTicketCard extends ConsumerWidget {
 
   /// A neutral card; see [TicketCard.calm].
   final bool calm;
+
+  /// The purchase was cancelled for want of a payment. The ticket itself
+  /// cannot say so (the mobile list drops such a ticket), only the details
+  /// of its purchase.
+  final bool cancelled;
 
   /// Marks the ticket the user pinned to the home screen, unless [trailing]
   /// says so itself.
@@ -40,15 +46,20 @@ class MkkmTicketCard extends ConsumerWidget {
     // until that is there.
     final zone = ticketZone(ticket.ticketNumberOfLineCode, ref.watch(ticketLineScopesProvider).value);
     final now = DateTime.now();
-    final phase = phaseOf(ticket, now);
-    final tone = toneOf(ticket, now);
-    final countdown = countdownOf(ticket, now);
+    final phase = cancelled ? TicketPhase.cancelled : phaseOf(ticket, now);
+    final tone = cancelled ? TicketTone.over : toneOf(ticket, now);
+    final countdown = cancelled ? null : countdownOf(ticket, now);
     // Likewise the product: its fare and its period.
-    final product = ticketProduct(
-      ticket,
-      kinds: ref.watch(ticketKindsProvider).value,
-      periods: ref.watch(ticketPeriodsProvider).value,
-    );
+    final kinds = ref.watch(ticketKindsProvider);
+    final periods = ref.watch(ticketPeriodsProvider);
+    final product = ticketProduct(ticket, kinds: kinds.value, periods: periods.value);
+    // Only a first start waits for the dictionaries, and then for both, so
+    // that the line comes whole. One that could not be loaded leaves its
+    // part out.
+    final productLoading =
+        !kinds.hasError &&
+        !periods.hasError &&
+        ((kinds.isLoading && !kinds.hasValue) || (periods.isLoading && !periods.hasValue));
     final price = ticket.price;
 
     final TicketHero? hero;
@@ -71,7 +82,8 @@ class MkkmTicketCard extends ConsumerWidget {
 
     return TicketCard(
       title: ticketScope(l10n, ticket, zone: zone),
-      subtitle: product,
+      subtitle: productLoading ? null : product,
+      subtitleLoading: productLoading,
       icon: isTramTicket(ticket) ? Symbols.tram_rounded : Symbols.directions_bus_rounded,
       tone: tone,
       calm: calm,
@@ -82,11 +94,15 @@ class MkkmTicketCard extends ConsumerWidget {
       }),
       hero: hero,
       range: hero == null ? formatValidity(locale, ticket.startDate, ticket.endDate) : null,
-      left: validityLeft(ticket, now),
+      left: cancelled ? null : validityLeft(ticket, now),
       meta: hero == null ? null : formatShortRange(locale, ticket.startDate, ticket.endDate),
-      price: price == null ? null : formatPrice(locale, price),
+      price: price == null ? null : formatPrice(price),
       trailing: trailing ?? (pinned ? const PinnedMark() : null),
-      stub: showActions && TicketActions.appliesTo(ticket) ? TicketActions(ticket) : null,
+      stub: cancelled
+          ? TicketNote(Symbols.block_rounded, l10n.ticketCancelledNote)
+          : showActions && TicketActions.appliesTo(ticket)
+          ? TicketActions(ticket)
+          : null,
       onTap: onTap,
     );
   }
@@ -97,6 +113,7 @@ class MkkmTicketCard extends ConsumerWidget {
     TicketPhase.pending => Symbols.payments_rounded,
     TicketPhase.processing => Symbols.hourglass_top_rounded,
     TicketPhase.returned => Symbols.undo_rounded,
+    TicketPhase.cancelled => Symbols.block_rounded,
     TicketPhase.expired => Symbols.event_busy_rounded,
     TicketPhase.unknown => Symbols.info_rounded,
   };

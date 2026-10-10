@@ -361,9 +361,22 @@ class _HistoryRow extends StatelessWidget {
     final start = entry.ticketStartDate;
     final end = entry.ticketExpiryDate;
     final price = entry.price;
-    final state = entry.transactionStateDescription;
+    // What became of the purchase, in a word. The server's own description
+    // is a sentence; it stands in only for a state this app has no word for.
+    final purchase = purchaseStateOf(entry);
+    final state = switch (purchase) {
+      PurchaseState.completed => l10n.ticketHistoryStateCompleted,
+      PurchaseState.cancelled => l10n.ticketHistoryStateCancelled,
+      PurchaseState.other => entry.transactionStateDescription,
+    };
     final now = DateTime.now();
-    final running = start != null && end != null && !now.isBefore(start) && !now.isAfter(end);
+    // A cancelled purchase keeps the dates of the ticket it never became.
+    final running =
+        purchase != PurchaseState.cancelled &&
+        start != null &&
+        end != null &&
+        !now.isBefore(start) &&
+        !now.isAfter(end);
     final range = [
       if (start != null) DateFormat.MMMd(locale).format(start.toLocal()),
       if (end != null) formatDate(locale, end),
@@ -372,7 +385,10 @@ class _HistoryRow extends StatelessWidget {
 
     return GroupRow(
       leading: IconTile(
-        Symbols.confirmation_number_rounded,
+        switch (purchase) {
+          PurchaseState.cancelled => Symbols.block_rounded,
+          PurchaseState.completed || PurchaseState.other => Symbols.confirmation_number_rounded,
+        },
         size: 40,
         background: running ? scheme.primaryContainer : scheme.surface,
         foreground: running ? scheme.primaryFixed : scheme.onSurfaceVariant,
@@ -388,13 +404,12 @@ class _HistoryRow extends StatelessWidget {
           children: [
             if (price != null)
               Text(
-                formatPrice(locale, price),
+                formatPrice(price),
                 style: theme.textTheme.labelLarge?.copyWith(
                   fontSize: 15,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
-            // The server's own wording (Polish only), like its error messages.
             if (state != null && state.isNotEmpty)
               Text(state, textAlign: TextAlign.end, maxLines: 2, overflow: TextOverflow.ellipsis, style: quiet),
           ],

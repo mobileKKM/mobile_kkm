@@ -16,6 +16,14 @@ void main() {
     endDate: DateTime.utc(2026, 6, endDay, 23, 59, 59),
   );
 
+  test('a purchase in the history went through or was cancelled, by its transaction state', () {
+    PurchaseState of(int? state) => purchaseStateOf(TicketHistoryEntry(transactionStateId: state));
+    expect(of(9), PurchaseState.completed);
+    expect(of(5), PurchaseState.cancelled);
+    expect(of(2), PurchaseState.other);
+    expect(of(null), PurchaseState.other);
+  });
+
   test('phaseOf follows the status, then the validity window', () {
     expect(phaseOf(ticket('pending', 1, 30), now), TicketPhase.pending);
     // A returned ticket runs until the end the return left it with.
@@ -32,6 +40,8 @@ void main() {
       TicketPhase.returned,
     );
     expect(phaseOf(ticket('weird', 1, 30), now), TicketPhase.unknown);
+    // The list has no status for a cancelled purchase: it drops the ticket.
+    expect(phaseOf(ticket('cancelled', 1, 30), now), TicketPhase.unknown);
     expect(phaseOf(ticket('active', 1, 30), now), TicketPhase.valid);
     expect(phaseOf(ticket('active', 20, 30), now), TicketPhase.upcoming);
     expect(phaseOf(ticket('active', 1, 10), now), TicketPhase.expired);
@@ -220,10 +230,9 @@ void main() {
     expect(ticketPeriod(listed, periods), 'Jeden miesiąc');
   });
 
-  test('a price is the amount, then the złoty, in every language', () {
-    expect(formatPrice('en', 99), '99.00 zł');
-    expect(formatPrice('en', 49.5), '49.50 zł');
-    expect(formatPrice('pl', 99), '99,00 zł');
+  test('a price is written the Polish way in every language', () {
+    expect(formatPrice(99), '99,00\u00a0zł');
+    expect(formatPrice(49.5), '49,50\u00a0zł');
   });
 
   test('the short range is the two days alone', () {

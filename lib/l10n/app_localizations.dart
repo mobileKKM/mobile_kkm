@@ -1079,7 +1079,7 @@ abstract class AppLocalizations {
   /// No description provided for @ticketControlError.
   ///
   /// In en, this message translates to:
-  /// **'The ticket code could not be loaded. Try again.'**
+  /// **'The code could not be loaded. Check your connection and try again.'**
   String get ticketControlError;
 
   /// No description provided for @ticketControlTimeLeft.
@@ -1355,14 +1355,8 @@ abstract class AppLocalizations {
   /// No description provided for @ticketControlGettingCode.
   ///
   /// In en, this message translates to:
-  /// **'Getting a new code…'**
+  /// **'Getting your code…'**
   String get ticketControlGettingCode;
-
-  /// No description provided for @ticketControlCodeFor.
-  ///
-  /// In en, this message translates to:
-  /// **'Code valid for'**
-  String get ticketControlCodeFor;
 
   /// No description provided for @ticketControlFare.
   ///
@@ -1373,14 +1367,98 @@ abstract class AppLocalizations {
   /// No description provided for @ticketControlZone.
   ///
   /// In en, this message translates to:
-  /// **'Zone'**
+  /// **'Zones'**
   String get ticketControlZone;
 
   /// No description provided for @ticketControlValidUntil.
   ///
   /// In en, this message translates to:
-  /// **'Valid until'**
-  String get ticketControlValidUntil;
+  /// **'Valid until {date}'**
+  String ticketControlValidUntil(String date);
+
+  /// No description provided for @ticketControlPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Period'**
+  String get ticketControlPeriod;
+
+  /// No description provided for @ticketStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get ticketStatusCancelled;
+
+  /// No description provided for @ticketHistoryStateCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get ticketHistoryStateCompleted;
+
+  /// No description provided for @ticketHistoryStateCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get ticketHistoryStateCancelled;
+
+  /// No description provided for @ticketCancelledNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The payment wasn’t finished in time, so this purchase was cancelled.'**
+  String get ticketCancelledNote;
+
+  /// No description provided for @ticketActionBuyAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy again'**
+  String get ticketActionBuyAgain;
+
+  /// No description provided for @ticketDetailsProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get ticketDetailsProduct;
+
+  /// No description provided for @ticketReturnKeepToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Still valid until today, {time}'**
+  String ticketReturnKeepToday(String time);
+
+  /// No description provided for @ticketReturnStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts {date}'**
+  String ticketReturnStarts(String date);
+
+  /// No description provided for @ticketReturnWhole.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{The whole ticket is returned, 1 day} other{The whole ticket is returned, all {count} days}}'**
+  String ticketReturnWhole(int count);
+
+  /// No description provided for @ticketReturnFullPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'The full price. The ticket won’t start.'**
+  String get ticketReturnFullPrice;
+
+  /// No description provided for @ticketReturnConfirmBodyToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} will be refunded. The ticket stays valid until today, {time}.'**
+  String ticketReturnConfirmBodyToday(String amount, String time);
+
+  /// No description provided for @ticketReturnConfirmBodyWhole.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} will be refunded. The ticket won’t start and will be removed from your tickets.'**
+  String ticketReturnConfirmBodyWhole(String amount);
+
+  /// No description provided for @ticketReturnDoneWhole.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket returned and removed from your tickets.'**
+  String get ticketReturnDoneWhole;
 
   /// No description provided for @ticketControlCaptureHidden.
   ///

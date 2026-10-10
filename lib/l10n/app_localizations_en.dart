@@ -74,12 +74,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String passwordRuleDigits(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'At least $count digits',
-      one: 'A digit',
-    );
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'At least $count digits', one: 'A digit');
     return '$_temp0';
   }
 
@@ -564,7 +559,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketControlCustomerCode => 'Customer number (mKKM)';
 
   @override
-  String get ticketControlError => 'The ticket code could not be loaded. Try again.';
+  String get ticketControlError => 'The code could not be loaded. Check your connection and try again.';
 
   @override
   String ticketControlTimeLeft(String time) {
@@ -738,19 +733,76 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketActionBuySimilarHint => 'Start a purchase with this ticket filled in';
 
   @override
-  String get ticketControlGettingCode => 'Getting a new code…';
-
-  @override
-  String get ticketControlCodeFor => 'Code valid for';
+  String get ticketControlGettingCode => 'Getting your code…';
 
   @override
   String get ticketControlFare => 'Fare';
 
   @override
-  String get ticketControlZone => 'Zone';
+  String get ticketControlZone => 'Zones';
 
   @override
-  String get ticketControlValidUntil => 'Valid until';
+  String ticketControlValidUntil(String date) {
+    return 'Valid until $date';
+  }
+
+  @override
+  String get ticketControlPeriod => 'Period';
+
+  @override
+  String get ticketStatusCancelled => 'Cancelled';
+
+  @override
+  String get ticketHistoryStateCompleted => 'Completed';
+
+  @override
+  String get ticketHistoryStateCancelled => 'Cancelled';
+
+  @override
+  String get ticketCancelledNote => 'The payment wasn’t finished in time, so this purchase was cancelled.';
+
+  @override
+  String get ticketActionBuyAgain => 'Buy again';
+
+  @override
+  String get ticketDetailsProduct => 'Product';
+
+  @override
+  String ticketReturnKeepToday(String time) {
+    return 'Still valid until today, $time';
+  }
+
+  @override
+  String ticketReturnStarts(String date) {
+    return 'Starts $date';
+  }
+
+  @override
+  String ticketReturnWhole(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'The whole ticket is returned, all $count days',
+      one: 'The whole ticket is returned, 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketReturnFullPrice => 'The full price. The ticket won’t start.';
+
+  @override
+  String ticketReturnConfirmBodyToday(String amount, String time) {
+    return '$amount will be refunded. The ticket stays valid until today, $time.';
+  }
+
+  @override
+  String ticketReturnConfirmBodyWhole(String amount) {
+    return '$amount will be refunded. The ticket won’t start and will be removed from your tickets.';
+  }
+
+  @override
+  String get ticketReturnDoneWhole => 'Ticket returned and removed from your tickets.';
 
   @override
   String get ticketControlCaptureHidden => 'The code is hidden while the screen is being recorded.';

@@ -3,7 +3,31 @@ import 'package:intl/intl.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// Where a mobile ticket stands at a given moment.
-enum TicketPhase { pending, processing, returned, upcoming, valid, expired, unknown }
+///
+/// `cancelled` is never the answer of [phaseOf]: an unpaid ticket leaves the
+/// mobile list when its purchase is cancelled. Only a purchase's details
+/// can say so, from its transaction state; see [isCancelledPurchase].
+enum TicketPhase { pending, processing, returned, cancelled, upcoming, valid, expired, unknown }
+
+/// The transaction state of a purchase that went through.
+const completedTransactionState = 9;
+
+/// The transaction state of a purchase the server cancelled because it was
+/// not paid in time, in the history and in a ticket's details.
+const cancelledTransactionState = 5;
+
+bool isCancelledPurchase(int? transactionStateId) => transactionStateId == cancelledTransactionState;
+
+/// What became of a purchase in the history: it went through, or it was
+/// cancelled. The history has no more to say; a ticket that was returned
+/// later is reported like any other that went through.
+enum PurchaseState { completed, cancelled, other }
+
+PurchaseState purchaseStateOf(TicketHistoryEntry entry) => switch (entry.transactionStateId) {
+  completedTransactionState => PurchaseState.completed,
+  cancelledTransactionState => PurchaseState.cancelled,
+  _ => PurchaseState.other,
+};
 
 TicketPhase phaseOf(MkkmTicket ticket, DateTime now) {
   switch (ticket.statusEnum) {
@@ -53,6 +77,7 @@ MkkmTicket? currentOrUpcoming(Iterable<MkkmTicket> tickets, DateTime now) {
       case TicketPhase.pending ||
           TicketPhase.processing ||
           TicketPhase.returned ||
+          TicketPhase.cancelled ||
           TicketPhase.expired ||
           TicketPhase.unknown:
         break;
@@ -174,6 +199,7 @@ String phaseLabel(AppLocalizations l10n, TicketPhase phase, MkkmTicket ticket) {
     TicketPhase.pending => l10n.ticketStatusPending,
     TicketPhase.processing => l10n.ticketStatusProcessing,
     TicketPhase.returned => l10n.ticketStatusReturned,
+    TicketPhase.cancelled => l10n.ticketStatusCancelled,
     TicketPhase.upcoming when start != null => l10n.ticketStatusValidFrom(formatDate(l10n.localeName, start)),
     TicketPhase.upcoming => l10n.ticketStatusUpcoming,
     TicketPhase.valid => l10n.ticketStatusValid,
@@ -198,9 +224,9 @@ String formatShortRange(String locale, DateTime? start, DateTime? end) {
   return [if (start != null) day.format(start.toLocal()), if (end != null) day.format(end.toLocal())].join(' – ');
 }
 
-/// `99.00 zł`: the amount first in every language, as the złoty is written.
-String formatPrice(String locale, double price) =>
-    '${NumberFormat.decimalPatternDigits(locale: locale, decimalDigits: 2).format(price)}\u00a0zł';
+/// `99,00 zł`: written the Polish way in every language, as the złoty is.
+String formatPrice(double price) =>
+    '${NumberFormat.decimalPatternDigits(locale: 'pl', decimalDigits: 2).format(price)}\u00a0zł';
 
 /// What a ticket's card says with its colour: what can be done with the
 /// ticket on this phone. Its label says which phase it is in.
@@ -227,7 +253,7 @@ TicketTone toneOf(MkkmTicket ticket, DateTime now) {
     TicketPhase.processing => TicketTone.wait,
     TicketPhase.upcoming => elsewhere ? TicketTone.over : TicketTone.wait,
     TicketPhase.valid => elsewhere ? TicketTone.over : TicketTone.valid,
-    TicketPhase.returned || TicketPhase.expired || TicketPhase.unknown => TicketTone.over,
+    TicketPhase.returned || TicketPhase.cancelled || TicketPhase.expired || TicketPhase.unknown => TicketTone.over,
   };
 }
 
@@ -267,6 +293,7 @@ TicketCountdown? countdownOf(MkkmTicket ticket, DateTime now) {
     case TicketPhase.pending ||
         TicketPhase.processing ||
         TicketPhase.returned ||
+        TicketPhase.cancelled ||
         TicketPhase.expired ||
         TicketPhase.unknown:
       return null;
@@ -300,6 +327,6 @@ int listRankOf(MkkmTicket ticket, DateTime now) {
     TicketPhase.valid => 0,
     TicketPhase.pending => 1,
     TicketPhase.upcoming || TicketPhase.processing => 2,
-    TicketPhase.returned || TicketPhase.expired || TicketPhase.unknown => 6,
+    TicketPhase.returned || TicketPhase.cancelled || TicketPhase.expired || TicketPhase.unknown => 6,
   };
 }

@@ -1,8 +1,10 @@
 import 'package:drift/native.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
+import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/features/tickets/services/tickets_dao.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
 
@@ -49,7 +51,7 @@ void main() {
     expect(find.textContaining('Valid from '), findsOneWidget);
     expect(find.widgetWithText(TicketCard, 'Lines 4, 52'), findsOneWidget);
     expect(find.widgetWithText(TicketCard, 'Awaiting payment'), findsOneWidget);
-    expect(find.textContaining('54.50'), findsOneWidget);
+    expect(find.textContaining('54,50'), findsOneWidget);
   });
 
   testWidgets('without tickets the list says so', (tester) async {
@@ -278,11 +280,32 @@ void main() {
 
       expect(adapter.requestTo(_history).queryParameters, {'customerCode': '100001', 'validity': 'Past'});
       expect(find.text('Bilet norm. 1-mies. sieciowy'), findsOneWidget);
-      expect(find.text('Transakcja zakończona pomyślnie'), findsOneWidget);
+      // In a word, not in the server's sentence.
+      expect(find.text('Completed'), findsOneWidget);
+      expect(find.text('Transakcja zakończona pomyślnie'), findsNothing);
       // Receipts, grouped by the month the ticket started in; not cards.
       expect(find.text('March 2025'), findsOneWidget);
-      expect(find.textContaining('80.00'), findsOneWidget);
+      expect(find.textContaining('80,00'), findsOneWidget);
       expect(find.byType(TicketCard), findsNothing);
+    });
+
+    testWidgets('tells a cancelled purchase from one that went through', (tester) async {
+      final adapter = _adapter([])
+        ..reply('GET', _history, 200, [
+          {...historyJson.single, 'productName': 'Paid'},
+          {...historyJson.single, 'productName': 'Unpaid', 'transactionStateId': 5},
+        ]);
+      await pumpApp(tester, adapter, session: signedInSession, tall: true);
+      await openTab(tester, 'Tickets');
+      await tester.tap(find.text('History'));
+      await tester.pumpAndSettle();
+
+      Finder inRow(String name, Finder what) =>
+          find.descendant(of: find.widgetWithText(GroupRow, name), matching: what);
+      expect(inRow('Paid', find.text('Completed')), findsOneWidget);
+      expect(inRow('Paid', find.byIcon(Symbols.confirmation_number_rounded)), findsOneWidget);
+      expect(inRow('Unpaid', find.text('Cancelled')), findsOneWidget);
+      expect(inRow('Unpaid', find.byIcon(Symbols.block_rounded)), findsOneWidget);
     });
 
     testWidgets('says when there is none', (tester) async {
@@ -421,6 +444,20 @@ void main() {
     expect(find.textContaining('days left'), findsOneWidget);
     expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Ticket control')).onPressed, isNotNull);
     expect(find.byTooltip('Pin to Home'), findsOneWidget);
+  });
+
+  testWidgets('while the dictionaries are on their way a bar holds the place of the product', (tester) async {
+    final ticket = {...validTicket(assigned: true), ...productCodes};
+    final adapter = _adapter([ticket])..reply('GET', '/dictionary/ticket-period-list', 200, ticketPeriodsJson);
+    final release = adapter.hold('GET', '/dictionary/ticket-kind-list');
+    await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Tickets');
+    expect(find.byKey(const Key('ticket-subtitle-loading')), findsOneWidget);
+
+    // Not to be had: the line is left out.
+    release();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('ticket-subtitle-loading')), findsNothing);
   });
 
   testWidgets('the product is named from the fare and period dictionaries, which the list leaves out', (tester) async {

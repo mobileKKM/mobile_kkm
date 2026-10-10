@@ -14,6 +14,7 @@ import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
 import 'package:mobile_kkm/features/tickets/widgets/mkkm_ticket_card.dart';
+import 'package:mobile_kkm/features/tickets/widgets/ticket_actions.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
@@ -98,6 +99,9 @@ class _Details extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
     final locale = l10n.localeName;
     final purchase = detail.ticket;
+    // Cancelled for want of a payment: only the purchase says so, the
+    // ticket in it has no status for that.
+    final cancelled = isCancelledPurchase(purchase?.transactionStateId);
     final mobile = detail.ticketEkp;
     final returns = detail.ticketReturns ?? const <TicketReturn>[];
     final timeline = timelineOf(l10n, detail);
@@ -113,36 +117,47 @@ class _Details extends ConsumerWidget {
       onTap: onTap,
     );
     final actions = [
-      if (canChangeLineOf(detail))
-        action(
-          Symbols.swap_horiz_rounded,
-          l10n.ticketActionChangeLine,
-          l10n.ticketActionChangeLineHint,
-          () => context.push(Routes.ticketChangeLine(transactionCode)),
-        ),
-      // Both are part of the purchase flow.
-      if (detail.canBuyTheSame ?? false)
-        if (running)
-          action(
-            Symbols.event_repeat_rounded,
-            l10n.ticketActionExtend,
-            l10n.ticketActionExtendHint(formatDate(locale, expiry.add(const Duration(seconds: 1)))),
-            () => context.push(Routes.buy),
-          )
-        else
+      // Nothing is left to change, extend or give back; only to buy it again.
+      if (cancelled) ...[
+        if (detail.canBuyTheSame ?? false)
           action(
             Symbols.add_shopping_cart_rounded,
-            l10n.ticketActionBuySimilar,
+            l10n.ticketActionBuyAgain,
             l10n.ticketActionBuySimilarHint,
             () => context.push(Routes.buy),
           ),
-      if (detail.canReturn ?? false)
-        action(
-          Symbols.undo_rounded,
-          l10n.ticketActionReturn,
-          l10n.ticketActionReturnHint,
-          () => context.push(Routes.ticketReturn(transactionCode)),
-        ),
+      ] else ...[
+        if (canChangeLineOf(detail))
+          action(
+            Symbols.swap_horiz_rounded,
+            l10n.ticketActionChangeLine,
+            l10n.ticketActionChangeLineHint,
+            () => context.push(Routes.ticketChangeLine(transactionCode)),
+          ),
+        // Both are part of the purchase flow.
+        if (detail.canBuyTheSame ?? false)
+          if (running)
+            action(
+              Symbols.event_repeat_rounded,
+              l10n.ticketActionExtend,
+              l10n.ticketActionExtendHint(formatDate(locale, expiry.add(const Duration(seconds: 1)))),
+              () => context.push(Routes.buy),
+            )
+          else
+            action(
+              Symbols.add_shopping_cart_rounded,
+              l10n.ticketActionBuySimilar,
+              l10n.ticketActionBuySimilarHint,
+              () => context.push(Routes.buy),
+            ),
+        if (detail.canReturn ?? false)
+          action(
+            Symbols.undo_rounded,
+            l10n.ticketActionReturn,
+            l10n.ticketActionReturnHint,
+            () => context.push(Routes.ticketReturn(transactionCode)),
+          ),
+      ],
     ];
 
     return RefreshIndicator(
@@ -153,13 +168,15 @@ class _Details extends ConsumerWidget {
         padding: EdgeInsets.fromLTRB(16, 4, 16, 24 + MediaQuery.viewPaddingOf(context).bottom),
         children: [
           if (mobile != null)
-            MkkmTicketCard(mobile)
+            MkkmTicketCard(mobile, cancelled: cancelled)
           else
             TicketCard(
               title: purchase?.productName ?? l10n.ticketTitleGeneric,
+              pill: cancelled ? TicketPill(l10n.ticketStatusCancelled, Symbols.block_rounded) : null,
               range: formatValidity(locale, purchase?.ticketStartDate, purchase?.ticketExpiryDate),
+              stub: cancelled ? TicketNote(Symbols.block_rounded, l10n.ticketCancelledNote) : null,
             ),
-          if (mobile != null && actionOf(mobile) == TicketAction.assignedElsewhere) ...[
+          if (mobile != null && !cancelled && actionOf(mobile) == TicketAction.assignedElsewhere) ...[
             const SizedBox(height: 16),
             MessageBanner(l10n.ticketCantAssign, kind: BannerKind.info),
           ],
@@ -174,6 +191,9 @@ class _Details extends ConsumerWidget {
               title: l10n.ticketSectionPurchase,
               children: [
                 _FieldGrid([
+                  // The server's name for what was bought; the card above
+                  // names it from the dictionaries.
+                  if (purchase.productName case final name? when name.isNotEmpty) (l10n.ticketDetailsProduct, name),
                   if (purchase.transactionDate case final date?)
                     (l10n.ticketFieldPurchased, formatDateTime(locale, date)),
                   (l10n.ticketFieldPaid, (purchase.isPayed ?? false) ? l10n.yes : l10n.no),
@@ -182,7 +202,7 @@ class _Details extends ConsumerWidget {
                   (l10n.ticketFieldPaymentState, purchase.paymentStateDescription),
                   (l10n.ticketFieldTransactionState, purchase.transactionStateDescription),
                   (l10n.ticketFieldPromotion, purchase.promotionName),
-                  if (purchase.price case final price?) (l10n.ticketFieldPrice, formatPrice(locale, price)),
+                  if (purchase.price case final price?) (l10n.ticketFieldPrice, formatPrice(price)),
                 ]),
               ],
             ),
@@ -238,7 +258,7 @@ class _ReturnCard extends StatelessWidget {
                   style: theme.textTheme.labelMedium?.copyWith(fontSize: 13, height: 18 / 13, color: on),
                 ),
                 Text(
-                  formatPrice(locale, amount),
+                  formatPrice(amount),
                   style: theme.textTheme.displaySmall?.copyWith(
                     color: on,
                     fontFeatures: const [FontFeature.tabularFigures()],

@@ -571,7 +571,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketControlCustomerCode => 'Numer klienta (mKKM)';
 
   @override
-  String get ticketControlError => 'Wystąpił błąd podczas pobierania klucza, spróbuj ponownie.';
+  String get ticketControlError => 'Nie udało się pobrać kodu. Sprawdź połączenie i spróbuj ponownie.';
 
   @override
   String ticketControlTimeLeft(String time) {
@@ -752,19 +752,76 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketActionBuySimilarHint => 'Rozpocznij zakup z tym biletem';
 
   @override
-  String get ticketControlGettingCode => 'Pobieramy nowy kod…';
-
-  @override
-  String get ticketControlCodeFor => 'Kod ważny jeszcze';
+  String get ticketControlGettingCode => 'Pobieramy kod…';
 
   @override
   String get ticketControlFare => 'Ulga';
 
   @override
-  String get ticketControlZone => 'Strefa';
+  String get ticketControlZone => 'Strefy';
 
   @override
-  String get ticketControlValidUntil => 'Ważny do';
+  String ticketControlValidUntil(String date) {
+    return 'Ważny do $date';
+  }
+
+  @override
+  String get ticketControlPeriod => 'Okres';
+
+  @override
+  String get ticketStatusCancelled => 'Anulowany';
+
+  @override
+  String get ticketHistoryStateCompleted => 'Zakończona';
+
+  @override
+  String get ticketHistoryStateCancelled => 'Anulowana';
+
+  @override
+  String get ticketCancelledNote => 'Płatność nie została dokończona na czas, więc zakup anulowano.';
+
+  @override
+  String get ticketActionBuyAgain => 'Kup ponownie';
+
+  @override
+  String get ticketDetailsProduct => 'Produkt';
+
+  @override
+  String ticketReturnKeepToday(String time) {
+    return 'Nadal ważny do dziś, $time';
+  }
+
+  @override
+  String ticketReturnStarts(String date) {
+    return 'Początek $date';
+  }
+
+  @override
+  String ticketReturnWhole(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Zwrot całego biletu, wszystkie $count dni',
+      one: 'Zwrot całego biletu, 1 dzień',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketReturnFullPrice => 'Pełna cena. Bilet nie zacznie obowiązywać.';
+
+  @override
+  String ticketReturnConfirmBodyToday(String amount, String time) {
+    return 'Zwrócimy $amount. Bilet pozostanie ważny do dziś, $time.';
+  }
+
+  @override
+  String ticketReturnConfirmBodyWhole(String amount) {
+    return 'Zwrócimy $amount. Bilet nie zacznie obowiązywać i zniknie z listy biletów.';
+  }
+
+  @override
+  String get ticketReturnDoneWhole => 'Bilet zwrócony i usunięty z listy.';
 
   @override
   String get ticketControlCaptureHidden => 'Kod jest ukryty podczas nagrywania ekranu.';

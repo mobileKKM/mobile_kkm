@@ -14,13 +14,20 @@ const _list = '/mkkm/tickets/list';
 const _calculate = '/ticket-returns/calculate';
 const _return = '/ticket-returns';
 
-final _preview = {
+/// The server's answer for a return that keeps the ticket until [keptUntil].
+Map<String, dynamic> _previewKeeping(DateTime keptUntil) => {
   'returnPrice': 92.4,
   'ticketStartDate': '2025-10-27T22:59:59Z',
-  'newTicketExpiryDate': '2025-09-29T21:59:59Z',
+  'newTicketExpiryDate': keptUntil.toUtc().toIso8601String(),
   'code': null,
   'message': null,
 };
+
+/// A running ticket returned from today on stays valid for the rest of it.
+Map<String, dynamic> get _preview {
+  final now = DateTime.now();
+  return _previewKeeping(DateTime(now.year, now.month, now.day, 23, 59, 59));
+}
 
 FakeAdapter _adapter() {
   final ticket = validTicket(assigned: true);
@@ -117,9 +124,9 @@ void main() {
     final sent = adapter.requestTo(_calculate).data as Map<String, dynamic>;
     expect(sent['transactionId'], 400001);
     expect(DateTime.parse(sent['returnDate'] as String).toLocal(), DateTime(today.year, today.month, today.day));
-    expect(find.textContaining('92.40'), findsOneWidget);
+    expect(find.textContaining('92,40'), findsOneWidget);
     // What is kept and what goes back, under the bar that shows it.
-    expect(find.textContaining('Still valid until '), findsOneWidget);
+    expect(find.text('Still valid until today, 23:59'), findsOneWidget);
     expect(find.textContaining(' days returned'), findsOneWidget);
     expect(find.text('You get back'), findsOneWidget);
     expect(adapter.requestsTo(_return), isEmpty);
@@ -128,7 +135,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Return this ticket?'), findsOneWidget);
     // With what it comes to, and until when the ticket still runs.
-    expect(find.textContaining('will be refunded. The ticket stays valid until '), findsOneWidget);
+    expect(find.textContaining('will be refunded. The ticket stays valid until today, 23:59.'), findsOneWidget);
     expect(adapter.requestsTo(_return), isEmpty);
     await tester.tap(_confirm);
     await tester.pumpAndSettle();
@@ -139,6 +146,38 @@ void main() {
     // The list and the details were fetched again.
     expect(adapter.requestsTo(_list), hasLength(2));
     expect(adapter.requestsTo('/tickets/$transactionCode'), hasLength(2));
+  });
+
+  testWidgets('a ticket still to start is given back whole, and is gone from the lists after', (tester) async {
+    final ticket = upcomingTicket(assigned: true);
+    final start = DateTime.parse(ticket['startDate'] as String);
+    final adapter = FakeAdapter()
+      ..reply('GET', _list, 200, ticketsReply([ticket]))
+      ..reply('GET', '/account/user-data', 200, userDataJson())
+      ..reply('GET', '/tickets/$transactionCode', 200, ticketDetailJson(ticket, canReturn: true))
+      // Nothing of it is kept: its end is put before its start.
+      ..reply('POST', _calculate, 200, _previewKeeping(start.subtract(const Duration(seconds: 1))))
+      ..reply('POST', _return, 200, {'createdCorrectionInvoice': false, 'success': true});
+    final app = await _open(tester, adapter);
+
+    // No today on the bar of a ticket that has not started.
+    expect(find.text('Today'), findsNothing);
+    expect(find.textContaining('Starts '), findsOneWidget);
+
+    await _pickFirstDay(tester);
+    expect(find.textContaining('Still valid until'), findsNothing);
+    expect(find.textContaining('The whole ticket is returned, all '), findsOneWidget);
+    expect(find.text('The full price. The ticket won’t start.'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Return ticket'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('The ticket won’t start and will be removed from your tickets.'), findsOneWidget);
+    await tester.tap(_confirm);
+    await tester.pumpAndSettle();
+
+    // Not back to the details: the server no longer has them.
+    expect(app.location, Routes.tickets);
+    expect(find.text('Ticket returned and removed from your tickets.'), findsOneWidget);
   });
 
   testWidgets('cancelling the confirmation returns nothing', (tester) async {

@@ -9,6 +9,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
+import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 import 'package:mobile_kkm/core/widgets/form_card.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
@@ -64,6 +65,20 @@ int returnedDays({
   }
   final days = last.difference(first).inDays + 1;
   return days < 0 ? 0 : days;
+}
+
+/// Whether two moments fall on the same day here.
+bool isSameDay(DateTime a, DateTime b) {
+  final x = a.toLocal();
+  final y = b.toLocal();
+  return x.year == y.year && x.month == y.month && x.day == y.day;
+}
+
+/// How many days a ticket runs, its first and its last included.
+int ticketDays(DateTime start, DateTime end) {
+  final a = start.toLocal();
+  final b = end.toLocal();
+  return DateTime.utc(b.year, b.month, b.day).difference(DateTime.utc(a.year, a.month, a.day)).inDays + 1;
 }
 
 /// Gives a ticket back for the days from a chosen date on: the server says
@@ -130,17 +145,27 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
     });
   }
 
-  Future<void> _return(int transactionId, DateTime date, double amount, DateTime? validUntil) async {
+  Future<void> _return(
+    int transactionId,
+    DateTime date,
+    double amount,
+    DateTime? validUntil, {
+    required bool whole,
+  }) async {
     final l10n = AppLocalizations.of(context);
-    final price = formatPrice(l10n.localeName, amount);
+    final price = formatPrice(amount);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         icon: const Icon(Symbols.undo_rounded),
         title: Text(l10n.ticketReturnConfirmTitle, textAlign: TextAlign.center),
         content: Text(
-          validUntil == null
+          whole
+              ? l10n.ticketReturnConfirmBodyWhole(price)
+              : validUntil == null
               ? l10n.ticketReturnConfirmBodyPlain(price)
+              : isSameDay(validUntil, DateTime.now())
+              ? l10n.ticketReturnConfirmBodyToday(price, formatTime(l10n.localeName, validUntil))
               : l10n.ticketReturnConfirmBody(price, formatDateTime(l10n.localeName, validUntil)),
         ),
         actions: [
@@ -188,8 +213,14 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
       ..invalidate(ticketDetailProvider(widget.transactionCode))
       ..invalidate(ticketHistoryProvider);
     unawaited(ref.read(ticketSyncProvider.notifier).refresh());
-    messenger.showSnackBar(SnackBar(content: Text(l10n.ticketReturnDone)));
-    context.pop();
+    messenger.showSnackBar(SnackBar(content: Text(whole ? l10n.ticketReturnDoneWhole : l10n.ticketReturnDone)));
+    // The server drops a ticket given back whole from its lists for a
+    // while, so its details could not be loaded any more.
+    if (whole) {
+      context.go(Routes.tickets);
+    } else {
+      context.pop();
+    }
   }
 
   @override
@@ -231,6 +262,9 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
     final price = purchase?.price;
     final quiet = theme.textTheme.bodySmall?.copyWith(fontSize: 13, height: 18 / 13, color: scheme.onSurfaceVariant);
     final canPick = transactionId != null && !_returning;
+    final keptUntil = preview?.newTicketExpiryDate;
+    // Given back from its first day on: nothing of the ticket is kept.
+    final whole = keptUntil != null && start != null && !keptUntil.isAfter(start);
 
     final String title;
     if (mobile != null) {
@@ -278,7 +312,7 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
                             ),
                           ),
                           Text(
-                            [if (range.isNotEmpty) range, if (price != null) formatPrice(locale, price)].join(' · '),
+                            [if (range.isNotEmpty) range, if (price != null) formatPrice(price)].join(' · '),
                             style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onPrimaryContainer),
                           ),
                         ],
@@ -308,7 +342,7 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
                       end: end,
                       // Where the kept part ends: the server's word once it
                       // is there, the chosen date until then.
-                      returnFrom: date == null ? null : preview?.newTicketExpiryDate ?? date,
+                      returnFrom: date == null ? null : keptUntil ?? date,
                       now: DateTime.now(),
                     ),
                   if (date != null)
@@ -316,20 +350,28 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       spacing: 8,
                       children: [
-                        if (preview?.newTicketExpiryDate case final keptUntil?)
-                          _Legend(hatched: false, text: l10n.ticketReturnKeep(formatDateTime(locale, keptUntil))),
+                        // A date before the ticket even starts would say nothing.
+                        if (keptUntil != null && !whole)
+                          _Legend(
+                            hatched: false,
+                            text: isSameDay(keptUntil, DateTime.now())
+                                ? l10n.ticketReturnKeepToday(formatTime(locale, keptUntil))
+                                : l10n.ticketReturnKeep(formatDateTime(locale, keptUntil)),
+                          ),
                         if (start != null && end != null)
                           _Legend(
                             hatched: true,
-                            text: l10n.ticketReturnDaysBack(
-                              returnedDays(
-                                returnFrom: date,
-                                start: start,
-                                end: end,
-                                now: DateTime.now(),
-                                keptUntil: preview?.newTicketExpiryDate,
-                              ),
-                            ),
+                            text: whole
+                                ? l10n.ticketReturnWhole(ticketDays(start, end))
+                                : l10n.ticketReturnDaysBack(
+                                    returnedDays(
+                                      returnFrom: date,
+                                      start: start,
+                                      end: end,
+                                      now: DateTime.now(),
+                                      keptUntil: keptUntil,
+                                    ),
+                                  ),
                           ),
                       ],
                     ),
@@ -394,12 +436,17 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
                         ),
                       ),
                       Text(
-                        formatPrice(locale, amount),
+                        formatPrice(amount),
                         style: theme.textTheme.displayMedium?.copyWith(
                           color: colors.onSuccessContainer,
                           fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
+                      if (whole)
+                        Text(
+                          l10n.ticketReturnFullPrice,
+                          style: theme.textTheme.bodyMedium?.copyWith(color: colors.onSuccessContainer),
+                        ),
                     ],
                   ),
                 ),
@@ -418,7 +465,7 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
               child: FilledButton.icon(
                 onPressed: transactionId == null || date == null || amount == null || _returning
                     ? null
-                    : () => unawaited(_return(transactionId, date, amount, preview?.newTicketExpiryDate)),
+                    : () => unawaited(_return(transactionId, date, amount, keptUntil, whole: whole)),
                 icon: const Icon(Symbols.undo_rounded),
                 label: Text(l10n.ticketActionReturn),
               ),
@@ -502,9 +549,12 @@ class _ValidityBar extends StatelessWidget {
     final whole = end.difference(start).inSeconds;
     double share(DateTime moment) =>
         whole <= 0 ? 0 : (moment.difference(start).inSeconds / whole).clamp(0, 1).toDouble();
-    final today = share(now);
     final running = !now.isBefore(start) && !now.isAfter(end);
+    // Before the start there is no today on the bar, and nothing used.
+    final today = now.isBefore(start) ? 0.0 : share(now);
     final kept = returnFrom == null ? 1.0 : share(returnFrom!).clamp(today, 1).toDouble();
+    // The rest of today is kept at the least, however little that is.
+    final keepsSome = returnFrom != null && returnFrom!.isAfter(now) && returnFrom!.isAfter(start);
     final quiet = theme.textTheme.bodySmall?.copyWith(fontSize: 13, height: 18 / 13, color: scheme.onSurfaceVariant);
 
     return ExcludeSemantics(
@@ -530,6 +580,19 @@ class _ValidityBar extends StatelessWidget {
                           style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
+                    )
+                  else if (now.isBefore(start))
+                    // In the label's place, so that the bar keeps its own.
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      child: Text(
+                        l10n.ticketReturnStarts(day.format(start.toLocal())),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
                     ),
                   Positioned(
                     left: 0,
@@ -540,6 +603,8 @@ class _ValidityBar extends StatelessWidget {
                       painter: _ValidityPainter(
                         today: today,
                         kept: kept,
+                        minKept: keepsSome ? 14 : 0,
+                        tick: running,
                         track: scheme.surfaceContainerHigh,
                         used: Color.alphaBlend(scheme.primary.withValues(alpha: 0.38), scheme.surfaceContainerHigh),
                         keep: scheme.primary,
@@ -550,7 +615,8 @@ class _ValidityBar extends StatelessWidget {
                   ),
                   if (running)
                     Positioned(
-                      left: constraints.maxWidth * today - 1,
+                      // Just before what is kept.
+                      left: constraints.maxWidth * today - 2,
                       top: 19,
                       child: Container(
                         width: 2,
@@ -579,6 +645,8 @@ class _ValidityPainter extends CustomPainter {
   const _ValidityPainter({
     required this.today,
     required this.kept,
+    required this.minKept,
+    required this.tick,
     required this.track,
     required this.used,
     required this.keep,
@@ -588,6 +656,12 @@ class _ValidityPainter extends CustomPainter {
 
   final double today;
   final double kept;
+
+  /// The least width of the kept part, which can be a sliver of a day.
+  final double minKept;
+
+  /// The Today tick stands at [today]: what is kept starts after a gap.
+  final bool tick;
   final Color track;
   final Color used;
   final Color keep;
@@ -601,19 +675,32 @@ class _ValidityPainter extends CustomPainter {
       ..save()
       ..clipRRect(bar)
       ..drawRect(Offset.zero & size, Paint()..color = track)
-      ..drawRect(Rect.fromLTRB(0, 0, size.width * today, size.height), Paint()..color = used)
-      ..drawRect(Rect.fromLTRB(size.width * today, 0, size.width * kept, size.height), Paint()..color = keep);
-    if (kept < 1) {
-      final from = size.width * kept;
-      hatchRect(canvas, Rect.fromLTRB(from, 0, size.width, size.height), hatch);
-      canvas.drawRect(Rect.fromLTWH(from, 0, 2, size.height), Paint()..color = gap);
+      ..drawRect(Rect.fromLTRB(0, 0, size.width * today, size.height), Paint()..color = used);
+    final keptFrom = size.width * today;
+    final keptTo = (size.width * kept).clamp(keptFrom + minKept, size.width);
+    canvas.drawRect(Rect.fromLTRB(keptFrom, 0, keptTo, size.height), Paint()..color = keep);
+    if (tick && keptTo > keptFrom) {
+      canvas.drawRect(Rect.fromLTWH(keptFrom, 0, 2, size.height), Paint()..color = gap);
+    }
+    if (keptTo < size.width) {
+      hatchRect(canvas, Rect.fromLTRB(keptTo, 0, size.width, size.height), hatch);
+      // Nothing to part the hatching from when the whole ticket goes back.
+      if (keptTo > 0) {
+        canvas.drawRect(Rect.fromLTWH(keptTo, 0, 2, size.height), Paint()..color = gap);
+      }
     }
     canvas.restore();
   }
 
   @override
   bool shouldRepaint(_ValidityPainter old) =>
-      old.today != today || old.kept != kept || old.keep != keep || old.track != track || old.hatch != hatch;
+      old.today != today ||
+      old.kept != kept ||
+      old.minKept != minKept ||
+      old.tick != tick ||
+      old.keep != keep ||
+      old.track != track ||
+      old.hatch != hatch;
 }
 
 /// Diagonal stripes: the pattern for "given back", which no colour means.

@@ -126,22 +126,7 @@ class TicketActions extends ConsumerWidget {
               : Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [pay, check]),
         );
       case TicketAction.assignedElsewhere:
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Symbols.devices_off_rounded, size: 20, color: palette.medium),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  l10n.ticketStatusAssignedElsewhere,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: palette.high),
-                ),
-              ),
-            ],
-          ),
-        );
+        return TicketNote(Symbols.devices_off_rounded, l10n.ticketStatusAssignedElsewhere);
       case TicketAction.processing || TicketAction.none:
         return const SizedBox.shrink();
     }
@@ -221,4 +206,31 @@ class _Spinner extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2));
+}
+
+/// Why there is nothing to do with the ticket, in place of a button: on the
+/// stub of a [TicketCard].
+class TicketNote extends StatelessWidget {
+  const TicketNote(this.icon, this.text, {super.key});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = TicketCardColors.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: palette.medium),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(text, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: palette.high)),
+          ),
+        ],
+      ),
+    );
+  }
 }

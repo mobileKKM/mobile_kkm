@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 
@@ -41,8 +42,7 @@ void main() {
     expect(find.text('Jan Testowy'), findsOneWidget);
     expect(find.text('100001'), findsOneWidget);
     expect(find.text('Network ticket'), findsOneWidget);
-    expect(find.text('Valid until'), findsOneWidget);
-    expect(find.text('Code valid for'), findsOneWidget);
+    expect(find.textContaining('Valid until '), findsOneWidget);
     expect(find.text('1:59'), findsOneWidget);
 
     await tester.pump(const Duration(seconds: 60));
@@ -66,11 +66,13 @@ void main() {
       ..reply('POST', _contract, 200, _contractJson);
     await _open(tester, adapter);
 
-    expect(find.text('Network ticket · Jeden miesiąc'), findsOneWidget);
+    expect(find.text('Network ticket'), findsOneWidget);
+    expect(find.text('Zones'), findsOneWidget);
+    expect(find.text('Strefa I'), findsOneWidget);
     expect(find.text('Fare'), findsOneWidget);
     expect(find.text('Normalny'), findsOneWidget);
-    expect(find.text('Zone'), findsOneWidget);
-    expect(find.text('I'), findsOneWidget);
+    expect(find.text('Period'), findsOneWidget);
+    expect(find.text('Jeden miesiąc'), findsOneWidget);
     expect(find.textContaining('Bilet norm.'), findsNothing);
   });
 
@@ -80,7 +82,7 @@ void main() {
 
     expect(find.text('Network ticket'), findsOneWidget);
     expect(find.text('Fare'), findsNothing);
-    expect(find.text('Valid until'), findsOneWidget);
+    expect(find.textContaining('Valid until '), findsOneWidget);
   });
 
   testWidgets('a long name is shown in full', (tester) async {
@@ -96,7 +98,7 @@ void main() {
     final name = tester.widget<Text>(find.text('Aleksandra Katarzyna Szczepańska-Wojciechowska'));
     expect(name.overflow, isNull);
     // In smaller letters than a short one.
-    expect(name.style?.fontSize, 24);
+    expect(name.style?.fontSize, 20);
   });
 
   testWidgets('stays open: the next code is fetched ahead and takes over', (tester) async {
@@ -121,6 +123,17 @@ void main() {
     expect(adapter.requestsTo(_contract), hasLength(2));
   });
 
+  testWidgets('the last seconds are marked by more than the colour', (tester) async {
+    final adapter = _adapter()..reply('POST', _contract, 200, _contractJson);
+    await _open(tester, adapter);
+    Icon timer() => tester.widget<Icon>(find.byIcon(Symbols.timer_rounded));
+    expect(timer().fill, 0);
+
+    await tester.pump(const Duration(seconds: 105));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(timer().fill, 1);
+  });
+
   testWidgets('a slow next code is waited for, without the old one', (tester) async {
     final adapter = _adapter()..reply('POST', _contract, 200, _contractJson);
     await _open(tester, adapter);
@@ -129,12 +142,13 @@ void main() {
     await tester.pump(const Duration(seconds: 119));
     await tester.pump();
     expect(find.byType(BarcodeWidget), findsNothing);
-    expect(find.text('Getting a new code…'), findsOneWidget);
+    expect(find.text('Getting your code…'), findsOneWidget);
 
     release();
     await tester.pumpAndSettle();
     expect(find.byType(BarcodeWidget), findsOneWidget);
-    expect(find.text('Code valid for'), findsOneWidget);
+    expect(find.text('Getting your code…'), findsNothing);
+    expect(find.byIcon(Symbols.timer_rounded), findsOneWidget);
   });
 
   testWidgets('without a next code the old one is dropped when its time is up', (tester) async {
@@ -174,7 +188,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(app.screen.secure, isTrue);
 
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Close'));
     await tester.pumpAndSettle();
     expect(app.screen.changes, [true, false]);
   });
@@ -206,7 +220,7 @@ void main() {
   testWidgets('a code that cannot be read can be asked for again', (tester) async {
     final adapter = _adapter()..reply('POST', _contract, 200, {'contract': 'AAAA'});
     await _open(tester, adapter);
-    expect(find.text('The ticket code could not be loaded. Try again.'), findsOneWidget);
+    expect(find.text('The code could not be loaded. Check your connection and try again.'), findsOneWidget);
 
     adapter.reply('POST', _contract, 200, _contractJson);
     await tester.tap(find.text('Try again'));
@@ -214,7 +228,7 @@ void main() {
 
     expect(find.byType(BarcodeWidget), findsOneWidget);
     // Leave before the test ends: the countdown is still running.
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Close'));
     await tester.pumpAndSettle();
   });
 }
