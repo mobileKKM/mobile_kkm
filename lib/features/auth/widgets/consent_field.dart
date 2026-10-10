@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/widgets/check_row.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// A mandatory consent checkbox, optionally followed by a link to the
@@ -27,35 +28,31 @@ class ConsentField extends StatelessWidget {
       initialValue: initialValue,
       validator: (checked) => checked == true ? null : l10n.consentRequired,
       builder: (field) {
-        void toggle(bool? checked) {
-          field.didChange(checked ?? false);
-          onChanged(checked ?? false);
+        void toggle(bool checked) {
+          field.didChange(checked);
+          onChanged(checked);
         }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Checkbox(value: field.value, isError: field.hasError, onChanged: toggle, semanticLabel: label),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => toggle(!(field.value ?? false)),
-                        child: ExcludeSemantics(
-                          child: Text(label, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15)),
-                        ),
+            CheckRow(
+              value: field.value ?? false,
+              isError: field.hasError,
+              onChanged: toggle,
+              label: label,
+              // At the row's end, whatever the length of the consent.
+              trailing: onOpenRegulations == null
+                  ? null
+                  : TextButton(
+                      style: TextButton.styleFrom(
+                        minimumSize: const Size(0, 48),
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      if (onOpenRegulations != null)
-                        TextButton(onPressed: onOpenRegulations, child: Text(l10n.regulationsLink)),
-                    ],
-                  ),
-                ),
-              ],
+                      onPressed: onOpenRegulations,
+                      child: Text(l10n.regulationsLink),
+                    ),
             ),
             if (field.hasError)
               Padding(

@@ -243,6 +243,14 @@ void main() {
     expect(_registerRequests(adapter), hasLength(1));
   });
 
+  testWidgets('the password rules are short where one of a kind is asked for', (tester) async {
+    await _openRegister(tester, _adapter());
+
+    expect(find.text('An uppercase letter'), findsOneWidget);
+    expect(find.text('A digit'), findsOneWidget);
+    expect(find.textContaining('At least 1 '), findsNothing);
+  });
+
   testWidgets('the regulations link opens the document', (tester) async {
     final opened = <Uri>[];
     await _openRegister(tester, _adapter(), openedUrls: opened);

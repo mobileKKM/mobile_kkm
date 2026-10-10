@@ -11,9 +11,9 @@
   "passwordTooWeak": "Hasło nie spełnia wymagań",
   "passwordsDontMatch": "Hasła nie są takie same",
   "passwordRuleMinLength": "{count, plural, =1{Co najmniej 1 znak} few{Co najmniej {count} znaki} many{Co najmniej {count} znaków} other{Co najmniej {count} znaku}}",
-  "passwordRuleLowercase": "{count, plural, =1{Co najmniej 1 mała litera} few{Co najmniej {count} małe litery} many{Co najmniej {count} małych liter} other{Co najmniej {count} małej litery}}",
-  "passwordRuleUppercase": "{count, plural, =1{Co najmniej 1 wielka litera} few{Co najmniej {count} wielkie litery} many{Co najmniej {count} wielkich liter} other{Co najmniej {count} wielkiej litery}}",
-  "passwordRuleDigits": "{count, plural, =1{Co najmniej 1 cyfra} few{Co najmniej {count} cyfry} many{Co najmniej {count} cyfr} other{Co najmniej {count} cyfry}}",
+  "passwordRuleLowercase": "{count, plural, =1{Mała litera} few{Co najmniej {count} małe litery} many{Co najmniej {count} małych liter} other{Co najmniej {count} małej litery}}",
+  "passwordRuleUppercase": "{count, plural, =1{Wielka litera} few{Co najmniej {count} wielkie litery} many{Co najmniej {count} wielkich liter} other{Co najmniej {count} wielkiej litery}}",
+  "passwordRuleDigits": "{count, plural, =1{Cyfra} few{Co najmniej {count} cyfry} many{Co najmniej {count} cyfr} other{Co najmniej {count} cyfry}}",
 
   "errorNetwork": "Nie udało się połączyć z serwerem. Sprawdź połączenie z internetem i spróbuj ponownie.",
   "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie.",

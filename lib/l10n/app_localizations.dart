@@ -161,19 +161,19 @@ abstract class AppLocalizations {
   /// No description provided for @passwordRuleLowercase.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{At least 1 lowercase letter} other{At least {count} lowercase letters}}'**
+  /// **'{count, plural, =1{A lowercase letter} other{At least {count} lowercase letters}}'**
   String passwordRuleLowercase(int count);
 
   /// No description provided for @passwordRuleUppercase.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{At least 1 uppercase letter} other{At least {count} uppercase letters}}'**
+  /// **'{count, plural, =1{An uppercase letter} other{At least {count} uppercase letters}}'**
   String passwordRuleUppercase(int count);
 
   /// No description provided for @passwordRuleDigits.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{At least 1 digit} other{At least {count} digits}}'**
+  /// **'{count, plural, =1{A digit} other{At least {count} digits}}'**
   String passwordRuleDigits(int count);
 
   /// No description provided for @errorNetwork.

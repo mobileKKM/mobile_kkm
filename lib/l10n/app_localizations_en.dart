@@ -56,7 +56,7 @@ class AppLocalizationsEn extends AppLocalizations {
       count,
       locale: localeName,
       other: 'At least $count lowercase letters',
-      one: 'At least 1 lowercase letter',
+      one: 'A lowercase letter',
     );
     return '$_temp0';
   }
@@ -67,7 +67,7 @@ class AppLocalizationsEn extends AppLocalizations {
       count,
       locale: localeName,
       other: 'At least $count uppercase letters',
-      one: 'At least 1 uppercase letter',
+      one: 'An uppercase letter',
     );
     return '$_temp0';
   }
@@ -78,7 +78,7 @@ class AppLocalizationsEn extends AppLocalizations {
       count,
       locale: localeName,
       other: 'At least $count digits',
-      one: 'At least 1 digit',
+      one: 'A digit',
     );
     return '$_temp0';
   }

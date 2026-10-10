@@ -60,7 +60,7 @@ class AppLocalizationsPl extends AppLocalizations {
       other: 'Co najmniej $count małej litery',
       many: 'Co najmniej $count małych liter',
       few: 'Co najmniej $count małe litery',
-      one: 'Co najmniej 1 mała litera',
+      one: 'Mała litera',
     );
     return '$_temp0';
   }
@@ -73,7 +73,7 @@ class AppLocalizationsPl extends AppLocalizations {
       other: 'Co najmniej $count wielkiej litery',
       many: 'Co najmniej $count wielkich liter',
       few: 'Co najmniej $count wielkie litery',
-      one: 'Co najmniej 1 wielka litera',
+      one: 'Wielka litera',
     );
     return '$_temp0';
   }
@@ -86,7 +86,7 @@ class AppLocalizationsPl extends AppLocalizations {
       other: 'Co najmniej $count cyfry',
       many: 'Co najmniej $count cyfr',
       few: 'Co najmniej $count cyfry',
-      one: 'Co najmniej 1 cyfra',
+      one: 'Cyfra',
     );
     return '$_temp0';
   }

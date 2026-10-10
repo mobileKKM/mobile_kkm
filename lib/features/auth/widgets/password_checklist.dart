@@ -22,10 +22,10 @@ class PasswordChecklist extends StatelessWidget {
     Widget item(PasswordRule rule) {
       final met = rule.isSatisfiedBy(password);
       final color = met ? scheme.primary : scheme.onSurfaceVariant;
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+      return Container(
+        constraints: const BoxConstraints(minHeight: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Ticked as well as coloured: never the colour alone.
             Icon(
@@ -52,10 +52,10 @@ class PasswordChecklist extends StatelessWidget {
     }
 
     return Column(
+      spacing: 6,
       children: [
         for (var row = 0; row < rules.length; row += 2)
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 6,
             children: [
               Expanded(child: item(rules[row])),

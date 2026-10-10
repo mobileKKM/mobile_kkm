@@ -10,6 +10,7 @@ import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
+import 'package:mobile_kkm/core/widgets/check_row.dart';
 import 'package:mobile_kkm/core/widgets/form_card.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/submit_button.dart';
@@ -238,7 +239,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     decoration: InputDecoration(labelText: l10n.lastNameLabel),
                     validator: (value) => validateRequired(l10n, value),
                   ),
-                  // The choice belongs to the number above it.
+                  // The number, the choice to do without it and the date either gives.
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -251,27 +252,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         onChanged: (value) => _setBirthDate(Pesel.birthDate(value)),
                         validator: (value) => _noPesel || Pesel.isValid(value ?? '') ? null : l10n.peselInvalid,
                       ),
-                      CheckboxListTile(
-                        value: _noPesel,
-                        onChanged: (value) => _setNoPesel(value ?? false),
-                        title: Text(l10n.noPeselCheckbox, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15)),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
+                      // Closer to its field than to the date it decides
+                      // about.
+                      const SizedBox(height: 8),
+                      CheckRow(value: _noPesel, onChanged: _setNoPesel, label: l10n.noPeselCheckbox),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _birthDateText,
+                        readOnly: true,
+                        enabled: _noPesel,
+                        onTap: _noPesel ? _pickBirthDate : null,
+                        decoration: InputDecoration(
+                          labelText: l10n.birthDateLabel,
+                          helperText: _noPesel ? null : l10n.birthDateFromPeselHelper,
+                          suffixIcon: const Icon(Symbols.calendar_today_rounded),
+                        ),
+                        validator: (_) => _noPesel && _birthDate == null ? l10n.birthDateRequired : null,
                       ),
                     ],
-                  ),
-                  TextFormField(
-                    controller: _birthDateText,
-                    readOnly: true,
-                    enabled: _noPesel,
-                    onTap: _noPesel ? _pickBirthDate : null,
-                    decoration: InputDecoration(
-                      labelText: l10n.birthDateLabel,
-                      helperText: _noPesel ? null : l10n.birthDateFromPeselHelper,
-                      suffixIcon: const Icon(Symbols.calendar_today_rounded),
-                    ),
-                    validator: (_) => _noPesel && _birthDate == null ? l10n.birthDateRequired : null,
                   ),
                 ],
               ),
