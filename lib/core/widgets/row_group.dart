@@ -55,6 +55,7 @@ class GroupRow extends StatelessWidget {
     this.color,
     this.labelColor,
     this.minHeight = 68,
+    this.dense = false,
   });
 
   final Widget leading;
@@ -71,6 +72,9 @@ class GroupRow extends StatelessWidget {
   final Color? labelColor;
   final double minHeight;
 
+  /// The smaller row of a sheet: a 15 dp label and less room around it.
+  final bool dense;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -84,7 +88,7 @@ class GroupRow extends StatelessWidget {
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: minHeight),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(12, 12, showChevron ? 8 : 16, 12),
+            padding: EdgeInsetsDirectional.fromSTEB(12, dense ? 10 : 12, showChevron ? 8 : 16, dense ? 10 : 12),
             child: Row(
               children: [
                 leading,
@@ -97,7 +101,8 @@ class GroupRow extends StatelessWidget {
                       Text(
                         label,
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          height: 22 / 16,
+                          fontSize: dense ? 15 : null,
+                          height: dense ? 20 / 15 : 22 / 16,
                           fontWeight: FontWeight.w600,
                           color: labelColor,
                         ),

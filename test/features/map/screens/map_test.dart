@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/features/account/widgets/link_sheet.dart';
 
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';
@@ -45,18 +47,23 @@ void main() {
     for (final name in ['© OpenStreetMap contributors', '© OpenMapTiles', 'OpenFreeMap']) {
       expect(find.text(name), findsOneWidget);
     }
+    // Each a map source, and marked as leaving the app.
+    final sheet = find.byType(LinkSheet);
+    expect(find.descendant(of: sheet, matching: find.byIcon(Symbols.map_rounded)), findsNWidgets(3));
+    expect(find.descendant(of: sheet, matching: find.byIcon(Symbols.open_in_new_rounded)), findsNWidgets(3));
 
     await tester.tap(find.text('© OpenStreetMap contributors'));
     await tester.pumpAndSettle();
     expect(opened, [Uri.parse('https://openstreetmap.org/copyright')]);
   });
 
-  testWidgets('the filter button sits below the location button and is not built yet', (tester) async {
+  testWidgets('the filter button sits above the location button and is not built yet', (tester) async {
     await pumpApp(tester, FakeAdapter(), session: signedInSession);
     await openTab(tester, 'Map');
     final filters = find.byTooltip('Filters');
 
-    expect(tester.getTopLeft(filters).dy, greaterThan(tester.getBottomLeft(find.byTooltip('My location')).dy));
+    // The location button is the one nearest the thumb.
+    expect(tester.getBottomLeft(filters).dy, lessThan(tester.getTopLeft(find.byTooltip('My location')).dy));
 
     await tester.tap(filters);
     await tester.pumpAndSettle();

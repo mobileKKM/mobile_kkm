@@ -109,6 +109,7 @@ class LinkTile extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
     return GroupRow(
       minHeight: 64,
+      dense: true,
       color: scheme.surfaceContainerHigh,
       leading: IconTile(link.icon, size: 40, background: scheme.surfaceContainerLow),
       label: link.label,

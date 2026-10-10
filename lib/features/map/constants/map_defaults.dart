@@ -6,7 +6,7 @@ abstract final class MapDefaults {
   static const center = LatLng(50.0617, 19.9373);
   static const double zoom = 12;
 
-  /// How close the map goes to the user's position.
+  /// How close the map goes to the user's position, at the least.
   static const double locationZoom = 15;
 
   // OpenFreeMap: vector tiles from OpenStreetMap data, no key and no limit.

@@ -102,29 +102,45 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    const fabShape = RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16)));
     return Scaffold(
+      // The location button last: nearest the thumb.
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Not built yet: what the map shows (lines, kinds of vehicle).
+          FloatingActionButton(
+            heroTag: 'map-filters',
+            tooltip: l10n.mapFilters,
+            shape: fabShape,
+            backgroundColor: scheme.surfaceContainerHigh,
+            foregroundColor: scheme.primary,
+            onPressed: () => _say(l10n.comingSoon),
+            child: const Icon(Symbols.filter_alt_rounded),
+          ),
+          const SizedBox(height: 12),
           FloatingActionButton(
             heroTag: 'my-location',
             tooltip: l10n.mapMyLocation,
+            shape: fabShape,
+            backgroundColor: scheme.primaryContainer,
+            foregroundColor: scheme.onPrimaryContainer,
             onPressed: _locating ? null : _goToMyLocation,
             child: _locating
-                ? const SizedBox.square(dimension: 24, child: CircularProgressIndicator(strokeWidth: 3))
+                ? SizedBox.square(
+                    dimension: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      strokeCap: StrokeCap.round,
+                      color: scheme.onPrimaryContainer,
+                    ),
+                  )
                 // Filled while the map follows the position.
                 : Icon(
                     _showLocation ? Symbols.my_location_rounded : Symbols.location_searching_rounded,
                     fill: _following ? 1 : 0,
                   ),
-          ),
-          const SizedBox(height: 12),
-          // Not built yet: what the map shows (lines, kinds of vehicle).
-          FloatingActionButton(
-            heroTag: 'map-filters',
-            tooltip: l10n.mapFilters,
-            onPressed: () => _say(l10n.comingSoon),
-            child: const Icon(Symbols.filter_alt_rounded),
           ),
         ],
       ),
@@ -139,13 +155,44 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               onFollowEnded: () => setState(() => _following = false),
             ),
           ),
+          // The map runs up behind the status bar; this keeps the clock and
+          // the icons there readable.
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 120,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      scheme.surface.withValues(alpha: 0.94),
+                      scheme.surface.withValues(alpha: 0.6),
+                      scheme.surface.withValues(alpha: 0),
+                    ],
+                    stops: const [0, 0.45, 1],
+                  ),
+                ),
+              ),
+            ),
+          ),
           // In place of the map view's own attribution button.
           Positioned(
             left: 8,
             bottom: 8,
             child: IconButton.filledTonal(
               tooltip: l10n.mapCredits,
-              icon: const Icon(Symbols.info_rounded),
+              style: IconButton.styleFrom(
+                fixedSize: const Size.square(40),
+                iconSize: 22,
+                elevation: 1,
+                shadowColor: Colors.black,
+                tapTargetSize: MaterialTapTargetSize.padded,
+              ),
+              icon: const Icon(Symbols.info_rounded, fill: 1),
               onPressed: () => unawaited(
                 showLinkSheet(
                   context,
@@ -153,10 +200,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   links: [
                     for (final credit in MapCredits.all)
                       SheetLink(
-                        icon: Symbols.open_in_new_rounded,
+                        icon: Symbols.map_rounded,
                         label: credit.name,
                         subtitle: credit.site,
                         uri: Uri.parse('https://${credit.site}'),
+                        external: true,
                       ),
                   ],
                 ),
@@ -173,11 +221,22 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               bottom: false,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: SearchBar(
-                  enabled: false,
-                  hintText: l10n.mapSearchHint,
-                  leading: const Icon(Symbols.search_rounded),
-                  padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 16)),
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(28)),
+                    boxShadow: [
+                      BoxShadow(color: Color(0x29000000), offset: Offset(0, 1), blurRadius: 3),
+                      BoxShadow(color: Color(0x1A181C50), offset: Offset(0, 4), blurRadius: 10),
+                    ],
+                  ),
+                  child: SearchBar(
+                    enabled: false,
+                    hintText: l10n.mapSearchHint,
+                    elevation: const WidgetStatePropertyAll(0),
+                    backgroundColor: WidgetStatePropertyAll(scheme.surfaceContainerHigh),
+                    leading: Icon(Symbols.search_rounded, color: scheme.onSurface),
+                    padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 16)),
+                  ),
                 ),
               ),
             ),

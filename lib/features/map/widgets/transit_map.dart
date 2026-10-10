@@ -43,11 +43,13 @@ class _TransitMapState extends State<TransitMap> {
     return MapLibreMap(
       styleString: dark ? MapDefaults.darkStyle : MapDefaults.lightStyle,
       initialCameraPosition: const CameraPosition(target: MapDefaults.center, zoom: MapDefaults.zoom),
-      onMapCreated: (map) => widget.controller.attach(
-        (target) => map.animateCamera(
-          CameraUpdate.newLatLngZoom(LatLng(target.latitude, target.longitude), MapDefaults.locationZoom),
-        ),
-      ),
+      onMapCreated: (map) => widget.controller.attach((target) async {
+        // Closer in, never back out: a map already nearer stays so.
+        final zoom = (await map.queryCameraPosition())?.zoom ?? 0;
+        await map.animateCamera(
+          CameraUpdate.newLatLngZoom(LatLng(target.latitude, target.longitude), max(zoom, MapDefaults.locationZoom)),
+        );
+      }),
       myLocationEnabled: widget.showLocation,
       myLocationTrackingMode: widget.showLocation && widget.followLocation
           ? MyLocationTrackingMode.tracking
