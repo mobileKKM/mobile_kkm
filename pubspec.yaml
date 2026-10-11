@@ -39,10 +39,13 @@ dependencies:
   cached_network_image: ^4.0.4
   cupertino_icons: ^1.0.8
   device_info_plus: ^13.3.0
+  dio: ^5.11.1
   drift: ^2.35.1
   drift_flutter: ^0.3.1
   ekp_api:
     path: packages/ekp_api
+  ekp_crypto:
+    path: packages/ekp_crypto
   flutter:
     sdk: flutter
   flutter_cache_manager: ^3.4.5
@@ -66,7 +69,6 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.16.1
-  dio: ^5.11.1
   drift_dev: ^2.35.1
   flutter_lints: ^6.0.0
   flutter_native_splash: ^2.4.8

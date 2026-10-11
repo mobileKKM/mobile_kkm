@@ -297,5 +297,10 @@
   "debugDeviceNameHint": "Leave empty for this device's own name",
   "debugSave": "Save",
   "debugScreenSecurity": "Screen security",
-  "debugScreenSecurityHint": "Keeps the ticket code out of screenshots and recordings. Back on when the app is started again."
+  "debugScreenSecurityHint": "Keeps the ticket code out of screenshots and recordings. Back on when the app is started again.",
+  "debugAztecKey": "Ticket code key",
+  "debugAztecKeyBundled": "The one built into the app. Tap to ask the relay.",
+  "debugAztecKeyRelay": "From the relay: version {version}, {fingerprint}. Tap to ask again.",
+  "@debugAztecKeyRelay": {"placeholders": {"version": {"type": "int"}, "fingerprint": {"type": "String"}}},
+  "debugAztecKeyFailed": "The relay did not answer with a key."
 }

@@ -186,3 +186,28 @@ const lineScopesJson = {
     {'code': 3, 'description': 'Wszystkie linie - Strefa I'},
   ],
 };
+
+/// A second, synthetic key for the encrypted requests: what the relay hands
+/// out after a rotation. Nobody holds its private half.
+const rotatedAztecKeyPem = '''
+-----BEGIN RSA PUBLIC KEY-----
+MIIBCgKCAQEAp9ygk89XucoHQjin7eK3q0RAcUaPYP14lOzKw1qmwx2aEjrzuuHE
+MOtkVCFvrz7dXXW/4ltStERl4MINEDLBPIG//FfjdIYA3/zyR8p27F3xgVlkjQkR
+iSaNftAtAh3e8QO2P9gPxb/SJhr8Bb8l8QlXto+tdR61V9ofHcvr4TlZ2pEHh17U
++g4oCrt79Ifglx5jCakEvPieT8/FdmCj6TGJru0W1ojA0SCO0MI0bsUv/97CNXVm
+RdUVh5jE7evQOCV3Cq2PeME/iH31e39D+sTOF1Mnf5FufiguZTGImwZB1ObLk9nS
+UY2QXMc/WAbze5vyWr7CFwkCYeq7+FkIjwIDAQAB
+-----END RSA PUBLIC KEY-----
+''';
+
+/// The relay's reply for [pem]. The fingerprint is made up: the app only
+/// shows it.
+Map<String, dynamic> relayKeyJson(String pem, {int version = 1, String fingerprint = 'c0ffee00c0ffee00'}) => {
+  'pem': pem,
+  'fingerprint_sha256': fingerprint,
+  'fetched_at': '2026-06-01T04:00:00+00:00',
+  'age_seconds': 60,
+  'version': version,
+  'stale': false,
+  'bits': 2048,
+};

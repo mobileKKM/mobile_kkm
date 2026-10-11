@@ -10,6 +10,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
+import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
 import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
@@ -117,7 +118,12 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
     _Code? code;
     Object? error;
     try {
-      final response = await ref.read(ekpClientProvider).tickets.contract(widget.ticketGuid);
+      final response = await ref
+          .read(aztecKeyProvider.notifier)
+          .guard(
+            () => ref.read(ekpClientProvider).tickets.contract(widget.ticketGuid),
+            refused: (response) => response.code != null || response.decodeAztec() == null,
+          );
       // A refusal arrives as a reply like any other.
       if (response.code != null) {
         error = response.message;

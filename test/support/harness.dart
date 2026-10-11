@@ -9,12 +9,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/app.dart';
+import 'package:mobile_kkm/core/crypto/aztec_key.dart';
+import 'package:mobile_kkm/core/crypto/aztec_key_relay.dart';
+import 'package:mobile_kkm/core/crypto/aztec_key_store.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/dictionaries/dictionary_cache.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
 import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
+import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
 import 'package:mobile_kkm/core/providers/database_provider.dart';
 import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
@@ -75,6 +79,26 @@ class InMemoryDictionaryCache implements DictionaryCache {
   @override
   Future<void> write(String name, Map<String, dynamic> json, DateTime fetchedAt) async =>
       _stored[name] = (jsonEncode(json), fetchedAt);
+}
+
+/// Keeps the relay's key as the JSON text a file would hold.
+class InMemoryAztecKeyStore implements AztecKeyStore {
+  InMemoryAztecKeyStore([AztecKey? key]) : _stored = key == null ? null : jsonEncode(key.toJson());
+
+  String? _stored;
+  int writes = 0;
+
+  @override
+  Future<AztecKey?> read() async {
+    final stored = _stored;
+    return stored == null ? null : AztecKey.fromJson(jsonDecode(stored) as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> write(AztecKey key) async {
+    writes++;
+    _stored = jsonEncode(key.toJson());
+  }
 }
 
 /// Serves a one-pixel image for any URL and notes what was asked of it.
@@ -203,6 +227,7 @@ typedef SavedIdentity = ({String deviceId, String? deviceName});
 class App {
   App(
     this.client,
+    this.relay,
     this.router,
     this.database,
     this.map,
@@ -216,6 +241,10 @@ class App {
   String get location => router.state.uri.path;
 
   final EkpClient client;
+
+  /// The aztec key relay. Without a canned reply it has no key to give (404),
+  /// and the app keeps the one it has.
+  final FakeAdapter relay;
   final GoRouter router;
   final AppDatabase database;
   final FakeMapView map;
@@ -241,6 +270,8 @@ Future<App> pumpApp(
   AppDatabase? database,
   PhotoCache? photoCache,
   LocationService? location,
+  FakeAdapter? relay,
+  AztecKeyStore? aztecKeyStore,
   bool settle = true,
   bool tall = false,
 }) async {
@@ -253,10 +284,14 @@ Future<App> pumpApp(
   if (session != null) {
     await store.write(session);
   }
+  late final ProviderContainer container;
   final client = EkpClient(
     dio: Dio(BaseOptions(baseUrl: 'https://ekp.test'))..httpClientAdapter = adapter,
     tokenStore: store,
+    // As `ekpClientProvider` does it.
+    aztecKey: () => container.read(aztecKeyInUseProvider).pem,
   );
+  final keyRelay = relay ?? FakeAdapter();
   addTearDown(client.dispose);
   // Pass one in to seed it, or to keep it across two app runs in one test.
   final db = database ?? AppDatabase(NativeDatabase.memory());
@@ -268,7 +303,7 @@ Future<App> pumpApp(
   final screen = FakeScreenSecurity();
   final scanDisplay = FakeScanDisplay();
   final savedIdentities = <SavedIdentity>[];
-  final container = ProviderContainer(
+  container = ProviderContainer(
     overrides: [
       ekpClientProvider.overrideWithValue(client),
       // Only the debug menu reads it here: the client above is fixed.
@@ -284,6 +319,13 @@ Future<App> pumpApp(
       userDataCacheProvider.overrideWithValue(userDataCache ?? InMemoryUserDataCache()),
       appDatabaseProvider.overrideWithValue(db),
       dictionaryCacheProvider.overrideWithValue(dictionaryCache ?? InMemoryDictionaryCache()),
+      aztecKeyRelayProvider.overrideWithValue(
+        AztecKeyRelay(
+          Dio(BaseOptions(baseUrl: 'https://relay.test/api/v1/'))..httpClientAdapter = keyRelay,
+          userAgent: 'mobileKKM/1.2.3',
+        ),
+      ),
+      aztecKeyStoreProvider.overrideWithValue(aztecKeyStore ?? InMemoryAztecKeyStore()),
       photoCacheProvider.overrideWithValue(photoCache ?? FakePhotoCache()),
       mapViewProvider.overrideWithValue(map.build),
       locationServiceProvider.overrideWithValue(location ?? FakeLocationService()),
@@ -310,7 +352,17 @@ Future<App> pumpApp(
     await tester.pumpAndSettle();
   }
 
-  return App(client, container.read(routerProvider), db, map, screen, scanDisplay, savedIdentities, container);
+  return App(
+    client,
+    keyRelay,
+    container.read(routerProvider),
+    db,
+    map,
+    screen,
+    scanDisplay,
+    savedIdentities,
+    container,
+  );
 }
 
 /// Scrolls [finder] into view, then taps it.

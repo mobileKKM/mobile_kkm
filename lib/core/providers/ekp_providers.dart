@@ -1,4 +1,5 @@
 import 'package:ekp_api/ekp_api.dart';
+import 'package:ekp_crypto/ekp_crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Writes a changed identity to the device. No [deviceName]: the hardware's.
@@ -50,9 +51,28 @@ final deviceIdentityProvider = NotifierProvider<DeviceIdentityController, EkpDev
 /// Session persistence, supplied in `main()`.
 final tokenStoreProvider = Provider<TokenStore>((ref) => throw UnimplementedError('overridden in main()'));
 
+/// The key the client encrypts the `assign-e` / `contract-e` requests with,
+/// as PEM. `AztecKeyController` writes it here.
+///
+/// A plain holder, not the controller's state: the controller follows the
+/// session, which the client below provides, so the client cannot depend on
+/// it in turn. And a new key must not rebuild the client, which would send
+/// the app through the splash.
+class AztecKeyInUse {
+  String pem = aztecKeyPem;
+}
+
+final aztecKeyInUseProvider = Provider<AztecKeyInUse>((ref) => AztecKeyInUse());
+
 /// The one client for the EKP backend, with its session.
 final ekpClientProvider = Provider<EkpClient>((ref) {
-  final client = EkpClient(device: ref.watch(deviceIdentityProvider), tokenStore: ref.watch(tokenStoreProvider));
+  final key = ref.watch(aztecKeyInUseProvider);
+  final client = EkpClient(
+    device: ref.watch(deviceIdentityProvider),
+    tokenStore: ref.watch(tokenStoreProvider),
+    // Read on every encrypted request.
+    aztecKey: () => key.pem,
+  );
   ref.onDispose(client.dispose);
   return client;
 });

@@ -280,5 +280,9 @@
   "debugDeviceNameHint": "Zostaw puste, aby użyć nazwy tego urządzenia",
   "debugSave": "Zapisz",
   "debugScreenSecurity": "Ochrona ekranu",
-  "debugScreenSecurityHint": "Chroni kod biletu przed zrzutami ekranu i nagraniami. Włącza się ponownie po ponownym uruchomieniu aplikacji."
+  "debugScreenSecurityHint": "Chroni kod biletu przed zrzutami ekranu i nagraniami. Włącza się ponownie po ponownym uruchomieniu aplikacji.",
+  "debugAztecKey": "Klucz kodu biletu",
+  "debugAztecKeyBundled": "Wbudowany w aplikację. Dotknij, aby zapytać serwer pośredniczący.",
+  "debugAztecKeyRelay": "Z serwera pośredniczącego: wersja {version}, {fingerprint}. Dotknij, aby zapytać ponownie.",
+  "debugAztecKeyFailed": "Serwer pośredniczący nie zwrócił klucza."
 }

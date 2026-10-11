@@ -1,7 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/device_identity.dart';
+import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
@@ -22,6 +25,8 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
   late final TextEditingController _deviceId;
   late final TextEditingController _deviceName;
   bool _saving = false;
+  bool _askingRelay = false;
+  bool _relayFailed = false;
 
   @override
   void initState() {
@@ -56,11 +61,26 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     }
   }
 
+  Future<void> _askRelay() async {
+    if (_askingRelay) {
+      return;
+    }
+    setState(() => _askingRelay = true);
+    final answered = await ref.read(aztecKeyProvider.notifier).reload();
+    if (mounted) {
+      setState(() {
+        _askingRelay = false;
+        _relayFailed = !answered;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final key = ref.watch(aztecKeyProvider);
     final secure = ref.watch(screenSecurityEnabledProvider);
     void setSecure(bool enabled) => ref.read(screenSecurityEnabledProvider.notifier).set(enabled);
 
@@ -114,6 +134,24 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                       showChevron: false,
                       trailing: Switch(value: secure, onChanged: setSecure),
                       onTap: () => setSecure(!secure),
+                    ),
+                    GroupRow(
+                      leading: const IconTile(Symbols.key_rounded),
+                      label: l10n.debugAztecKey,
+                      subtitle: _relayFailed
+                          ? l10n.debugAztecKeyFailed
+                          : switch (key.fingerprint) {
+                              null => l10n.debugAztecKeyBundled,
+                              final fingerprint => l10n.debugAztecKeyRelay(
+                                key.version ?? 0,
+                                fingerprint.substring(0, math.min(8, fingerprint.length)),
+                              ),
+                            },
+                      showChevron: false,
+                      trailing: _askingRelay
+                          ? const SizedBox.square(dimension: 24, child: CircularProgressIndicator(strokeWidth: 3))
+                          : const Icon(Symbols.refresh_rounded),
+                      onTap: _askingRelay ? null : _askRelay,
                     ),
                   ],
                 ),

@@ -88,4 +88,21 @@ void main() {
     await tapVisible(tester, find.text('Screen security'));
     expect(app.container.read(screenSecurityEnabledProvider), isTrue);
   });
+
+  testWidgets('the key for the ticket code says where it is from, and the relay can be asked again', (tester) async {
+    final app = await _openDebug(tester);
+    expect(find.text('The one built into the app. Tap to ask the relay.'), findsOneWidget);
+
+    await tapVisible(tester, find.text('Ticket code key'));
+    expect(find.text('The relay did not answer with a key.'), findsOneWidget);
+
+    app.relay.reply(
+      'GET',
+      'aztec-key',
+      200,
+      relayKeyJson(rotatedAztecKeyPem, version: 7, fingerprint: '0123456789abcdef'),
+    );
+    await tapVisible(tester, find.text('Ticket code key'));
+    expect(find.text('From the relay: version 7, 01234567. Tap to ask again.'), findsOneWidget);
+  });
 }

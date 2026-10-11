@@ -81,8 +81,17 @@ which catches decryption errors and shows a generic error.
 ## Key rotation
 
 The RSA public key is served via Firebase Remote Config, so the operator can
-rotate it server-side at any time. When `assign-e`/`contract-e` requests
-start failing (or a new app bundle carries a changed `aztecKey`):
+rotate it server-side at any time.
+
+The app follows a rotation by itself: it gets the current key from the
+[aztec-key-relay](https://relay.mobilekkm.app) service (one shared Firebase
+installation instead of one per device) and hands it to `ekp_api` through
+`EkpClient(aztecKey: …)`. The `aztecKeyPem` constant in this package is what
+is used until the relay has answered, and whenever it cannot be reached.
+
+So after a rotation nothing has to be released. To bring the bundled
+constant up to date for new installs, take the PEM from the relay
+(`GET /api/v1/aztec-key`), or capture it yourself:
 
 1. Capture the Remote Config fetch with mitmproxy:
    ```
@@ -102,8 +111,8 @@ start failing (or a new app bundle carries a changed `aztecKey`):
    the new string (Nitro `HybridCppModule::getString()` / vaddr noted in the
    binary) and update `cppSecret` likewise.
 
-There is intentionally **no** Firebase RC fetch client here — re-capturing
-manually is the documented procedure.
+There is intentionally **no** Firebase RC fetch client here: that is the
+relay's job, and this package stays free of network code.
 
 ## Testing
 

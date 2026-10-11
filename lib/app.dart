@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
 import 'package:mobile_kkm/core/router/app_router.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
@@ -14,6 +15,9 @@ class MobileKkmApp extends ConsumerWidget {
     // Alive in every auth state, not only behind the signed-in screens: it
     // is also what empties the ticket store when the session ends.
     ref.listen(ticketSyncProvider, (_, _) {});
+    // Alive from the start too: it asks the relay for the ticket code's key
+    // once the user is signed in, before a screen needs it.
+    ref.listen(aztecKeyProvider, (_, _) {});
     return MaterialApp.router(
       title: 'mobileKKM',
       theme: AppTheme.light(),

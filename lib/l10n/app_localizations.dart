@@ -1597,6 +1597,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Keeps the ticket code out of screenshots and recordings. Back on when the app is started again.'**
   String get debugScreenSecurityHint;
+
+  /// No description provided for @debugAztecKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket code key'**
+  String get debugAztecKey;
+
+  /// No description provided for @debugAztecKeyBundled.
+  ///
+  /// In en, this message translates to:
+  /// **'The one built into the app. Tap to ask the relay.'**
+  String get debugAztecKeyBundled;
+
+  /// No description provided for @debugAztecKeyRelay.
+  ///
+  /// In en, this message translates to:
+  /// **'From the relay: version {version}, {fingerprint}. Tap to ask again.'**
+  String debugAztecKeyRelay(int version, String fingerprint);
+
+  /// No description provided for @debugAztecKeyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The relay did not answer with a key.'**
+  String get debugAztecKeyFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -43,6 +43,10 @@ final urlOpenerProvider = Provider<UrlOpener>(
       (url) => launchUrl(url, mode: LaunchMode.externalApplication),
 );
 
+/// What the platform knows of the installed app, resolved in `main()` for
+/// whatever needs the version without waiting for it.
+final packageInfoProvider = Provider<PackageInfo>((ref) => throw UnimplementedError('overridden in main()'));
+
 /// The installed app's version as `1.2.3 (45)`.
 final appVersionProvider = FutureProvider<String>((ref) async {
   final info = await PackageInfo.fromPlatform();

@@ -10,15 +10,19 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/app.dart';
 import 'package:mobile_kkm/core/api/device_identity.dart';
 import 'package:mobile_kkm/core/api/secure_token_store.dart';
+import 'package:mobile_kkm/core/crypto/aztec_key_store.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/dictionaries/dictionary_cache.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
+import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
 import 'package:mobile_kkm/core/providers/database_provider.dart';
 import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
+import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
@@ -41,13 +45,13 @@ Future<void> main() async {
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
   );
 
-  // The native splash stays up until the first frame, so resolving the
-  // device identity here does not show a blank screen.
+  // The native splash stays up until the first frame, so resolving these
+  // here does not show a blank screen.
   final device = await loadDeviceIdentity(storage);
-
-  // Not the cache directory: the system empties that when space runs short,
-  // and the names would be gone offline.
+  final package = await PackageInfo.fromPlatform();
   final support = await getApplicationSupportDirectory();
+
+  // Decode the splash logo before running the app to avoid a visual glitch.
   await _decodeSplashLogo();
 
   runApp(
@@ -61,11 +65,15 @@ Future<void> main() async {
                 saveDeviceIdentity(storage, deviceId: deviceId, deviceName: deviceName),
           ),
         ),
+        packageInfoProvider.overrideWithValue(package),
         tokenStoreProvider.overrideWithValue(SecureTokenStore(storage)),
         userDataCacheProvider.overrideWithValue(SecureUserDataCache(storage)),
         appDatabaseProvider.overrideWithValue(AppDatabase(driftDatabase(name: 'mobile_kkm'))),
         dictionaryCacheProvider.overrideWithValue(
           FileDictionaryCache(Directory('${support.path}${Platform.pathSeparator}dictionaries')),
+        ),
+        aztecKeyStoreProvider.overrideWithValue(
+          FileAztecKeyStore(File('${support.path}${Platform.pathSeparator}aztec_key.json')),
         ),
       ],
       child: const MobileKkmApp(),

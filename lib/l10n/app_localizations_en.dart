@@ -877,4 +877,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get debugScreenSecurityHint =>
       'Keeps the ticket code out of screenshots and recordings. Back on when the app is started again.';
+
+  @override
+  String get debugAztecKey => 'Ticket code key';
+
+  @override
+  String get debugAztecKeyBundled => 'The one built into the app. Tap to ask the relay.';
+
+  @override
+  String debugAztecKeyRelay(int version, String fingerprint) {
+    return 'From the relay: version $version, $fingerprint. Tap to ask again.';
+  }
+
+  @override
+  String get debugAztecKeyFailed => 'The relay did not answer with a key.';
 }

@@ -896,4 +896,18 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get debugScreenSecurityHint =>
       'Chroni kod biletu przed zrzutami ekranu i nagraniami. Włącza się ponownie po ponownym uruchomieniu aplikacji.';
+
+  @override
+  String get debugAztecKey => 'Klucz kodu biletu';
+
+  @override
+  String get debugAztecKeyBundled => 'Wbudowany w aplikację. Dotknij, aby zapytać serwer pośredniczący.';
+
+  @override
+  String debugAztecKeyRelay(int version, String fingerprint) {
+    return 'Z serwera pośredniczącego: wersja $version, $fingerprint. Dotknij, aby zapytać ponownie.';
+  }
+
+  @override
+  String get debugAztecKeyFailed => 'Serwer pośredniczący nie zwrócił klucza.';
 }

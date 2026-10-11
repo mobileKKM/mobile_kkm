@@ -1,5 +1,6 @@
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
@@ -23,7 +24,12 @@ class TicketActionsController extends Notifier<Set<String>> {
   /// `assign-e`: lets this device show the ticket's code. Throws
   /// [TicketActionFailure] when the server refuses.
   Future<void> assign(String ticketGuid) => _run(ticketGuid, () async {
-    final response = await ref.read(ekpClientProvider).tickets.assign(ticketGuid);
+    final response = await ref
+        .read(aztecKeyProvider.notifier)
+        .guard(
+          () => ref.read(ekpClientProvider).tickets.assign(ticketGuid),
+          refused: (response) => !(response.assigned ?? false),
+        );
     if (!(response.assigned ?? false)) {
       throw TicketActionFailure(response.message);
     }
