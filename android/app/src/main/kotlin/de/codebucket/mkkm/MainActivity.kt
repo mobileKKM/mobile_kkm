@@ -1,4 +1,4 @@
-package de.codebucket.mobile_kkm
+package de.codebucket.mkkm
 
 import android.content.Intent
 import android.content.pm.verify.domain.DomainVerificationManager
@@ -60,6 +60,6 @@ class MainActivity : FlutterActivity() {
     }
 
     private companion object {
-        const val LINKS_CHANNEL = "de.codebucket.mobile_kkm/links"
+        const val LINKS_CHANNEL = "de.codebucket.mkkm/links"
     }
 }

@@ -12,7 +12,7 @@ const ekpLinkHost = 'ekp.mpk.krakow.pl';
 class LinkSettings {
   const LinkSettings();
 
-  static const _channel = MethodChannel('de.codebucket.mobile_kkm/links');
+  static const _channel = MethodChannel('de.codebucket.mkkm/links');
 
   bool get isSupported => defaultTargetPlatform == TargetPlatform.android;
 
