@@ -193,6 +193,21 @@ void main() {
     expect(app.screen.changes, [true, false]);
   });
 
+  testWidgets('the display is bright and stays awake while the screen is open', (tester) async {
+    final adapter = _adapter()..reply('POST', _contract, 200, _contractJson);
+    final app = await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Tickets');
+    expect(app.scanDisplay.changes, isEmpty);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Ticket control'));
+    await tester.pumpAndSettle();
+    expect(app.scanDisplay.active, isTrue);
+
+    await tester.tap(find.byTooltip('Close'));
+    await tester.pumpAndSettle();
+    expect(app.scanDisplay.changes, [true, false]);
+  });
+
   testWidgets('the code is hidden while the screen is being recorded', (tester) async {
     final adapter = _adapter()..reply('POST', _contract, 200, _contractJson);
     final app = await _open(tester, adapter);

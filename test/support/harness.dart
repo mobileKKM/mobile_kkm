@@ -13,6 +13,7 @@ import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/dictionaries/dictionary_cache.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/providers/database_provider.dart';
 import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
@@ -176,6 +177,17 @@ class FakeScreenSecurity extends ScreenSecurity {
   Stream<bool> get captured => _captured.stream;
 }
 
+/// Notes when the display was turned up and kept awake.
+class FakeScanDisplay extends ScanDisplay {
+  /// Every change asked for, in order.
+  final changes = <bool>[];
+
+  bool get active => changes.isNotEmpty && changes.last;
+
+  @override
+  Future<void> setActive(bool active) async => changes.add(active);
+}
+
 final signedInSession = AuthSession(
   token: 'aaa.bbb.ccc',
   refresh: 'feedfacefeedfacefeedfacefeedface',
@@ -183,7 +195,7 @@ final signedInSession = AuthSession(
 );
 
 class App {
-  App(this.client, this.router, this.database, this.map, this.screen, this.container);
+  App(this.client, this.router, this.database, this.map, this.screen, this.scanDisplay, this.container);
 
   /// The path of the screen on top.
   String get location => router.state.uri.path;
@@ -193,6 +205,7 @@ class App {
   final AppDatabase database;
   final FakeMapView map;
   final FakeScreenSecurity screen;
+  final FakeScanDisplay scanDisplay;
 
   /// For providers that no screen shows.
   final ProviderContainer container;
@@ -235,6 +248,7 @@ Future<App> pumpApp(
   // schedules a timer that the test framework then reports as pending.
   final map = FakeMapView();
   final screen = FakeScreenSecurity();
+  final scanDisplay = FakeScanDisplay();
   final container = ProviderContainer(
     overrides: [
       ekpClientProvider.overrideWithValue(client),
@@ -246,6 +260,7 @@ Future<App> pumpApp(
       mapViewProvider.overrideWithValue(map.build),
       locationServiceProvider.overrideWithValue(location ?? FakeLocationService()),
       screenSecurityProvider.overrideWithValue(screen),
+      scanDisplayProvider.overrideWithValue(scanDisplay),
       appVersionProvider.overrideWith((ref) => '1.2.3 (45)'),
       // Records instead of launching a browser.
       urlOpenerProvider.overrideWithValue((url) async {
@@ -267,7 +282,7 @@ Future<App> pumpApp(
     await tester.pumpAndSettle();
   }
 
-  return App(client, container.read(routerProvider), db, map, screen, container);
+  return App(client, container.read(routerProvider), db, map, screen, scanDisplay, container);
 }
 
 /// Scrolls [finder] into view, then taps it.

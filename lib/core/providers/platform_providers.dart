@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/platform/url_opener.dart';
 import 'package:mobile_kkm/features/account/services/photo_cache.dart';
@@ -16,6 +17,10 @@ final locationServiceProvider = Provider<LocationService>((ref) => const Locatio
 /// Screenshot and recording protection for the ticket code. A provider so
 /// tests can see it switched on and off.
 final screenSecurityProvider = Provider<ScreenSecurity>((ref) => const ScreenSecurity());
+
+/// A bright display that stays awake for the ticket code. A provider so
+/// tests can see it switched on and off.
+final scanDisplayProvider = Provider<ScanDisplay>((ref) => const ScanDisplay());
 
 /// Opens a web page in the system browser. A provider so tests can capture
 /// the URL instead of launching anything.

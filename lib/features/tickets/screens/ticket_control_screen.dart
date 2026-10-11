@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
+import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
@@ -68,6 +69,7 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
   Timer? _timer;
   int _secondsLeft = 0;
 
+  late final ScanDisplay _display;
   late final ScreenSecurity _security;
   StreamSubscription<bool>? _captureChanges;
 
@@ -77,6 +79,10 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
   @override
   void initState() {
     super.initState();
+    // For as long as the screen is open, not per code: there is normally
+    // always one to scan.
+    _display = ref.read(scanDisplayProvider);
+    unawaited(_display.setActive(true));
     _security = ref.read(screenSecurityProvider);
     unawaited(_security.setSecure(true));
     _captureChanges = _security.captured.listen((captured) {
@@ -93,6 +99,7 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
     _timer?.cancel();
     unawaited(_captureChanges?.cancel());
     unawaited(_security.setSecure(false));
+    unawaited(_display.setActive(false));
     super.dispose();
   }
 
