@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:asn1lib/asn1lib.dart';
 import 'package:dio/dio.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:ekp_crypto/ekp_crypto.dart';
+import 'package:pointycastle/export.dart';
 import 'package:test/test.dart';
 
 import 'fixtures.dart';
@@ -127,6 +131,46 @@ void main() {
     });
   });
 
+  group('aztecKey', () {
+    test('the key the host supplies is asked for on every call and used', () async {
+      final first = _generateRsaKeyPair();
+      final second = _generateRsaKeyPair();
+      var current = first;
+      final rotating = EkpClient(
+        tokenStore: InMemoryTokenStore(),
+        dio: Dio(BaseOptions(baseUrl: baseUrl))..httpClientAdapter = adapter,
+        aztecKey: () => _encodePublicKeyToPkcs1Pem(current.publicKey),
+      );
+      addTearDown(rotating.dispose);
+      adapter.onPost('/mkkm/tickets/contract-e', [
+        (200, fixture('contract_e_response')),
+        (200, fixture('contract_e_response')),
+      ]);
+
+      await rotating.tickets.contract(ticketGuid);
+      current = second;
+      await rotating.tickets.contract(ticketGuid);
+
+      final sent = [
+        for (final request in adapter.requestsTo('/mkkm/tickets/contract-e')) bodyOf(request)['message'] as String,
+      ];
+      expect(_decrypt(sent[0], first.privateKey), jsonEncode({'ticketGuid': ticketGuid}));
+      expect(_decrypt(sent[1], second.privateKey), jsonEncode({'ticketGuid': ticketGuid}));
+    });
+
+    test('a key that cannot be read fails before anything is sent', () async {
+      final broken = EkpClient(
+        tokenStore: InMemoryTokenStore(),
+        dio: Dio(BaseOptions(baseUrl: baseUrl))..httpClientAdapter = adapter,
+        aztecKey: () => 'not a pem',
+      );
+      addTearDown(broken.dispose);
+
+      await expectLater(broken.tickets.assign(ticketGuid), throwsA(isA<EkpCryptoException>()));
+      expect(adapter.requestsTo('/mkkm/tickets/assign-e'), isEmpty);
+    });
+  });
+
   group('TicketContractResponse.decodeAztec', () {
     test('returns null for a contract with garbage bytes', () {
       final response = TicketContractResponse(contract: base64Encode(List<int>.filled(64, 7)));
@@ -141,4 +185,33 @@ void main() {
       );
     });
   });
+}
+
+/// Undoes [EkpAztecCrypto.encryptJson] with the private half of the key.
+String _decrypt(String message, RSAPrivateKey key) {
+  final rsa = PKCS1Encoding(RSAEngine())..init(false, PrivateKeyParameter<RSAPrivateKey>(key));
+  return utf8.decode(rsa.process(base64Decode(message.replaceAll('\n', ''))));
+}
+
+/// Generates a 2048-bit RSA keypair (test only; ~0.5 s).
+AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> _generateRsaKeyPair() {
+  final seed = Uint8List.fromList(List<int>.generate(32, (_) => Random.secure().nextInt(256)));
+  final random = FortunaRandom()..seed(KeyParameter(seed));
+  final generator = RSAKeyGenerator()
+    ..init(ParametersWithRandom(RSAKeyGeneratorParameters(BigInt.from(65537), 2048, 64), random));
+  return generator.generateKeyPair();
+}
+
+/// [key] as a PKCS#1 `BEGIN RSA PUBLIC KEY` PEM.
+String _encodePublicKeyToPkcs1Pem(RSAPublicKey key) {
+  final sequence = ASN1Sequence()
+    ..add(ASN1Integer(key.modulus!))
+    ..add(ASN1Integer(key.exponent!));
+  final encoded = base64Encode(sequence.encodedBytes);
+  final buffer = StringBuffer()..writeln('-----BEGIN RSA PUBLIC KEY-----');
+  for (var i = 0; i < encoded.length; i += 64) {
+    buffer.writeln(encoded.substring(i, min(i + 64, encoded.length)));
+  }
+  buffer.writeln('-----END RSA PUBLIC KEY-----');
+  return buffer.toString();
 }

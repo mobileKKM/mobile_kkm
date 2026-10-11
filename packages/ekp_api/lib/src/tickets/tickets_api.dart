@@ -12,10 +12,19 @@ import 'ticket_models.dart';
 /// configuration, price calculation, purchase initiation, returns and the
 /// encrypted assign/contract (AZTEC) endpoints.
 class TicketsApi extends EkpApiService {
-  TicketsApi(super.dio, this._device, {EkpAztecCrypto? crypto}) : _crypto = crypto ?? const EkpAztecCrypto();
+  TicketsApi(super.dio, this._device, {this._aztecKey});
 
   final EkpDeviceIdentity _device;
-  final EkpAztecCrypto _crypto;
+
+  /// The RSA public key (PEM) for the encrypted endpoints, asked for on
+  /// every call so that a rotated key takes effect at once. Without it:
+  /// the key bundled with `ekp_crypto`.
+  final String Function()? _aztecKey;
+
+  EkpAztecCrypto get _crypto {
+    final key = _aztecKey;
+    return key == null ? const EkpAztecCrypto() : EkpAztecCrypto(publicKeyPem: key());
+  }
 
   /// `GET mkkm/tickets/list` — the mobile tickets shown in the app.
   Future<MkkmTicketsResponse> mkkmTickets() async {

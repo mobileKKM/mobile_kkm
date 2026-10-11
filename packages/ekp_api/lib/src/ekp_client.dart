@@ -26,9 +26,14 @@ import 'tickets/tickets_api.dart';
 /// final tickets = await client.tickets.mkkmTickets();
 /// ```
 class EkpClient {
-  EkpClient({EkpDeviceIdentity? device, TokenStore? tokenStore, Dio? dio, String baseUrl = EkpDefaults.baseUrl})
-    : device = device ?? EkpDeviceIdentity.test(),
-      dio = dio ?? Dio(BaseOptions(baseUrl: baseUrl, headers: {Headers.acceptHeader: 'application/json'})) {
+  EkpClient({
+    EkpDeviceIdentity? device,
+    TokenStore? tokenStore,
+    Dio? dio,
+    String baseUrl = EkpDefaults.baseUrl,
+    this.aztecKey,
+  }) : device = device ?? EkpDeviceIdentity.test(),
+       dio = dio ?? Dio(BaseOptions(baseUrl: baseUrl, headers: {Headers.acceptHeader: 'application/json'})) {
     session = EkpSessionManager(dio: this.dio, device: this.device, tokenStore: tokenStore);
 
     // Standard cookie jar: login/recover responses store the auth cookies
@@ -46,6 +51,11 @@ class EkpClient {
 
   /// Device identity used in headers and auth bodies.
   final EkpDeviceIdentity device;
+
+  /// Supplies the RSA public key (PEM) for the encrypted ticket endpoints,
+  /// read on every such call. The host can so follow a key rotation without
+  /// a new client; `null` means the key bundled with `ekp_crypto`.
+  final String Function()? aztecKey;
 
   /// The underlying [Dio] — exposed for advanced use (timeouts, proxies).
   final Dio dio;
@@ -67,7 +77,7 @@ class EkpClient {
 
   /// Tickets: mobile tickets, history, purchase, returns, encrypted
   /// assign/contract (AZTEC) endpoints.
-  late final TicketsApi tickets = TicketsApi(dio, device);
+  late final TicketsApi tickets = TicketsApi(dio, device, aztecKey: aztecKey);
 
   /// Payments (tpay): banks, payment status.
   late final PaymentsApi payments = PaymentsApi(dio);
