@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 /// Base type for all errors raised by this package.
@@ -47,8 +49,7 @@ sealed class EkpApiException implements Exception {
       return EkpNetworkException(message: e.message, cause: e);
     }
 
-    final body = response.data;
-    final fields = body is Map<String, dynamic> ? body : <String, dynamic>{};
+    final fields = _fieldsOf(response.data);
     final message = fields['message'] is String ? fields['message'] as String : null;
     // /tickets history 400s use `exceptionCode` instead of `code`.
     final code = fields['code'] ?? fields['exceptionCode'];
@@ -58,6 +59,25 @@ sealed class EkpApiException implements Exception {
       return EkpUnauthorizedException(message: message, statusCode: response.statusCode, code: code);
     }
     return EkpHttpException(message: message, statusCode: response.statusCode, code: code, errorToken: errorToken);
+  }
+
+  /// The error body as a map. A request made for a plain response, as
+  /// those whose success has no body are, gets its error body as text too.
+  static Map<String, dynamic> _fieldsOf(Object? body) {
+    if (body is Map<String, dynamic>) {
+      return body;
+    }
+    if (body is String && body.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(body);
+        if (decoded is Map<String, dynamic>) {
+          return decoded;
+        }
+      } on FormatException {
+        // Not JSON: an error page, or nothing of use.
+      }
+    }
+    return const {};
   }
 
   @override

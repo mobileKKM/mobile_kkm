@@ -35,8 +35,11 @@ abstract class StorageMedium with _$StorageMedium {
 
   factory StorageMedium.fromJson(Map<String, dynamic> json) => _$StorageMediumFromJson(json);
 
+  /// The `cityCardCode` of the mobile Kraków City Card.
+  static const mkkmCityCardCode = 8;
+
   /// Whether this medium is the mobile Kraków City Card (`cityCardCode == 8`).
-  bool get isMkkm => cityCardCode == 8;
+  bool get isMkkm => cityCardCode == mkkmCityCardCode;
 }
 
 /// `GET storage-medium/list` — note the `items` key (not `list`).

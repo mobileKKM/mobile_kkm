@@ -31,6 +31,7 @@ abstract final class EkpApiPaths {
 
   // ------------------------------------------------------- storage medium
   static const String storageMediumList = '$apiRoot/storage-medium/list';
+  static const String storageMediumCreate = '$apiRoot/storage-medium/create';
   static const String storageMediumCreateMkkm = '$apiRoot/storage-medium/create-mkkm';
 
   // ---------------------------------------------------------- dictionary

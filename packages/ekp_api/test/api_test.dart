@@ -201,6 +201,15 @@ void main() {
       final req = requestsTo('/account/photo').single;
       expect(req.data, isA<FormData>());
       expect((req.data as FormData).files.single.key, 'photo');
+      expect((req.data as FormData).files.single.value.contentType?.mimeType, 'image/jpeg');
+    });
+
+    test('uploadPhotoBytes sends the given content type', () async {
+      adapter.onPost('/account/photo', [(200, '')]);
+      await client.account.uploadPhotoBytes([1, 2, 3, 4], filename: 'photo.png', contentType: 'image/png');
+      final file = (requestsTo('/account/photo').single.data as FormData).files.single.value;
+      expect(file.contentType?.mimeType, 'image/png');
+      expect(file.filename, 'photo.png');
     });
 
     test('updateUserData serializes a full registered address', () async {
@@ -226,6 +235,31 @@ void main() {
       await client.storageMediums.createMkkm(address);
       final req = requestsTo('/storage-medium/create-mkkm').single;
       expect(bodyOf(req), address.toJson());
+    });
+
+    test('a refused createMkkm keeps the server message, though the reply is read as text', () async {
+      adapter.onPost('/storage-medium/create-mkkm', [
+        (400, {'code': 1, 'message': 'Nieprawidłowy adres'}),
+      ]);
+      final user = UserDataResponse.fromJson(fixture('user_data'));
+      await expectLater(
+        client.storageMediums.createMkkm(user.userData!.registeredAddress!),
+        throwsA(
+          isA<EkpHttpException>()
+              .having((e) => e.message, 'message', 'Nieprawidłowy adres')
+              .having((e) => e.statusCode, 'statusCode', 400)
+              .having((e) => e.codeAsInt, 'code', 1),
+        ),
+      );
+    });
+
+    test('create POSTs the customer code for the mKKM card type', () async {
+      adapter.onPost('/storage-medium/create', [(200, '')]);
+      await client.storageMediums.create(customerCode: '100001', isWithoutPesel: false);
+      // Not the request to `create-mkkm`, which the fragment also matches.
+      final req = requestsTo('/storage-medium/create').single;
+      expect(req.path, endsWith('/storage-medium/create'));
+      expect(bodyOf(req), {'customerCode': '100001', 'cityCardCode': 8, 'universityId': null, 'isWithoutPesel': false});
     });
   });
 

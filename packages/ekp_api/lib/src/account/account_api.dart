@@ -74,14 +74,19 @@ class AccountApi extends EkpApiService {
   }
 
   /// `POST account/photo` — multipart upload of the profile photo
-  /// (form field `photo`, JPEG).
-  Future<void> uploadPhotoBytes(List<int> bytes, {String filename = 'photo.jpg'}) async {
+  /// (form field `photo`). The official client accepts JPEG, PNG and WebP
+  /// up to 5 MB; only a JPEG upload was observed.
+  Future<void> uploadPhotoBytes(
+    List<int> bytes, {
+    String filename = 'photo.jpg',
+    String contentType = 'image/jpeg',
+  }) async {
     return guard(() async {
       final form = FormData();
       form.files.add(
         MapEntry(
           'photo',
-          MultipartFile.fromBytes(bytes, filename: filename, contentType: DioMediaType.parse('image/jpeg')),
+          MultipartFile.fromBytes(bytes, filename: filename, contentType: DioMediaType.parse(contentType)),
         ),
       );
       await dio.post<dynamic>(
