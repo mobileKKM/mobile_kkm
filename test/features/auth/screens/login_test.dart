@@ -7,6 +7,7 @@ import 'package:mobile_kkm/features/auth/screens/register_screen.dart';
 
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';
+import '../../../support/sample_data.dart';
 
 const _loginReply = {
   'token': 'aaa.bbb.ccc',
@@ -94,6 +95,31 @@ void main() {
     final body = adapter.requestTo('/auth/login').data as Map<String, dynamic>;
     expect(body['username'], 'user@example.com');
     expect(body['password'], 'Secret123');
+  });
+
+  testWidgets('the sign-in waits for the user data, then goes where the mKKM card says', (tester) async {
+    final adapter = FakeAdapter()
+      ..reply('POST', '/auth/login', 200, _loginReply)
+      ..reply('GET', '/account/user-data', 200, userDataJson(card: false));
+    final release = adapter.hold('GET', '/account/user-data');
+    final app = await pumpApp(tester, adapter);
+
+    await tester.enterText(field('E-mail'), 'user@example.com');
+    await tester.enterText(field('Password'), 'Secret123');
+    await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    // Signed in, but still here, the button busy.
+    expect(adapter.requestsTo('/account/user-data'), hasLength(1));
+    expect(app.location, '/login');
+    expect(find.text('Signing in…'), findsOneWidget);
+
+    release();
+    await tester.pumpAndSettle();
+    // Straight to the set-up: Home was never shown.
+    expect(app.location, '/card-setup');
+    expect(find.text('Set up your mKKM card'), findsOneWidget);
   });
 
   testWidgets('wrong credentials show a localized error', (tester) async {

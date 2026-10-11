@@ -186,6 +186,11 @@ void main() {
       }
       expect(adapter.requestsTo('/account/user-data'), hasLength(1));
       expect(adapter.requestsTo(_list), hasLength(1));
+
+      // The card set-up holds the app back for the user data, but not for
+      // ever: the tickets are there when it lets go.
+      await tester.pump(const Duration(seconds: 8));
+      await tester.pumpAndSettle();
       expect(find.widgetWithText(TicketCard, 'Network ticket'), findsOneWidget);
     });
 

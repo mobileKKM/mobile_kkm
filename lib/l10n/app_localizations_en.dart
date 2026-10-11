@@ -891,4 +891,169 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debugAztecKeyFailed => 'The relay did not answer with a key.';
+
+  @override
+  String get cardTitle => 'mKKM card';
+
+  @override
+  String get cardSubtitle => 'Mobile Kraków City Card';
+
+  @override
+  String get cardChipCreating => 'Creating…';
+
+  @override
+  String get cardChipActive => 'Active';
+
+  @override
+  String get cardChipDetached => 'Detached';
+
+  @override
+  String get cardSetupTitle => 'Set up your mKKM card';
+
+  @override
+  String cardSetupWelcome(String name) {
+    return 'Hi $name! Mobile tickets are stored on a virtual card, the mKKM. Your account doesn\'t have one yet.';
+  }
+
+  @override
+  String get cardSetupWelcomeAnonymous =>
+      'Mobile tickets are stored on a virtual card, the mKKM. Your account doesn\'t have one yet.';
+
+  @override
+  String get cardSetupBenefitTicketsTitle => 'Buy and keep tickets in the app';
+
+  @override
+  String get cardSetupBenefitTicketsBody => 'Tickets and the 5+1 subscription both need the card.';
+
+  @override
+  String get cardSetupBenefitPhoneTitle => 'Valid on your phone';
+
+  @override
+  String get cardSetupBenefitPhoneBody => 'Show them from the app when an inspector asks.';
+
+  @override
+  String get cardSetupBenefitTimeTitle => 'Takes about a minute';
+
+  @override
+  String get cardSetupBenefitTimeBody => 'Your home address and a photo. It\'s free.';
+
+  @override
+  String get cardSetupCreate => 'Create mKKM card';
+
+  @override
+  String get cardDetachedTitle => 'Add your mKKM card again';
+
+  @override
+  String get cardDetachedHint =>
+      'It was detached from your account on the website. Add it again to keep using the app and your tickets.';
+
+  @override
+  String get cardReattach => 'Add mKKM card';
+
+  @override
+  String get cardReattaching => 'Adding…';
+
+  @override
+  String cardSetupStep(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get cardSetupStepAddress => 'Home address';
+
+  @override
+  String get cardSetupStepPhoto => 'Photo';
+
+  @override
+  String get cardSetupAddressTitle => 'Where do you live?';
+
+  @override
+  String get cardSetupAddressHint => 'Needed for the card. You can change it later in Edit account.';
+
+  @override
+  String get cardSetupContinue => 'Continue';
+
+  @override
+  String get addressStreet => 'Street';
+
+  @override
+  String get addressBuilding => 'Building';
+
+  @override
+  String get addressFlat => 'Flat';
+
+  @override
+  String get addressPostcode => 'Postcode';
+
+  @override
+  String get addressTown => 'Town';
+
+  @override
+  String get addressPostcodeInvalid => 'Use the form 00-000';
+
+  @override
+  String get fieldOptional => 'Optional';
+
+  @override
+  String get cardSetupPhotoTitle => 'Add your photo';
+
+  @override
+  String get cardSetupPhotoHint => 'It\'s used to check that the card is yours.';
+
+  @override
+  String get cardPhotoFormats => 'JPG, PNG or WebP, up to 5 MB';
+
+  @override
+  String get cardPhotoNew => 'New photo';
+
+  @override
+  String get cardPhotoAdd => 'Add photo';
+
+  @override
+  String get cardPhotoChange => 'Change photo';
+
+  @override
+  String get cardPhotoRuleIdTitle => 'Like an ID photo';
+
+  @override
+  String get cardPhotoRuleIdBody => 'Face the camera. Your face fills about two thirds of the picture.';
+
+  @override
+  String get cardPhotoRuleLightTitle => 'Evenly lit, light background';
+
+  @override
+  String get cardPhotoRuleLightBody => 'No strong shadows across your face.';
+
+  @override
+  String get cardPhotoRuleFaceTitle => 'No hat or sunglasses';
+
+  @override
+  String get cardPhotoRuleFaceBody => 'Nothing covering your head or eyes.';
+
+  @override
+  String get cardPhotoTake => 'Take a photo';
+
+  @override
+  String get cardPhotoChoose => 'Choose from gallery';
+
+  @override
+  String get cardPhotoTooLarge => 'The photo is larger than 5 MB. Choose a smaller one.';
+
+  @override
+  String get cardPhotoWrongType => 'Use a JPG, PNG or WebP photo.';
+
+  @override
+  String get cardPhotoUnavailable => 'The photo could not be opened. Try again.';
+
+  @override
+  String get cardSetupSubmit => 'Create card';
+
+  @override
+  String get cardReadyTitle => 'Your mKKM card is ready';
+
+  @override
+  String get cardReadyHint => 'Tickets you buy are stored on it.';
+
+  @override
+  String get goHome => 'Go to Home';
 }

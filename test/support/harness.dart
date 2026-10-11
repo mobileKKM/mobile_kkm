@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:drift/native.dart';
@@ -16,6 +17,7 @@ import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/dictionaries/dictionary_cache.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/core/platform/photo_picker.dart';
 import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
@@ -101,19 +103,35 @@ class InMemoryAztecKeyStore implements AztecKeyStore {
   }
 }
 
+/// A PNG of one pixel.
+final onePixelPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+);
+
+/// Hands over [photo] for the camera and the gallery alike, and notes which
+/// was asked for. Without one, the user backed out.
+class FakePhotoPicker extends PhotoPicker {
+  FakePhotoPicker([this.photo]);
+
+  Uint8List? photo;
+  final sources = <PhotoSource>[];
+
+  @override
+  Future<Uint8List?> pick(PhotoSource source) async {
+    sources.add(source);
+    return photo;
+  }
+}
+
 /// Serves a one-pixel image for any URL and notes what was asked of it.
 class FakePhotoCache implements PhotoCache {
-  static final _pixel = base64Decode(
-    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
-  );
-
   final requested = <String>[];
   int cleared = 0;
 
   @override
   ImageProvider image(String url) {
     requested.add(url);
-    return MemoryImage(_pixel);
+    return MemoryImage(onePixelPng);
   }
 
   @override
@@ -270,6 +288,7 @@ Future<App> pumpApp(
   AppDatabase? database,
   PhotoCache? photoCache,
   LocationService? location,
+  PhotoPicker? photoPicker,
   FakeAdapter? relay,
   AztecKeyStore? aztecKeyStore,
   bool settle = true,
@@ -329,6 +348,7 @@ Future<App> pumpApp(
       photoCacheProvider.overrideWithValue(photoCache ?? FakePhotoCache()),
       mapViewProvider.overrideWithValue(map.build),
       locationServiceProvider.overrideWithValue(location ?? FakeLocationService()),
+      photoPickerProvider.overrideWithValue(photoPicker ?? FakePhotoPicker()),
       screenSecurityProvider.overrideWithValue(screen),
       scanDisplayProvider.overrideWithValue(scanDisplay),
       appVersionProvider.overrideWith((ref) => '1.2.3 (45)'),

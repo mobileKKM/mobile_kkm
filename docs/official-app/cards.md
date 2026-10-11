@@ -33,8 +33,14 @@ in a circle beside three lines: the name, "Numer klienta" with the customer code
 mieszkańca" with "Tak" in blue or "Nie" in red.
 
 **Reattaching** posts to `storage-medium/create` with the existing customer code and the mKKM card
-type (code 8). Success: dialog "Karta mKKM została podłączona do konta", and closing it reloads the
-screen. Failure: the server's message.
+type (code 8): `{customerCode, cityCardCode: 8, universityId: null, isWithoutPesel}`, the customer code
+as the string from `mkkmData`, `isWithoutPesel` true for an account with no PESEL number. The server
+answers 200 with an empty body. Success: dialog "Karta mKKM została podłączona do konta", and closing
+it reloads the screen. Failure: the server's message.
+
+While detached, `account/user-data` keeps `mkkmData` with its customer code and `detached: true`,
+`storage-medium/list` is empty and `mkkm/tickets/list` answers with an empty list. In the one
+observed reattachment the next `user-data`, under two seconds later, had `detached: false`.
 
 ## Creating the card (`CreateMkkmCard`)
 
@@ -74,8 +80,11 @@ sequenceDiagram
     end
 ```
 
-The card is created asynchronously on the server, which is why the app polls. While it does, the
-"My card" screen shows the spinner. Closing the success dialog reloads the data and goes back.
+The card is created asynchronously on the server, which is why the app polls
+(`fetchMkkmCardByInterval`): until `mkkmData` is there and the list has a medium with `cityCardCode`
+8, with no limit. Nothing waits for it: the dialog shows at once, and meanwhile the "My card" screen
+shows the spinner. Closing the success dialog reloads the data and goes back. In the one observed
+creation the first check, 0.3 s after the request, already had the card.
 
 ## Tickets on the card (`CardTickets`)
 

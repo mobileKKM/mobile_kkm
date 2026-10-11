@@ -71,8 +71,12 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
+		<key>NSCameraUsageDescription</key>
+		<string>The camera is used to take the photo for your mKKM card.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Your location is used to show your position on the map. It does not leave your device.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Your photos are used to choose the photo for your mKKM card.</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 	</dict>

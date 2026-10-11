@@ -29,8 +29,8 @@ class HomeScreen extends ConsumerWidget {
     final firstName = user?.userData?.firstName;
     // As in the official client: 5+1 is offered to Karta Krakowska holders and
     // to anyone with a running subscription. The client also requires an
-    // attached mKKM card; here that will be settled by the onboarding, before
-    // the user gets this far. Unknown counts as no, so the row does not appear
+    // attached mKKM card; here the card set-up settles that before the user
+    // gets this far. Unknown counts as no, so the row does not appear
     // and vanish again while the data loads.
     final mkkm = user?.mkkmData;
     final has5p1Access = mkkm?.hasInhabitantPrivilege == true || mkkm?.hasActiveSubscription == true;

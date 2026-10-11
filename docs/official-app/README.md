@@ -182,7 +182,8 @@ As of October 2026. "Placeholder" means the route exists and shows `ComingSoonSc
 | Line change | Not present | |
 | Purchase, payment, pending payment | Placeholder (`/buy`) | |
 | Karta Krakowska status and control code | Placeholder (`/karta-krakowska`) | |
-| mKKM card: create, reattach, card tickets | Not present | An attached card is assumed; onboarding is meant to cover the rest. |
+| mKKM card: create, reattach | A gate before the signed-in area (`/card-setup`) | Two steps, address then photo; the street is free text. No "My card" screen: the signed-in screens assume an attached card. |
+| Tickets stored on the card | Not present | |
 | 5+1 subscription | Placeholder (`/subscription`) | |
 | Profile, change password, delete account | Placeholder | |
 | Contact, regulations, invoices | Not present | |

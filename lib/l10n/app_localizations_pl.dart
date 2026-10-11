@@ -910,4 +910,169 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get debugAztecKeyFailed => 'Serwer pośredniczący nie zwrócił klucza.';
+
+  @override
+  String get cardTitle => 'Karta mKKM';
+
+  @override
+  String get cardSubtitle => 'Mobilna Krakowska Karta Miejska';
+
+  @override
+  String get cardChipCreating => 'Tworzymy…';
+
+  @override
+  String get cardChipActive => 'Aktywna';
+
+  @override
+  String get cardChipDetached => 'Odłączona';
+
+  @override
+  String get cardSetupTitle => 'Utwórz kartę mKKM';
+
+  @override
+  String cardSetupWelcome(String name) {
+    return 'Cześć, $name! Bilety mobilne zapisujemy na wirtualnej karcie mKKM. Twoje konto jeszcze jej nie ma.';
+  }
+
+  @override
+  String get cardSetupWelcomeAnonymous =>
+      'Bilety mobilne zapisujemy na wirtualnej karcie mKKM. Twoje konto jeszcze jej nie ma.';
+
+  @override
+  String get cardSetupBenefitTicketsTitle => 'Kupuj i przechowuj bilety w aplikacji';
+
+  @override
+  String get cardSetupBenefitTicketsBody => 'Bilety i subskrypcja 5+1 wymagają karty.';
+
+  @override
+  String get cardSetupBenefitPhoneTitle => 'Ważne na Twoim telefonie';
+
+  @override
+  String get cardSetupBenefitPhoneBody => 'Podczas kontroli pokażesz je w aplikacji.';
+
+  @override
+  String get cardSetupBenefitTimeTitle => 'Zajmie około minuty';
+
+  @override
+  String get cardSetupBenefitTimeBody => 'Adres zamieszkania i zdjęcie. Bezpłatnie.';
+
+  @override
+  String get cardSetupCreate => 'Utwórz kartę mKKM';
+
+  @override
+  String get cardDetachedTitle => 'Dodaj ponownie kartę mKKM';
+
+  @override
+  String get cardDetachedHint =>
+      'Została odłączona od konta na stronie. Dodaj ją ponownie, aby dalej korzystać z aplikacji i biletów.';
+
+  @override
+  String get cardReattach => 'Dodaj kartę mKKM';
+
+  @override
+  String get cardReattaching => 'Dodajemy…';
+
+  @override
+  String cardSetupStep(int step, int total) {
+    return 'Krok $step z $total';
+  }
+
+  @override
+  String get cardSetupStepAddress => 'Adres zamieszkania';
+
+  @override
+  String get cardSetupStepPhoto => 'Zdjęcie';
+
+  @override
+  String get cardSetupAddressTitle => 'Gdzie mieszkasz?';
+
+  @override
+  String get cardSetupAddressHint => 'Potrzebny do karty. Później zmienisz go w Edytuj konto.';
+
+  @override
+  String get cardSetupContinue => 'Dalej';
+
+  @override
+  String get addressStreet => 'Ulica';
+
+  @override
+  String get addressBuilding => 'Numer budynku';
+
+  @override
+  String get addressFlat => 'Numer lokalu';
+
+  @override
+  String get addressPostcode => 'Kod pocztowy';
+
+  @override
+  String get addressTown => 'Miejscowość';
+
+  @override
+  String get addressPostcodeInvalid => 'Podaj w formacie 00-000';
+
+  @override
+  String get fieldOptional => 'Opcjonalnie';
+
+  @override
+  String get cardSetupPhotoTitle => 'Dodaj zdjęcie';
+
+  @override
+  String get cardSetupPhotoHint => 'Służy do potwierdzenia, że karta należy do Ciebie.';
+
+  @override
+  String get cardPhotoFormats => 'JPG, PNG lub WebP, do 5 MB';
+
+  @override
+  String get cardPhotoNew => 'Nowe zdjęcie';
+
+  @override
+  String get cardPhotoAdd => 'Dodaj zdjęcie';
+
+  @override
+  String get cardPhotoChange => 'Zmień zdjęcie';
+
+  @override
+  String get cardPhotoRuleIdTitle => 'Jak do dowodu';
+
+  @override
+  String get cardPhotoRuleIdBody => 'Patrz w obiektyw. Twarz zajmuje około dwóch trzecich zdjęcia.';
+
+  @override
+  String get cardPhotoRuleLightTitle => 'Równe światło, jasne tło';
+
+  @override
+  String get cardPhotoRuleLightBody => 'Bez mocnych cieni na twarzy.';
+
+  @override
+  String get cardPhotoRuleFaceTitle => 'Bez nakrycia głowy i okularów przeciwsłonecznych';
+
+  @override
+  String get cardPhotoRuleFaceBody => 'Nic nie zasłania głowy ani oczu.';
+
+  @override
+  String get cardPhotoTake => 'Zrób zdjęcie';
+
+  @override
+  String get cardPhotoChoose => 'Wybierz z galerii';
+
+  @override
+  String get cardPhotoTooLarge => 'Zdjęcie jest większe niż 5 MB. Wybierz mniejsze.';
+
+  @override
+  String get cardPhotoWrongType => 'Wybierz zdjęcie w formacie JPG, PNG lub WebP.';
+
+  @override
+  String get cardPhotoUnavailable => 'Nie udało się otworzyć zdjęcia. Spróbuj ponownie.';
+
+  @override
+  String get cardSetupSubmit => 'Utwórz kartę';
+
+  @override
+  String get cardReadyTitle => 'Karta mKKM jest gotowa';
+
+  @override
+  String get cardReadyHint => 'Kupione bilety zapiszemy na tej karcie.';
+
+  @override
+  String get goHome => 'Przejdź do Start';
 }

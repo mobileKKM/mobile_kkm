@@ -6,12 +6,17 @@ import 'package:mobile_kkm/core/providers/platform_providers.dart';
 
 /// The user's photo, or their initials until (or unless) it loads.
 class UserAvatar extends ConsumerWidget {
-  const UserAvatar({super.key, required this.user, this.size = 64});
+  const UserAvatar({super.key, required this.user, this.size = 64, this.background, this.foreground});
 
   final UserData? user;
 
   /// The circle's diameter.
   final double size;
+
+  /// primaryContainer with primaryFixed on it unless given, as for an avatar
+  /// that itself lies on the brand colour.
+  final Color? background;
+  final Color? foreground;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,9 +31,9 @@ class UserAvatar extends ConsumerWidget {
 
     return CircleAvatar(
       radius: size / 2,
-      backgroundColor: scheme.primaryContainer,
+      backgroundColor: background ?? scheme.primaryContainer,
       // The fixed role: primary would vanish on the brand colour.
-      foregroundColor: scheme.primaryFixed,
+      foregroundColor: foreground ?? scheme.primaryFixed,
       foregroundImage: photo,
       // Unreachable or undecodable: the initials underneath stay visible.
       onForegroundImageError: photo == null ? null : (_, _) {},
@@ -37,7 +42,7 @@ class UserAvatar extends ConsumerWidget {
           : Text(
               initials,
               style: theme.textTheme.titleLarge?.copyWith(
-                color: scheme.primaryFixed,
+                color: foreground ?? scheme.primaryFixed,
                 fontSize: (size * 0.36).roundToDouble(),
                 height: 1,
               ),

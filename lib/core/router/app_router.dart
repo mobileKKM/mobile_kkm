@@ -13,6 +13,11 @@ import 'package:mobile_kkm/features/auth/screens/inbox_screen.dart';
 import 'package:mobile_kkm/features/auth/screens/login_screen.dart';
 import 'package:mobile_kkm/features/auth/screens/register_screen.dart';
 import 'package:mobile_kkm/features/auth/screens/reset_password_screen.dart';
+import 'package:mobile_kkm/features/card_setup/models/card_gate.dart';
+import 'package:mobile_kkm/features/card_setup/providers/card_gate_provider.dart';
+import 'package:mobile_kkm/features/card_setup/screens/card_address_screen.dart';
+import 'package:mobile_kkm/features/card_setup/screens/card_photo_screen.dart';
+import 'package:mobile_kkm/features/card_setup/screens/card_setup_screen.dart';
 import 'package:mobile_kkm/features/debug/screens/debug_screen.dart';
 import 'package:mobile_kkm/features/home/screens/home_screen.dart';
 import 'package:mobile_kkm/features/map/screens/map_screen.dart';
@@ -32,6 +37,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   // Also starts the start-up check.
   ref.listen(appStartupProvider, (_, _) => refresh.value++);
   ref.listen(appStatusProvider.select((status) => status.mode == AppMode.outdated), (_, _) => refresh.value++);
+  ref.listen(cardGateProvider, (_, _) => refresh.value++);
 
   final router = GoRouter(
     initialLocation: Routes.splash,
@@ -44,11 +50,24 @@ final routerProvider = Provider<GoRouter>((ref) {
         state.uri,
         started ? ref.read(authControllerProvider).status : AuthStatus.unknown,
         outdated: ref.read(appStatusProvider).mode == AppMode.outdated,
+        card: ref.read(cardGateProvider),
       );
     },
     routes: [
       GoRoute(path: Routes.splash, builder: (context, state) => const SplashScreen()),
       GoRoute(path: Routes.updateRequired, builder: (context, state) => const UpdateRequiredScreen()),
+      // In the place of the whole signed-in area until the account has a card.
+      GoRoute(
+        path: Routes.cardSetup,
+        builder: (context, state) => const CardSetupScreen(),
+        routes: [
+          GoRoute(
+            path: 'address',
+            builder: (context, state) => const CardAddressScreen(),
+            routes: [GoRoute(path: 'photo', builder: (context, state) => const CardPhotoScreen())],
+          ),
+        ],
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) => MainShell(navigationShell: navigationShell),
         branches: [
@@ -131,8 +150,12 @@ GoRoute _comingSoon(String path, String Function(AppLocalizations l10n) title) =
 ///
 /// [outdated]: the server no longer serves this client. Then there is one
 /// screen, in every auth state and for every link.
+///
+/// [card]: whether the signed-in user has an mKKM card. Until they do, the
+/// signed-in area is the card set-up alone; until that is known, nothing
+/// moves.
 @visibleForTesting
-String? redirectFor(Uri uri, AuthStatus status, {bool outdated = false}) {
+String? redirectFor(Uri uri, AuthStatus status, {bool outdated = false, CardGate card = CardGate.open}) {
   if (outdated) {
     return uri.path == Routes.updateRequired ? null : Routes.updateRequired;
   }
@@ -155,7 +178,14 @@ String? redirectFor(Uri uri, AuthStatus status, {bool outdated = false}) {
 
   return switch (status) {
     AuthStatus.unknown => path == Routes.splash ? null : Routes.splash,
-    AuthStatus.authenticated => Routes.isSignedIn(path) ? null : Routes.home,
+    AuthStatus.authenticated => switch (card) {
+      CardGate.open => Routes.isSignedIn(path) ? null : Routes.home,
+      CardGate.setUp => Routes.isCardSetup(path) ? null : Routes.cardSetup,
+      CardGate.detached || CardGate.settling => path == Routes.cardSetup ? null : Routes.cardSetup,
+      // The first user data is on its way. Whatever led here waits for it:
+      // the sign-in with its button busy, a start with a session the splash.
+      CardGate.checking => path == Routes.splash || Routes.isPublic(path) ? null : Routes.splash,
+    },
     AuthStatus.unauthenticated => Routes.isPublic(path) ? null : Routes.login,
   };
 }

@@ -2,6 +2,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
+import 'package:mobile_kkm/core/widgets/perforation.dart';
 import 'package:mobile_kkm/core/widgets/status_chip.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
 
@@ -423,7 +424,7 @@ class TicketCard extends StatelessWidget {
               if (stub != null) ...[
                 // The card always lies on the surface, so the notches are
                 // drawn in its colour.
-                _Perforation(line: palette.medium.withValues(alpha: 0.55), notch: scheme.surface),
+                Perforation(line: palette.medium.withValues(alpha: 0.55), notch: scheme.surface),
                 Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 16), child: stub),
               ] else
                 const SizedBox(height: 4),
@@ -433,46 +434,4 @@ class TicketCard extends StatelessWidget {
       ),
     );
   }
-}
-
-/// The tear-off line between a ticket and its stub: a notch at either edge
-/// and a dashed line between them.
-class _Perforation extends StatelessWidget {
-  const _Perforation({required this.line, required this.notch});
-
-  final Color line;
-  final Color notch;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    height: 24,
-    child: CustomPaint(
-      painter: _PerforationPainter(line: line, notch: notch),
-    ),
-  );
-}
-
-class _PerforationPainter extends CustomPainter {
-  const _PerforationPainter({required this.line, required this.notch});
-
-  final Color line;
-  final Color notch;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final y = size.height / 2;
-    final fill = Paint()..color = notch;
-    canvas
-      ..drawCircle(Offset(0, y), 12, fill)
-      ..drawCircle(Offset(size.width, y), 12, fill);
-    final stroke = Paint()
-      ..color = line
-      ..strokeWidth = 2;
-    for (var x = 22.0; x < size.width - 22; x += 10) {
-      canvas.drawLine(Offset(x, y), Offset(x + 6 > size.width - 22 ? size.width - 22 : x + 6, y), stroke);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_PerforationPainter old) => old.line != line || old.notch != notch;
 }

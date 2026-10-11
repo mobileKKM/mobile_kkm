@@ -1621,6 +1621,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The relay did not answer with a key.'**
   String get debugAztecKeyFailed;
+
+  /// No description provided for @cardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'mKKM card'**
+  String get cardTitle;
+
+  /// No description provided for @cardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Kraków City Card'**
+  String get cardSubtitle;
+
+  /// No description provided for @cardChipCreating.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating…'**
+  String get cardChipCreating;
+
+  /// No description provided for @cardChipActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get cardChipActive;
+
+  /// No description provided for @cardChipDetached.
+  ///
+  /// In en, this message translates to:
+  /// **'Detached'**
+  String get cardChipDetached;
+
+  /// No description provided for @cardSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your mKKM card'**
+  String get cardSetupTitle;
+
+  /// No description provided for @cardSetupWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi {name}! Mobile tickets are stored on a virtual card, the mKKM. Your account doesn\'t have one yet.'**
+  String cardSetupWelcome(String name);
+
+  /// No description provided for @cardSetupWelcomeAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile tickets are stored on a virtual card, the mKKM. Your account doesn\'t have one yet.'**
+  String get cardSetupWelcomeAnonymous;
+
+  /// No description provided for @cardSetupBenefitTicketsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy and keep tickets in the app'**
+  String get cardSetupBenefitTicketsTitle;
+
+  /// No description provided for @cardSetupBenefitTicketsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets and the 5+1 subscription both need the card.'**
+  String get cardSetupBenefitTicketsBody;
+
+  /// No description provided for @cardSetupBenefitPhoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid on your phone'**
+  String get cardSetupBenefitPhoneTitle;
+
+  /// No description provided for @cardSetupBenefitPhoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Show them from the app when an inspector asks.'**
+  String get cardSetupBenefitPhoneBody;
+
+  /// No description provided for @cardSetupBenefitTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Takes about a minute'**
+  String get cardSetupBenefitTimeTitle;
+
+  /// No description provided for @cardSetupBenefitTimeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your home address and a photo. It\'s free.'**
+  String get cardSetupBenefitTimeBody;
+
+  /// No description provided for @cardSetupCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create mKKM card'**
+  String get cardSetupCreate;
+
+  /// No description provided for @cardDetachedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your mKKM card again'**
+  String get cardDetachedTitle;
+
+  /// No description provided for @cardDetachedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'It was detached from your account on the website. Add it again to keep using the app and your tickets.'**
+  String get cardDetachedHint;
+
+  /// No description provided for @cardReattach.
+  ///
+  /// In en, this message translates to:
+  /// **'Add mKKM card'**
+  String get cardReattach;
+
+  /// No description provided for @cardReattaching.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding…'**
+  String get cardReattaching;
+
+  /// No description provided for @cardSetupStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String cardSetupStep(int step, int total);
+
+  /// No description provided for @cardSetupStepAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Home address'**
+  String get cardSetupStepAddress;
+
+  /// No description provided for @cardSetupStepPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get cardSetupStepPhoto;
+
+  /// No description provided for @cardSetupAddressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where do you live?'**
+  String get cardSetupAddressTitle;
+
+  /// No description provided for @cardSetupAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Needed for the card. You can change it later in Edit account.'**
+  String get cardSetupAddressHint;
+
+  /// No description provided for @cardSetupContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get cardSetupContinue;
+
+  /// No description provided for @addressStreet.
+  ///
+  /// In en, this message translates to:
+  /// **'Street'**
+  String get addressStreet;
+
+  /// No description provided for @addressBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Building'**
+  String get addressBuilding;
+
+  /// No description provided for @addressFlat.
+  ///
+  /// In en, this message translates to:
+  /// **'Flat'**
+  String get addressFlat;
+
+  /// No description provided for @addressPostcode.
+  ///
+  /// In en, this message translates to:
+  /// **'Postcode'**
+  String get addressPostcode;
+
+  /// No description provided for @addressTown.
+  ///
+  /// In en, this message translates to:
+  /// **'Town'**
+  String get addressTown;
+
+  /// No description provided for @addressPostcodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the form 00-000'**
+  String get addressPostcodeInvalid;
+
+  /// No description provided for @fieldOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get fieldOptional;
+
+  /// No description provided for @cardSetupPhotoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your photo'**
+  String get cardSetupPhotoTitle;
+
+  /// No description provided for @cardSetupPhotoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s used to check that the card is yours.'**
+  String get cardSetupPhotoHint;
+
+  /// No description provided for @cardPhotoFormats.
+  ///
+  /// In en, this message translates to:
+  /// **'JPG, PNG or WebP, up to 5 MB'**
+  String get cardPhotoFormats;
+
+  /// No description provided for @cardPhotoNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New photo'**
+  String get cardPhotoNew;
+
+  /// No description provided for @cardPhotoAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get cardPhotoAdd;
+
+  /// No description provided for @cardPhotoChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get cardPhotoChange;
+
+  /// No description provided for @cardPhotoRuleIdTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Like an ID photo'**
+  String get cardPhotoRuleIdTitle;
+
+  /// No description provided for @cardPhotoRuleIdBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Face the camera. Your face fills about two thirds of the picture.'**
+  String get cardPhotoRuleIdBody;
+
+  /// No description provided for @cardPhotoRuleLightTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Evenly lit, light background'**
+  String get cardPhotoRuleLightTitle;
+
+  /// No description provided for @cardPhotoRuleLightBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No strong shadows across your face.'**
+  String get cardPhotoRuleLightBody;
+
+  /// No description provided for @cardPhotoRuleFaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No hat or sunglasses'**
+  String get cardPhotoRuleFaceTitle;
+
+  /// No description provided for @cardPhotoRuleFaceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing covering your head or eyes.'**
+  String get cardPhotoRuleFaceBody;
+
+  /// No description provided for @cardPhotoTake.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get cardPhotoTake;
+
+  /// No description provided for @cardPhotoChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get cardPhotoChoose;
+
+  /// No description provided for @cardPhotoTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo is larger than 5 MB. Choose a smaller one.'**
+  String get cardPhotoTooLarge;
+
+  /// No description provided for @cardPhotoWrongType.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a JPG, PNG or WebP photo.'**
+  String get cardPhotoWrongType;
+
+  /// No description provided for @cardPhotoUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo could not be opened. Try again.'**
+  String get cardPhotoUnavailable;
+
+  /// No description provided for @cardSetupSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Create card'**
+  String get cardSetupSubmit;
+
+  /// No description provided for @cardReadyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mKKM card is ready'**
+  String get cardReadyTitle;
+
+  /// No description provided for @cardReadyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets you buy are stored on it.'**
+  String get cardReadyHint;
+
+  /// No description provided for @goHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Home'**
+  String get goHome;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

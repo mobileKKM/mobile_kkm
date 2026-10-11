@@ -85,19 +85,40 @@ Map<String, dynamic> ticketsReply(List<Map<String, dynamic>> tickets) => {
   'message': null,
 };
 
-Map<String, dynamic> userDataJson({bool? resident = true, bool? activeSubscription, String? photoUrl}) => {
+/// [card]: false for an account that has no mKKM card yet. [detached]: the
+/// card was taken off the account on the website.
+Map<String, dynamic> userDataJson({
+  bool? resident = true,
+  bool? activeSubscription,
+  String? photoUrl,
+  bool card = true,
+  bool detached = false,
+  Map<String, dynamic>? address,
+}) => {
   'userData': {
     'firstName': 'Jan',
     'lastName': 'Testowy',
     'email': 'jan@example.com',
     'birthDate': '2000-01-03T00:00:00',
     'photoUrl': photoUrl,
+    'registeredAddress': ?address,
   },
-  'mkkmData': {
-    'customerCode': '100001',
-    'hasInhabitantPrivilege': resident,
-    'hasActiveSubscription': ?activeSubscription,
-  },
+  'mkkmData': card
+      ? {
+          'customerCode': '100001',
+          'hasInhabitantPrivilege': resident,
+          'hasActiveSubscription': ?activeSubscription,
+          'detached': detached,
+        }
+      : null,
+};
+
+const addressJson = {
+  'city': 'Kraków',
+  'postalCode': '00-001',
+  'street': 'ul. Testowa',
+  'buildingNumber': '1',
+  'apartmentNumber': '41',
 };
 
 const appConfigJson = {

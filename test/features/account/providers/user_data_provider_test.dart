@@ -14,7 +14,7 @@ Map<String, dynamic> _userData(String firstName) => {
     'email': 'jan@example.com',
     'birthDate': '2000-01-03T00:00:00',
   },
-  'mkkmData': null,
+  'mkkmData': {'customerCode': '100001'},
 };
 
 Iterable<Object> _userDataRequests(FakeAdapter adapter) =>

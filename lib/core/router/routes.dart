@@ -13,6 +13,12 @@ abstract final class Routes {
   static const buy = '/buy';
   static const subscription = '/subscription';
 
+  /// The mKKM card set-up: all a signed-in user gets until the account has
+  /// an attached card. Its two steps lie on top of each other.
+  static const cardSetup = '/card-setup';
+  static const cardSetupAddress = '$cardSetup/address';
+  static const cardSetupPhoto = '$cardSetupAddress/photo';
+
   /// The hidden debug menu, behind the version line on Account and the logo
   /// on the login screen. Open signed in or out.
   static const debug = '/debug';
@@ -59,6 +65,9 @@ abstract final class Routes {
   /// Screens available without a session.
   static bool isPublic(String path) =>
       path == login || path == register || path == registerSent || path == forgotPassword || path == forgotPasswordSent;
+
+  /// The card set-up and its steps.
+  static bool isCardSetup(String path) => path == cardSetup || path.startsWith('$cardSetup/');
 
   /// Screens of the signed-in area.
   static bool isSignedIn(String path) =>

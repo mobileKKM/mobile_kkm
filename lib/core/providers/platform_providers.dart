@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/core/platform/photo_picker.dart';
 import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/platform/url_opener.dart';
@@ -56,3 +57,7 @@ final appVersionProvider = FutureProvider<String>((ref) async {
 /// The profile photo, from the network and kept on disk. A provider so tests
 /// need neither.
 final photoCacheProvider = Provider<PhotoCache>((ref) => const NetworkPhotoCache());
+
+/// The camera and the gallery, for the photo on the mKKM card. A provider so
+/// tests can hand over a picture of their own.
+final photoPickerProvider = Provider<PhotoPicker>((ref) => const PhotoPicker());
