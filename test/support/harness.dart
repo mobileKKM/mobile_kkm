@@ -194,8 +194,23 @@ final signedInSession = AuthSession(
   expires: DateTime.utc(2100),
 );
 
+/// What the device calls itself in the tests.
+const testHardwareName = 'Test Phone';
+
+/// One identity the debug menu stored.
+typedef SavedIdentity = ({String deviceId, String? deviceName});
+
 class App {
-  App(this.client, this.router, this.database, this.map, this.screen, this.scanDisplay, this.container);
+  App(
+    this.client,
+    this.router,
+    this.database,
+    this.map,
+    this.screen,
+    this.scanDisplay,
+    this.savedIdentities,
+    this.container,
+  );
 
   /// The path of the screen on top.
   String get location => router.state.uri.path;
@@ -206,6 +221,9 @@ class App {
   final FakeMapView map;
   final FakeScreenSecurity screen;
   final FakeScanDisplay scanDisplay;
+
+  /// Every identity the debug menu stored, in order.
+  final List<SavedIdentity> savedIdentities;
 
   /// For providers that no screen shows.
   final ProviderContainer container;
@@ -249,9 +267,19 @@ Future<App> pumpApp(
   final map = FakeMapView();
   final screen = FakeScreenSecurity();
   final scanDisplay = FakeScanDisplay();
+  final savedIdentities = <SavedIdentity>[];
   final container = ProviderContainer(
     overrides: [
       ekpClientProvider.overrideWithValue(client),
+      // Only the debug menu reads it here: the client above is fixed.
+      deviceIdentityProvider.overrideWith(
+        () => DeviceIdentityController(
+          client.device,
+          hardwareName: testHardwareName,
+          save: ({required deviceId, required deviceName}) async =>
+              savedIdentities.add((deviceId: deviceId, deviceName: deviceName)),
+        ),
+      ),
       linkSettingsProvider.overrideWithValue(linkSettings ?? FakeLinkSettings()),
       userDataCacheProvider.overrideWithValue(userDataCache ?? InMemoryUserDataCache()),
       appDatabaseProvider.overrideWithValue(db),
@@ -282,7 +310,7 @@ Future<App> pumpApp(
     await tester.pumpAndSettle();
   }
 
-  return App(client, container.read(routerProvider), db, map, screen, scanDisplay, container);
+  return App(client, container.read(routerProvider), db, map, screen, scanDisplay, savedIdentities, container);
 }
 
 /// Scrolls [finder] into view, then taps it.

@@ -843,4 +843,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logout => 'Sign out';
+
+  @override
+  String get debugTitle => 'Debug menu';
+
+  @override
+  String get debugIdentityHelp =>
+      'Sent with every request. Saving reconnects the app at once. The session is kept, but the server may reject it under another device ID.';
+
+  @override
+  String get debugDeviceId => 'Device ID';
+
+  @override
+  String debugDeviceIdInvalid(int length) {
+    return 'Must be $length characters';
+  }
+
+  @override
+  String get debugGenerate => 'Generate';
+
+  @override
+  String get debugDeviceName => 'Device name';
+
+  @override
+  String get debugDeviceNameHint => 'Leave empty for this device\'s own name';
+
+  @override
+  String get debugSave => 'Save';
+
+  @override
+  String get debugScreenSecurity => 'Screen security';
+
+  @override
+  String get debugScreenSecurityHint =>
+      'Keeps the ticket code out of screenshots and recordings. Back on when the app is started again.';
 }

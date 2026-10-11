@@ -60,3 +60,15 @@ class ScreenSecurity {
     }
   }
 }
+
+/// Protects nothing and reports no recording: in [ScreenSecurity]'s place
+/// while the debug menu has the protection switched off.
+class NoScreenSecurity extends ScreenSecurity {
+  const NoScreenSecurity();
+
+  @override
+  Future<void> setSecure(bool secure) async {}
+
+  @override
+  Stream<bool> get captured => const Stream.empty();
+}

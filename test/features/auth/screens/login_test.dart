@@ -27,6 +27,27 @@ void main() {
     expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
   });
 
+  testWidgets('eleven taps on the logo open the debug menu without a session', (tester) async {
+    final app = await pumpApp(tester, FakeAdapter());
+
+    for (var tap = 0; tap < 10; tap++) {
+      await tester.tap(find.text('mobileKKM'));
+      // Past the double-tap window, so each one counts as a tap of its own.
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+    expect(app.location, '/login');
+
+    await tester.tap(find.text('mobileKKM'));
+    await tester.pumpAndSettle();
+    expect(app.location, '/debug');
+    expect(field('Device ID'), findsOneWidget);
+
+    // And back to where it was opened from.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(app.location, '/login');
+  });
+
   testWidgets('starts on home when a session is stored', (tester) async {
     await pumpApp(tester, FakeAdapter(), session: signedInSession);
     expect(find.byType(NavigationBar), findsOneWidget);

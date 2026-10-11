@@ -270,5 +270,15 @@
   "logoutConfirmBody": "Bilety przypisane do tego urządzenia pozostaną dostępne po ponownym zalogowaniu.",
   "logoutConfirmAction": "Wyloguj",
   "cancel": "Anuluj",
-  "logout": "Wyloguj się"
+  "logout": "Wyloguj się",
+  "debugTitle": "Menu debugowania",
+  "debugIdentityHelp": "Wysyłane z każdym żądaniem. Zapisanie od razu łączy aplikację ponownie. Sesja zostaje, ale serwer może ją odrzucić przy innym identyfikatorze urządzenia.",
+  "debugDeviceId": "Identyfikator urządzenia",
+  "debugDeviceIdInvalid": "Wymagane znaki: {length}",
+  "debugGenerate": "Wygeneruj",
+  "debugDeviceName": "Nazwa urządzenia",
+  "debugDeviceNameHint": "Zostaw puste, aby użyć nazwy tego urządzenia",
+  "debugSave": "Zapisz",
+  "debugScreenSecurity": "Ochrona ekranu",
+  "debugScreenSecurityHint": "Chroni kod biletu przed zrzutami ekranu i nagraniami. Włącza się ponownie po ponownym uruchomieniu aplikacji."
 }

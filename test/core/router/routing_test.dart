@@ -30,6 +30,12 @@ void main() {
       expect(go('/update-required', AuthStatus.authenticated), '/home');
     });
 
+    test('the debug menu is open signed in and out, once the app has started', () {
+      expect(go('/debug', AuthStatus.unknown), '/');
+      expect(go('/debug', AuthStatus.unauthenticated), isNull);
+      expect(go('/debug', AuthStatus.authenticated), isNull);
+    });
+
     test('unknown auth state waits on the splash', () {
       expect(go('/', AuthStatus.unknown), isNull);
       expect(go('/login', AuthStatus.unknown), '/');

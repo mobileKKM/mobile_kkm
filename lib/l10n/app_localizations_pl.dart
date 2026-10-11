@@ -862,4 +862,38 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get logout => 'Wyloguj się';
+
+  @override
+  String get debugTitle => 'Menu debugowania';
+
+  @override
+  String get debugIdentityHelp =>
+      'Wysyłane z każdym żądaniem. Zapisanie od razu łączy aplikację ponownie. Sesja zostaje, ale serwer może ją odrzucić przy innym identyfikatorze urządzenia.';
+
+  @override
+  String get debugDeviceId => 'Identyfikator urządzenia';
+
+  @override
+  String debugDeviceIdInvalid(int length) {
+    return 'Wymagane znaki: $length';
+  }
+
+  @override
+  String get debugGenerate => 'Wygeneruj';
+
+  @override
+  String get debugDeviceName => 'Nazwa urządzenia';
+
+  @override
+  String get debugDeviceNameHint => 'Zostaw puste, aby użyć nazwy tego urządzenia';
+
+  @override
+  String get debugSave => 'Zapisz';
+
+  @override
+  String get debugScreenSecurity => 'Ochrona ekranu';
+
+  @override
+  String get debugScreenSecurityHint =>
+      'Chroni kod biletu przed zrzutami ekranu i nagraniami. Włącza się ponownie po ponownym uruchomieniu aplikacji.';
 }

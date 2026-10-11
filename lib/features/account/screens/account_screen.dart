@@ -17,6 +17,7 @@ import 'package:mobile_kkm/features/account/constants/contacts.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/account/widgets/link_sheet.dart';
 import 'package:mobile_kkm/features/account/widgets/user_avatar.dart';
+import 'package:mobile_kkm/features/debug/widgets/debug_menu_trigger.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// Who is signed in, and everything about the account and the app itself.
@@ -192,16 +193,18 @@ class AccountScreen extends ConsumerWidget {
                 label: Text(l10n.logout),
               ),
               if (version != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    // The app's own version, and the official client's that it speaks to the server as.
-                    l10n.appVersion(version, EkpDefaults.clientVersion),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: 13,
-                      height: 18 / 13,
-                      color: scheme.onSurfaceVariant,
+                DebugMenuTrigger(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      // The app's own version, and the official client's that it speaks to the server as.
+                      l10n.appVersion(version, EkpDefaults.clientVersion),
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontSize: 13,
+                        height: 18 / 13,
+                        color: scheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 ),

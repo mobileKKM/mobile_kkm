@@ -14,9 +14,23 @@ final linkSettingsProvider = Provider<LinkSettings>((ref) => const LinkSettings(
 /// neither.
 final locationServiceProvider = Provider<LocationService>((ref) => const LocationService());
 
+/// Whether the ticket code is protected at all. Only the debug menu turns it
+/// off, and only until the app is closed: it is not stored.
+class ScreenSecurityEnabled extends Notifier<bool> {
+  @override
+  bool build() => true;
+
+  void set(bool enabled) => state = enabled;
+}
+
+final screenSecurityEnabledProvider = NotifierProvider<ScreenSecurityEnabled, bool>(ScreenSecurityEnabled.new);
+
 /// Screenshot and recording protection for the ticket code. A provider so
-/// tests can see it switched on and off.
-final screenSecurityProvider = Provider<ScreenSecurity>((ref) => const ScreenSecurity());
+/// tests can see it switched on and off, and so the debug menu can put one
+/// that does nothing in its place.
+final screenSecurityProvider = Provider<ScreenSecurity>(
+  (ref) => ref.watch(screenSecurityEnabledProvider) ? const ScreenSecurity() : const NoScreenSecurity(),
+);
 
 /// A bright display that stays awake for the ticket code. A provider so
 /// tests can see it switched on and off.

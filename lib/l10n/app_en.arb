@@ -286,5 +286,16 @@
   "logoutConfirmBody": "Tickets assigned to this device will be available again after you sign back in.",
   "logoutConfirmAction": "Sign out",
   "cancel": "Cancel",
-  "logout": "Sign out"
+  "logout": "Sign out",
+  "debugTitle": "Debug menu",
+  "debugIdentityHelp": "Sent with every request. Saving reconnects the app at once. The session is kept, but the server may reject it under another device ID.",
+  "debugDeviceId": "Device ID",
+  "debugDeviceIdInvalid": "Must be {length} characters",
+  "@debugDeviceIdInvalid": {"placeholders": {"length": {"type": "int"}}},
+  "debugGenerate": "Generate",
+  "debugDeviceName": "Device name",
+  "debugDeviceNameHint": "Leave empty for this device's own name",
+  "debugSave": "Save",
+  "debugScreenSecurity": "Screen security",
+  "debugScreenSecurityHint": "Keeps the ticket code out of screenshots and recordings. Back on when the app is started again."
 }

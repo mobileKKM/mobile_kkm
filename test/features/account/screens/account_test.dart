@@ -2,6 +2,7 @@ import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
 import 'package:mobile_kkm/features/account/services/photo_cache.dart';
@@ -237,6 +238,48 @@ void main() {
       expect(adapter.requestsTo('/auth/logout'), hasLength(1));
       expect(app.location, '/login');
     });
+  });
+
+  testWidgets('eleven taps on the version open the debug menu', (tester) async {
+    final app = await _openAccount(tester, _adapter());
+    final version = find.textContaining('Version 1.2.3');
+    await tester.ensureVisible(version);
+    await tester.pumpAndSettle();
+
+    for (var tap = 0; tap < 10; tap++) {
+      await tester.tap(version);
+      // Past the double-tap window, so each one counts as a tap of its own.
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+    expect(app.location, Routes.account);
+
+    await tester.tap(version);
+    await tester.pumpAndSettle();
+    expect(app.location, Routes.debug);
+  });
+
+  testWidgets('a pause between the taps on the version starts the count over', (tester) async {
+    final app = await _openAccount(tester, _adapter());
+    final version = find.textContaining('Version 1.2.3');
+    await tester.ensureVisible(version);
+    await tester.pumpAndSettle();
+
+    Future<void> tapTimes(int count) async {
+      for (var tap = 0; tap < count; tap++) {
+        await tester.tap(version);
+        await tester.pump(const Duration(milliseconds: 400));
+      }
+    }
+
+    await tapTimes(3);
+    await tester.pump(const Duration(seconds: 3));
+    // Eleven in all, but not in a row.
+    await tapTimes(8);
+    expect(app.location, Routes.account);
+
+    await tapTimes(3);
+    await tester.pumpAndSettle();
+    expect(app.location, Routes.debug);
   });
 
   testWidgets('the app version is at the bottom', (tester) async {

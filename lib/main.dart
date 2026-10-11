@@ -24,6 +24,7 @@ import 'package:path_provider/path_provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _registerFontLicenses();
+
   // Edge to edge on every Android version (15+ enforces it anyway): the
   // native splash covers the whole screen, so the Flutter one has to as well
   // or its centred logo sits higher. iOS always is.
@@ -43,6 +44,7 @@ Future<void> main() async {
   // The native splash stays up until the first frame, so resolving the
   // device identity here does not show a blank screen.
   final device = await loadDeviceIdentity(storage);
+
   // Not the cache directory: the system empties that when space runs short,
   // and the names would be gone offline.
   final support = await getApplicationSupportDirectory();
@@ -51,7 +53,14 @@ Future<void> main() async {
   runApp(
     ProviderScope(
       overrides: [
-        deviceIdentityProvider.overrideWithValue(device),
+        deviceIdentityProvider.overrideWith(
+          () => DeviceIdentityController(
+            device.identity,
+            hardwareName: device.hardwareName,
+            save: ({required deviceId, required deviceName}) =>
+                saveDeviceIdentity(storage, deviceId: deviceId, deviceName: deviceName),
+          ),
+        ),
         tokenStoreProvider.overrideWithValue(SecureTokenStore(storage)),
         userDataCacheProvider.overrideWithValue(SecureUserDataCache(storage)),
         appDatabaseProvider.overrideWithValue(AppDatabase(driftDatabase(name: 'mobile_kkm'))),

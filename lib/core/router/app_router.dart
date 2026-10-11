@@ -13,6 +13,7 @@ import 'package:mobile_kkm/features/auth/screens/inbox_screen.dart';
 import 'package:mobile_kkm/features/auth/screens/login_screen.dart';
 import 'package:mobile_kkm/features/auth/screens/register_screen.dart';
 import 'package:mobile_kkm/features/auth/screens/reset_password_screen.dart';
+import 'package:mobile_kkm/features/debug/screens/debug_screen.dart';
 import 'package:mobile_kkm/features/home/screens/home_screen.dart';
 import 'package:mobile_kkm/features/map/screens/map_screen.dart';
 import 'package:mobile_kkm/features/shell/widgets/main_shell.dart';
@@ -82,6 +83,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/ticket-control/:ticketGuid',
         builder: (context, state) => TicketControlScreen(ticketGuid: state.pathParameters['ticketGuid']!),
       ),
+      GoRoute(path: Routes.debug, builder: (context, state) => const DebugScreen()),
       // Not built yet.
       _comingSoon(Routes.accountEdit, (l10n) => l10n.accountEdit),
       _comingSoon(Routes.accountChangePassword, (l10n) => l10n.accountChangePassword),
@@ -143,6 +145,11 @@ String? redirectFor(Uri uri, AuthStatus status, {bool outdated = false}) {
 
   final path = uri.path;
   if (Routes.isEmailLinkTarget(path)) {
+    return null;
+  }
+
+  // The debug menu needs no session, only an app that has started.
+  if (path == Routes.debug && status != AuthStatus.unknown) {
     return null;
   }
 

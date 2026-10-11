@@ -17,6 +17,7 @@ import 'package:mobile_kkm/features/auth/utils/validators.dart';
 import 'package:mobile_kkm/features/auth/widgets/brand_header.dart';
 import 'package:mobile_kkm/features/auth/widgets/login_skyline.dart';
 import 'package:mobile_kkm/features/auth/widgets/password_field.dart';
+import 'package:mobile_kkm/features/debug/widgets/debug_menu_trigger.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -106,7 +107,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const BrandHeader(),
+                            // Signed out, the debug menu is behind the logo.
+                            const DebugMenuTrigger(child: BrandHeader()),
                             const SizedBox(height: 16),
                             LeadHeader(title: l10n.loginTitle, body: l10n.loginSubtitle),
                             const SizedBox(height: 16),

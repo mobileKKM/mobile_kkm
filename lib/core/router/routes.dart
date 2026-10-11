@@ -13,6 +13,10 @@ abstract final class Routes {
   static const buy = '/buy';
   static const subscription = '/subscription';
 
+  /// The hidden debug menu, behind the version line on Account and the logo
+  /// on the login screen. Open signed in or out.
+  static const debug = '/debug';
+
   /// Where everything leads once the server has stopped serving this client.
   static const updateRequired = '/update-required';
   static const login = '/login';

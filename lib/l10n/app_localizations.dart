@@ -1537,6 +1537,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign out'**
   String get logout;
+
+  /// No description provided for @debugTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug menu'**
+  String get debugTitle;
+
+  /// No description provided for @debugIdentityHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent with every request. Saving reconnects the app at once. The session is kept, but the server may reject it under another device ID.'**
+  String get debugIdentityHelp;
+
+  /// No description provided for @debugDeviceId.
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID'**
+  String get debugDeviceId;
+
+  /// No description provided for @debugDeviceIdInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be {length} characters'**
+  String debugDeviceIdInvalid(int length);
+
+  /// No description provided for @debugGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate'**
+  String get debugGenerate;
+
+  /// No description provided for @debugDeviceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Device name'**
+  String get debugDeviceName;
+
+  /// No description provided for @debugDeviceNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for this device\'s own name'**
+  String get debugDeviceNameHint;
+
+  /// No description provided for @debugSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get debugSave;
+
+  /// No description provided for @debugScreenSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen security'**
+  String get debugScreenSecurity;
+
+  /// No description provided for @debugScreenSecurityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeps the ticket code out of screenshots and recordings. Back on when the app is started again.'**
+  String get debugScreenSecurityHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
