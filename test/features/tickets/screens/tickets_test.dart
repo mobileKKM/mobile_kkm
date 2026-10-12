@@ -178,7 +178,7 @@ void main() {
     testWidgets('without waiting for the user data', (tester) async {
       final adapter = _adapter([validTicket()]);
       adapter.hold('GET', '/account/user-data');
-      await pumpApp(tester, adapter, session: signedInSession, settle: false);
+      final app = await pumpApp(tester, adapter, session: signedInSession, settle: false);
 
       // Through the start-up check, up to the held request.
       for (var i = 0; i < 5; i++) {
@@ -187,11 +187,10 @@ void main() {
       expect(adapter.requestsTo('/account/user-data'), hasLength(1));
       expect(adapter.requestsTo(_list), hasLength(1));
 
-      // The card set-up holds the app back for the user data, but not for
-      // ever: the tickets are there when it lets go.
+      // The user data never comes: no app without it.
       await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
-      expect(find.widgetWithText(TicketCard, 'Network ticket'), findsOneWidget);
+      expect(app.location, '/login');
     });
 
     testWidgets('also when the user data could not be loaded', (tester) async {

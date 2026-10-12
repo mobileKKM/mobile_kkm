@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/platform/photo_picker.dart';
@@ -84,22 +85,43 @@ void main() {
       expect(app.location, '/home');
     });
 
-    testWidgets('user data that cannot be loaded closes nothing', (tester) async {
-      final app = await pumpApp(tester, FakeAdapter()..fail('GET', _userData), session: signedInSession);
+    testWidgets('user data that cannot be loaded signs the user out on this device', (tester) async {
+      final adapter = FakeAdapter()..fail('GET', _userData);
+      final app = await pumpApp(tester, adapter, session: signedInSession);
 
-      expect(app.location, '/home');
+      expect(app.location, '/login');
+      expect(find.textContaining('account details couldn’t be loaded'), findsOneWidget);
+      expect(await app.client.session.currentSession(), isNull);
+      // The server is not asked: it may be the one that does not answer.
+      expect(adapter.requestsTo('/auth/logout'), isEmpty);
     });
 
-    testWidgets('a start without stored user data waits for it on the splash, but not for ever', (tester) async {
+    testWidgets('a start without stored user data waits for it on the splash, then signs out', (tester) async {
       final adapter = FakeAdapter()..hold('GET', _userData);
       final app = await pumpApp(tester, adapter, session: signedInSession, settle: false);
       for (var i = 0; i < 5; i++) {
         await tester.pump(const Duration(milliseconds: 300));
       }
       expect(app.location, '/');
+      expect(find.text('Loading your account…'), findsNothing);
+
+      await tester.pump(const Duration(seconds: 3));
+      expect(app.location, '/');
+      expect(find.text('Loading your account…'), findsOneWidget);
 
       await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
+      expect(app.location, '/login');
+      expect(find.textContaining('account details couldn’t be loaded'), findsOneWidget);
+      expect(await app.client.session.currentSession(), isNull);
+      expect(adapter.requestsTo('/auth/logout'), isEmpty);
+    });
+
+    testWidgets('a stored copy keeps the app open when the server does not answer', (tester) async {
+      final adapter = FakeAdapter()..fail('GET', _userData);
+      final cache = InMemoryUserDataCache(UserDataResponse.fromJson(userDataJson()));
+      final app = await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache);
+
       expect(app.location, '/home');
     });
 

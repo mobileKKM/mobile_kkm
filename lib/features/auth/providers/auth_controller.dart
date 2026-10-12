@@ -11,13 +11,22 @@ enum AuthStatus {
   unauthenticated,
 }
 
+/// Why the app signed the user out by itself.
+enum SignOutReason {
+  /// The session could not be renewed.
+  sessionExpired,
+
+  /// The account's data could not be loaded, and no copy of it was stored.
+  userDataFailed,
+}
+
 class AuthState {
-  const AuthState(this.status, {this.sessionExpired = false});
+  const AuthState(this.status, {this.reason});
 
   final AuthStatus status;
 
-  /// The user was signed out because the session could not be renewed.
-  final bool sessionExpired;
+  /// Set when the user did not sign out themselves.
+  final SignOutReason? reason;
 }
 
 /// Mirrors the [EkpSessionManager] lifecycle for the router and the UI.
@@ -28,6 +37,9 @@ class AuthController extends Notifier<AuthState> {
   /// Holds the splash for this many seconds, to look at it while developing:
   /// `flutter run --dart-define=SPLASH_DELAY_SECONDS=5`. Off by default.
   static const _splashDelaySeconds = int.fromEnvironment('SPLASH_DELAY_SECONDS');
+
+  /// For the next [EkpSessionLoggedOut], which does not say why.
+  SignOutReason? _signOutReason;
 
   @override
   AuthState build() {
@@ -56,11 +68,23 @@ class AuthController extends Notifier<AuthState> {
     state = AuthState(stored == null ? AuthStatus.unauthenticated : AuthStatus.authenticated);
   }
 
+  /// Ends the session on this device because the user data could not be
+  /// loaded. The server is not told: it may be the one that does not answer.
+  Future<void> signOutAfterUserDataFailed() async {
+    if (state.status != AuthStatus.authenticated) {
+      return;
+    }
+    _signOutReason = SignOutReason.userDataFailed;
+    await ref.read(ekpClientProvider).session.publishLoggedOut();
+  }
+
   void _onEvent(EkpSessionEvent event) {
+    final reason = _signOutReason;
+    _signOutReason = null;
     state = switch (event) {
       EkpSessionAuthenticated() || EkpSessionUpdated() => const AuthState(AuthStatus.authenticated),
-      EkpSessionExpired() => const AuthState(AuthStatus.unauthenticated, sessionExpired: true),
-      EkpSessionLoggedOut() => const AuthState(AuthStatus.unauthenticated),
+      EkpSessionExpired() => const AuthState(AuthStatus.unauthenticated, reason: SignOutReason.sessionExpired),
+      EkpSessionLoggedOut() => AuthState(AuthStatus.unauthenticated, reason: reason),
     };
   }
 }

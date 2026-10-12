@@ -4,7 +4,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
-import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
 import 'package:mobile_kkm/features/account/services/photo_cache.dart';
 import 'package:mobile_kkm/features/account/widgets/link_sheet.dart';
 
@@ -41,21 +40,6 @@ void main() {
     expect(find.text('Jan Testowy'), findsOneWidget);
     expect(find.text('Customer code 100001', findRichText: true), findsOneWidget);
     expect(find.widgetWithText(CircleAvatar, 'JT'), findsOneWidget);
-  });
-
-  testWidgets('the header waits for the user data instead of guessing', (tester) async {
-    final adapter = _adapter();
-    final release = adapter.hold('GET', '/account/user-data');
-    await pumpApp(tester, adapter, session: signedInSession);
-    await openTab(tester, 'Account');
-
-    expect(find.text('Jan Testowy'), findsNothing);
-    expect(find.byType(SkeletonBox), findsNWidgets(2));
-
-    release();
-    await tester.pumpAndSettle();
-    expect(find.text('Jan Testowy'), findsOneWidget);
-    expect(find.byType(SkeletonBox), findsNothing);
   });
 
   testWidgets('the photo comes from the photo cache, not through the API client', (tester) async {

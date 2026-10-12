@@ -15,10 +15,10 @@ void main() {
     expect(cardGateOf(data(detached: true), CardSetupStage.idle), CardGate.detached);
   });
 
-  test('user data that is not there closes nothing', () {
+  test('user data that is not there never opens the gate', () {
     expect(cardGateOf(const AsyncLoading(), CardSetupStage.idle), CardGate.checking);
-    expect(cardGateOf(const AsyncData(null), CardSetupStage.idle), CardGate.open);
-    expect(cardGateOf(AsyncError(Exception(), StackTrace.empty), CardSetupStage.idle), CardGate.open);
+    expect(cardGateOf(const AsyncData(null), CardSetupStage.idle), CardGate.checking);
+    expect(cardGateOf(AsyncError(Exception(), StackTrace.empty), CardSetupStage.idle), CardGate.checking);
   });
 
   test('a card that was just made stays behind the gate until the user goes on', () {

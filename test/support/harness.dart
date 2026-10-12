@@ -33,6 +33,7 @@ import 'package:mobile_kkm/features/map/models/map_view_controller.dart';
 import 'package:mobile_kkm/features/map/providers/map_providers.dart';
 
 import 'fake_adapter.dart';
+import 'sample_data.dart';
 
 class FakeLinkSettings extends LinkSettings {
   FakeLinkSettings({this.supported = true, this.enabled = false});
@@ -298,6 +299,10 @@ Future<App> pumpApp(
   tester.view.physicalSize = tall ? const Size(1080, 9000) : const Size(1080, 2400);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
+
+  // A signed-in app without user data signs out again, so there is an
+  // account with a card unless the test says otherwise.
+  adapter.fallback('GET', '/account/user-data', 200, userDataJson());
 
   final store = InMemoryTokenStore();
   if (session != null) {

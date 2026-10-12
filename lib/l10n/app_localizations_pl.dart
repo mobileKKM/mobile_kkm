@@ -125,6 +125,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get sessionExpiredNotice => 'Sesja wygasła. Zaloguj się ponownie.';
 
   @override
+  String get userDataFailed => 'Nie udało się wczytać danych konta, więc nastąpiło wylogowanie. Zaloguj się ponownie.';
+
+  @override
+  String get splashLoadingAccount => 'Wczytujemy konto…';
+
+  @override
   String get passwordResetDoneNotice => 'Hasło zostało zmienione. Możesz się zalogować.';
 
   @override

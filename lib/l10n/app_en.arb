@@ -31,6 +31,8 @@
   "noAccountPrompt": "Don't have an account?",
   "registerLink": "Create account",
   "sessionExpiredNotice": "Your session has expired. Please sign in again.",
+  "userDataFailed": "Your account details couldn’t be loaded, so you were signed out. Please sign in again.",
+  "splashLoadingAccount": "Loading your account…",
   "passwordResetDoneNotice": "Your password has been changed. You can sign in now.",
 
   "registerTitle": "Create account",

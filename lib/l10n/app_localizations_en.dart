@@ -112,6 +112,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionExpiredNotice => 'Your session has expired. Please sign in again.';
 
   @override
+  String get userDataFailed => 'Your account details couldn’t be loaded, so you were signed out. Please sign in again.';
+
+  @override
+  String get splashLoadingAccount => 'Loading your account…';
+
+  @override
   String get passwordResetDoneNotice => 'Your password has been changed. You can sign in now.';
 
   @override

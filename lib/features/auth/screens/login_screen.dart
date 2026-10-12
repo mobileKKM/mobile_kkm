@@ -71,7 +71,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final sessionExpired = ref.watch(authControllerProvider.select((state) => state.sessionExpired));
+    final signOutReason = ref.watch(authControllerProvider.select((state) => state.reason));
+
+    // Signed in, but the account's data did not come: back here, with the
+    // e-mail kept; only when the user was during login.
+    ref.listen(authControllerProvider.select((state) => state.reason), (_, reason) {
+      if (reason == SignOutReason.userDataFailed) {
+        _password.clear();
+        setState(() {
+          _submitting = false;
+          _error = null;
+        });
+      }
+    });
 
     final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
     final skylineHeight = LoginSkyline.heightFor(MediaQuery.sizeOf(context));
@@ -119,7 +131,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ] else if (widget.passwordResetDone) ...[
                               MessageBanner(l10n.passwordResetDoneNotice, kind: BannerKind.success),
                               const SizedBox(height: 16),
-                            ] else if (sessionExpired) ...[
+                            ] else if (signOutReason == SignOutReason.userDataFailed) ...[
+                              MessageBanner(l10n.userDataFailed, icon: Symbols.cloud_off_rounded),
+                              const SizedBox(height: 16),
+                            ] else if (signOutReason == SignOutReason.sessionExpired) ...[
                               MessageBanner(
                                 l10n.sessionExpiredNotice,
                                 kind: BannerKind.info,

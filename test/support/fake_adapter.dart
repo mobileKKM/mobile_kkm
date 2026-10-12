@@ -8,18 +8,27 @@ import 'package:dio/dio.dart';
 /// suffix, plus a log of the requests that were made.
 class FakeAdapter implements HttpClientAdapter {
   final _replies = <(String, String), ResponseBody Function()>{};
+  final _fallbacks = <(String, String), ResponseBody Function()>{};
   final _held = <(String, String), Completer<void>>{};
   final requests = <RequestOptions>[];
 
   void reply(String method, String pathSuffix, int status, [Object? body]) {
-    _replies[(method, pathSuffix)] = () => ResponseBody.fromString(
-      body == null ? '' : jsonEncode(body),
-      status,
-      headers: {
-        Headers.contentTypeHeader: [Headers.jsonContentType],
-      },
-    );
+    _replies[(method, pathSuffix)] = () => _json(status, body);
   }
+
+  /// The reply for calls that no [reply] or [fail] is about, in the place of
+  /// the 404.
+  void fallback(String method, String pathSuffix, int status, [Object? body]) {
+    _fallbacks[(method, pathSuffix)] = () => _json(status, body);
+  }
+
+  static ResponseBody _json(int status, Object? body) => ResponseBody.fromString(
+    body == null ? '' : jsonEncode(body),
+    status,
+    headers: {
+      Headers.contentTypeHeader: [Headers.jsonContentType],
+    },
+  );
 
   /// Makes the call fail without a response, like a dropped connection.
   void fail(String method, String pathSuffix) {
@@ -56,6 +65,11 @@ class FakeAdapter implements HttpClientAdapter {
         } on FormatException {
           throw DioException.connectionError(requestOptions: options, reason: 'offline');
         }
+      }
+    }
+    for (final MapEntry(key: (method, suffix), value: build) in _fallbacks.entries) {
+      if (options.method == method && options.path.endsWith(suffix)) {
+        return build();
       }
     }
     return ResponseBody.fromString('', 404);

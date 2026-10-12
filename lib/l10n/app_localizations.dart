@@ -242,6 +242,18 @@ abstract class AppLocalizations {
   /// **'Your session has expired. Please sign in again.'**
   String get sessionExpiredNotice;
 
+  /// No description provided for @userDataFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account details couldn’t be loaded, so you were signed out. Please sign in again.'**
+  String get userDataFailed;
+
+  /// No description provided for @splashLoadingAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading your account…'**
+  String get splashLoadingAccount;
+
   /// No description provided for @passwordResetDoneNotice.
   ///
   /// In en, this message translates to:

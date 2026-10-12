@@ -122,6 +122,55 @@ void main() {
     expect(find.text('Set up your mKKM card'), findsOneWidget);
   });
 
+  testWidgets('user data that fails after the sign-in signs out again and says so', (tester) async {
+    final adapter = FakeAdapter()
+      ..reply('POST', '/auth/login', 200, _loginReply)
+      ..fail('GET', '/account/user-data');
+    final app = await pumpApp(tester, adapter);
+
+    await _signIn(tester);
+
+    expect(app.location, '/login');
+    expect(find.textContaining('account details couldn’t be loaded'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
+    // The e-mail is kept, the password is not.
+    expect(
+      tester
+          .widget<EditableText>(find.descendant(of: field('E-mail'), matching: find.byType(EditableText)))
+          .controller
+          .text,
+      ' user@example.com ',
+    );
+    expect(
+      tester
+          .widget<EditableText>(find.descendant(of: field('Password'), matching: find.byType(EditableText)))
+          .controller
+          .text,
+      isEmpty,
+    );
+    expect(await app.client.session.currentSession(), isNull);
+    expect(adapter.requestsTo('/auth/logout'), isEmpty);
+  });
+
+  testWidgets('user data that does not come after the sign-in is waited for 8 s', (tester) async {
+    final adapter = FakeAdapter()..reply('POST', '/auth/login', 200, _loginReply);
+    adapter.hold('GET', '/account/user-data');
+    final app = await pumpApp(tester, adapter);
+
+    await tester.enterText(field('E-mail'), 'user@example.com');
+    await tester.enterText(field('Password'), 'Secret123');
+    await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
+    await tester.pump(const Duration(seconds: 7));
+    expect(find.text('Signing in…'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pumpAndSettle();
+    expect(app.location, '/login');
+    expect(find.textContaining('account details couldn’t be loaded'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
+    expect(adapter.requestsTo('/auth/logout'), isEmpty);
+  });
+
   testWidgets('wrong credentials show a localized error', (tester) async {
     final adapter = FakeAdapter()..reply('POST', '/auth/login', 401);
     await pumpApp(tester, adapter);

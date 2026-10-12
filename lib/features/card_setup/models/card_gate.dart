@@ -8,7 +8,7 @@ enum CardGate {
   /// it: the sign-in screen or the splash stays until it is known.
   checking,
 
-  /// There is an attached card, or nothing is known: the app is open.
+  /// There is an attached card: the app is open.
   open,
 
   /// The account has no card yet.
@@ -41,15 +41,16 @@ bool hasAttachedCard(UserDataResponse? data) {
 
 /// The gate for [userData], [stage] into the set-up.
 ///
-/// It closes only on what the server said. User data that could not be
-/// loaded leaves the app open, as everything else works from stored data.
+/// It closes only on what the server said, and opens only on that too:
+/// without user data nothing is known, and a load that failed ends the
+/// session instead (see `UserDataController`).
 CardGate cardGateOf(AsyncValue<UserDataResponse?> userData, CardSetupStage stage) {
   if (stage == CardSetupStage.ready) {
     return CardGate.settling;
   }
   final data = userData.value;
   if (data == null) {
-    return userData.isLoading ? CardGate.checking : CardGate.open;
+    return CardGate.checking;
   }
   final mkkm = data.mkkmData;
   if (mkkm == null) {

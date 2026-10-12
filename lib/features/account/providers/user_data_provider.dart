@@ -17,8 +17,13 @@ final userDataCacheProvider = Provider<UserDataCache>((ref) => throw Unimplement
 /// With a cached copy the value is available straight away (also offline)
 /// and is refreshed from the server once in the background. Without one it
 /// is fetched; that is the only case in which this provider can be in an
-/// error state. Signing out clears the memory, the cached copy and the stored photo.
+/// error state, and it ends the session: the app does not run without user
+/// data. Signing out clears the memory, the cached copy and the stored photo.
 class UserDataController extends AsyncNotifier<UserDataResponse?> {
+  /// How long the first load may take. The client has no request timeout,
+  /// and the sign-in screen or the splash waits for this.
+  static const firstLoadLimit = Duration(seconds: 8);
+
   @override
   Future<UserDataResponse?> build() async {
     final status = ref.watch(authControllerProvider.select((state) => state.status));
@@ -46,7 +51,7 @@ class UserDataController extends AsyncNotifier<UserDataResponse?> {
           return cached;
         }
         if (cached == null) {
-          return _fetch();
+          return _firstLoad();
         }
         unawaited(_revalidate());
         return cached;
@@ -56,28 +61,62 @@ class UserDataController extends AsyncNotifier<UserDataResponse?> {
   /// Reloads from the server, e.g. after the profile was edited. Keeps the
   /// current value if the request fails and rethrows the error.
   Future<void> refresh() async {
-    state = AsyncData(await _fetch());
+    final fresh = await _fetch();
+    if (fresh != null) {
+      state = AsyncData(fresh);
+    }
   }
 
-  Future<UserDataResponse> _fetch() async {
-    final fresh = await ref.read(ekpClientProvider).account.userData();
-    // Signed out while the request was in flight: do not resurrect the cache.
-    if (ref.mounted) {
-      await ref.read(userDataCacheProvider).write(fresh);
+  /// The load nothing stands in for. When it fails or takes too long, the
+  /// user is signed out on this device.
+  Future<UserDataResponse> _firstLoad() async {
+    final ref = this.ref;
+    try {
+      // An answer that comes after the limit is dropped, not stored: the
+      // session it was for is over by then.
+      final fresh = await ref.read(ekpClientProvider).account.userData().timeout(firstLoadLimit);
+      if (_stillFor(ref)) {
+        await ref.read(userDataCacheProvider).write(fresh);
+      }
+      return fresh;
+    } catch (_) {
+      if (_stillFor(ref)) {
+        unawaited(ref.read(authControllerProvider.notifier).signOutAfterUserDataFailed());
+      }
+      rethrow;
     }
+  }
+
+  /// The user data from the server, stored. Null when the session it was
+  /// asked for ended while the request was in flight: then nothing is stored,
+  /// and there is nothing to show.
+  Future<UserDataResponse?> _fetch() async {
+    final ref = this.ref;
+    final fresh = await ref.read(ekpClientProvider).account.userData();
+    if (!_stillFor(ref)) {
+      return null;
+    }
+    await ref.read(userDataCacheProvider).write(fresh);
     return fresh;
   }
 
   Future<void> _revalidate() async {
     try {
       final fresh = await _fetch();
-      if (ref.mounted) {
+      if (fresh != null) {
         state = AsyncData(fresh);
       }
     } catch (_) {
       // Offline or server trouble: the cached copy stays in use.
     }
   }
+
+  /// Whether the session that [ref] started a request in is still the one.
+  ///
+  /// [ref] must be the one taken before the request: after an `await`,
+  /// `this.ref` is that of the latest build and always mounted, so it does
+  /// not notice a sign-out.
+  bool _stillFor(Ref ref) => ref.mounted && ref.read(authControllerProvider).status == AuthStatus.authenticated;
 }
 
 final userDataProvider = AsyncNotifierProvider<UserDataController, UserDataResponse?>(

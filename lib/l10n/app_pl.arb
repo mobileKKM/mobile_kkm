@@ -27,6 +27,8 @@
   "noAccountPrompt": "Nie masz konta?",
   "registerLink": "Załóż konto",
   "sessionExpiredNotice": "Sesja wygasła. Zaloguj się ponownie.",
+  "userDataFailed": "Nie udało się wczytać danych konta, więc nastąpiło wylogowanie. Zaloguj się ponownie.",
+  "splashLoadingAccount": "Wczytujemy konto…",
   "passwordResetDoneNotice": "Hasło zostało zmienione. Możesz się zalogować.",
 
   "registerTitle": "Załóż konto",
