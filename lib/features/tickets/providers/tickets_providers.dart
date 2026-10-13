@@ -23,6 +23,13 @@ final sortedTicketsProvider = Provider<List<StoredTicket>?>((ref) {
   return [for (final (_, _, stored) in ranked) stored];
 });
 
+/// The stored copy of the ticket bought as [transactionCode], if the mobile
+/// list has it: what its details can show before they have loaded.
+final storedTicketProvider = Provider.autoDispose.family<StoredTicket?, String>((ref, transactionCode) {
+  final tickets = ref.watch(mkkmTicketsProvider).value ?? const <StoredTicket>[];
+  return tickets.where((stored) => stored.ticket.transactionCode == transactionCode).firstOrNull;
+});
+
 /// How many stored tickets still wait for their payment.
 final pendingPaymentCountProvider = Provider<int>((ref) {
   final tickets = ref.watch(mkkmTicketsProvider).value ?? const <StoredTicket>[];

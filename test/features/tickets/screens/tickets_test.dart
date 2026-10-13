@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,6 +8,7 @@ import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/features/tickets/services/tickets_dao.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
+import 'package:mobile_kkm/features/tickets/widgets/ticket_skeletons.dart';
 
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';
@@ -117,8 +119,84 @@ void main() {
     await openTab(tester, 'Tickets');
 
     expect(find.widgetWithText(TicketCard, 'Network ticket'), findsOneWidget);
-    // With how old the copy is.
-    expect(find.textContaining("You're offline. Showing saved data. Saved "), findsOneWidget);
+    expect(find.text('You’re offline. Showing saved data.'), findsOneWidget);
+    // With how old the copy is, on a line of its own.
+    expect(find.textContaining(RegExp(r'^Saved at \d\d:\d\d$')), findsOneWidget);
+    // Under the bar with the two lists, not part of it.
+    expect(
+      tester.getTopLeft(find.textContaining('Saved at ')).dy,
+      greaterThan(tester.getBottomLeft(find.byType(AppBar)).dy),
+    );
+    // Inside what is pulled to refresh, so that the indicator comes down over it.
+    expect(
+      find.descendant(of: find.byType(RefreshIndicator), matching: find.textContaining('Saved at ')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('a copy from an earlier day is dated', (tester) async {
+    final adapter = FakeAdapter()
+      ..fail('GET', '/service-status')
+      ..fail('GET', _list);
+    final db = await _seeded([validTicket()]);
+    await db.update(db.tickets).write(TicketsCompanion(syncedAt: Value(DateTime(2026, 10, 10, 18, 47))));
+    await pumpApp(tester, adapter, session: signedInSession, database: db);
+    await openTab(tester, 'Tickets');
+
+    expect(find.text('Saved on 10 Oct at 18:47'), findsOneWidget);
+  });
+
+  testWidgets('a switched-off service says so in its own words, without a saved time', (tester) async {
+    final adapter = FakeAdapter()
+      ..reply('GET', '/service-status', 200, {'isAvailable': false, 'customMessage': 'Usługa tymczasowo niedostępna.'});
+    await pumpApp(tester, adapter, session: signedInSession, database: await _seeded([validTicket()]));
+    await openTab(tester, 'Tickets');
+
+    expect(find.text('Usługa tymczasowo niedostępna.'), findsOneWidget);
+    expect(find.byIcon(Symbols.construction_rounded), findsOneWidget);
+    expect(find.textContaining('Saved'), findsNothing);
+  });
+
+  testWidgets('the two lists are the halves of one segmented button', (tester) async {
+    await pumpApp(tester, _adapter([validTicket()]), session: signedInSession);
+    await openTab(tester, 'Tickets');
+
+    final tabs = find.byType(SegmentedButton<bool>);
+    expect(tester.widget<SegmentedButton<bool>>(tabs).selected, {false});
+
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<SegmentedButton<bool>>(tabs).selected, {true});
+  });
+
+  testWidgets('a first load shows the shapes of what is coming, not a spinner', (tester) async {
+    // Still shapes, so that the test can settle.
+    tester.platformDispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    final adapter = _adapter([validTicket()]);
+    final releaseList = adapter.hold('GET', _list);
+    final releaseHistory = adapter.hold('GET', _history);
+    // Home waits for the same list under a bar that never settles.
+    await pumpApp(tester, adapter, session: signedInSession, settle: false);
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+    await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text('Tickets')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TicketCardSkeleton), findsNWidgets(2));
+    expect(find.bySemanticsLabel('Loading tickets'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TicketHistorySkeleton), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    releaseList();
+    releaseHistory();
+    await tester.pumpAndSettle();
+    expect(find.byType(TicketHistorySkeleton), findsNothing);
   });
 
   testWidgets('a ticket the server no longer returns disappears', (tester) async {
@@ -380,11 +458,55 @@ void main() {
       adapter.reply('GET', _list, 200, ticketsReply([validTicket(assigned: true)]));
       await tester.tap(find.widgetWithText(FilledButton, 'Assign to device'));
       await tester.pumpAndSettle();
+      // It takes one of the ticket's two places, so it asks first.
+      expect(find.text('Assign to this phone?'), findsOneWidget);
+      expect(adapter.requestsTo('/mkkm/tickets/assign-e'), isEmpty);
+      await tester.tap(find.widgetWithText(FilledButton, 'Assign'));
+      await tester.pumpAndSettle();
 
       expect(adapter.requestTo('/mkkm/tickets/assign-e').data, contains('message'));
       expect(adapter.requestsTo(_list), hasLength(2));
-      expect(find.text('Ticket assigned to this device.'), findsOneWidget);
+      expect(find.text('Assigned to this phone.'), findsOneWidget);
       expect(find.widgetWithText(FilledButton, 'Ticket control'), findsOneWidget);
+    });
+
+    testWidgets('not assigning it after all asks nothing of the server', (tester) async {
+      final adapter = _adapter([validTicket(canAssign: true)]);
+      await pumpApp(tester, adapter, session: signedInSession);
+      await openTab(tester, 'Tickets');
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Assign to device'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(adapter.requestsTo('/mkkm/tickets/assign-e'), isEmpty);
+      expect(find.widgetWithText(FilledButton, 'Assign to device'), findsOneWidget);
+    });
+
+    testWidgets('while it is being assigned the button says so and takes no more taps', (tester) async {
+      final adapter = _adapter([validTicket(canAssign: true)])
+        ..reply('POST', '/mkkm/tickets/assign-e', 200, {'assigned': true});
+      final release = adapter.hold('POST', '/mkkm/tickets/assign-e');
+      await pumpApp(tester, adapter, session: signedInSession);
+      await openTab(tester, 'Tickets');
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Assign to device'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Assign'));
+      // The spinner never settles.
+      await tester.pump(const Duration(milliseconds: 500));
+
+      final button = find.widgetWithText(FilledButton, 'Assigning…');
+      // In its colours still: at work, not unavailable.
+      expect(tester.widget<FilledButton>(button).enabled, isTrue);
+      await tester.tap(button, warnIfMissed: false);
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.text('Assign to this phone?'), findsNothing);
+
+      release();
+      await tester.pumpAndSettle();
+      expect(adapter.requestsTo('/mkkm/tickets/assign-e'), hasLength(1));
     });
 
     testWidgets('the server says why a ticket could not be assigned', (tester) async {
@@ -395,8 +517,16 @@ void main() {
 
       await tester.tap(find.widgetWithText(FilledButton, 'Assign to device'));
       await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Assign'));
+      await tester.pumpAndSettle();
 
-      expect(find.text('Bilet jest już powiązany.'), findsOneWidget);
+      // In a snackbar that can be closed, and the card as it was.
+      expect(find.widgetWithText(SnackBar, 'Bilet jest już powiązany.'), findsOneWidget);
+      expect(find.descendant(of: find.byType(SnackBar), matching: find.byIcon(Symbols.error_rounded)), findsOneWidget);
+      await tester.tap(find.descendant(of: find.byType(SnackBar), matching: find.byTooltip('Close')));
+      await tester.pumpAndSettle();
+      expect(find.byType(SnackBar), findsNothing);
+      expect(find.widgetWithText(FilledButton, 'Assign to device'), findsOneWidget);
       expect(adapter.requestsTo(_list), hasLength(1));
     });
 
@@ -410,6 +540,8 @@ void main() {
         ..reply('POST', '/payments/check', 400, {'code': 2, 'message': 'Brak zaksięgowanej płatności.'});
       final app = await pumpApp(tester, adapter, session: signedInSession);
       await openTab(tester, 'Tickets');
+      // Not a ticket yet: no place on the home screen.
+      expect(find.byTooltip('Pin to Home'), findsNothing);
 
       await tester.tap(find.widgetWithText(OutlinedButton, 'Check payment'));
       await tester.pumpAndSettle();

@@ -7,6 +7,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
+import 'package:mobile_kkm/core/theme/app_theme.dart';
+import 'package:mobile_kkm/core/widgets/app_snack_bar.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_actions.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
@@ -73,11 +75,15 @@ class TicketActions extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 8,
           children: [
-            FilledButton.icon(
-              style: main,
-              onPressed: busy ? null : () => unawaited(_assign(context, ref, guid)),
-              icon: busy ? const _Spinner() : const Icon(Symbols.add_to_home_screen_rounded),
-              label: Text(l10n.ticketActionAssign),
+            // At work, not unavailable: it keeps its colours and ignores taps.
+            AbsorbPointer(
+              absorbing: busy,
+              child: FilledButton.icon(
+                style: main,
+                onPressed: () => unawaited(_assign(context, ref, guid)),
+                icon: busy ? _Spinner(palette.onButton) : const Icon(Symbols.add_to_home_screen_rounded),
+                label: Text(busy ? l10n.ticketAssigning : l10n.ticketActionAssign),
+              ),
             ),
             // Assigning works ahead of time; the code only from the start on.
             if (startsLater) _Helper(l10n.ticketControlFrom(startText)),
@@ -98,17 +104,20 @@ class TicketActions extends ConsumerWidget {
           icon: const Icon(Symbols.payments_rounded),
           label: Text(l10n.ticketActionContinuePayment, textAlign: TextAlign.center),
         );
-        final check = OutlinedButton.icon(
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size.fromHeight(56),
-            padding: padding,
-            textStyle: text,
-            foregroundColor: palette.high,
-            side: BorderSide(color: palette.medium, width: 1.5),
+        final check = AbsorbPointer(
+          absorbing: busy,
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(56),
+              padding: padding,
+              textStyle: text,
+              foregroundColor: palette.high,
+              side: BorderSide(color: palette.medium, width: 1.5),
+            ),
+            onPressed: () => unawaited(_checkPayment(context, ref, guid)),
+            icon: busy ? _Spinner(palette.high) : const Icon(Symbols.refresh_rounded),
+            label: Text(busy ? l10n.ticketPaymentChecking : l10n.ticketActionCheckPayment, textAlign: TextAlign.center),
           ),
-          onPressed: busy ? null : () => unawaited(_checkPayment(context, ref, guid)),
-          icon: busy ? const _Spinner() : const Icon(Symbols.refresh_rounded),
-          label: Text(l10n.ticketActionCheckPayment, textAlign: TextAlign.center),
         );
         // Side by side where both fit, one above the other where not.
         return LayoutBuilder(
@@ -132,26 +141,45 @@ class TicketActions extends ConsumerWidget {
     }
   }
 
+  /// Assigning takes one of the ticket's two device slots, so it asks first.
   Future<void> _assign(BuildContext context, WidgetRef ref, String guid) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    String message;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Symbols.add_to_home_screen_rounded),
+        title: Text(l10n.ticketAssignTitle, textAlign: TextAlign.center),
+        content: Text(l10n.ticketAssignBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.cancel)),
+          FilledButton(
+            style: AppTheme.dialogAction,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.ticketAssignAction),
+          ),
+        ],
+      ),
+    );
+    if (!(confirmed ?? false)) {
+      return;
+    }
+    String refusal;
     try {
       await ref.read(ticketActionsProvider.notifier).assign(guid);
-      message = l10n.ticketAssignDone;
+      showAppSnackBar(messenger, l10n.ticketAssigned, kind: SnackKind.success);
+      return;
     } on TicketActionFailure catch (failure) {
       // The server's own wording (Polish only), like its error messages.
-      message = failure.message ?? l10n.ticketAssignError;
+      refusal = failure.message ?? l10n.ticketAssignError;
     } on EkpNetworkException catch (error) {
-      message = describeError(l10n, error);
+      refusal = describeError(l10n, error);
     } on Exception {
       // Also when the request could not be encrypted.
-      message = l10n.ticketAssignError;
+      refusal = l10n.ticketAssignError;
     }
-    // Instead of an earlier answer, not after it.
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    // A snackbar, not a banner: it shows however far down the card is.
+    showAppSnackBar(messenger, refusal, kind: SnackKind.error);
   }
 
   Future<void> _checkPayment(BuildContext context, WidgetRef ref, String guid) async {
@@ -167,10 +195,7 @@ class TicketActions extends ConsumerWidget {
     } on Exception catch (error) {
       message = describeError(l10n, error);
     }
-    // Instead of an earlier answer, not after it.
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    showAppSnackBar(messenger, message);
   }
 }
 
@@ -200,12 +225,15 @@ class _Helper extends StatelessWidget {
   }
 }
 
+/// In a busy button's icon slot, in the button's own foreground.
 class _Spinner extends StatelessWidget {
-  const _Spinner();
+  const _Spinner(this.color);
+
+  final Color color;
 
   @override
   Widget build(BuildContext context) =>
-      const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2));
+      SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2, color: color));
 }
 
 /// Why there is nothing to do with the ticket, in place of a button: on the

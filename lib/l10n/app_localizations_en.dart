@@ -284,12 +284,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comingSoonBody => 'This part of the app is not ready yet.';
 
   @override
-  String get offlineNotice => 'You\'re offline. Showing saved data.';
-
-  @override
-  String get serviceUnavailableNotice => 'The service is currently unavailable.';
-
-  @override
   String get linkOpenFailed => 'Could not open this link.';
 
   @override
@@ -426,9 +420,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketActionExtend => 'Extend ticket';
 
   @override
-  String get ticketAssignDone => 'Ticket assigned to this device.';
-
-  @override
   String get ticketAssignError => 'The ticket could not be assigned. Try again.';
 
   @override
@@ -443,9 +434,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ticketDetailsTitle => 'Ticket details';
-
-  @override
-  String get ticketDetailsLoadError => 'The ticket could not be loaded.';
 
   @override
   String get ticketSectionPurchase => 'Purchase';
@@ -573,7 +561,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get accountCustomerCode => 'Customer code';
+  String get accountCustomerCode => 'Customer number';
 
   @override
   String get accountSectionProfile => 'My account';
@@ -707,12 +695,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String homeCustomerCode(String code) {
-    return 'Customer code $code';
-  }
-
-  @override
-  String offlineSavedAt(String time) {
-    return 'Saved $time';
+    return 'Customer number $code';
   }
 
   @override
@@ -1062,4 +1045,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goHome => 'Go to Home';
+
+  @override
+  String get offlineBannerTitle => 'You’re offline.';
+
+  @override
+  String get offlineBanner => 'Showing saved data.';
+
+  @override
+  String offlineSavedToday(String time) {
+    return 'Saved at $time';
+  }
+
+  @override
+  String offlineSavedOn(String date, String time) {
+    return 'Saved on $date at $time';
+  }
+
+  @override
+  String get serviceUnavailableBanner => 'The eKP service is unavailable right now. Showing saved data.';
+
+  @override
+  String get ticketsLoading => 'Loading tickets';
+
+  @override
+  String get ticketAssignTitle => 'Assign to this phone?';
+
+  @override
+  String get ticketAssignBody =>
+      'A ticket can be assigned to at most two phones, and this phone will be one of them. Only an assigned phone can show the ticket for control.';
+
+  @override
+  String get ticketAssignAction => 'Assign';
+
+  @override
+  String get ticketAssigning => 'Assigning…';
+
+  @override
+  String get ticketAssigned => 'Assigned to this phone.';
+
+  @override
+  String get ticketPaymentChecking => 'Checking…';
+
+  @override
+  String get ticketDetailsFailed => 'The ticket details could not be loaded.';
+
+  @override
+  String get ticketDetailsSaved => 'The ticket above is the copy saved on this phone.';
+
+  @override
+  String get ticketDetailsOffline => 'Details load when you’re back online.';
 }

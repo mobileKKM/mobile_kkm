@@ -31,10 +31,7 @@ class SubmitButton extends StatelessWidget {
           disabledForegroundColor: scheme.onPrimary,
         ),
         onPressed: null,
-        icon: SizedBox.square(
-          dimension: 20,
-          child: CircularProgressIndicator(strokeWidth: 2.5, color: scheme.onPrimary),
-        ),
+        icon: SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2, color: scheme.onPrimary)),
         label: Text(loadingLabel ?? label),
       );
     }

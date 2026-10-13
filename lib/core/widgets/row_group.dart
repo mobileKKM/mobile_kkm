@@ -56,6 +56,7 @@ class GroupRow extends StatelessWidget {
     this.labelColor,
     this.minHeight = 68,
     this.dense = false,
+    this.smallLabel,
   });
 
   final Widget leading;
@@ -75,10 +76,14 @@ class GroupRow extends StatelessWidget {
   /// The smaller row of a sheet: a 15 dp label and less room around it.
   final bool dense;
 
+  /// The 15 dp label without the tighter row; as [dense] unless given.
+  final bool? smallLabel;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final smallLabel = this.smallLabel ?? dense;
     return Material(
       color: color ?? scheme.surfaceContainer,
       borderRadius: BorderRadius.circular(6),
@@ -101,8 +106,8 @@ class GroupRow extends StatelessWidget {
                       Text(
                         label,
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          fontSize: dense ? 15 : null,
-                          height: dense ? 20 / 15 : 22 / 16,
+                          fontSize: smallLabel ? 15 : null,
+                          height: smallLabel ? 20 / 15 : 22 / 16,
                           fontWeight: FontWeight.w600,
                           color: labelColor,
                         ),

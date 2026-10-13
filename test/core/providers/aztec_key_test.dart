@@ -226,6 +226,8 @@ void main() {
 
       await tester.tap(find.widgetWithText(FilledButton, 'Assign to device'));
       await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Assign'));
+      await tester.pumpAndSettle();
 
       expect(adapter.requestsTo(_assign), hasLength(2));
       expect(find.text('Bilet jest już powiązany.'), findsOneWidget);

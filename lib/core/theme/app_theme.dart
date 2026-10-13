@@ -4,9 +4,11 @@ abstract final class AppTheme {
   /// The mobileKKM brand colour.
   static const Color brand = Color(0xFF303F9F);
 
-  /// Splash backgrounds — must match `flutter_native_splash` in pubspec.yaml.
-  static const Color splashLight = Color(0xFFFFFFFF);
-  static const Color splashDark = Color(0xFF121318);
+  /// Splash backgrounds, the surface of each theme — must match
+  /// `flutter_native_splash` in pubspec.yaml and the covers in
+  /// tool/render_branding.sh.
+  static const Color splashLight = Color(0xFFFBF8FF);
+  static const Color splashDark = Color(0xFF121319);
 
   static const String _headingFont = 'Montserrat';
   static const String _bodyFont = 'Inter';

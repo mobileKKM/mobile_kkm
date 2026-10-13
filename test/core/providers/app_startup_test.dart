@@ -7,7 +7,7 @@ import '../../support/fake_adapter.dart';
 import '../../support/harness.dart';
 import '../../support/sample_data.dart';
 
-const _offline = "You're offline. Showing saved data.";
+const _offline = 'You’re offline. Showing saved data.';
 
 void main() {
   testWidgets('the splash stays up until the service status and the config have answered', (tester) async {

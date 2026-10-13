@@ -83,7 +83,7 @@ void main() {
 
   testWidgets('says who is signed in next to the greeting', (tester) async {
     await pumpApp(tester, _adapter([]), session: signedInSession);
-    expect(find.text('Customer code 100001'), findsOneWidget);
+    expect(find.text('Customer number 100001'), findsOneWidget);
     expect(find.widgetWithText(CircleAvatar, 'JT'), findsOneWidget);
   });
 

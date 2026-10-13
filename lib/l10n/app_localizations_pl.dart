@@ -296,12 +296,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get comingSoonBody => 'Ta część aplikacji nie jest jeszcze gotowa.';
 
   @override
-  String get offlineNotice => 'Brak połączenia. Wyświetlamy zapisane dane.';
-
-  @override
-  String get serviceUnavailableNotice => 'Usługa jest obecnie niedostępna.';
-
-  @override
   String get linkOpenFailed => 'Nie udało się otworzyć linku.';
 
   @override
@@ -438,9 +432,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketActionExtend => 'Przedłuż bilet';
 
   @override
-  String get ticketAssignDone => 'Bilet powiązano z tym urządzeniem.';
-
-  @override
   String get ticketAssignError => 'Wystąpił błąd podczas powiązywania biletu, spróbuj ponownie.';
 
   @override
@@ -455,9 +446,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get ticketDetailsTitle => 'Szczegóły biletu';
-
-  @override
-  String get ticketDetailsLoadError => 'Nie udało się wczytać biletu.';
 
   @override
   String get ticketSectionPurchase => 'Zakup';
@@ -585,7 +573,7 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get accountCustomerCode => 'Kod klienta';
+  String get accountCustomerCode => 'Numer klienta';
 
   @override
   String get accountSectionProfile => 'Moje konto';
@@ -726,12 +714,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String homeCustomerCode(String code) {
-    return 'Kod klienta $code';
-  }
-
-  @override
-  String offlineSavedAt(String time) {
-    return 'Zapisano $time';
+    return 'Numer klienta $code';
   }
 
   @override
@@ -1081,4 +1064,54 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get goHome => 'Przejdź do Start';
+
+  @override
+  String get offlineBannerTitle => 'Brak połączenia.';
+
+  @override
+  String get offlineBanner => 'Wyświetlamy zapisane dane.';
+
+  @override
+  String offlineSavedToday(String time) {
+    return 'Zapisano o $time';
+  }
+
+  @override
+  String offlineSavedOn(String date, String time) {
+    return 'Zapisano $date o $time';
+  }
+
+  @override
+  String get serviceUnavailableBanner => 'Usługa eKP jest teraz niedostępna. Wyświetlamy zapisane dane.';
+
+  @override
+  String get ticketsLoading => 'Wczytywanie biletów';
+
+  @override
+  String get ticketAssignTitle => 'Powiązać bilet z tym telefonem?';
+
+  @override
+  String get ticketAssignBody =>
+      'Bilet można powiązać z najwyżej dwoma telefonami, a ten będzie jednym z nich. Tylko powiązany telefon pokaże bilet do kontroli.';
+
+  @override
+  String get ticketAssignAction => 'Powiąż';
+
+  @override
+  String get ticketAssigning => 'Wiążemy…';
+
+  @override
+  String get ticketAssigned => 'Bilet powiązany z tym telefonem.';
+
+  @override
+  String get ticketPaymentChecking => 'Sprawdzamy…';
+
+  @override
+  String get ticketDetailsFailed => 'Nie udało się wczytać szczegółów biletu.';
+
+  @override
+  String get ticketDetailsSaved => 'Powyżej widzisz kopię biletu zapisaną na tym telefonie.';
+
+  @override
+  String get ticketDetailsOffline => 'Szczegóły wczytają się po połączeniu.';
 }

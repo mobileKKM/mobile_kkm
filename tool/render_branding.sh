@@ -125,5 +125,5 @@ cover() { # <name> <background> <out>...
 }
 COVER=../../ios/Runner/Assets.xcassets/NoScreenshotImage.imageset
 # Colours as in flutter_native_splash (pubspec.yaml).
-cover cover '#FFFFFF' "$COVER/NoScreenshotImage@3x.png" "$RES/drawable-nodpi/no_screenshot_image.png"
-cover cover_dark '#121318' "$COVER/NoScreenshotImageDark@3x.png" "$RES/drawable-night-nodpi/no_screenshot_image.png"
+cover cover '#FBF8FF' "$COVER/NoScreenshotImage@3x.png" "$RES/drawable-nodpi/no_screenshot_image.png"
+cover cover_dark '#121319' "$COVER/NoScreenshotImageDark@3x.png" "$RES/drawable-night-nodpi/no_screenshot_image.png"

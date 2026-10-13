@@ -11,6 +11,7 @@ import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
+import 'package:mobile_kkm/core/widgets/app_snack_bar.dart';
 import 'package:mobile_kkm/core/widgets/form_card.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/load_problem.dart';
@@ -213,7 +214,7 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
       ..invalidate(ticketDetailProvider(widget.transactionCode))
       ..invalidate(ticketHistoryProvider);
     unawaited(ref.read(ticketSyncProvider.notifier).refresh());
-    messenger.showSnackBar(SnackBar(content: Text(whole ? l10n.ticketReturnDoneWhole : l10n.ticketReturnDone)));
+    showAppSnackBar(messenger, whole ? l10n.ticketReturnDoneWhole : l10n.ticketReturnDone, kind: SnackKind.success);
     // The server drops a ticket given back whole from its lists for a
     // while, so its details could not be loaded any more.
     if (whole) {

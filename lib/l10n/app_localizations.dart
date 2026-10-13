@@ -572,18 +572,6 @@ abstract class AppLocalizations {
   /// **'This part of the app is not ready yet.'**
   String get comingSoonBody;
 
-  /// No description provided for @offlineNotice.
-  ///
-  /// In en, this message translates to:
-  /// **'You\'re offline. Showing saved data.'**
-  String get offlineNotice;
-
-  /// No description provided for @serviceUnavailableNotice.
-  ///
-  /// In en, this message translates to:
-  /// **'The service is currently unavailable.'**
-  String get serviceUnavailableNotice;
-
   /// No description provided for @linkOpenFailed.
   ///
   /// In en, this message translates to:
@@ -842,12 +830,6 @@ abstract class AppLocalizations {
   /// **'Extend ticket'**
   String get ticketActionExtend;
 
-  /// No description provided for @ticketAssignDone.
-  ///
-  /// In en, this message translates to:
-  /// **'Ticket assigned to this device.'**
-  String get ticketAssignDone;
-
   /// No description provided for @ticketAssignError.
   ///
   /// In en, this message translates to:
@@ -877,12 +859,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ticket details'**
   String get ticketDetailsTitle;
-
-  /// No description provided for @ticketDetailsLoadError.
-  ///
-  /// In en, this message translates to:
-  /// **'The ticket could not be loaded.'**
-  String get ticketDetailsLoadError;
 
   /// No description provided for @ticketSectionPurchase.
   ///
@@ -1103,7 +1079,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountCustomerCode.
   ///
   /// In en, this message translates to:
-  /// **'Customer code'**
+  /// **'Customer number'**
   String get accountCustomerCode;
 
   /// No description provided for @accountSectionProfile.
@@ -1313,14 +1289,8 @@ abstract class AppLocalizations {
   /// No description provided for @homeCustomerCode.
   ///
   /// In en, this message translates to:
-  /// **'Customer code {code}'**
+  /// **'Customer number {code}'**
   String homeCustomerCode(String code);
-
-  /// No description provided for @offlineSavedAt.
-  ///
-  /// In en, this message translates to:
-  /// **'Saved {time}'**
-  String offlineSavedAt(String time);
 
   /// No description provided for @ticketsEmptyBody.
   ///
@@ -1951,6 +1921,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go to Home'**
   String get goHome;
+
+  /// No description provided for @offlineBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You’re offline.'**
+  String get offlineBannerTitle;
+
+  /// No description provided for @offlineBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing saved data.'**
+  String get offlineBanner;
+
+  /// No description provided for @offlineSavedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved at {time}'**
+  String offlineSavedToday(String time);
+
+  /// No description provided for @offlineSavedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on {date} at {time}'**
+  String offlineSavedOn(String date, String time);
+
+  /// No description provided for @serviceUnavailableBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'The eKP service is unavailable right now. Showing saved data.'**
+  String get serviceUnavailableBanner;
+
+  /// No description provided for @ticketsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading tickets'**
+  String get ticketsLoading;
+
+  /// No description provided for @ticketAssignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to this phone?'**
+  String get ticketAssignTitle;
+
+  /// No description provided for @ticketAssignBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A ticket can be assigned to at most two phones, and this phone will be one of them. Only an assigned phone can show the ticket for control.'**
+  String get ticketAssignBody;
+
+  /// No description provided for @ticketAssignAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign'**
+  String get ticketAssignAction;
+
+  /// No description provided for @ticketAssigning.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigning…'**
+  String get ticketAssigning;
+
+  /// No description provided for @ticketAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to this phone.'**
+  String get ticketAssigned;
+
+  /// No description provided for @ticketPaymentChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get ticketPaymentChecking;
+
+  /// No description provided for @ticketDetailsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The ticket details could not be loaded.'**
+  String get ticketDetailsFailed;
+
+  /// No description provided for @ticketDetailsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'The ticket above is the copy saved on this phone.'**
+  String get ticketDetailsSaved;
+
+  /// No description provided for @ticketDetailsOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Details load when you’re back online.'**
+  String get ticketDetailsOffline;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -3,38 +3,45 @@ import 'package:mobile_kkm/core/widgets/dashed_border.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 
 /// Stands where a ticket or a list would be: says what is missing and
-/// offers the one thing to do about it.
+/// offers the one thing to do about it, if there is one.
 class EmptyStateCard extends StatelessWidget {
   const EmptyStateCard({
     super.key,
     required this.icon,
     required this.title,
     this.body,
-    required this.actionIcon,
-    required this.actionLabel,
-    required this.onAction,
+    this.actionIcon,
+    this.actionLabel,
+    this.onAction,
     this.tonal = false,
+    this.quiet = false,
   });
 
   final IconData icon;
   final String title;
   final String? body;
-  final IconData actionIcon;
-  final String actionLabel;
-  final VoidCallback onAction;
+  final IconData? actionIcon;
+
+  /// No button without it.
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
   /// A quieter button, for trying again rather than moving on.
   final bool tonal;
+
+  /// For a part of a screen rather than its subject: a grey tile and a
+  /// smaller title.
+  final bool quiet;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final actionChild = Text(actionLabel);
-    final actionIconWidget = Icon(actionIcon);
+    final actionLabel = this.actionLabel;
+    final style = FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 28));
     return DashedBorder(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+        padding: EdgeInsets.fromLTRB(24, quiet ? 28 : 32, 24, 24),
         child: Column(
           children: [
             IconTile(
@@ -42,15 +49,21 @@ class EmptyStateCard extends StatelessWidget {
               size: 72,
               radius: 24,
               iconSize: 36,
-              background: scheme.primaryFixed,
-              foreground: scheme.onPrimaryFixed,
+              background: quiet ? scheme.surfaceContainerHigh : scheme.primaryFixed,
+              foreground: quiet ? scheme.onSurfaceVariant : scheme.onPrimaryFixed,
             ),
             const SizedBox(height: 16),
-            Text(title, textAlign: TextAlign.center, style: theme.textTheme.titleLarge),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: quiet
+                  ? theme.textTheme.titleLarge?.copyWith(fontSize: 20, height: 26 / 20)
+                  : theme.textTheme.titleLarge,
+            ),
             if (body != null) ...[
               const SizedBox(height: 10),
               ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 280),
+                constraints: BoxConstraints(maxWidth: quiet ? 300 : 280),
                 child: Text(
                   body!,
                   textAlign: TextAlign.center,
@@ -62,11 +75,18 @@ class EmptyStateCard extends StatelessWidget {
                 ),
               ),
             ],
-            const SizedBox(height: 22),
-            if (tonal)
-              FilledButton.tonalIcon(onPressed: onAction, icon: actionIconWidget, label: actionChild)
-            else
-              FilledButton.icon(onPressed: onAction, icon: actionIconWidget, label: actionChild),
+            if (actionLabel != null) ...[
+              const SizedBox(height: 22),
+              if (tonal)
+                FilledButton.tonalIcon(
+                  style: style,
+                  onPressed: onAction,
+                  icon: Icon(actionIcon),
+                  label: Text(actionLabel),
+                )
+              else
+                FilledButton.icon(style: style, onPressed: onAction, icon: Icon(actionIcon), label: Text(actionLabel)),
+            ],
           ],
         ),
       ),

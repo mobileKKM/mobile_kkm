@@ -2,10 +2,13 @@ import 'package:material_ui/material_ui.dart';
 
 /// One section of a form with several: a titled card around its fields.
 class FormCard extends StatelessWidget {
-  const FormCard({super.key, this.title, this.subtitle, required this.children});
+  const FormCard({super.key, this.title, this.subtitle, this.spacing = 20, required this.children});
 
   final String? title;
   final String? subtitle;
+
+  /// Between the title and the children, and between those.
+  final double spacing;
   final List<Widget> children;
 
   @override
@@ -20,7 +23,7 @@ class FormCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 20,
+          spacing: spacing,
           children: [
             if (title != null)
               Column(

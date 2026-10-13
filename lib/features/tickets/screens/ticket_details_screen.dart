@@ -1,22 +1,27 @@
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
+import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
+import 'package:mobile_kkm/core/widgets/app_status_banner.dart';
+import 'package:mobile_kkm/core/widgets/empty_state_card.dart';
 import 'package:mobile_kkm/core/widgets/form_card.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
-import 'package:mobile_kkm/core/widgets/load_problem.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
+import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
 import 'package:mobile_kkm/core/widgets/system_bar_scrim.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
 import 'package:mobile_kkm/features/tickets/widgets/mkkm_ticket_card.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_actions.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
+import 'package:mobile_kkm/features/tickets/widgets/ticket_skeletons.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// The line number that stands for "all lines" on network tickets.
@@ -68,35 +73,112 @@ class TicketDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final detail = ref.watch(ticketDetailProvider(transactionCode));
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.ticketDetailsTitle)),
-      body: switch (detail) {
-        // The list runs on under the system's navigation bar.
-        AsyncValue(value: final detail?) => SystemBarScrim(child: _Details(detail, transactionCode: transactionCode)),
-        AsyncError(:final error) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: LoadProblem(
-              message: describeError(l10n, error),
-              onRetry: () => ref.invalidate(ticketDetailProvider(transactionCode)),
+    final provider = ticketDetailProvider(transactionCode);
+    final detail = ref.watch(provider);
+    // What the app already has of the ticket: shown at once, under it only
+    // what the request brings.
+    final stored = ref.watch(storedTicketProvider(transactionCode))?.ticket;
+    final offline = ref.watch(appStatusProvider.select((status) => status.mode == AppMode.offline));
+
+    ref
+      // A request that got no answer: the strip says why, as for the list.
+      ..listen(provider, (_, next) {
+        if (!next.isLoading && next.error is EkpNetworkException) {
+          ref.read(appStatusProvider.notifier).markOffline();
+        }
+      })
+      // Back online: what could not be loaded is asked for again.
+      ..listen(appStatusProvider.select((status) => status.mode), (_, mode) {
+        if (mode == AppMode.online && ref.read(provider).hasError) {
+          ref.invalidate(provider);
+        }
+      });
+
+    Future<void> refresh() async {
+      if (ref.read(appStatusProvider).mode == AppMode.online) {
+        ref.invalidate(provider);
+      } else {
+        // Finds out first whether the server is back; the listener above
+        // reloads when it is.
+        await ref.read(appStatusProvider.notifier).check();
+      }
+      // A failure shows in the details' place, not here.
+      await ref.read(provider.future).then<void>((_) {}, onError: (_) {});
+    }
+
+    final Widget content;
+    if (detail.value case final detail?) {
+      content = _Details(detail, transactionCode: transactionCode);
+    } else if (detail.hasError && !detail.isLoading) {
+      content = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 16,
+        children: [
+          if (stored != null) MkkmTicketCard(stored),
+          if (offline)
+            EmptyStateCard(icon: Symbols.cloud_off_rounded, title: l10n.ticketDetailsOffline, quiet: true)
+          else
+            EmptyStateCard(
+              icon: Symbols.error_rounded,
+              title: l10n.ticketDetailsFailed,
+              // Without a copy to point to, why it failed.
+              body: stored != null ? l10n.ticketDetailsSaved : describeError(l10n, detail.error!),
+              actionIcon: Symbols.refresh_rounded,
+              actionLabel: l10n.retry,
+              onAction: () => ref.invalidate(provider),
+              tonal: true,
+              quiet: true,
+            ),
+        ],
+      );
+    } else {
+      content = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 16,
+        children: [
+          if (stored != null) MkkmTicketCard(stored),
+          SkeletonPulse(
+            label: l10n.ticketsLoading,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 16,
+              children: [if (stored == null) const TicketCardSkeleton(), const TicketDetailsSkeleton()],
             ),
           ),
+        ],
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.ticketDetailsTitle)),
+      // The list runs on under the system's navigation bar.
+      body: SystemBarScrim(
+        child: RefreshIndicator(
+          onRefresh: refresh,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(16, 4, 16, 24 + MediaQuery.viewPaddingOf(context).bottom),
+            children: [
+              const AppStatusBanner(padding: EdgeInsets.only(bottom: 16)),
+              content,
+            ],
+          ),
         ),
-        _ => const Center(child: CircularProgressIndicator()),
-      },
+      ),
     );
   }
 }
 
-class _Details extends ConsumerWidget {
+/// The details once they are there: the ticket, what can still be done with
+/// it, the purchase and its history.
+class _Details extends StatelessWidget {
   const _Details(this.detail, {required this.transactionCode});
 
   final TicketDetailResponse detail;
   final String transactionCode;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final locale = l10n.localeName;
@@ -142,7 +224,10 @@ class _Details extends ConsumerWidget {
             action(
               Symbols.event_repeat_rounded,
               l10n.ticketActionExtend,
-              l10n.ticketActionExtendHint(formatDate(locale, expiry.add(const Duration(seconds: 1)))),
+              // The day alone, as on the card: the year goes without saying.
+              l10n.ticketActionExtendHint(
+                DateFormat.MMMd(locale).format(expiry.add(const Duration(seconds: 1)).toLocal()),
+              ),
               () => context.push(Routes.buy),
             )
           else
@@ -162,59 +247,55 @@ class _Details extends ConsumerWidget {
       ],
     ];
 
-    return RefreshIndicator(
-      // A failure shows in the screen's place, not here.
-      onRefresh: () => ref.refresh(ticketDetailProvider(transactionCode).future).then<void>((_) {}, onError: (_) {}),
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(16, 4, 16, 24 + MediaQuery.viewPaddingOf(context).bottom),
-        children: [
-          if (mobile != null)
-            MkkmTicketCard(mobile, cancelled: cancelled)
-          else
-            TicketCard(
-              title: purchase?.productName ?? l10n.ticketTitleGeneric,
-              pill: cancelled ? TicketPill(l10n.ticketStatusCancelled, Symbols.block_rounded) : null,
-              range: formatValidity(locale, purchase?.ticketStartDate, purchase?.ticketExpiryDate),
-              stub: cancelled ? TicketNote(Symbols.block_rounded, l10n.ticketCancelledNote) : null,
-            ),
-          if (mobile != null && !cancelled && actionOf(mobile) == TicketAction.assignedElsewhere) ...[
-            const SizedBox(height: 16),
-            MessageBanner(l10n.ticketCantAssign, kind: BannerKind.info),
-          ],
-          if (actions.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            RowGroup(title: l10n.ticketDetailsManage, titleColor: scheme.onSurface, children: actions),
-          ],
-          for (final entry in returns) ...[const SizedBox(height: 16), _ReturnCard(entry)],
-          if (purchase != null) ...[
-            const SizedBox(height: 16),
-            FormCard(
-              title: l10n.ticketSectionPurchase,
-              children: [
-                _FieldGrid([
-                  // The server's name for what was bought; the card above
-                  // names it from the dictionaries.
-                  if (purchase.productName case final name? when name.isNotEmpty) (l10n.ticketDetailsProduct, name),
-                  if (purchase.transactionDate case final date?)
-                    (l10n.ticketFieldPurchased, formatDateTime(locale, date)),
-                  (l10n.ticketFieldPaid, (purchase.isPayed ?? false) ? l10n.yes : l10n.no),
-                  // The server's own wording (Polish only) from here on.
-                  (l10n.ticketFieldPaymentType, purchase.paymentDescription),
-                  (l10n.ticketFieldPaymentState, purchase.paymentStateDescription),
-                  (l10n.ticketFieldTransactionState, purchase.transactionStateDescription),
-                  (l10n.ticketFieldPromotion, purchase.promotionName),
-                  if (purchase.price case final price?) (l10n.ticketFieldPrice, formatPrice(price)),
-                ]),
-              ],
-            ),
-          ],
-          if (timeline.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            FormCard(title: l10n.ticketHistoryTitle, children: [_Timeline(timeline)]),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (mobile != null)
+          MkkmTicketCard(mobile, cancelled: cancelled)
+        else
+          TicketCard(
+            title: purchase?.productName ?? l10n.ticketTitleGeneric,
+            pill: cancelled ? TicketPill(l10n.ticketStatusCancelled, Symbols.block_rounded) : null,
+            range: formatValidity(locale, purchase?.ticketStartDate, purchase?.ticketExpiryDate),
+            stub: cancelled ? TicketNote(Symbols.block_rounded, l10n.ticketCancelledNote) : null,
+          ),
+        if (mobile != null && !cancelled && actionOf(mobile) == TicketAction.assignedElsewhere) ...[
+          const SizedBox(height: 16),
+          MessageBanner(l10n.ticketCantAssign, kind: BannerKind.info),
         ],
-      ),
+        if (actions.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          RowGroup(title: l10n.ticketDetailsManage, titleColor: scheme.onSurface, children: actions),
+        ],
+        for (final entry in returns) ...[const SizedBox(height: 16), _ReturnCard(entry)],
+        if (purchase != null) ...[
+          const SizedBox(height: 16),
+          FormCard(
+            title: l10n.ticketSectionPurchase,
+            spacing: 16,
+            children: [
+              _FieldGrid([
+                // The server's name for what was bought; the card above
+                // names it from the dictionaries.
+                if (purchase.productName case final name? when name.isNotEmpty) (l10n.ticketDetailsProduct, name),
+                if (purchase.transactionDate case final date?)
+                  (l10n.ticketFieldPurchased, formatDateTime(locale, date)),
+                (l10n.ticketFieldPaid, (purchase.isPayed ?? false) ? l10n.yes : l10n.no),
+                // The server's own wording (Polish only) from here on.
+                (l10n.ticketFieldPaymentType, purchase.paymentDescription),
+                (l10n.ticketFieldPaymentState, purchase.paymentStateDescription),
+                (l10n.ticketFieldTransactionState, purchase.transactionStateDescription),
+                (l10n.ticketFieldPromotion, purchase.promotionName),
+                if (purchase.price case final price?) (l10n.ticketFieldPrice, formatPrice(price)),
+              ]),
+            ],
+          ),
+        ],
+        if (timeline.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          FormCard(title: l10n.ticketHistoryTitle, spacing: 16, children: [_Timeline(timeline)]),
+        ],
+      ],
     );
   }
 }

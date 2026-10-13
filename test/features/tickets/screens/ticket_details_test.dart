@@ -1,10 +1,12 @@
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/features/tickets/screens/ticket_details_screen.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
+import 'package:mobile_kkm/features/tickets/widgets/ticket_skeletons.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 import '../../../support/fake_adapter.dart';
@@ -135,6 +137,8 @@ void main() {
     expect(find.text('Buy similar'), findsNothing);
 
     expect(find.text('Manage'), findsOneWidget);
+    // From the day after the end, without the year.
+    expect(find.textContaining(RegExp(r'^The same ticket again, from [A-Z][a-z]{2} \d{1,2}$')), findsOneWidget);
     await tapVisible(tester, find.widgetWithText(GroupRow, 'Extend ticket'));
     // Not built yet.
     expect(app.location, '/buy');
@@ -209,12 +213,81 @@ void main() {
     final ticket = validTicket();
     final adapter = _adapter(ticket)..reply('GET', _detail, 500, {'message': 'Błąd serwera.'});
     await _open(tester, adapter);
-    expect(find.text('Błąd serwera.'), findsOneWidget);
+    // The ticket itself is there all the same: the copy the list holds.
+    expect(find.byType(TicketCard), findsOneWidget);
+    expect(find.text('The ticket details could not be loaded.'), findsOneWidget);
+    expect(find.text('The ticket above is the copy saved on this phone.'), findsOneWidget);
+    expect(find.text('Manage'), findsNothing);
 
     adapter.reply('GET', _detail, 200, ticketDetailJson(ticket));
     await tester.tap(find.text('Try again'));
     await tester.pumpAndSettle();
 
+    expect(find.text('Paid'), findsOneWidget);
+    expect(find.byType(TicketCard), findsOneWidget);
+  });
+
+  testWidgets('a purchase the list does not hold says why it could not be loaded', (tester) async {
+    final adapter = FakeAdapter()
+      ..reply('GET', '/mkkm/tickets/list', 200, ticketsReply([]))
+      ..reply('GET', '/api/v1/tickets', 200, historyJson)
+      ..reply('GET', _detail, 500, {'message': 'Błąd serwera.'});
+    await pumpApp(tester, adapter, session: signedInSession, tall: true);
+    await openTab(tester, 'Tickets');
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(GroupRow).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TicketCard), findsNothing);
+    expect(find.text('The ticket details could not be loaded.'), findsOneWidget);
+    expect(find.text('Błąd serwera.'), findsOneWidget);
+  });
+
+  testWidgets('while the details load, the stored ticket is over the shapes of the rest', (tester) async {
+    // Still shapes, so that the test can settle.
+    tester.platformDispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    final ticket = validTicket(assigned: true);
+    final adapter = _adapter(ticket, canReturn: true);
+    final release = adapter.hold('GET', _detail);
+    await _open(tester, adapter);
+
+    expect(find.widgetWithText(FilledButton, 'Ticket control'), findsOneWidget);
+    expect(find.byType(TicketDetailsSkeleton), findsOneWidget);
+    expect(find.byType(TicketCardSkeleton), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    // What can be done follows the server's flags, so not before they are there.
+    expect(find.text('Manage'), findsNothing);
+
+    release();
+    await tester.pumpAndSettle();
+    expect(find.byType(TicketDetailsSkeleton), findsNothing);
+    expect(find.text('Manage'), findsOneWidget);
+  });
+
+  testWidgets('offline, the stored ticket stays and the details come when the server is back', (tester) async {
+    final ticket = validTicket(assigned: true);
+    final adapter = _adapter(ticket)..fail('GET', _detail);
+    // Not tall: a pull has to cover a share of the list's height.
+    final app = await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Tickets');
+    await tester.tap(find.byType(TicketCard));
+    await tester.pumpAndSettle();
+
+    // The request that got no answer is how the app found out.
+    expect(app.container.read(appStatusProvider).mode, AppMode.offline);
+    expect(find.text('You’re offline. Showing saved data.'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Ticket control'), findsOneWidget);
+    expect(find.text('Details load when you’re back online.'), findsOneWidget);
+    expect(find.text('Try again'), findsNothing);
+
+    adapter.reply('GET', _detail, 200, ticketDetailJson(ticket));
+    // The list of this screen, over the one of the Tickets section.
+    await tester.fling(find.byType(Scrollable).last, const Offset(0, 400), 1000);
+    await tester.pumpAndSettle();
+
+    expect(find.text('You’re offline. Showing saved data.'), findsNothing);
     expect(find.text('Paid'), findsOneWidget);
   });
 

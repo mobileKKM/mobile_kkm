@@ -9,17 +9,19 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
+import 'package:mobile_kkm/core/widgets/app_snack_bar.dart';
 import 'package:mobile_kkm/core/widgets/app_status_banner.dart';
 import 'package:mobile_kkm/core/widgets/empty_state_card.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
-import 'package:mobile_kkm/core/widgets/load_problem.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
+import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
 import 'package:mobile_kkm/features/tickets/models/stored_ticket.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
 import 'package:mobile_kkm/features/tickets/widgets/mkkm_ticket_card.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
+import 'package:mobile_kkm/features/tickets/widgets/ticket_skeletons.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// The user's mobile tickets and, in a second list, the purchase history.
@@ -38,100 +40,65 @@ class _TicketsScreenState extends ConsumerState<TicketsScreen> {
     final l10n = AppLocalizations.of(context);
     // Without tickets the way to buy one is in the list's place, not over it.
     final hasTickets = ref.watch(mkkmTicketsProvider.select((tickets) => tickets.value?.isNotEmpty ?? false));
-    return Scaffold(
-      appBar: AppBar(
-        // Its "scrolled under" tint only follows scrolling, and each list starts at the top: start over with the list.
-        key: ValueKey(_past),
-        title: Text(l10n.navTickets),
-        // Part of the bar, so that it takes the bar's tint when a list scrolls under it.
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(64),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-            child: Row(
-              spacing: 4,
-              children: [
-                Expanded(
-                  child: _Segment(
-                    label: l10n.ticketsActive,
-                    selected: !_past,
-                    onTap: () => setState(() => _past = false),
-                  ),
-                ),
-                Expanded(
-                  child: _Segment(
-                    label: l10n.ticketsHistory,
-                    selected: _past,
-                    onTap: () => setState(() => _past = true),
-                  ),
-                ),
-              ],
+    // A messenger of its own: this screen's snackbars then belong to its
+    // scaffold, which lifts the floating button over them, and not to the
+    // shell's, which would draw them across it.
+    return ScaffoldMessenger(
+      child: Scaffold(
+        appBar: AppBar(
+          // Its "scrolled under" tint only follows scrolling, and each list starts at the top: start over with the list.
+          key: ValueKey(_past),
+          title: Text(l10n.navTickets),
+          // Part of the bar, so that it takes the bar's tint when a list scrolls under it.
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(56),
+            child: Padding(
+              // Material's own button: 40 high in a touch target of 48.
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: SegmentedButton<bool>(
+                expandedInsets: EdgeInsets.zero,
+                selectedIcon: const Icon(Symbols.check_rounded, size: 18),
+                segments: [
+                  ButtonSegment(value: false, label: Text(l10n.ticketsActive)),
+                  ButtonSegment(value: true, label: Text(l10n.ticketsHistory)),
+                ],
+                selected: {_past},
+                onSelectionChanged: (selection) => setState(() => _past = selection.first),
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _past || hasTickets
-          ? FloatingActionButton.extended(
-              heroTag: 'buy-ticket',
-              onPressed: () => context.push(Routes.buy),
-              icon: const Icon(Symbols.add_shopping_cart_rounded),
-              label: Text(l10n.navBuy),
-            )
-          : null,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const AppStatusBanner(padding: EdgeInsets.fromLTRB(16, 4, 16, 4)),
-          Expanded(child: _past ? const _TicketHistory() : const _ActiveTickets()),
-        ],
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _past || hasTickets
+            ? FloatingActionButton.extended(
+                heroTag: 'buy-ticket',
+                onPressed: () => context.push(Routes.buy),
+                icon: const Icon(Symbols.add_shopping_cart_rounded),
+                label: Text(l10n.navBuy),
+              )
+            : null,
+        body: _past ? const _TicketHistory() : const _ActiveTickets(),
       ),
     );
   }
 }
 
-/// One of the two lists' names; the chosen one is filled and ticked.
-class _Segment extends StatelessWidget {
-  const _Segment({required this.label, required this.selected, required this.onTap});
+/// A list with the offline strip held over it: the list scrolls under the
+/// strip, and both are inside the refresh indicator, which so comes down
+/// from the app bar and not from under the strip.
+class _UnderStatus extends StatelessWidget {
+  const _UnderStatus({required this.child});
 
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
+  final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final foreground = selected ? scheme.onSecondaryContainer : scheme.onSurfaceVariant;
-    return Semantics(
-      button: true,
-      selected: selected,
-      child: Material(
-        color: selected ? scheme.secondaryContainer : scheme.surfaceContainer,
-        shape: const StadiumBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: SizedBox(
-            height: 48,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (selected) ...[Icon(Symbols.check_rounded, size: 20, color: foreground), const SizedBox(width: 6)],
-                Flexible(
-                  child: Text(
-                    label,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.labelLarge?.copyWith(fontSize: 15, color: foreground),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      const AppStatusBanner(padding: EdgeInsets.fromLTRB(16, 4, 16, 8)),
+      Expanded(child: child),
+    ],
+  );
 }
 
 // The bottom leaves room for the floating button.
@@ -153,6 +120,23 @@ class _Placeholder extends StatelessWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: fill ? const EdgeInsets.fromLTRB(16, 28, 16, 24) : const EdgeInsets.fromLTRB(24, 96, 24, 24),
       children: [fill ? child : Center(child: child)],
+    );
+  }
+}
+
+/// The shapes of a list that is loading for the first time, where the list
+/// will be, so that nothing jumps when it arrives.
+class _Loading extends StatelessWidget {
+  const _Loading({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: _listPadding,
+      children: [SkeletonPulse(label: AppLocalizations.of(context).ticketsLoading, child: child)],
     );
   }
 }
@@ -196,7 +180,7 @@ class _ActiveTickets extends ConsumerWidget {
       content = failed(l10n.ticketsLoadError);
     } else if (tickets == null || sync.lastSyncedAt == null) {
       // Nothing stored and the first sync has not come back yet.
-      content = const _Placeholder(child: CircularProgressIndicator());
+      content = const _Loading(child: Column(spacing: 12, children: [TicketCardSkeleton(), TicketCardSkeleton()]));
     } else {
       content = _Placeholder(
         fill: true,
@@ -210,7 +194,10 @@ class _ActiveTickets extends ConsumerWidget {
         ),
       );
     }
-    return RefreshIndicator(onRefresh: ref.read(ticketSyncProvider.notifier).refresh, child: content);
+    return RefreshIndicator(
+      onRefresh: ref.read(ticketSyncProvider.notifier).refresh,
+      child: _UnderStatus(child: content),
+    );
   }
 }
 
@@ -224,9 +211,15 @@ class _ActiveTicketCard extends StatelessWidget {
     final ticket = stored.ticket;
     final code = ticket.transactionCode;
     final guid = ticket.ticketGuid;
-    // A ticket that is over, or cannot be shown here, has no place on the
-    // home screen.
-    final canPin = guid != null && toneOf(ticket, DateTime.now()) != TicketTone.over;
+    // Only a running or coming ticket that this phone can show, or could
+    // once assigned, has a place on the home screen: not one that is unpaid,
+    // over, or held by other devices.
+    final now = DateTime.now();
+    final phase = phaseOf(ticket, now);
+    final canPin =
+        guid != null &&
+        (phase == TicketPhase.valid || phase == TicketPhase.upcoming) &&
+        toneOf(ticket, now) != TicketTone.over;
     return MkkmTicketCard(
       ticket,
       pinned: stored.pinned,
@@ -247,10 +240,7 @@ class _PinToggle extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     await ref.read(ticketsDaoProvider).setPinned(pinned ? null : guid);
-    // Instead of an earlier answer, not after it.
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(pinned ? l10n.ticketUnpinDone : l10n.ticketPinDone)));
+    showAppSnackBar(messenger, pinned ? l10n.ticketUnpinDone : l10n.ticketPinDone);
   }
 
   @override
@@ -280,14 +270,22 @@ class _TicketHistory extends ConsumerWidget {
       AsyncValue(value: final entries?) when entries.isNotEmpty => _HistoryList(entries),
       AsyncValue(hasValue: true) => _Placeholder(child: Text(l10n.ticketsEmptyHistory)),
       AsyncError(:final error) => _Placeholder(
-        child: LoadProblem(message: describeError(l10n, error), onRetry: () => ref.invalidate(ticketHistoryProvider)),
+        fill: true,
+        child: EmptyStateCard(
+          icon: Symbols.cloud_off_rounded,
+          title: describeError(l10n, error),
+          actionIcon: Symbols.refresh_rounded,
+          actionLabel: l10n.retry,
+          onAction: () => ref.invalidate(ticketHistoryProvider),
+          tonal: true,
+        ),
       ),
-      _ => const _Placeholder(child: CircularProgressIndicator()),
+      _ => const _Loading(child: TicketHistorySkeleton()),
     };
     return RefreshIndicator(
       // A failure shows in the list's place, not here.
       onRefresh: () => ref.refresh(ticketHistoryProvider.future).then<void>((_) {}, onError: (_) {}),
-      child: content,
+      child: _UnderStatus(child: content),
     );
   }
 }
@@ -369,14 +367,6 @@ class _HistoryRow extends StatelessWidget {
       PurchaseState.cancelled => l10n.ticketHistoryStateCancelled,
       PurchaseState.other => entry.transactionStateDescription,
     };
-    final now = DateTime.now();
-    // A cancelled purchase keeps the dates of the ticket it never became.
-    final running =
-        purchase != PurchaseState.cancelled &&
-        start != null &&
-        end != null &&
-        !now.isBefore(start) &&
-        !now.isAfter(end);
     final range = [
       if (start != null) DateFormat.MMMd(locale).format(start.toLocal()),
       if (end != null) formatDate(locale, end),
@@ -390,11 +380,11 @@ class _HistoryRow extends StatelessWidget {
           PurchaseState.completed || PurchaseState.other => Symbols.confirmation_number_rounded,
         },
         size: 40,
-        background: running ? scheme.primaryContainer : scheme.surface,
-        foreground: running ? scheme.primaryFixed : scheme.onSurfaceVariant,
+        foreground: scheme.onSurfaceVariant,
       ),
       label: name == null || name.isEmpty ? l10n.ticketTitleGeneric : name,
       subtitle: range.isEmpty ? null : range,
+      smallLabel: true,
       showChevron: false,
       trailing: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 128),

@@ -46,7 +46,7 @@ class HomeScreen extends ConsumerWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
             children: [
-              const AppStatusBanner(padding: EdgeInsets.only(top: 4, bottom: 8)),
+              const AppStatusBanner(padding: EdgeInsets.only(bottom: 8)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
                 child: Row(

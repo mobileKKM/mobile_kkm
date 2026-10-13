@@ -38,7 +38,7 @@ void main() {
     await _openAccount(tester, _adapter());
 
     expect(find.text('Jan Testowy'), findsOneWidget);
-    expect(find.text('Customer code 100001', findRichText: true), findsOneWidget);
+    expect(find.text('Customer number 100001', findRichText: true), findsOneWidget);
     expect(find.widgetWithText(CircleAvatar, 'JT'), findsOneWidget);
   });
 

@@ -322,7 +322,7 @@ class TicketCard extends StatelessWidget {
                                         width: 148,
                                         height: 12,
                                         decoration: BoxDecoration(
-                                          color: palette.pill,
+                                          color: palette.medium.withValues(alpha: 0.32),
                                           borderRadius: BorderRadius.circular(6),
                                         ),
                                       ),
