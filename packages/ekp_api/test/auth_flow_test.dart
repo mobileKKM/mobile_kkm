@@ -461,5 +461,21 @@ void main() {
       expect((req.data as Map<String, dynamic>)['password'], 'Sup3rSecret!');
       expect(headersOf(req)['authorization'], 'Bearer $tokenA', reason: 'anonymise is an authenticated call');
     });
+
+    test('a wrong password is an HTTP error carrying the server\'s message', () async {
+      await store.write(sessionA);
+      adapter.onPut('/account/anonymise', [
+        (400, {'message': 'Nieprawidłowe hasło', 'exceptionCode': 259, 'code': 1}),
+      ]);
+
+      await expectLater(
+        client.account.anonymise(password: 'wrong'),
+        throwsA(
+          isA<EkpHttpException>()
+              .having((e) => e.statusCode, 'statusCode', 400)
+              .having((e) => e.message, 'message', 'Nieprawidłowe hasło'),
+        ),
+      );
+    });
   });
 }

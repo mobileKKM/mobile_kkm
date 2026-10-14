@@ -105,6 +105,12 @@ class AccountApi extends EkpApiService {
   /// invalidated server-side immediately — the capture shows the very
   /// next `auth/logout` returning 401 — so callers should clear the local
   /// session right after a successful call.
+  ///
+  /// A wrong password is HTTP 400 with `{message, exceptionCode, code}`
+  /// ("Nieprawidłowe hasło"), i.e. an [EkpHttpException]. An account with a
+  /// card still attached was never sent here: the official client looks at
+  /// `storage-medium/list` first and only goes on when it is empty, which
+  /// it is once the mKKM card was detached on the website.
   Future<CodeMessageResponse> anonymise({required String password}) async {
     return guard(() async {
       final response = await dio.put<Map<String, dynamic>>(EkpApiPaths.accountAnonymise, data: {'password': password});

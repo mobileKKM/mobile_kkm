@@ -625,11 +625,11 @@ void main() {
       });
     });
 
-    test('changeLine posts ccTransaction + one {number, secondZone} entry', () async {
-      adapter.onPost('/tickets/line-change/edit', [(200, 3170)]);
+    test('changeLine posts ccTransaction + one {number, secondZone} entry per line', () async {
+      adapter.onPost('/tickets/line-change/edit', [(200, 3170), (200, 3171)]);
       final res = await client.tickets.changeLine(
         transactionId: 400005,
-        line: const TransportLine(line: 253, secondZone: false),
+        lines: const [TransportLine(line: 253, secondZone: false)],
       );
       expect(res, 3170);
       expect(bodyOf(requestsTo('/tickets/line-change/edit').single), {
@@ -638,6 +638,15 @@ void main() {
           {'number': 253, 'secondZone': false},
         ],
       });
+
+      await client.tickets.changeLine(
+        transactionId: 400005,
+        lines: const [TransportLine(line: 13, secondZone: false), TransportLine(line: 139, secondZone: true)],
+      );
+      expect(bodyOf(requestsTo('/tickets/line-change/edit').last)['lines'], [
+        {'number': 13, 'secondZone': false},
+        {'number': 139, 'secondZone': true},
+      ]);
     });
   });
 
