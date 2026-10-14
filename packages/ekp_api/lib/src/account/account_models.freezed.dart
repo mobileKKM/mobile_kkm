@@ -1553,7 +1553,7 @@ mixin _$InhabitantContract {
 /// ISO-8601 string (json_serializable has no built-in epoch support,
 /// hence the local [_parseEpochMs] hook).
 @JsonKey(fromJson: _parseEpochMs) DateTime? get expirationDate;/// Base64-encoded PNG of the AZTEC barcode (signed server-side).
- String? get contract;
+ String? get contract; Object? get code; String? get message;
 /// Create a copy of InhabitantContract
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1567,20 +1567,20 @@ $InhabitantContractCopyWith<InhabitantContract> get copyWith => _$InhabitantCont
 @override
 bool operator ==(Object other) {
   final _this = this as InhabitantContract;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InhabitantContract&&(identical(other.expirationDate, _this.expirationDate) || other.expirationDate == _this.expirationDate)&&(identical(other.contract, _this.contract) || other.contract == _this.contract));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InhabitantContract&&(identical(other.expirationDate, _this.expirationDate) || other.expirationDate == _this.expirationDate)&&(identical(other.contract, _this.contract) || other.contract == _this.contract)&&const DeepCollectionEquality().equals(other.code, _this.code)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as InhabitantContract;
-  return Object.hash(runtimeType,_this.expirationDate,_this.contract);
+  return Object.hash(runtimeType,_this.expirationDate,_this.contract,const DeepCollectionEquality().hash(_this.code),_this.message);
 }
 
 @override
 String toString() {
   final _this = this as InhabitantContract;
-  return 'InhabitantContract(expirationDate: ${_this.expirationDate}, contract: ${_this.contract})';
+  return 'InhabitantContract(expirationDate: ${_this.expirationDate}, contract: ${_this.contract}, code: ${_this.code}, message: ${_this.message})';
 }
 
 
@@ -1591,7 +1591,7 @@ abstract mixin class $InhabitantContractCopyWith<$Res>  {
   factory $InhabitantContractCopyWith(InhabitantContract value, $Res Function(InhabitantContract) _then) = _$InhabitantContractCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(fromJson: _parseEpochMs) DateTime? expirationDate, String? contract
+@JsonKey(fromJson: _parseEpochMs) DateTime? expirationDate, String? contract, Object? code, String? message
 });
 
 
@@ -1608,10 +1608,11 @@ class _$InhabitantContractCopyWithImpl<$Res>
 
 /// Create a copy of InhabitantContract
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? expirationDate = freezed,Object? contract = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? expirationDate = freezed,Object? contract = freezed,Object? code = freezed,Object? message = freezed,}) {
   return _then(InhabitantContract(
 expirationDate: freezed == expirationDate ? _self.expirationDate : expirationDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,contract: freezed == contract ? _self.contract : contract // ignore: cast_nullable_to_non_nullable
+as String?,code: freezed == code ? _self.code : code ,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -1697,10 +1698,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _parseEpochMs)  DateTime? expirationDate,  String? contract)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _parseEpochMs)  DateTime? expirationDate,  String? contract,  Object? code,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InhabitantContract() when $default != null:
-return $default(_that.expirationDate,_that.contract);case _:
+return $default(_that.expirationDate,_that.contract,_that.code,_that.message);case _:
   return orElse();
 
 }
@@ -1718,10 +1719,10 @@ return $default(_that.expirationDate,_that.contract);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _parseEpochMs)  DateTime? expirationDate,  String? contract)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _parseEpochMs)  DateTime? expirationDate,  String? contract,  Object? code,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _InhabitantContract():
-return $default(_that.expirationDate,_that.contract);case _:
+return $default(_that.expirationDate,_that.contract,_that.code,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1738,10 +1739,10 @@ return $default(_that.expirationDate,_that.contract);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _parseEpochMs)  DateTime? expirationDate,  String? contract)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _parseEpochMs)  DateTime? expirationDate,  String? contract,  Object? code,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _InhabitantContract() when $default != null:
-return $default(_that.expirationDate,_that.contract);case _:
+return $default(_that.expirationDate,_that.contract,_that.code,_that.message);case _:
   return null;
 
 }
@@ -1753,7 +1754,7 @@ return $default(_that.expirationDate,_that.contract);case _:
 @JsonSerializable()
 
 class _InhabitantContract extends InhabitantContract {
-  const _InhabitantContract({@JsonKey(fromJson: _parseEpochMs) this.expirationDate, this.contract}): super._();
+  const _InhabitantContract({@JsonKey(fromJson: _parseEpochMs) this.expirationDate, this.contract, this.code, this.message}): super._();
   factory _InhabitantContract.fromJson(Map<String, dynamic> json) => _$InhabitantContractFromJson(json);
 
 /// Epoch milliseconds — the only date in the whole API that is not an
@@ -1762,6 +1763,8 @@ class _InhabitantContract extends InhabitantContract {
 @override@JsonKey(fromJson: _parseEpochMs) final  DateTime? expirationDate;
 /// Base64-encoded PNG of the AZTEC barcode (signed server-side).
 @override final  String? contract;
+@override final  Object? code;
+@override final  String? message;
 
 /// Create a copy of InhabitantContract
 /// with the given fields replaced by the non-null parameter values.
@@ -1776,18 +1779,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InhabitantContract&&(identical(other.expirationDate, expirationDate) || other.expirationDate == expirationDate)&&(identical(other.contract, contract) || other.contract == contract));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InhabitantContract&&(identical(other.expirationDate, expirationDate) || other.expirationDate == expirationDate)&&(identical(other.contract, contract) || other.contract == contract)&&const DeepCollectionEquality().equals(other.code, code)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,expirationDate,contract);
+    return Object.hash(runtimeType,expirationDate,contract,const DeepCollectionEquality().hash(code),message);
 }
 
 @override
 String toString() {
-    return 'InhabitantContract(expirationDate: $expirationDate, contract: $contract)';
+    return 'InhabitantContract(expirationDate: $expirationDate, contract: $contract, code: $code, message: $message)';
 }
 
 
@@ -1798,7 +1801,7 @@ abstract mixin class _$InhabitantContractCopyWith<$Res> implements $InhabitantCo
   factory _$InhabitantContractCopyWith(_InhabitantContract value, $Res Function(_InhabitantContract) _then) = __$InhabitantContractCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(fromJson: _parseEpochMs) DateTime? expirationDate, String? contract
+@JsonKey(fromJson: _parseEpochMs) DateTime? expirationDate, String? contract, Object? code, String? message
 });
 
 
@@ -1815,10 +1818,11 @@ class __$InhabitantContractCopyWithImpl<$Res>
 
 /// Create a copy of InhabitantContract
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? expirationDate = freezed,Object? contract = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? expirationDate = freezed,Object? contract = freezed,Object? code = freezed,Object? message = freezed,}) {
   return _then(_InhabitantContract(
 expirationDate: freezed == expirationDate ? _self.expirationDate : expirationDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,contract: freezed == contract ? _self.contract : contract // ignore: cast_nullable_to_non_nullable
+as String?,code: freezed == code ? _self.code : code ,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

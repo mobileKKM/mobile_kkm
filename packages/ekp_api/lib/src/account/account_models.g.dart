@@ -126,12 +126,18 @@ Map<String, dynamic> _$InhabitantStatusToJson(_InhabitantStatus instance) => <St
   'message': instance.message,
 };
 
-_InhabitantContract _$InhabitantContractFromJson(Map<String, dynamic> json) =>
-    _InhabitantContract(expirationDate: _parseEpochMs(json['expirationDate']), contract: json['contract'] as String?);
+_InhabitantContract _$InhabitantContractFromJson(Map<String, dynamic> json) => _InhabitantContract(
+  expirationDate: _parseEpochMs(json['expirationDate']),
+  contract: json['contract'] as String?,
+  code: json['code'],
+  message: json['message'] as String?,
+);
 
 Map<String, dynamic> _$InhabitantContractToJson(_InhabitantContract instance) => <String, dynamic>{
   'expirationDate': instance.expirationDate?.toIso8601String(),
   'contract': instance.contract,
+  'code': instance.code,
+  'message': instance.message,
 };
 
 _StreetAutocompleteResponse _$StreetAutocompleteResponseFromJson(Map<String, dynamic> json) =>

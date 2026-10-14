@@ -60,6 +60,14 @@ void main() {
       expect(res.expirationDate!.isUtc, isTrue);
       expect(res.contract, isNotEmpty);
       expect(res.decodeContractPng(), isNotEmpty);
+      expect(res.code, isNull);
+    });
+
+    test('InhabitantContract keeps the reason of a refusal', () {
+      final res = InhabitantContract.fromJson({'code': 4, 'message': 'Brak aktywnego statusu mieszkańca.'});
+      expect(res.codeAsInt, 4);
+      expect(res.message, 'Brak aktywnego statusu mieszkańca.');
+      expect(res.decodeContractPng(), isEmpty);
     });
 
     test('StreetAutocompleteResponse parses', () {

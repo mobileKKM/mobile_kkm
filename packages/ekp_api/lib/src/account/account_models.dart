@@ -108,7 +108,7 @@ abstract class InhabitantStatus with EkpCodeMessage, _$InhabitantStatus {
 /// the mKKM AZTEC `contract-e`, whose barcode must be rendered
 /// client-side from the decrypted token.
 @freezed
-abstract class InhabitantContract with _$InhabitantContract {
+abstract class InhabitantContract with EkpCodeMessage, _$InhabitantContract {
   const factory InhabitantContract({
     /// Epoch milliseconds — the only date in the whole API that is not an
     /// ISO-8601 string (json_serializable has no built-in epoch support,
@@ -117,6 +117,8 @@ abstract class InhabitantContract with _$InhabitantContract {
 
     /// Base64-encoded PNG of the AZTEC barcode (signed server-side).
     String? contract,
+    Object? code,
+    String? message,
   }) = _InhabitantContract;
 
   const InhabitantContract._();
