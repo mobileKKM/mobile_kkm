@@ -29,6 +29,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _registerFontLicenses();
 
+  // Every screen is laid out for portrait; the manifest and Info.plist lock
+  // the native side (and the splash) the same way.
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   // Edge to edge on every Android version (15+ enforces it anyway): the
   // native splash covers the whole screen, so the Flutter one has to as well
   // or its centred logo sits higher. iOS always is.
