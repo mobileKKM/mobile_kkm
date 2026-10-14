@@ -1138,4 +1138,182 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get cityCardOfflineCode => 'Kod statusu wymaga połączenia.';
+
+  @override
+  String get lineChangeYour => 'Twoja linia';
+
+  @override
+  String get lineChangeYourHint => 'Dotknij jej, a potem wybierz nową linię w jej miejsce.';
+
+  @override
+  String get lineChangeWhich => 'Którą linię chcesz zmienić?';
+
+  @override
+  String get lineChangeWhichHint => 'Dotknij linii, a potem wybierz nową w jej miejsce.';
+
+  @override
+  String get lineTram => 'Tramwaj';
+
+  @override
+  String get lineBus => 'Autobus';
+
+  @override
+  String lineReplacing(String line) {
+    return 'Zamiast linii $line';
+  }
+
+  @override
+  String lineReplaces(String type, String line) {
+    return '$type · zamiast $line';
+  }
+
+  @override
+  String get lineOnTicket => 'Na Twoim bilecie';
+
+  @override
+  String lineChangeSummaryOne(String line) {
+    return 'Po zapisaniu bilet będzie ważny na linii $line.';
+  }
+
+  @override
+  String lineChangeSummaryMany(String lines, String last) {
+    return 'Po zapisaniu bilet będzie ważny na liniach $lines i $last.';
+  }
+
+  @override
+  String get lineSave => 'Zapisz';
+
+  @override
+  String get lineChangeDone => 'Pomyślnie zmieniono linię.';
+
+  @override
+  String get lineSearchHint => 'Numer linii';
+
+  @override
+  String get lineSearchClear => 'Wyczyść';
+
+  @override
+  String lineSearchNone(String query) {
+    return 'Brak linii zaczynających się od $query.';
+  }
+
+  @override
+  String get lineSearchFailed => 'Nie udało się wczytać linii.';
+
+  @override
+  String get editPhotoPending => 'Nowe zdjęcie, jeszcze niezapisane';
+
+  @override
+  String get editPhotoSave => 'Zapisz zdjęcie';
+
+  @override
+  String get editPhotoSaved => 'Zdjęcie zostało zmienione.';
+
+  @override
+  String get photoSheetTitle => 'Zdjęcie profilowe';
+
+  @override
+  String get photoSheetRules =>
+      'Służy do potwierdzenia, że to Ty. Użyj zdjęcia jak do dowodu: równe światło, jasne tło, bez nakrycia głowy i okularów przeciwsłonecznych.';
+
+  @override
+  String get editPersonal => 'Dane osobowe';
+
+  @override
+  String get editPhone => 'Numer telefonu';
+
+  @override
+  String get editPesel => 'PESEL';
+
+  @override
+  String get editLockedNote => 'Tych danych nie można zmienić w aplikacji.';
+
+  @override
+  String get editAddress => 'Adres zamieszkania';
+
+  @override
+  String get editAddressHint => 'Wymagany dla karty mKKM.';
+
+  @override
+  String get editSave => 'Zapisz zmiany';
+
+  @override
+  String get editSaving => 'Zapisujemy…';
+
+  @override
+  String get editSaved => 'Dane zostały zaktualizowane.';
+
+  @override
+  String get editDiscardTitle => 'Odrzucić zmiany?';
+
+  @override
+  String get editDiscardBody => 'Zmiany imienia, telefonu lub adresu nie zostały zapisane.';
+
+  @override
+  String get editKeep => 'Edytuj dalej';
+
+  @override
+  String get editDiscard => 'Odrzuć';
+
+  @override
+  String get offlineSaveKept => 'Zmiany zostają; połącz się, aby je zapisać.';
+
+  @override
+  String get passwordCurrent => 'Obecne hasło';
+
+  @override
+  String get passwordRepeatNew => 'Powtórz nowe hasło';
+
+  @override
+  String get passwordChanged => 'Hasło zostało zmienione.';
+
+  @override
+  String get passwordStaySignedIn => 'Pozostaniesz zalogowany na tym urządzeniu.';
+
+  @override
+  String get deleteTitle => 'Usunąć konto?';
+
+  @override
+  String get deleteChecking => 'Sprawdzamy karty…';
+
+  @override
+  String get deleteAccountGoesTitle => 'Konto eKP też zostanie usunięte';
+
+  @override
+  String get deleteAccountGoesBody =>
+      'mobileKKM korzysta z konta eKP, więc zniknie ono również ze strony ekp.mpk.krakow.pl.';
+
+  @override
+  String get deleteTicketsLostTitle => 'Stracisz bilety i faktury';
+
+  @override
+  String get deleteTicketsLostBody => 'Nie będziesz mieć dostępu do biletów i faktur z tego konta.';
+
+  @override
+  String get deletePlasticTitle => 'Karta plastikowa wymaga konta eKP';
+
+  @override
+  String get deletePlasticBody => 'Bilet przez internet na nośnik plastikowy kupisz tylko z kontem eKP.';
+
+  @override
+  String get deleteCardsTitle => 'Najpierw odłącz karty';
+
+  @override
+  String get deleteCardsBody =>
+      'Do konta wciąż są podłączone karty. Zaloguj się na ekp.mpk.krakow.pl, odłącz je i spróbuj ponownie.';
+
+  @override
+  String get deleteCardsAction => 'Otwórz stronę eKP';
+
+  @override
+  String get deletePasswordTitle => 'Podaj hasło';
+
+  @override
+  String get deletePasswordBody => 'Konto zostanie usunięte od razu.';
+
+  @override
+  String get deleteAction => 'Usuń';
+
+  @override
+  String get deleteDoneTitle => 'Konto usunięte';
 }

@@ -97,6 +97,7 @@ Map<String, dynamic> userDataJson({
   bool card = true,
   bool detached = false,
   Map<String, dynamic>? address,
+  String? phone,
 }) => {
   'userData': {
     'firstName': 'Jan',
@@ -104,6 +105,7 @@ Map<String, dynamic> userDataJson({
     'email': 'jan@example.com',
     'birthDate': '2000-01-03T00:00:00',
     'photoUrl': photoUrl,
+    'phoneNumber': ?phone,
     'registeredAddress': ?address,
   },
   'mkkmData': card

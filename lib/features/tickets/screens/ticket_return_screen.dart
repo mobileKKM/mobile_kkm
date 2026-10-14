@@ -7,19 +7,18 @@ import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
-import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 import 'package:mobile_kkm/core/widgets/app_snack_bar.dart';
 import 'package:mobile_kkm/core/widgets/form_card.dart';
-import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/load_problem.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
+import 'package:mobile_kkm/features/tickets/widgets/ticket_summary_panel.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// The days a return can be dated: from today, or from the ticket's first
@@ -253,31 +252,17 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
     final colors = AppColors.of(context);
     final locale = l10n.localeName;
     final purchase = detail.ticket;
-    final mobile = detail.ticketEkp;
     final transactionId = purchase?.transactionId;
     final date = _date;
     final preview = _preview;
     final amount = preview?.returnPrice;
     final start = purchase?.ticketStartDate;
     final end = purchase?.ticketExpiryDate;
-    final price = purchase?.price;
     final quiet = theme.textTheme.bodySmall?.copyWith(fontSize: 13, height: 18 / 13, color: scheme.onSurfaceVariant);
     final canPick = transactionId != null && !_returning;
     final keptUntil = preview?.newTicketExpiryDate;
     // Given back from its first day on: nothing of the ticket is kept.
     final whole = keptUntil != null && start != null && !keptUntil.isAfter(start);
-
-    final String title;
-    if (mobile != null) {
-      final zone = ticketZone(mobile.ticketNumberOfLineCode, ref.watch(ticketLineScopesProvider).value);
-      title = ticketScope(l10n, mobile, zone: zone);
-    } else {
-      title = purchase?.productName ?? l10n.ticketTitleGeneric;
-    }
-    final range = [
-      if (start != null) DateFormat.MMMd(locale).format(start.toLocal()),
-      if (end != null) formatDate(locale, end),
-    ].join(' – ');
 
     return Column(
       children: [
@@ -285,43 +270,7 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             children: [
-              // Which ticket this is about; its card stays on the details.
-              Container(
-                padding: const EdgeInsetsDirectional.fromSTEB(14, 14, 16, 14),
-                decoration: BoxDecoration(color: scheme.primaryContainer, borderRadius: BorderRadius.circular(24)),
-                child: Row(
-                  children: [
-                    IconTile(
-                      mobile != null && isTramTicket(mobile) ? Symbols.tram_rounded : Symbols.directions_bus_rounded,
-                      radius: 16,
-                      iconSize: 24,
-                      background: scheme.primaryFixed,
-                      foreground: scheme.onPrimaryFixed,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 2,
-                        children: [
-                          Text(
-                            title,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 17,
-                              height: 22 / 17,
-                              color: scheme.primaryFixed,
-                            ),
-                          ),
-                          Text(
-                            [if (range.isNotEmpty) range, if (price != null) formatPrice(price)].join(' · '),
-                            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onPrimaryContainer),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              TicketSummaryPanel(detail: detail),
               const SizedBox(height: 16),
               FormCard(
                 children: [

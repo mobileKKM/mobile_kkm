@@ -78,6 +78,15 @@ class AuthController extends Notifier<AuthState> {
     await ref.read(ekpClientProvider).session.publishLoggedOut();
   }
 
+  /// Ends the session on this device without a word to the server: for an
+  /// account that was just deleted, whose token the server no longer knows.
+  Future<void> signOutLocally() async {
+    if (state.status != AuthStatus.authenticated) {
+      return;
+    }
+    await ref.read(ekpClientProvider).session.publishLoggedOut();
+  }
+
   void _onEvent(EkpSessionEvent event) {
     final reason = _signOutReason;
     _signOutReason = null;

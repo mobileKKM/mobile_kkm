@@ -5,6 +5,9 @@ import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/coming_soon_screen.dart';
 import 'package:mobile_kkm/features/account/screens/account_screen.dart';
+import 'package:mobile_kkm/features/account/screens/change_password_screen.dart';
+import 'package:mobile_kkm/features/account/screens/delete_account_screen.dart';
+import 'package:mobile_kkm/features/account/screens/edit_account_screen.dart';
 import 'package:mobile_kkm/features/auth/models/email_link.dart';
 import 'package:mobile_kkm/features/auth/providers/auth_controller.dart';
 import 'package:mobile_kkm/features/auth/screens/activate_screen.dart';
@@ -25,6 +28,7 @@ import 'package:mobile_kkm/features/home/screens/home_screen.dart';
 import 'package:mobile_kkm/features/map/screens/map_screen.dart';
 import 'package:mobile_kkm/features/shell/widgets/main_shell.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
+import 'package:mobile_kkm/features/tickets/screens/ticket_change_line_screen.dart';
 import 'package:mobile_kkm/features/tickets/screens/ticket_control_screen.dart';
 import 'package:mobile_kkm/features/tickets/screens/ticket_details_screen.dart';
 import 'package:mobile_kkm/features/tickets/screens/ticket_return_screen.dart';
@@ -96,8 +100,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'return',
             builder: (context, state) => TicketReturnScreen(transactionCode: state.pathParameters['transactionCode']!),
           ),
-          // Not built yet.
-          _comingSoon('change-line', (l10n) => l10n.ticketActionChangeLine),
+          GoRoute(
+            path: 'change-line',
+            builder: (context, state) =>
+                TicketChangeLineScreen(transactionCode: state.pathParameters['transactionCode']!),
+          ),
         ],
       ),
       GoRoute(
@@ -110,10 +117,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [GoRoute(path: 'code', builder: (context, state) => const CityCardCodeScreen())],
       ),
       GoRoute(path: Routes.debug, builder: (context, state) => const DebugScreen()),
+      GoRoute(path: Routes.accountEdit, builder: (context, state) => const EditAccountScreen()),
+      GoRoute(path: Routes.accountChangePassword, builder: (context, state) => const ChangePasswordScreen()),
+      GoRoute(path: Routes.accountDelete, builder: (context, state) => const DeleteAccountScreen()),
       // Not built yet.
-      _comingSoon(Routes.accountEdit, (l10n) => l10n.accountEdit),
-      _comingSoon(Routes.accountChangePassword, (l10n) => l10n.accountChangePassword),
-      _comingSoon(Routes.accountDelete, (l10n) => l10n.accountDelete),
       _comingSoon(Routes.buy, (l10n) => l10n.navBuy),
       _comingSoon(Routes.subscription, (l10n) => l10n.subscriptionTitle),
       GoRoute(
@@ -186,6 +193,11 @@ String? redirectFor(Uri uri, AuthStatus status, {bool outdated = false, CardGate
     AuthStatus.unknown => path == Routes.splash ? null : Routes.splash,
     AuthStatus.authenticated => switch (card) {
       CardGate.open => Routes.isSignedIn(path) ? null : Routes.home,
+      // TODO(card-gate): Delete account is let past the gate of a detached
+      // card, since an account can only be deleted once its card was taken
+      // off on the website, which is when the gate is shut. Nothing leads
+      // there yet. To go when the re-attach moves out of the gate.
+      CardGate.detached when path == Routes.accountDelete => null,
       CardGate.setUp => Routes.isCardSetup(path) ? null : Routes.cardSetup,
       CardGate.detached || CardGate.settling => path == Routes.cardSetup ? null : Routes.cardSetup,
       // The first user data is on its way. Whatever led here waits for it:

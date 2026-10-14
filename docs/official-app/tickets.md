@@ -211,7 +211,9 @@ For tickets valid on specific lines. Title "ZMIEŃ LINIĘ".
 - "ZMIEŃ" opens the line search: a full-screen list titled "Wyszukaj linię/linie" with a numeric
   keypad. Typing digits queries `dictionary/transport-line`; each result is a vehicle icon and the
   line number. One line can be chosen.
-- "ZAPISZ" posts the ticket's transaction id and the chosen line (with its second-zone flag) to
-  `tickets/line-change/edit`.
+- "ZAPISZ" posts the ticket's transaction id and the chosen line to `tickets/line-change/edit`:
+  always exactly one line, with the `second_zone` value the search returned for it. The picker's
+  "II strefa" checkbox (shown for a line with `has_second_zone`) sets `checked_zone` on the item,
+  which nothing in the bundle reads, so ticking it changes nothing in the request.
 - Success: dialog "Pomyślnie zmieniono linię"; closing it reloads the details and goes back.
 - Failure: the server's message, or "Proszę wybrac linię" when nothing was chosen.

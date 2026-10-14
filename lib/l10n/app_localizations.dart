@@ -2059,6 +2059,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The status code needs a connection.'**
   String get cityCardOfflineCode;
+
+  /// No description provided for @lineChangeYour.
+  ///
+  /// In en, this message translates to:
+  /// **'Your line'**
+  String get lineChangeYour;
+
+  /// No description provided for @lineChangeYourHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap it, then pick the line to replace it.'**
+  String get lineChangeYourHint;
+
+  /// No description provided for @lineChangeWhich.
+  ///
+  /// In en, this message translates to:
+  /// **'Which line do you want to change?'**
+  String get lineChangeWhich;
+
+  /// No description provided for @lineChangeWhichHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a line, then pick the one to replace it.'**
+  String get lineChangeWhichHint;
+
+  /// No description provided for @lineTram.
+  ///
+  /// In en, this message translates to:
+  /// **'Tram'**
+  String get lineTram;
+
+  /// No description provided for @lineBus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus'**
+  String get lineBus;
+
+  /// No description provided for @lineReplacing.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacing line {line}'**
+  String lineReplacing(String line);
+
+  /// No description provided for @lineReplaces.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} · replaces {line}'**
+  String lineReplaces(String type, String line);
+
+  /// No description provided for @lineOnTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'On your ticket'**
+  String get lineOnTicket;
+
+  /// No description provided for @lineChangeSummaryOne.
+  ///
+  /// In en, this message translates to:
+  /// **'After saving, this ticket is valid on line {line}.'**
+  String lineChangeSummaryOne(String line);
+
+  /// No description provided for @lineChangeSummaryMany.
+  ///
+  /// In en, this message translates to:
+  /// **'After saving, this ticket is valid on lines {lines} and {last}.'**
+  String lineChangeSummaryMany(String lines, String last);
+
+  /// No description provided for @lineSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get lineSave;
+
+  /// No description provided for @lineChangeDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Line changed.'**
+  String get lineChangeDone;
+
+  /// No description provided for @lineSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Line number'**
+  String get lineSearchHint;
+
+  /// No description provided for @lineSearchClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get lineSearchClear;
+
+  /// No description provided for @lineSearchNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No line starts with {query}.'**
+  String lineSearchNone(String query);
+
+  /// No description provided for @lineSearchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The lines could not be loaded.'**
+  String get lineSearchFailed;
+
+  /// No description provided for @editPhotoPending.
+  ///
+  /// In en, this message translates to:
+  /// **'New photo, not saved yet'**
+  String get editPhotoPending;
+
+  /// No description provided for @editPhotoSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save photo'**
+  String get editPhotoSave;
+
+  /// No description provided for @editPhotoSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your photo was changed.'**
+  String get editPhotoSaved;
+
+  /// No description provided for @photoSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo'**
+  String get photoSheetTitle;
+
+  /// No description provided for @photoSheetRules.
+  ///
+  /// In en, this message translates to:
+  /// **'It is used to check that it’s you. Use an ID-style photo: evenly lit, light background, no hat or sunglasses.'**
+  String get photoSheetRules;
+
+  /// No description provided for @editPersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal details'**
+  String get editPersonal;
+
+  /// No description provided for @editPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get editPhone;
+
+  /// No description provided for @editPesel.
+  ///
+  /// In en, this message translates to:
+  /// **'PESEL'**
+  String get editPesel;
+
+  /// No description provided for @editLockedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'These can’t be changed in the app.'**
+  String get editLockedNote;
+
+  /// No description provided for @editAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Home address'**
+  String get editAddress;
+
+  /// No description provided for @editAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Needed for your mKKM card.'**
+  String get editAddressHint;
+
+  /// No description provided for @editSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get editSave;
+
+  /// No description provided for @editSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving…'**
+  String get editSaving;
+
+  /// No description provided for @editSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your details were updated.'**
+  String get editSaved;
+
+  /// No description provided for @editDiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get editDiscardTitle;
+
+  /// No description provided for @editDiscardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your changes to your name, phone or address haven’t been saved.'**
+  String get editDiscardBody;
+
+  /// No description provided for @editKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get editKeep;
+
+  /// No description provided for @editDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get editDiscard;
+
+  /// No description provided for @offlineSaveKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Your changes are kept; connect to save them.'**
+  String get offlineSaveKept;
+
+  /// No description provided for @passwordCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get passwordCurrent;
+
+  /// No description provided for @passwordRepeatNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat new password'**
+  String get passwordRepeatNew;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed.'**
+  String get passwordChanged;
+
+  /// No description provided for @passwordStaySignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'You stay signed in on this device.'**
+  String get passwordStaySignedIn;
+
+  /// No description provided for @deleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteTitle;
+
+  /// No description provided for @deleteChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your cards…'**
+  String get deleteChecking;
+
+  /// No description provided for @deleteAccountGoesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your eKP account goes too'**
+  String get deleteAccountGoesTitle;
+
+  /// No description provided for @deleteAccountGoesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'mobileKKM uses your eKP account, so it is also deleted on ekp.mpk.krakow.pl.'**
+  String get deleteAccountGoesBody;
+
+  /// No description provided for @deleteTicketsLostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets and invoices are lost'**
+  String get deleteTicketsLostTitle;
+
+  /// No description provided for @deleteTicketsLostBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You won’t be able to see or use the tickets and invoices on this account.'**
+  String get deleteTicketsLostBody;
+
+  /// No description provided for @deletePlasticTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plastic cards need an eKP account'**
+  String get deletePlasticTitle;
+
+  /// No description provided for @deletePlasticBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Buying tickets online for a plastic card only works with an eKP account.'**
+  String get deletePlasticBody;
+
+  /// No description provided for @deleteCardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Detach your cards first'**
+  String get deleteCardsTitle;
+
+  /// No description provided for @deleteCardsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account still has cards attached. Sign in on ekp.mpk.krakow.pl, detach them, then try again.'**
+  String get deleteCardsBody;
+
+  /// No description provided for @deleteCardsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open eKP website'**
+  String get deleteCardsAction;
+
+  /// No description provided for @deletePasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get deletePasswordTitle;
+
+  /// No description provided for @deletePasswordBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is deleted straight away.'**
+  String get deletePasswordBody;
+
+  /// No description provided for @deleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteAction;
+
+  /// No description provided for @deleteDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deleted'**
+  String get deleteDoneTitle;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

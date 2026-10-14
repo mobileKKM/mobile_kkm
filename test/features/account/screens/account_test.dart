@@ -183,13 +183,13 @@ void main() {
     ('Change password', '/account/change-password'),
     ('Delete account', '/account/delete'),
   ]) {
-    testWidgets('$row is announced as coming soon', (tester) async {
+    testWidgets('$row has a screen of its own', (tester) async {
       final app = await _openAccount(tester, _adapter());
 
       await tapVisible(tester, find.widgetWithText(GroupRow, row));
 
       expect(app.location, location);
-      expect(find.text('Coming soon'), findsOneWidget);
+      expect(find.widgetWithText(AppBar, row), findsOneWidget);
     });
   }
 

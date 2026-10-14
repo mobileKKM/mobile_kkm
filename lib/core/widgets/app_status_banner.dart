@@ -12,10 +12,15 @@ import 'package:mobile_kkm/l10n/app_localizations.dart';
 /// while everything works. A compact strip, so that what is stored stays in
 /// view under it. It goes below a screen's app bar, never into it.
 class AppStatusBanner extends ConsumerStatefulWidget {
-  const AppStatusBanner({super.key, this.padding = EdgeInsets.zero});
+  const AppStatusBanner({super.key, this.padding = EdgeInsets.zero, this.offlineDetail});
 
   /// Around the banner, so that it takes no room while there is none.
   final EdgeInsetsGeometry padding;
+
+  /// What being offline means on this screen, in the place of "Showing
+  /// saved data." and of when it was saved: for a screen that shows what was
+  /// typed rather than what was stored.
+  final String? offlineDetail;
 
   @override
   ConsumerState<AppStatusBanner> createState() => _AppStatusBannerState();
@@ -51,7 +56,8 @@ class _AppStatusBannerState extends ConsumerState<AppStatusBanner> {
     // An outdated app never gets as far as a screen with this banner.
     final shown = offline || status.mode == AppMode.unavailable;
     // How old "saved data" is: only worth saying while there is no asking.
-    final syncedAt = offline ? ref.watch(ticketsSyncedAtProvider).value?.toLocal() : null;
+    final detail = widget.offlineDetail;
+    final syncedAt = offline && detail == null ? ref.watch(ticketsSyncedAtProvider).value?.toLocal() : null;
     _watchMidnight(syncedAt != null);
 
     final style = theme.textTheme.bodyMedium?.copyWith(color: scheme.onInverseSurface);
@@ -86,7 +92,7 @@ class _AppStatusBannerState extends ConsumerState<AppStatusBanner> {
                                       style: const TextStyle(fontWeight: FontWeight.w600),
                                       children: [
                                         TextSpan(
-                                          text: ' ${l10n.offlineBanner}',
+                                          text: ' ${detail ?? l10n.offlineBanner}',
                                           style: const TextStyle(fontWeight: FontWeight.w400),
                                         ),
                                       ],

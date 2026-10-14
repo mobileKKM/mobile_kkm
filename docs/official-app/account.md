@@ -172,8 +172,11 @@ flowchart TD
 ```
 
 - The account cannot be deleted while a card is attached to it, and cards can only be detached on
-  the website. The app checks this first and sends the user there. (Which branch of that check shows
-  which dialog was inferred from the texts.)
+  the website. The app checks this first and sends the user there: any entry in `storage-medium/list`,
+  the mKKM card included, gets the "odłącz nośnik/i" dialog, and only an empty list the question.
+  After a detach on the website the list is empty, while the user data keeps the card's data with
+  `detached: true`.
+- A wrong password is HTTP 400 with the message "Nieprawidłowe hasło".
 - The password field has the context menu disabled, so nothing can be pasted into it.
 - After a successful deletion the dialog's button reads "Wyloguj", and closing it signs the user
   out.

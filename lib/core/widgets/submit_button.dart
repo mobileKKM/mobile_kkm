@@ -10,6 +10,7 @@ class SubmitButton extends StatelessWidget {
     this.icon,
     this.loading = false,
     this.loadingLabel,
+    this.style,
   });
 
   final String label;
@@ -20,6 +21,9 @@ class SubmitButton extends StatelessWidget {
   /// What the button says while [loading]; [label] unless given.
   final String? loadingLabel;
 
+  /// On top of the theme's, e.g. a smaller size.
+  final ButtonStyle? style;
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -29,14 +33,14 @@ class SubmitButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           disabledBackgroundColor: scheme.primary.withValues(alpha: 0.72),
           disabledForegroundColor: scheme.onPrimary,
-        ),
+        ).merge(style),
         onPressed: null,
         icon: SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2, color: scheme.onPrimary)),
         label: Text(loadingLabel ?? label),
       );
     }
     return icon == null
-        ? FilledButton(onPressed: onPressed, child: Text(label))
-        : FilledButton.icon(onPressed: onPressed, icon: Icon(icon), label: Text(label));
+        ? FilledButton(style: style, onPressed: onPressed, child: Text(label))
+        : FilledButton.icon(style: style, onPressed: onPressed, icon: Icon(icon), label: Text(label));
   }
 }

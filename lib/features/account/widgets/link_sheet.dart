@@ -53,13 +53,17 @@ Future<void> showRegulationsSheet(BuildContext context) {
 /// A bottom sheet listing places to go: web pages, a phone number, an
 /// e-mail address.
 class LinkSheet extends StatelessWidget {
-  const LinkSheet({super.key, required this.title, required this.children});
+  const LinkSheet({super.key, required this.title, this.subtitle, required this.children});
 
   final String title;
+
+  /// A sentence under the title, on what the rows are for.
+  final String? subtitle;
   final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SafeArea(
       child: SingleChildScrollView(
         child: Column(
@@ -68,7 +72,18 @@ class LinkSheet extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-              child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 6,
+                children: [
+                  Text(title, style: theme.textTheme.titleLarge),
+                  if (subtitle != null)
+                    Text(
+                      subtitle!,
+                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    ),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),

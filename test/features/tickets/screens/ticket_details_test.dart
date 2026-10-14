@@ -115,9 +115,8 @@ void main() {
 
       await tapVisible(tester, find.widgetWithText(GroupRow, 'Change line'));
 
-      // Not built yet.
       expect(app.location, Routes.ticketChangeLine(transactionCode));
-      expect(find.text('Coming soon'), findsOneWidget);
+      expect(find.text('Your line'), findsOneWidget);
     });
   });
 

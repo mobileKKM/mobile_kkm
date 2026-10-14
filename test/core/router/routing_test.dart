@@ -68,7 +68,13 @@ void main() {
         // Still open: it needs no session either.
         expect(gated('/debug', card), isNull);
         expect(gated('/reset-password/abc', card), isNull);
+        expect(gated('/account/edit', card), '/card-setup');
       }
+      // For now: an account can only be deleted with its card detached.
+      expect(gated('/account/delete', CardGate.detached), isNull);
+      expect(gated('/account/delete', CardGate.setUp), '/card-setup');
+      expect(gated('/account/delete', CardGate.settling), '/card-setup');
+      expect(gated('/account/delete', CardGate.checking), '/');
       // The steps only while there is a card to make.
       expect(gated('/card-setup/address', CardGate.setUp), isNull);
       expect(gated('/card-setup/address/photo', CardGate.setUp), isNull);

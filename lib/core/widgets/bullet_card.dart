@@ -13,9 +13,12 @@ class BulletItem {
 /// A few points worth knowing before going on, each a tile, a title and a
 /// line, on one card.
 class BulletCard extends StatelessWidget {
-  const BulletCard({super.key, required this.items});
+  const BulletCard({super.key, required this.items, this.iconColor});
 
   final List<BulletItem> items;
+
+  /// Of the icons; primary unless given.
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class BulletCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconTile(item.icon, size: 40),
+                IconTile(item.icon, size: 40, foreground: iconColor),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(

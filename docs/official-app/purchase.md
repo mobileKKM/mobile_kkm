@@ -95,7 +95,9 @@ that opens the line search:
 - Full-screen list titled "Wyszukaj linię/linie", numeric keypad, results from
   `dictionary/transport-line`.
 - As many lines can be picked as the zone allows; picking fewer blocks the continue button.
-- Each picked line that also runs in the second zone has a checkbox "II strefa".
+- Each picked line that also runs in the second zone has a checkbox "II strefa". It stores
+  `checked_zone` on the line, which nothing else in the bundle reads: what is sent and summarised
+  is the line's own `second_zone` from the search.
 - A picked line can be removed with a red cross. "Zapisz wybrane" closes the search.
 
 ### Prefilled form (extend / buy similar)

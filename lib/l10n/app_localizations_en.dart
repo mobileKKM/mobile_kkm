@@ -1119,4 +1119,181 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cityCardOfflineCode => 'The status code needs a connection.';
+
+  @override
+  String get lineChangeYour => 'Your line';
+
+  @override
+  String get lineChangeYourHint => 'Tap it, then pick the line to replace it.';
+
+  @override
+  String get lineChangeWhich => 'Which line do you want to change?';
+
+  @override
+  String get lineChangeWhichHint => 'Tap a line, then pick the one to replace it.';
+
+  @override
+  String get lineTram => 'Tram';
+
+  @override
+  String get lineBus => 'Bus';
+
+  @override
+  String lineReplacing(String line) {
+    return 'Replacing line $line';
+  }
+
+  @override
+  String lineReplaces(String type, String line) {
+    return '$type · replaces $line';
+  }
+
+  @override
+  String get lineOnTicket => 'On your ticket';
+
+  @override
+  String lineChangeSummaryOne(String line) {
+    return 'After saving, this ticket is valid on line $line.';
+  }
+
+  @override
+  String lineChangeSummaryMany(String lines, String last) {
+    return 'After saving, this ticket is valid on lines $lines and $last.';
+  }
+
+  @override
+  String get lineSave => 'Save';
+
+  @override
+  String get lineChangeDone => 'Line changed.';
+
+  @override
+  String get lineSearchHint => 'Line number';
+
+  @override
+  String get lineSearchClear => 'Clear';
+
+  @override
+  String lineSearchNone(String query) {
+    return 'No line starts with $query.';
+  }
+
+  @override
+  String get lineSearchFailed => 'The lines could not be loaded.';
+
+  @override
+  String get editPhotoPending => 'New photo, not saved yet';
+
+  @override
+  String get editPhotoSave => 'Save photo';
+
+  @override
+  String get editPhotoSaved => 'Your photo was changed.';
+
+  @override
+  String get photoSheetTitle => 'Profile photo';
+
+  @override
+  String get photoSheetRules =>
+      'It is used to check that it’s you. Use an ID-style photo: evenly lit, light background, no hat or sunglasses.';
+
+  @override
+  String get editPersonal => 'Personal details';
+
+  @override
+  String get editPhone => 'Phone number';
+
+  @override
+  String get editPesel => 'PESEL';
+
+  @override
+  String get editLockedNote => 'These can’t be changed in the app.';
+
+  @override
+  String get editAddress => 'Home address';
+
+  @override
+  String get editAddressHint => 'Needed for your mKKM card.';
+
+  @override
+  String get editSave => 'Save changes';
+
+  @override
+  String get editSaving => 'Saving…';
+
+  @override
+  String get editSaved => 'Your details were updated.';
+
+  @override
+  String get editDiscardTitle => 'Discard changes?';
+
+  @override
+  String get editDiscardBody => 'Your changes to your name, phone or address haven’t been saved.';
+
+  @override
+  String get editKeep => 'Keep editing';
+
+  @override
+  String get editDiscard => 'Discard';
+
+  @override
+  String get offlineSaveKept => 'Your changes are kept; connect to save them.';
+
+  @override
+  String get passwordCurrent => 'Current password';
+
+  @override
+  String get passwordRepeatNew => 'Repeat new password';
+
+  @override
+  String get passwordChanged => 'Password changed.';
+
+  @override
+  String get passwordStaySignedIn => 'You stay signed in on this device.';
+
+  @override
+  String get deleteTitle => 'Delete your account?';
+
+  @override
+  String get deleteChecking => 'Checking your cards…';
+
+  @override
+  String get deleteAccountGoesTitle => 'Your eKP account goes too';
+
+  @override
+  String get deleteAccountGoesBody => 'mobileKKM uses your eKP account, so it is also deleted on ekp.mpk.krakow.pl.';
+
+  @override
+  String get deleteTicketsLostTitle => 'Tickets and invoices are lost';
+
+  @override
+  String get deleteTicketsLostBody => 'You won’t be able to see or use the tickets and invoices on this account.';
+
+  @override
+  String get deletePlasticTitle => 'Plastic cards need an eKP account';
+
+  @override
+  String get deletePlasticBody => 'Buying tickets online for a plastic card only works with an eKP account.';
+
+  @override
+  String get deleteCardsTitle => 'Detach your cards first';
+
+  @override
+  String get deleteCardsBody =>
+      'Your account still has cards attached. Sign in on ekp.mpk.krakow.pl, detach them, then try again.';
+
+  @override
+  String get deleteCardsAction => 'Open eKP website';
+
+  @override
+  String get deletePasswordTitle => 'Enter your password';
+
+  @override
+  String get deletePasswordBody => 'Your account is deleted straight away.';
+
+  @override
+  String get deleteAction => 'Delete';
+
+  @override
+  String get deleteDoneTitle => 'Account deleted';
 }

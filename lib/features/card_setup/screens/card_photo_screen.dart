@@ -1,28 +1,22 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
-import 'package:mobile_kkm/core/platform/photo_picker.dart';
-import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/bullet_card.dart';
 import 'package:mobile_kkm/core/widgets/dashed_border.dart';
-import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/lead_header.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
-import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/core/widgets/submit_button.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
-import 'package:mobile_kkm/features/account/widgets/link_sheet.dart';
+import 'package:mobile_kkm/features/account/widgets/photo_source_sheet.dart';
 import 'package:mobile_kkm/features/account/widgets/user_avatar.dart';
 import 'package:mobile_kkm/features/auth/widgets/auth_page.dart';
 import 'package:mobile_kkm/features/card_setup/models/card_gate.dart';
 import 'package:mobile_kkm/features/card_setup/services/card_setup_controller.dart';
-import 'package:mobile_kkm/features/card_setup/utils/photo_type.dart';
 import 'package:mobile_kkm/features/card_setup/widgets/step_bar.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
@@ -42,54 +36,15 @@ class _CardPhotoScreenState extends ConsumerState<CardPhotoScreen> {
   String? _error;
 
   Future<void> _choose() async {
-    final l10n = AppLocalizations.of(context);
-    final scheme = Theme.of(context).colorScheme;
-    final source = await showModalBottomSheet<PhotoSource>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => LinkSheet(
-        title: l10n.cardPhotoAdd,
-        children: [
-          for (final (source, icon, label) in [
-            (PhotoSource.camera, Symbols.photo_camera_rounded, l10n.cardPhotoTake),
-            (PhotoSource.gallery, Symbols.photo_library_rounded, l10n.cardPhotoChoose),
-          ])
-            GroupRow(
-              minHeight: 64,
-              dense: true,
-              color: scheme.surfaceContainerHigh,
-              leading: IconTile(icon, size: 40, background: scheme.surfaceContainerLow),
-              label: label,
-              showChevron: false,
-              onTap: () => Navigator.of(context).pop(source),
-            ),
-        ],
-      ),
-    );
-    if (source == null || !mounted) {
+    final choice = await choosePhoto(context, ref, title: AppLocalizations.of(context).cardPhotoAdd);
+    if (choice == null || !mounted) {
       return;
     }
-
-    Uint8List? bytes;
-    try {
-      bytes = await ref.read(photoPickerProvider).pick(source);
-    } catch (_) {
-      // No camera, no permission for it, or a file that could not be read.
-      if (mounted) {
-        setState(() => _error = l10n.cardPhotoUnavailable);
-      }
-      return;
+    final photo = choice.photo;
+    if (photo != null) {
+      ref.read(cardSetupProvider.notifier).setPhoto(photo);
     }
-    if (bytes == null || !mounted) {
-      return;
-    }
-    final type = photoTypeOf(bytes);
-    if (type == null || bytes.length > maxPhotoBytes) {
-      setState(() => _error = type == null ? l10n.cardPhotoWrongType : l10n.cardPhotoTooLarge);
-      return;
-    }
-    ref.read(cardSetupProvider.notifier).setPhoto(PickedPhoto(bytes, type));
-    setState(() => _error = null);
+    setState(() => _error = choice.problem);
   }
 
   Future<void> _submit() async {
