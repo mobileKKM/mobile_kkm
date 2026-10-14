@@ -58,6 +58,16 @@ Iterable<Object?> _registerRequests(FakeAdapter adapter) =>
 TextFormField _widget(WidgetTester tester, String label) => tester.widget<TextFormField>(field(label));
 
 void main() {
+  testWidgets('password managers take the e-mail for the login and offer a new password', (tester) async {
+    await _openRegister(tester, _adapter());
+
+    expect(autofillHintsOf(tester, field('E-mail')), [AutofillHints.username, AutofillHints.email]);
+    // Not a second login.
+    expect(autofillHintsOf(tester, field('Repeat e-mail')), [AutofillHints.email]);
+    expect(autofillHintsOf(tester, field('Password')), [AutofillHints.newPassword]);
+    expect(autofillHintsOf(tester, field('Repeat password')), [AutofillHints.newPassword]);
+  });
+
   testWidgets('sections follow the official order', (tester) async {
     await _openRegister(tester, _adapter());
 

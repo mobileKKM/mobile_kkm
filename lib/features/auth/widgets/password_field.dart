@@ -14,7 +14,6 @@ class PasswordField extends StatefulWidget {
     this.onSubmitted,
     this.focusNode,
     this.errorText,
-    this.allowPaste = true,
     this.autofocus = false,
     this.enabled = true,
   });
@@ -31,8 +30,6 @@ class PasswordField extends StatefulWidget {
   /// Shown under the field whatever its validator says, e.g. a refusal.
   final String? errorText;
 
-  /// Off where the password has to be typed out: no menu to paste from.
-  final bool allowPaste;
   final bool autofocus;
   final bool enabled;
 
@@ -51,8 +48,8 @@ class _PasswordFieldState extends State<PasswordField> {
       focusNode: widget.focusNode,
       autofocus: widget.autofocus,
       enabled: widget.enabled,
-      enableInteractiveSelection: widget.allowPaste,
       obscureText: _obscured,
+      keyboardType: TextInputType.visiblePassword,
       autocorrect: false,
       enableSuggestions: false,
       autofillHints: widget.autofillHints,

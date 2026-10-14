@@ -434,3 +434,7 @@ Future<void> signOut(WidgetTester tester) async {
 }
 
 Finder field(String label) => find.widgetWithText(TextFormField, label);
+
+/// What a password manager is told about the text field under [finder].
+Iterable<String>? autofillHintsOf(WidgetTester tester, Finder finder) =>
+    tester.widget<TextField>(find.descendant(of: finder, matching: find.byType(TextField))).autofillHints;

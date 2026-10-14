@@ -247,25 +247,29 @@ class _PasswordDialogState extends ConsumerState<_PasswordDialog> {
       child: AlertDialog(
         icon: Icon(Symbols.lock_rounded, color: scheme.error),
         title: Text(l10n.deletePasswordTitle, textAlign: TextAlign.center),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 16,
-          children: [
-            Text(l10n.deletePasswordBody),
-            // Typed out, as in the official client: nothing to paste from.
-            PasswordField(
-              controller: _password,
-              label: l10n.passwordLabel,
-              allowPaste: false,
-              autofocus: true,
-              enabled: !_deleting,
-              errorText: _error,
-              textInputAction: TextInputAction.done,
-              onChanged: (_) => setState(() => _error = null),
-              onSubmitted: () => unawaited(_submit()),
-            ),
-          ],
+        // Filled from a password manager; nothing to save for an account on
+        // its way out.
+        content: AutofillGroup(
+          onDisposeAction: AutofillContextAction.cancel,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 16,
+            children: [
+              Text(l10n.deletePasswordBody),
+              PasswordField(
+                controller: _password,
+                label: l10n.passwordLabel,
+                autofillHints: const [AutofillHints.password],
+                autofocus: true,
+                enabled: !_deleting,
+                errorText: _error,
+                textInputAction: TextInputAction.done,
+                onChanged: (_) => setState(() => _error = null),
+                onSubmitted: () => unawaited(_submit()),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(onPressed: _deleting ? null : () => Navigator.of(context).pop(), child: Text(l10n.cancel)),

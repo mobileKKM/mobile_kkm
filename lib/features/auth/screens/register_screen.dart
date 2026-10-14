@@ -281,7 +281,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     autocorrect: false,
-                    autofillHints: const [AutofillHints.email],
+                    autofillHints: const [AutofillHints.username, AutofillHints.email],
                     decoration: InputDecoration(labelText: l10n.emailLabel),
                     validator: (value) => validateEmail(l10n, value),
                   ),
