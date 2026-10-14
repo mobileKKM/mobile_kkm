@@ -10,6 +10,7 @@ import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 import 'package:mobile_kkm/core/widgets/app_status_banner.dart';
+import 'package:mobile_kkm/core/widgets/bottom_action_bar.dart';
 import 'package:mobile_kkm/core/widgets/empty_state_card.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/status_chip.dart';
@@ -138,17 +139,12 @@ class _CityCardScreenState extends ConsumerState<CityCardScreen> {
           ),
           // Without a status there is no code to ask for.
           if (active)
-            SafeArea(
-              top: false,
-              minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  // The code is a request: nothing to show without the server.
-                  onPressed: offline ? null : () => unawaited(context.push(Routes.cityCardCode)),
-                  icon: const Icon(Symbols.verified_user_rounded),
-                  label: Text(l10n.cityCardShow),
-                ),
+            BottomActionBar(
+              child: FilledButton.icon(
+                // The code is a request: nothing to show without the server.
+                onPressed: offline ? null : () => unawaited(context.push(Routes.cityCardCode)),
+                icon: const Icon(Symbols.verified_user_rounded),
+                label: Text(l10n.cityCardShow),
               ),
             ),
         ],

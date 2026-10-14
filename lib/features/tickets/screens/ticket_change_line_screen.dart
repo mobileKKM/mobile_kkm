@@ -10,6 +10,7 @@ import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/widgets/app_snack_bar.dart';
 import 'package:mobile_kkm/core/widgets/app_status_banner.dart';
+import 'package:mobile_kkm/core/widgets/bottom_action_bar.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/load_problem.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
@@ -216,23 +217,15 @@ class _TicketChangeLineScreenState extends ConsumerState<TicketChangeLineScreen>
             ],
           ),
         ),
-        SafeArea(
-          top: false,
-          minimum: const EdgeInsets.only(bottom: 16),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: SizedBox(
-              width: double.infinity,
-              child: SubmitButton(
-                label: l10n.lineSave,
-                icon: Symbols.check_rounded,
-                loading: _saving,
-                loadingLabel: l10n.editSaving,
-                onPressed: transactionId == null || _picked.isEmpty || !online
-                    ? null
-                    : () => unawaited(_save(transactionId, lines)),
-              ),
-            ),
+        BottomActionBar(
+          child: SubmitButton(
+            label: l10n.lineSave,
+            icon: Symbols.check_rounded,
+            loading: _saving,
+            loadingLabel: l10n.editSaving,
+            onPressed: transactionId == null || _picked.isEmpty || !online
+                ? null
+                : () => unawaited(_save(transactionId, lines)),
           ),
         ),
       ],

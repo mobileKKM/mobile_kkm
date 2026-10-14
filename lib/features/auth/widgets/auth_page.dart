@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/widgets/bottom_action_bar.dart';
 
 /// The frame of the signed-out screens besides the sign-in itself: an
 /// optional app bar, a scrolling, width-constrained body and an optional
@@ -36,8 +37,9 @@ class AuthPage extends StatelessWidget {
     final bottom = this.bottom;
     return Scaffold(
       appBar: showAppBar ? AppBar(title: title == null ? null : Text(title), leading: leading) : null,
+      // With a pinned button, `BottomActionBar` takes the bottom inset.
       body: SafeArea(
-        minimum: const EdgeInsets.only(bottom: 16),
+        bottom: bottom == null,
         child: Column(
           children: [
             Expanded(
@@ -49,14 +51,7 @@ class AuthPage extends StatelessWidget {
                 ),
               ),
             ),
-            if (bottom != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 480),
-                  child: SizedBox(width: double.infinity, child: bottom),
-                ),
-              ),
+            if (bottom != null) BottomActionBar(maxWidth: 480, child: bottom),
           ],
         ),
       ),

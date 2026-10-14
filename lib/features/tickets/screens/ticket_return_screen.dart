@@ -11,6 +11,7 @@ import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 import 'package:mobile_kkm/core/widgets/app_snack_bar.dart';
+import 'package:mobile_kkm/core/widgets/bottom_action_bar.dart';
 import 'package:mobile_kkm/core/widgets/form_card.dart';
 import 'package:mobile_kkm/core/widgets/load_problem.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
@@ -405,21 +406,13 @@ class _TicketReturnScreenState extends ConsumerState<TicketReturnScreen> {
             ],
           ),
         ),
-        SafeArea(
-          top: false,
-          minimum: const EdgeInsets.only(bottom: 16),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: transactionId == null || date == null || amount == null || _returning
-                    ? null
-                    : () => unawaited(_return(transactionId, date, amount, keptUntil, whole: whole)),
-                icon: const Icon(Symbols.undo_rounded),
-                label: Text(l10n.ticketActionReturn),
-              ),
-            ),
+        BottomActionBar(
+          child: FilledButton.icon(
+            onPressed: transactionId == null || date == null || amount == null || _returning
+                ? null
+                : () => unawaited(_return(transactionId, date, amount, keptUntil, whole: whole)),
+            icon: const Icon(Symbols.undo_rounded),
+            label: Text(l10n.ticketActionReturn),
           ),
         ),
       ],
