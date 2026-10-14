@@ -77,7 +77,6 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
         _publish();
       }
     });
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
     unawaited(_fetch());
   }
 
@@ -165,6 +164,10 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
       _code = code;
       _error = null;
       _secondsLeft = _remaining(code);
+      // Ticks a full second apart from here on, so the first one does not
+      // land part-way through the ring's first second and make it skip.
+      _timer?.cancel();
+      _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
       _publish();
     }
   }

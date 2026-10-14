@@ -39,6 +39,8 @@ class CodeRing extends StatefulWidget {
 }
 
 class _CodeRingState extends State<CodeRing> with SingleTickerProviderStateMixin {
+  static const _sweepTime = Duration(milliseconds: 300);
+
   late final AnimationController _shown = AnimationController(vsync: this);
 
   @override
@@ -53,7 +55,9 @@ class _CodeRingState extends State<CodeRing> with SingleTickerProviderStateMixin
     // Not on every rebuild: one in the middle of a second leaves the ring
     // on its way.
     if (widget.id != old.id || widget.left != old.left || widget.leftNext != old.leftNext) {
-      _run();
+      // A renewed code fills the ring in from empty; the first one, after
+      // loading, starts full at once.
+      _run(sweepIn: old.id != null && widget.id != null && widget.id != old.id);
     }
   }
 
@@ -64,10 +68,32 @@ class _CodeRingState extends State<CodeRing> with SingleTickerProviderStateMixin
   /// still, under another route or with the app in the background, and
   /// then the ring is where it belongs at once instead of hurrying there.
   /// A new code starts at its own share the same way.
-  void _run() {
+  void _run({bool sweepIn = false}) {
+    final run = ++_runs;
+    if (sweepIn) {
+      _shown.value = 0;
+      unawaited(_sweep(run));
+      return;
+    }
+    _drain();
+  }
+
+  /// Which start-over is the latest, for a sweep that was overtaken.
+  int _runs = 0;
+
+  Future<void> _sweep(int run) async {
+    await _shown.animateTo(widget.left, duration: _sweepTime, curve: Curves.easeOut);
+    // Another second began meanwhile and has taken over.
+    if (mounted && run == _runs) {
+      // The rest of the second, so it still ends where the next one starts.
+      _drain(const Duration(seconds: 1) - _sweepTime);
+    }
+  }
+
+  void _drain([Duration duration = const Duration(seconds: 1)]) {
     _shown.value = widget.left;
     // A second per second: the ring moves evenly, not in jumps.
-    unawaited(_shown.animateTo(widget.leftNext, duration: const Duration(seconds: 1)));
+    unawaited(_shown.animateTo(widget.leftNext, duration: duration));
   }
 
   @override

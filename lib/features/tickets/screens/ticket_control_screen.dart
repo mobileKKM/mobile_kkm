@@ -100,7 +100,6 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
         _publish();
       }
     });
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
     unawaited(_fetch());
   }
 
@@ -201,6 +200,10 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
     _error = null;
     _fetchFailed = false;
     _secondsLeft = TicketControlScreen.codeLifetime.inSeconds;
+    // Ticks a full second apart from here on, so the first one does not land
+    // part-way through the ring's first second and make it skip.
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
   }
 
   /// The seconds [code] still has on the screen. By the clock, not by

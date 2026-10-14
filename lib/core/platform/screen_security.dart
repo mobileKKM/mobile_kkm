@@ -17,8 +17,16 @@ class ScreenSecurity {
     final plugin = NoScreenshot.instance;
     try {
       if (secure) {
-        // The overlay mode brings the prevention with it.
-        await plugin.screenshotWithImage();
+        if (defaultTargetPlatform == TargetPlatform.iOS) {
+          // The overlay mode brings the prevention with it.
+          await plugin.screenshotWithImage();
+        } else {
+          // Not the overlay on Android: the plugin clears FLAG_SECURE when
+          // the activity pauses and only then draws its cover, and Samsung
+          // takes the recents picture in between. The plain prevention keeps
+          // the flag, so the preview is blank.
+          await plugin.screenshotOff();
+        }
       } else {
         // Two claims on the prevention, the overlay's and the plain one:
         // released both, whichever was taken.
