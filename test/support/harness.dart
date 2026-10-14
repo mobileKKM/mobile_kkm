@@ -402,6 +402,17 @@ Future<void> tapVisible(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
+/// A frame, and time for a route to come or go: in `pumpAndSettle`'s place
+/// on a screen with a code up, whose ring moves for as long as it is open
+/// and so never settles.
+Future<void> pumpWithCode(WidgetTester tester) async {
+  await tester.pump();
+  // Longer than a page transition, shorter than the second a code counts.
+  await tester.pump(const Duration(milliseconds: 850));
+  // The transition is through; this takes the route it left off the stage.
+  await tester.pump(const Duration(milliseconds: 50));
+}
+
 /// Opens one of the four sections by its label in the navigation bar.
 Future<void> openTab(WidgetTester tester, String label) async {
   await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text(label)));

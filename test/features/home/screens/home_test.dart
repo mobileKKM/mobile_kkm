@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
+import 'package:mobile_kkm/features/account/widgets/user_avatar.dart';
 import 'package:mobile_kkm/features/home/widgets/quick_actions.dart';
 import 'package:mobile_kkm/features/tickets/services/tickets_dao.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
@@ -84,7 +85,7 @@ void main() {
   testWidgets('says who is signed in next to the greeting', (tester) async {
     await pumpApp(tester, _adapter([]), session: signedInSession);
     expect(find.text('Customer number 100001'), findsOneWidget);
-    expect(find.widgetWithText(CircleAvatar, 'JT'), findsOneWidget);
+    expect(find.widgetWithText(UserAvatar, 'JT'), findsOneWidget);
   });
 
   group('tickets awaiting payment', () {
@@ -179,7 +180,7 @@ void main() {
     for (final (label, location, lands) in [
       ('Tickets', '/tickets', 'Active'),
       ('Buy ticket', '/buy', 'Coming soon'),
-      ('Karta Krakowska', '/karta-krakowska', 'Coming soon'),
+      ('Karta Krakowska', '/karta-krakowska', 'Show status code'),
       ('Departures', '/map', 'Search for a stop'),
     ]) {
       testWidgets('$label opens $location', (tester) async {

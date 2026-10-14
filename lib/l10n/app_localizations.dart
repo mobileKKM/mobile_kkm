@@ -1070,12 +1070,6 @@ abstract class AppLocalizations {
   /// **'The code could not be loaded. Check your connection and try again.'**
   String get ticketControlError;
 
-  /// No description provided for @ticketControlTimeLeft.
-  ///
-  /// In en, this message translates to:
-  /// **'Code valid for {time}'**
-  String ticketControlTimeLeft(String time);
-
   /// No description provided for @accountCustomerCode.
   ///
   /// In en, this message translates to:
@@ -1346,23 +1340,11 @@ abstract class AppLocalizations {
   /// **'Fare'**
   String get ticketControlFare;
 
-  /// No description provided for @ticketControlZone.
-  ///
-  /// In en, this message translates to:
-  /// **'Zones'**
-  String get ticketControlZone;
-
   /// No description provided for @ticketControlValidUntil.
   ///
   /// In en, this message translates to:
-  /// **'Valid until {date}'**
-  String ticketControlValidUntil(String date);
-
-  /// No description provided for @ticketControlPeriod.
-  ///
-  /// In en, this message translates to:
-  /// **'Period'**
-  String get ticketControlPeriod;
+  /// **'Valid until'**
+  String get ticketControlValidUntil;
 
   /// No description provided for @ticketStatusCancelled.
   ///
@@ -1445,7 +1427,7 @@ abstract class AppLocalizations {
   /// No description provided for @ticketControlCaptureHidden.
   ///
   /// In en, this message translates to:
-  /// **'The code is hidden while the screen is being recorded.'**
+  /// **'The code is hidden while the screen is recorded or shared.'**
   String get ticketControlCaptureHidden;
 
   /// No description provided for @loginSubmitting.
@@ -2011,6 +1993,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Details load when you’re back online.'**
   String get ticketDetailsOffline;
+
+  /// No description provided for @ticketControlTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
+  String get ticketControlTicket;
+
+  /// No description provided for @ticketControlTapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the code to enlarge it'**
+  String get ticketControlTapHint;
+
+  /// No description provided for @ticketControlTapClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap anywhere to close'**
+  String get ticketControlTapClose;
+
+  /// No description provided for @ticketControlCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket code, valid for {time}. Double tap to enlarge.'**
+  String ticketControlCodeLabel(String time);
+
+  /// No description provided for @cityCardCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status code, valid for {time}. Double tap to enlarge.'**
+  String cityCardCodeLabel(String time);
+
+  /// No description provided for @cityCardFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Active from'**
+  String get cityCardFrom;
+
+  /// No description provided for @cityCardUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Active until'**
+  String get cityCardUntil;
+
+  /// No description provided for @cityCardShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show status code'**
+  String get cityCardShow;
+
+  /// No description provided for @cityCardNone.
+  ///
+  /// In en, this message translates to:
+  /// **'You don’t have Karta Krakowska status on your mKKM card.'**
+  String get cityCardNone;
+
+  /// No description provided for @cityCardHowTo.
+  ///
+  /// In en, this message translates to:
+  /// **'How to get Karta Krakowska'**
+  String get cityCardHowTo;
+
+  /// No description provided for @cityCardOfflineCode.
+  ///
+  /// In en, this message translates to:
+  /// **'The status code needs a connection.'**
+  String get cityCardOfflineCode;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

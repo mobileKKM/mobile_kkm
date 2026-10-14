@@ -18,6 +18,8 @@ import 'package:mobile_kkm/features/card_setup/providers/card_gate_provider.dart
 import 'package:mobile_kkm/features/card_setup/screens/card_address_screen.dart';
 import 'package:mobile_kkm/features/card_setup/screens/card_photo_screen.dart';
 import 'package:mobile_kkm/features/card_setup/screens/card_setup_screen.dart';
+import 'package:mobile_kkm/features/city_card/screens/city_card_code_screen.dart';
+import 'package:mobile_kkm/features/city_card/screens/city_card_screen.dart';
 import 'package:mobile_kkm/features/debug/screens/debug_screen.dart';
 import 'package:mobile_kkm/features/home/screens/home_screen.dart';
 import 'package:mobile_kkm/features/map/screens/map_screen.dart';
@@ -102,12 +104,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/ticket-control/:ticketGuid',
         builder: (context, state) => TicketControlScreen(ticketGuid: state.pathParameters['ticketGuid']!),
       ),
+      GoRoute(
+        path: Routes.cityCard,
+        builder: (context, state) => const CityCardScreen(),
+        routes: [GoRoute(path: 'code', builder: (context, state) => const CityCardCodeScreen())],
+      ),
       GoRoute(path: Routes.debug, builder: (context, state) => const DebugScreen()),
       // Not built yet.
       _comingSoon(Routes.accountEdit, (l10n) => l10n.accountEdit),
       _comingSoon(Routes.accountChangePassword, (l10n) => l10n.accountChangePassword),
       _comingSoon(Routes.accountDelete, (l10n) => l10n.accountDelete),
-      _comingSoon(Routes.cityCard, (l10n) => l10n.cityCardTitle),
       _comingSoon(Routes.buy, (l10n) => l10n.navBuy),
       _comingSoon(Routes.subscription, (l10n) => l10n.subscriptionTitle),
       GoRoute(

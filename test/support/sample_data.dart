@@ -86,9 +86,12 @@ Map<String, dynamic> ticketsReply(List<Map<String, dynamic>> tickets) => {
 };
 
 /// [card]: false for an account that has no mKKM card yet. [detached]: the
-/// card was taken off the account on the website.
+/// card was taken off the account on the website. [residentFrom] and
+/// [residentUntil] are sent whatever [resident] says, as the server does.
 Map<String, dynamic> userDataJson({
   bool? resident = true,
+  String residentFrom = '2026-01-01T11:00:00Z',
+  String residentUntil = '2026-12-31T11:00:00Z',
   bool? activeSubscription,
   String? photoUrl,
   bool card = true,
@@ -107,6 +110,8 @@ Map<String, dynamic> userDataJson({
       ? {
           'customerCode': '100001',
           'hasInhabitantPrivilege': resident,
+          'inhabitantPrivilegeDateFrom': residentFrom,
+          'inhabitantPrivilegeDateTo': residentUntil,
           'hasActiveSubscription': ?activeSubscription,
           'detached': detached,
         }

@@ -556,11 +556,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketControlError => 'The code could not be loaded. Check your connection and try again.';
 
   @override
-  String ticketControlTimeLeft(String time) {
-    return 'Code valid for $time';
-  }
-
-  @override
   String get accountCustomerCode => 'Customer number';
 
   @override
@@ -728,15 +723,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketControlFare => 'Fare';
 
   @override
-  String get ticketControlZone => 'Zones';
-
-  @override
-  String ticketControlValidUntil(String date) {
-    return 'Valid until $date';
-  }
-
-  @override
-  String get ticketControlPeriod => 'Period';
+  String get ticketControlValidUntil => 'Valid until';
 
   @override
   String get ticketStatusCancelled => 'Cancelled';
@@ -794,7 +781,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketReturnDoneWhole => 'Ticket returned and removed from your tickets.';
 
   @override
-  String get ticketControlCaptureHidden => 'The code is hidden while the screen is being recorded.';
+  String get ticketControlCaptureHidden => 'The code is hidden while the screen is recorded or shared.';
 
   @override
   String get loginSubmitting => 'Signing in…';
@@ -1095,4 +1082,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ticketDetailsOffline => 'Details load when you’re back online.';
+
+  @override
+  String get ticketControlTicket => 'Ticket';
+
+  @override
+  String get ticketControlTapHint => 'Tap the code to enlarge it';
+
+  @override
+  String get ticketControlTapClose => 'Tap anywhere to close';
+
+  @override
+  String ticketControlCodeLabel(String time) {
+    return 'Ticket code, valid for $time. Double tap to enlarge.';
+  }
+
+  @override
+  String cityCardCodeLabel(String time) {
+    return 'Status code, valid for $time. Double tap to enlarge.';
+  }
+
+  @override
+  String get cityCardFrom => 'Active from';
+
+  @override
+  String get cityCardUntil => 'Active until';
+
+  @override
+  String get cityCardShow => 'Show status code';
+
+  @override
+  String get cityCardNone => 'You don’t have Karta Krakowska status on your mKKM card.';
+
+  @override
+  String get cityCardHowTo => 'How to get Karta Krakowska';
+
+  @override
+  String get cityCardOfflineCode => 'The status code needs a connection.';
 }

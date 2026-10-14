@@ -112,6 +112,7 @@ void main() {
         '/account/change-password',
         '/account/delete',
         '/karta-krakowska',
+        '/karta-krakowska/code',
         '/buy',
         '/subscription',
         '/ticket/NDAwMDAxIzE',

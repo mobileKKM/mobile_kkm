@@ -42,9 +42,9 @@ void main() {
   testWidgets('a screen that is not built yet opens above the navigation bar and can be left', (tester) async {
     final app = await pumpApp(tester, FakeAdapter(), session: signedInSession);
 
-    await tester.tap(find.text('Karta Krakowska'));
+    await tester.tap(find.text('Buy ticket'));
     await tester.pumpAndSettle();
-    expect(app.location, '/karta-krakowska');
+    expect(app.location, '/buy');
     expect(find.text('Coming soon'), findsOneWidget);
     expect(find.byType(NavigationBar), findsNothing);
 

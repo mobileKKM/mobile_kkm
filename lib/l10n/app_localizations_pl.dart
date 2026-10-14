@@ -568,11 +568,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketControlError => 'Nie udało się pobrać kodu. Sprawdź połączenie i spróbuj ponownie.';
 
   @override
-  String ticketControlTimeLeft(String time) {
-    return 'Kod ważny jeszcze $time';
-  }
-
-  @override
   String get accountCustomerCode => 'Numer klienta';
 
   @override
@@ -747,15 +742,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketControlFare => 'Ulga';
 
   @override
-  String get ticketControlZone => 'Strefy';
-
-  @override
-  String ticketControlValidUntil(String date) {
-    return 'Ważny do $date';
-  }
-
-  @override
-  String get ticketControlPeriod => 'Okres';
+  String get ticketControlValidUntil => 'Ważny do';
 
   @override
   String get ticketStatusCancelled => 'Anulowany';
@@ -813,7 +800,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketReturnDoneWhole => 'Bilet zwrócony i usunięty z listy.';
 
   @override
-  String get ticketControlCaptureHidden => 'Kod jest ukryty podczas nagrywania ekranu.';
+  String get ticketControlCaptureHidden => 'Kod jest ukryty podczas nagrywania lub udostępniania ekranu.';
 
   @override
   String get loginSubmitting => 'Logowanie…';
@@ -1114,4 +1101,41 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get ticketDetailsOffline => 'Szczegóły wczytają się po połączeniu.';
+
+  @override
+  String get ticketControlTicket => 'Bilet';
+
+  @override
+  String get ticketControlTapHint => 'Dotknij kodu, aby go powiększyć';
+
+  @override
+  String get ticketControlTapClose => 'Dotknij, aby zamknąć';
+
+  @override
+  String ticketControlCodeLabel(String time) {
+    return 'Kod biletu, ważny jeszcze $time. Dotknij dwukrotnie, aby powiększyć.';
+  }
+
+  @override
+  String cityCardCodeLabel(String time) {
+    return 'Kod statusu, ważny jeszcze $time. Dotknij dwukrotnie, aby powiększyć.';
+  }
+
+  @override
+  String get cityCardFrom => 'Aktywna od';
+
+  @override
+  String get cityCardUntil => 'Aktywna do';
+
+  @override
+  String get cityCardShow => 'Pokaż kod statusu';
+
+  @override
+  String get cityCardNone => 'Nie posiadasz statusu Karty Krakowskiej zapisanego na karcie mKKM.';
+
+  @override
+  String get cityCardHowTo => 'Jak wyrobić Kartę Krakowską';
+
+  @override
+  String get cityCardOfflineCode => 'Kod statusu wymaga połączenia.';
 }

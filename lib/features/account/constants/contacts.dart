@@ -12,5 +12,9 @@ abstract final class Contacts {
   /// Where new versions of the app are published.
   static final releasesUri = Uri.parse('https://github.com/mobileKKM/mobile_kkm/releases');
 
+  /// Where the city explains how to get Karta Krakowska. The app cannot
+  /// grant the status itself.
+  static final cityCardHowToUri = Uri.parse('https://kk.krakow.pl/jak-wyrobic-karte-krakowska');
+
   static Uri mailto(String address) => Uri(scheme: 'mailto', path: address);
 }

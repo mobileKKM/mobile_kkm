@@ -43,7 +43,7 @@ AztecKey _keyOf(App app) => app.container.read(aztecKeyProvider);
 Future<void> _openControl(WidgetTester tester) async {
   await openTab(tester, 'Tickets');
   await tester.tap(find.widgetWithText(FilledButton, 'Ticket control'));
-  await tester.pumpAndSettle();
+  await pumpWithCode(tester);
 }
 
 void main() {
@@ -181,7 +181,7 @@ void main() {
       // Under the new key the server answers.
       adapter.reply('POST', _contract, 200, _contractJson);
       release();
-      await tester.pumpAndSettle();
+      await pumpWithCode(tester);
 
       expect(adapter.requestsTo(_contract), hasLength(2));
       expect(_keyOf(app).pem, rotatedAztecKeyPem);
@@ -200,7 +200,7 @@ void main() {
       expect(find.text('Bilet nie jest powiązany.'), findsOneWidget);
 
       await tester.tap(find.text('Try again'));
-      await tester.pumpAndSettle();
+      await pumpWithCode(tester);
       expect(adapter.requestsTo(_contract), hasLength(2));
       expect(relay.requestsTo(_refresh), hasLength(1));
       expect(_keyOf(app).sameKeyAs(AztecKey.bundled), isTrue);

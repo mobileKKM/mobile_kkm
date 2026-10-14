@@ -10,6 +10,10 @@ abstract final class Routes {
   static const accountChangePassword = '/account/change-password';
   static const accountDelete = '/account/delete';
   static const cityCard = '/karta-krakowska';
+
+  /// The status code, for whoever checks the status.
+  static const cityCardCode = '$cityCard/code';
+
   static const buy = '/buy';
   static const subscription = '/subscription';
 
@@ -80,6 +84,7 @@ abstract final class Routes {
         accountChangePassword,
         accountDelete,
         cityCard,
+        cityCardCode,
         buy,
         subscription,
       }.contains(path) ||

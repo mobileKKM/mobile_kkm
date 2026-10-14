@@ -6,6 +6,7 @@ import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/features/account/services/photo_cache.dart';
 import 'package:mobile_kkm/features/account/widgets/link_sheet.dart';
+import 'package:mobile_kkm/features/account/widgets/user_avatar.dart';
 
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';
@@ -39,7 +40,7 @@ void main() {
 
     expect(find.text('Jan Testowy'), findsOneWidget);
     expect(find.text('Customer number 100001', findRichText: true), findsOneWidget);
-    expect(find.widgetWithText(CircleAvatar, 'JT'), findsOneWidget);
+    expect(find.widgetWithText(UserAvatar, 'JT'), findsOneWidget);
   });
 
   testWidgets('the photo comes from the photo cache, not through the API client', (tester) async {
@@ -49,7 +50,7 @@ void main() {
     await _openAccount(tester, adapter, photoCache: photos);
 
     expect(photos.requested.toSet(), {url});
-    expect(tester.widget<CircleAvatar>(find.byType(CircleAvatar)).foregroundImage, isNotNull);
+    expect(find.descendant(of: find.byType(UserAvatar), matching: find.byType(Image)), findsOneWidget);
     expect(adapter.requests.where((request) => request.path.contains('photo')), isEmpty);
   });
 
@@ -58,7 +59,7 @@ void main() {
     await _openAccount(tester, _adapter(), photoCache: photos);
 
     expect(photos.requested, isEmpty);
-    expect(tester.widget<CircleAvatar>(find.byType(CircleAvatar)).foregroundImage, isNull);
+    expect(find.descendant(of: find.byType(UserAvatar), matching: find.byType(Image)), findsNothing);
   });
 
   group('Karta Krakowska', () {
@@ -179,7 +180,6 @@ void main() {
 
   for (final (row, location) in [
     ('Edit account', '/account/edit'),
-    ('Karta Krakowska', '/karta-krakowska'),
     ('Change password', '/account/change-password'),
     ('Delete account', '/account/delete'),
   ]) {
