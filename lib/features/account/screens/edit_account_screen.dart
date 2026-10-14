@@ -17,6 +17,7 @@ import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/submit_button.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/account/widgets/address_fields.dart';
+import 'package:mobile_kkm/features/account/widgets/photo_preview.dart';
 import 'package:mobile_kkm/features/account/widgets/photo_source_sheet.dart';
 import 'package:mobile_kkm/features/account/widgets/user_avatar.dart';
 import 'package:mobile_kkm/features/auth/utils/validators.dart';
@@ -55,6 +56,10 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
 
   /// A photo that was chosen and waits for its own Save.
   PickedPhoto? _photo;
+
+  /// The last photo saved here. It stays on screen in place of the account's,
+  /// which the cleared cache would first show as initials while it reloads.
+  Uint8List? _savedPhoto;
   bool _saving = false;
   bool _savingPhoto = false;
   String? _error;
@@ -166,6 +171,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
     setState(() {
       _savingPhoto = false;
       _photo = null;
+      _savedPhoto = photo.bytes;
     });
     showAppSnackBar(messenger, l10n.editPhotoSaved, kind: SnackKind.success);
   }
@@ -307,30 +313,12 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
                 child: Column(
                   spacing: 14,
                   children: [
-                    if (photo != null)
-                      // The ring marks it as the new one.
-                      Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: scheme.primary, width: 3),
-                        ),
-                        child: ClipOval(
-                          child: Image.memory(
-                            photo.bytes,
-                            width: _photoSize,
-                            height: _photoSize,
-                            fit: BoxFit.cover,
-                            gaplessPlayback: true,
-                            errorBuilder: (context, _, _) => SizedBox.square(
-                              dimension: _photoSize,
-                              child: Icon(Symbols.broken_image_rounded, size: 44, color: scheme.onSurfaceVariant),
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      UserAvatar(user: user, size: _photoSize, fontSize: 42),
+                    PhotoPreview(
+                      size: _photoSize,
+                      bytes: photo?.bytes ?? _savedPhoto,
+                      pending: photo != null,
+                      child: UserAvatar(user: user, size: _photoSize, fontSize: 42),
+                    ),
                     Text(
                       photo != null ? l10n.editPhotoPending : l10n.cardPhotoFormats,
                       textAlign: TextAlign.center,

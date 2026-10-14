@@ -12,6 +12,7 @@ import 'package:mobile_kkm/core/widgets/lead_header.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/submit_button.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
+import 'package:mobile_kkm/features/account/widgets/photo_preview.dart';
 import 'package:mobile_kkm/features/account/widgets/photo_source_sheet.dart';
 import 'package:mobile_kkm/features/account/widgets/user_avatar.dart';
 import 'package:mobile_kkm/features/auth/widgets/auth_page.dart';
@@ -85,41 +86,21 @@ class _CardPhotoScreenState extends ConsumerState<CardPhotoScreen> {
     final hasPhoto = picked != null || hasAccountPhoto;
     final busy = _submitting || setup.stage == CardSetupStage.waiting;
 
-    final Widget photo;
-    if (picked != null) {
-      // The ring marks it as the new one.
-      photo = Container(
-        padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: scheme.primary, width: 3),
-        ),
-        child: ClipOval(
-          child: Image.memory(
-            picked.bytes,
-            width: _photoSize,
-            height: _photoSize,
-            fit: BoxFit.cover,
-            gaplessPlayback: true,
-            errorBuilder: (context, _, _) => SizedBox.square(
-              dimension: _photoSize,
-              child: Icon(Symbols.broken_image_rounded, size: 48, color: scheme.onSurfaceVariant),
+    final photo = PhotoPreview(
+      size: _photoSize,
+      bytes: picked?.bytes,
+      pending: picked != null,
+      child: hasAccountPhoto
+          ? UserAvatar(user: user, size: _photoSize)
+          : DashedBorder(
+              radius: _photoSize / 2,
+              background: scheme.surfaceContainerHigh,
+              child: SizedBox.square(
+                dimension: _photoSize,
+                child: Icon(Symbols.add_a_photo_rounded, size: 48, color: scheme.onSurfaceVariant),
+              ),
             ),
-          ),
-        ),
-      );
-    } else if (hasAccountPhoto) {
-      photo = UserAvatar(user: user, size: _photoSize);
-    } else {
-      photo = DashedBorder(
-        radius: _photoSize / 2,
-        background: scheme.surfaceContainerHigh,
-        child: SizedBox.square(
-          dimension: _photoSize,
-          child: Icon(Symbols.add_a_photo_rounded, size: 48, color: scheme.onSurfaceVariant),
-        ),
-      );
-    }
+    );
 
     return AuthPage(
       title: l10n.cardTitle,

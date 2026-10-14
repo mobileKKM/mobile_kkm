@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
+import 'package:mobile_kkm/features/account/widgets/photo_preview.dart';
 
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';
@@ -184,6 +185,35 @@ void main() {
         adapter.requests.where((request) => request.method == 'POST' && request.path.endsWith(_userData)),
         isEmpty,
       );
+    });
+
+    testWidgets('moves nothing under it when picked or saved', (tester) async {
+      await _open(tester, _adapter(), photoPicker: FakePhotoPicker(onePixelPng));
+      final preview = find.byType(PhotoPreview);
+      Rect where() => tester.getRect(preview);
+      // The test font is wide: the captions and buttons under the photo wrap
+      // differently here, so it is where they begin that has to stay.
+      double captionTop(String caption) => tester.getTopLeft(find.text(caption)).dy;
+      double formTop() => tester.getTopLeft(find.text('Personal details')).dy;
+      final photo = where();
+      final caption = captionTop('JPG, PNG or WebP, up to 5 MB');
+      final form = formTop();
+
+      await tapVisible(tester, _changePhoto);
+      await tester.tap(find.text('Choose from gallery'));
+      await tester.pumpAndSettle();
+      expect(tester.widget<PhotoPreview>(preview).pending, isTrue);
+      expect(where(), photo);
+      expect(captionTop('New photo, not saved yet'), caption);
+
+      await tapVisible(tester, find.widgetWithText(FilledButton, 'Save photo'));
+      expect(where(), photo);
+      expect(formTop(), form);
+      // The saved photo stays, rather than the initials while the account's
+      // picture loads again.
+      final saved = tester.widget<PhotoPreview>(preview);
+      expect(saved.pending, isFalse);
+      expect(saved.bytes, onePixelPng);
     });
 
     testWidgets('can be dropped again before it is saved', (tester) async {
