@@ -35,6 +35,11 @@ Builds:
     output: build/app/outputs/flutter-apk/app-release.apk
     srclibs:
       - flutter@3.47.5
+    # maplibre_gl compiles its Java for 21; the build server's default JDK is older.
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-21-jdk-headless
+      - update-java-alternatives -a
     rm:
       - ios
     prebuild:
@@ -46,7 +51,8 @@ Builds:
       - sh tool/fdroid/strip_gms.sh
     build:
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - $$flutter$$/bin/flutter build apk --release
+      # As release.yml builds it: ARM only, Dart debug info left out of the APK.
+      - $$flutter$$/bin/flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/symbols
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9.]+$

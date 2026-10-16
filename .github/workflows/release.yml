@@ -104,8 +104,12 @@ jobs:
           ' > "$RUNNER_TEMP/dart_defines.json"
           if [ -n "$RELAY_URL" ]; then echo "Relay: $RELAY_URL"; else echo "Relay: the app's default"; fi
 
+      # ARM only (x86_64 is emulators and Chromebooks, which get the bundle from Play), and the Dart debug info
+      # kept apart: in build/symbols, uploaded below, for decoding a stack trace from this build.
       - name: Build APK
-        run: flutter build apk --release --dart-define-from-file="$RUNNER_TEMP/dart_defines.json"
+        run: >-
+          flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/symbols
+          --dart-define-from-file="$RUNNER_TEMP/dart_defines.json"
 
       - name: Check signature
         run: sh tool/ci/check_signer.sh "$APK" "${{ vars.RELEASE_CERT_SHA256 }}"
@@ -120,6 +124,12 @@ jobs:
         with:
           name: apk-${{ matrix.flavor }}
           path: ${{ env.OUT }}
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: symbols-${{ matrix.flavor }}
+          path: build/symbols
           if-no-files-found: error
 
       # For a manual upload to Google Play; not part of the GitHub release.

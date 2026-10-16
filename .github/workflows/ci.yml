@@ -97,7 +97,7 @@ jobs:
           flutter pub get
           sh tool/fdroid/strip_gms.sh
       # Without android/key.properties the release build is signed with the debug key; that is enough here.
-      - run: flutter build apk --release
+      - run: flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/symbols
       - name: Check for GMS
         if: matrix.flavor == 'foss'
         run: sh tool/ci/check_no_gms.sh

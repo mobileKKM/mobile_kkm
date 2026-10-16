@@ -36,6 +36,17 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // `flutter build --target-platform` builds the engine and the Dart code for those ABIs alone, but plugins'
+        // prebuilt libraries (MapLibre's) still come for every ABI, and a device would then pick one without the
+        // engine. Flutter passes the list to Gradle, and its plugin has already set the filter to all of its ABIs.
+        val abis = mapOf("android-arm" to "armeabi-v7a", "android-arm64" to "arm64-v8a", "android-x64" to "x86_64")
+        (findProperty("target-platform") as String?)?.let { platforms ->
+            ndk {
+                abiFilters.clear()
+                abiFilters += platforms.split(",").map { abis.getValue(it.trim()) }
+            }
+        }
     }
 
     signingConfigs {
@@ -60,6 +71,15 @@ android {
     dependenciesInfo {
         includeInApk = false
         includeInBundle = true
+    }
+
+    // The native libraries (Flutter, MapLibre, the Dart code, SQLite) are most of the APK. Stored uncompressed, as
+    // AGP does by default, they more than double its size; compressed, Android extracts them on install. Play builds
+    // its own APKs from the bundle.
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 }
 
