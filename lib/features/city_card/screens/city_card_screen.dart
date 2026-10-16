@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
+import 'package:mobile_kkm/core/providers/demo_mode_provider.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
@@ -72,7 +73,7 @@ class _CityCardScreenState extends ConsumerState<CityCardScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final data = ref.watch(userDataProvider).value;
+    final data = ref.watch(shownUserDataProvider).value;
     final user = data?.userData;
     final card = data?.mkkmData;
     final offline = ref.watch(appStatusProvider.select((status) => status.mode == AppMode.offline));

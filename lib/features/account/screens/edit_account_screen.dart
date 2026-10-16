@@ -7,6 +7,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
 import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
+import 'package:mobile_kkm/core/providers/demo_mode_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
@@ -90,7 +91,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
   @override
   void initState() {
     super.initState();
-    final user = ref.read(userDataProvider).value?.userData;
+    final user = ref.read(shownUserDataProvider).value?.userData;
     final address = user?.registeredAddress;
     _firstName = TextEditingController(text: user?.firstName);
     _lastName = TextEditingController(text: user?.lastName);
@@ -275,9 +276,11 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final user = ref.watch(userDataProvider).value?.userData;
+    final user = ref.watch(shownUserDataProvider).value?.userData;
     // Nothing here works without the server: off, with the reason on top.
     final online = ref.watch(appStatusProvider.select((status) => status.mode == AppMode.online));
+    // Placeholders on the screen must never reach the server.
+    final demo = ref.watch(demoModeProvider);
     final photo = _photo;
     final busy = _saving || _savingPhoto;
     final dirty = _changed || photo != null;
@@ -298,7 +301,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
           icon: Symbols.check_rounded,
           loading: _saving,
           loadingLabel: l10n.editSaving,
-          onPressed: _changed && online && !busy ? () => unawaited(_save()) : null,
+          onPressed: _changed && online && !busy && !demo ? () => unawaited(_save()) : null,
         ),
         child: Form(
           key: _formKey,
@@ -342,14 +345,14 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
                             icon: Symbols.check_rounded,
                             loading: _savingPhoto,
                             loadingLabel: l10n.editSaving,
-                            onPressed: online && !busy ? () => unawaited(_savePhoto(photo)) : null,
+                            onPressed: online && !busy && !demo ? () => unawaited(_savePhoto(photo)) : null,
                           ),
                         ],
                       )
                     else
                       FilledButton.tonalIcon(
                         style: _photoAction,
-                        onPressed: online && !busy ? () => unawaited(_choosePhoto()) : null,
+                        onPressed: online && !busy && !demo ? () => unawaited(_choosePhoto()) : null,
                         icon: const Icon(Symbols.photo_camera_rounded),
                         label: Text(l10n.cardPhotoChange),
                       ),

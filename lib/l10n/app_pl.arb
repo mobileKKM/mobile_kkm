@@ -272,6 +272,8 @@
   "debugDeviceName": "Nazwa urządzenia",
   "debugDeviceNameHint": "Zostaw puste, aby użyć nazwy tego urządzenia",
   "debugSave": "Zapisz",
+  "debugDemoMode": "Tryb demonstracyjny",
+  "debugDemoModeHint": "Pokazuje zmyślone imię i nazwisko, numery, zdjęcie i kody zamiast Twoich, do zrzutów ekranu i nagrań. Wyłącza się po ponownym uruchomieniu aplikacji.",
   "debugScreenSecurity": "Ochrona ekranu",
   "debugScreenSecurityHint": "Chroni kod biletu przed zrzutami ekranu i nagraniami. Włącza się ponownie po ponownym uruchomieniu aplikacji.",
   "debugAztecKey": "Klucz kodu biletu",

@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/providers/demo_mode_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
+import 'package:mobile_kkm/core/widgets/row_group.dart';
 
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';
@@ -82,11 +84,25 @@ void main() {
     final app = await _openDebug(tester);
     expect(app.container.read(screenSecurityEnabledProvider), isTrue);
 
-    await tapVisible(tester, find.byType(Switch));
+    await tapVisible(tester, find.widgetWithText(GroupRow, 'Screen security'));
     expect(app.container.read(screenSecurityEnabledProvider), isFalse);
 
     await tapVisible(tester, find.text('Screen security'));
     expect(app.container.read(screenSecurityEnabledProvider), isTrue);
+  });
+
+  testWidgets('the switch turns the demo mode on and off', (tester) async {
+    final app = await _openDebug(tester);
+    expect(app.container.read(demoModeProvider), isFalse);
+
+    await tapVisible(
+      tester,
+      find.descendant(of: find.widgetWithText(GroupRow, 'Demo mode'), matching: find.byType(Switch)),
+    );
+    expect(app.container.read(demoModeProvider), isTrue);
+
+    await tapVisible(tester, find.text('Demo mode'));
+    expect(app.container.read(demoModeProvider), isFalse);
   });
 
   testWidgets('the key for the ticket code says where it is from, and the relay can be asked again', (tester) async {

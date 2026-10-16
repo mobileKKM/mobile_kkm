@@ -5,6 +5,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/device_identity.dart';
 import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
+import 'package:mobile_kkm/core/providers/demo_mode_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
@@ -81,6 +82,8 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final key = ref.watch(aztecKeyProvider);
+    final demo = ref.watch(demoModeProvider);
+    void setDemo(bool enabled) => ref.read(demoModeProvider.notifier).set(enabled);
     final secure = ref.watch(screenSecurityEnabledProvider);
     void setSecure(bool enabled) => ref.read(screenSecurityEnabledProvider.notifier).set(enabled);
 
@@ -127,6 +130,14 @@ class _DebugScreenState extends ConsumerState<DebugScreen> {
                 FilledButton(onPressed: _saving ? null : _save, child: Text(l10n.debugSave)),
                 RowGroup(
                   children: [
+                    GroupRow(
+                      leading: const IconTile(Symbols.domino_mask_rounded),
+                      label: l10n.debugDemoMode,
+                      subtitle: l10n.debugDemoModeHint,
+                      showChevron: false,
+                      trailing: Switch(value: demo, onChanged: setDemo),
+                      onTap: () => setDemo(!demo),
+                    ),
                     GroupRow(
                       leading: const IconTile(Symbols.screenshot_rounded),
                       label: l10n.debugScreenSecurity,

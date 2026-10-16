@@ -1550,6 +1550,18 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get debugSave;
 
+  /// No description provided for @debugDemoMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo mode'**
+  String get debugDemoMode;
+
+  /// No description provided for @debugDemoModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows a made-up name, numbers, photo and codes in place of yours, for screenshots and recordings. Off when the app is started again.'**
+  String get debugDemoModeHint;
+
   /// No description provided for @debugScreenSecurity.
   ///
   /// In en, this message translates to:

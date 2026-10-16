@@ -6,15 +6,16 @@ import 'package:clock/clock.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/demo/demo_data.dart';
 import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
+import 'package:mobile_kkm/core/providers/demo_mode_provider.dart';
 import 'package:mobile_kkm/core/providers/dictionary_providers.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/widgets/code_screen/code_screen.dart';
 import 'package:mobile_kkm/core/widgets/code_screen/code_state.dart';
-import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
@@ -154,7 +155,7 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
         code: BarcodeWidget(
           key: const Key('ticket-code'),
           barcode: Barcode.aztec(),
-          data: code.token,
+          data: ref.read(demoModeProvider) ? demoTicketCode : code.token,
           color: Colors.black,
           drawText: false,
         ),
@@ -326,7 +327,7 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final data = ref.watch(userDataProvider).value;
+    final data = ref.watch(shownUserDataProvider).value;
     final stored = ref.watch(mkkmTicketsProvider).value;
     MkkmTicket? ticket;
     for (final entry in stored ?? const []) {

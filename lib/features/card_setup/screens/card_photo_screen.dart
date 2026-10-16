@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
+import 'package:mobile_kkm/core/providers/demo_mode_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/bullet_card.dart';
 import 'package:mobile_kkm/core/widgets/dashed_border.dart';
@@ -80,9 +81,11 @@ class _CardPhotoScreenState extends ConsumerState<CardPhotoScreen> {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final setup = ref.watch(cardSetupProvider);
-    final user = ref.watch(userDataProvider).value?.userData;
+    final user = ref.watch(shownUserDataProvider).value?.userData;
     final picked = setup.photo;
-    final hasAccountPhoto = user?.photoUrl?.isNotEmpty ?? false;
+    // From the real data: whether a photo is needed does not change in demo mode.
+    final accountPhoto = ref.watch(userDataProvider).value?.userData?.photoUrl;
+    final hasAccountPhoto = accountPhoto?.isNotEmpty ?? false;
     final hasPhoto = picked != null || hasAccountPhoto;
     final busy = _submitting || setup.stage == CardSetupStage.waiting;
 

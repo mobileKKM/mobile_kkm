@@ -2,11 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/providers/demo_mode_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/app_status_banner.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
-import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/account/widgets/user_avatar.dart';
 import 'package:mobile_kkm/features/home/widgets/pinned_ticket_card.dart';
 import 'package:mobile_kkm/features/home/widgets/quick_actions.dart';
@@ -25,7 +25,7 @@ class HomeScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final user = ref.watch(userDataProvider).value;
+    final user = ref.watch(shownUserDataProvider).value;
     final firstName = user?.userData?.firstName;
     // As in the official client: 5+1 is offered to Karta Krakowska holders and
     // to anyone with a running subscription. The client also requires an

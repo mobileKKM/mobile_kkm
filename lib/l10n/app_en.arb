@@ -287,6 +287,8 @@
   "debugDeviceName": "Device name",
   "debugDeviceNameHint": "Leave empty for this device's own name",
   "debugSave": "Save",
+  "debugDemoMode": "Demo mode",
+  "debugDemoModeHint": "Shows a made-up name, numbers, photo and codes in place of yours, for screenshots and recordings. Off when the app is started again.",
   "debugScreenSecurity": "Screen security",
   "debugScreenSecurityHint": "Keeps the ticket code out of screenshots and recordings. Back on when the app is started again.",
   "debugAztecKey": "Ticket code key",

@@ -5,12 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/api/error_messages.dart';
+import 'package:mobile_kkm/core/providers/demo_mode_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/bullet_card.dart';
 import 'package:mobile_kkm/core/widgets/lead_header.dart';
 import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/core/widgets/submit_button.dart';
-import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/auth/widgets/auth_page.dart';
 import 'package:mobile_kkm/features/auth/widgets/sign_out_dialog.dart';
 import 'package:mobile_kkm/features/card_setup/models/card_gate.dart';
@@ -58,7 +58,7 @@ class _CardSetupScreenState extends ConsumerState<CardSetupScreen> {
     final l10n = AppLocalizations.of(context);
     final gate = ref.watch(cardGateProvider);
     final stage = ref.watch(cardSetupProvider.select((state) => state.stage));
-    final data = ref.watch(userDataProvider).value;
+    final data = ref.watch(shownUserDataProvider).value;
     final user = data?.userData;
     final signOut = TextButton(
       style: TextButton.styleFrom(minimumSize: const Size.fromHeight(48)),

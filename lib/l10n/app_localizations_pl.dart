@@ -867,6 +867,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get debugSave => 'Zapisz';
 
   @override
+  String get debugDemoMode => 'Tryb demonstracyjny';
+
+  @override
+  String get debugDemoModeHint =>
+      'Pokazuje zmyślone imię i nazwisko, numery, zdjęcie i kody zamiast Twoich, do zrzutów ekranu i nagrań. Wyłącza się po ponownym uruchomieniu aplikacji.';
+
+  @override
   String get debugScreenSecurity => 'Ochrona ekranu';
 
   @override

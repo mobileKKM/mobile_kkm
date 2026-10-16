@@ -848,6 +848,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debugSave => 'Save';
 
   @override
+  String get debugDemoMode => 'Demo mode';
+
+  @override
+  String get debugDemoModeHint =>
+      'Shows a made-up name, numbers, photo and codes in place of yours, for screenshots and recordings. Off when the app is started again.';
+
+  @override
   String get debugScreenSecurity => 'Screen security';
 
   @override

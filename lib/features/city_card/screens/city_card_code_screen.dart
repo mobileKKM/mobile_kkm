@@ -2,18 +2,20 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:clock/clock.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/demo/demo_data.dart';
 import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
+import 'package:mobile_kkm/core/providers/demo_mode_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/widgets/code_screen/code_screen.dart';
 import 'package:mobile_kkm/core/widgets/code_screen/code_state.dart';
-import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// The code that proves the Karta Krakowska status: whose it is, and the
@@ -109,18 +111,26 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
         secondsLeft: _secondsLeft,
         lifetime: code.lifetime,
         since: _countedAt,
-        code: Image.memory(
-          code.png,
-          key: const Key('status-code'),
-          // Squares, not a photograph: kept sharp at any size.
-          filterQuality: FilterQuality.none,
-          gaplessPlayback: true,
-          errorBuilder: (context, error, stackTrace) {
-            // Not a picture after all: nothing anyone could scan.
-            WidgetsBinding.instance.addPostFrameCallback((_) => _fail(null));
-            return const SizedBox.shrink();
-          },
-        ),
+        code: ref.read(demoModeProvider)
+            ? BarcodeWidget(
+                key: const Key('status-code'),
+                barcode: Barcode.qrCode(),
+                data: demoCityCardCode,
+                color: Colors.black,
+                drawText: false,
+              )
+            : Image.memory(
+                code.png,
+                key: const Key('status-code'),
+                // Squares, not a photograph: kept sharp at any size.
+                filterQuality: FilterQuality.none,
+                gaplessPlayback: true,
+                errorBuilder: (context, error, stackTrace) {
+                  // Not a picture after all: nothing anyone could scan.
+                  WidgetsBinding.instance.addPostFrameCallback((_) => _fail(null));
+                  return const SizedBox.shrink();
+                },
+              ),
       );
     }
   }
@@ -217,7 +227,7 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final data = ref.watch(userDataProvider).value;
+    final data = ref.watch(shownUserDataProvider).value;
 
     return CodeScreen(
       title: l10n.cityCardTitle,
