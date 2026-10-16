@@ -9,11 +9,12 @@ import 'package:dio/dio.dart';
 typedef MockReply = (int, Object?);
 
 class _Route {
-  _Route(this.method, this.fragment, this.replies, this.responseHeaders);
+  _Route(this.method, this.fragment, this.replies, this.responseHeaders, this.until);
   final String method;
   final String fragment;
   final List<MockReply> replies;
   final Map<String, List<String>>? responseHeaders;
+  final Future<void>? until;
   int cursor = 0;
 }
 
@@ -22,20 +23,31 @@ class _Route {
 /// Routes are matched by HTTP method + path fragment and serve their
 /// replies as a FIFO queue (exhausted routes repeat the last reply).
 /// Every request is recorded in [requests]. Pass [responseHeaders] to
-/// simulate response headers such as `set-cookie`.
+/// simulate response headers such as `set-cookie`, and [until] to hold the
+/// replies back until that future completes.
 class MockAdapter implements HttpClientAdapter {
   final List<_Route> _routes = [];
   final List<RequestOptions> requests = [];
 
-  void on(String method, String pathFragment, List<MockReply> replies, {Map<String, List<String>>? responseHeaders}) {
-    _routes.add(_Route(method, pathFragment, replies, responseHeaders));
+  void on(
+    String method,
+    String pathFragment,
+    List<MockReply> replies, {
+    Map<String, List<String>>? responseHeaders,
+    Future<void>? until,
+  }) {
+    _routes.add(_Route(method, pathFragment, replies, responseHeaders, until));
   }
 
   void onGet(String pathFragment, List<MockReply> replies, {Map<String, List<String>>? responseHeaders}) =>
       on('GET', pathFragment, replies, responseHeaders: responseHeaders);
 
-  void onPost(String pathFragment, List<MockReply> replies, {Map<String, List<String>>? responseHeaders}) =>
-      on('POST', pathFragment, replies, responseHeaders: responseHeaders);
+  void onPost(
+    String pathFragment,
+    List<MockReply> replies, {
+    Map<String, List<String>>? responseHeaders,
+    Future<void>? until,
+  }) => on('POST', pathFragment, replies, responseHeaders: responseHeaders, until: until);
 
   void onPut(String pathFragment, List<MockReply> replies, {Map<String, List<String>>? responseHeaders}) =>
       on('PUT', pathFragment, replies, responseHeaders: responseHeaders);
@@ -54,6 +66,7 @@ class MockAdapter implements HttpClientAdapter {
       throw StateError('No mock registered for ${options.method} ${options.path}');
     }
     final r = route.first;
+    await r.until;
     final index = r.cursor < r.replies.length ? r.cursor++ : r.replies.length - 1;
     final (status, body) = r.replies[index];
     final data = switch (body) {

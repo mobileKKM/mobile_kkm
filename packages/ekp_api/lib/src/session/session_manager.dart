@@ -41,8 +41,13 @@ class EkpSessionManager {
   /// Current session, if any.
   Future<AuthSession?> currentSession() => store.read();
 
+  /// Counts the sessions: raised whenever one starts or ends, so that a
+  /// recovery can tell whether the session it renewed is still the one.
+  int _generation = 0;
+
   /// Stores [session] and emits [EkpSessionAuthenticated].
   Future<void> publishAuthenticated(AuthSession session) async {
+    _generation++;
     await store.write(session);
     _events.add(EkpSessionAuthenticated(session));
   }
@@ -55,12 +60,14 @@ class EkpSessionManager {
 
   /// Clears the session and emits [EkpSessionLoggedOut].
   Future<void> publishLoggedOut() async {
+    _generation++;
     await store.clear();
     _events.add(const EkpSessionLoggedOut());
   }
 
   /// Clears the session and emits [EkpSessionExpired].
   Future<void> publishExpired() async {
+    _generation++;
     await store.clear();
     _events.add(const EkpSessionExpired());
   }
@@ -83,6 +90,10 @@ class EkpSessionManager {
   /// [EkpSessionExpired] emitted and `false` returned. A connection-level
   /// failure (no response) also returns `false` but leaves the session
   /// untouched. Concurrent callers share one recovery attempt.
+  ///
+  /// A recovery that ends after the session was ended or replaced (a logout
+  /// while the request was on its way) changes nothing and returns `false`:
+  /// its answer belongs to a session that is no more.
   Future<bool> recover() {
     return _recoveryInFlight ??= _recover().whenComplete(() {
       _recoveryInFlight = null;
@@ -90,6 +101,7 @@ class EkpSessionManager {
   }
 
   Future<bool> _recover() async {
+    final generation = _generation;
     final session = await store.read();
     final refresh = session?.refresh;
     if (session == null || refresh == null || refresh.isEmpty) {
@@ -101,17 +113,23 @@ class EkpSessionManager {
         EkpApiPaths.tokenRecover,
         data: {'token': refresh, 'deviceId': device.deviceId, 'deviceName': device.deviceName},
       );
+      if (generation != _generation) {
+        return false;
+      }
       await publishUpdated(AuthSession.fromJson(_asMap(response.data)));
       return true;
     } on DioException catch (e) {
       // No response at all (offline, timeout): the refresh token was never
       // judged, so keep the session and let a later attempt try again.
-      if (e.response == null) {
+      if (e.response == null || generation != _generation) {
         return false;
       }
       await publishExpired();
       return false;
     } on FormatException {
+      if (generation != _generation) {
+        return false;
+      }
       await publishExpired();
       return false;
     }

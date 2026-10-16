@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:test/test.dart';
@@ -211,6 +213,37 @@ void main() {
       expect(ok, isTrue);
       expect((await store.read())!.token, tokenB);
       expect(events.whereType<EkpSessionUpdated>(), isNotEmpty);
+    });
+
+    test('a recovery that ends after logout does not bring the session back', () async {
+      await store.write(sessionA);
+      final release = Completer<void>();
+      adapter.onPost('/auth/token/recover', recoverSuccessReplies, until: release.future);
+      adapter.onPost('/auth/logout', [(401, '')]);
+
+      final recovery = client.session.recover();
+      await client.auth.logout();
+      release.complete();
+
+      expect(await recovery, isFalse);
+      expect(await store.read(), isNull);
+      await pumpEventQueue();
+      expect(events, [isA<EkpSessionLoggedOut>()]);
+    });
+
+    test('a recovery refused after logout does not report an expired session', () async {
+      await store.write(sessionA);
+      final release = Completer<void>();
+      adapter.onPost('/auth/token/recover', [(401, '')], until: release.future);
+      adapter.onPost('/auth/logout', [(200, '"Successfully logged out."')]);
+
+      final recovery = client.session.recover();
+      await client.auth.logout();
+      release.complete();
+
+      expect(await recovery, isFalse);
+      await pumpEventQueue();
+      expect(events, [isA<EkpSessionLoggedOut>()]);
     });
   });
 
