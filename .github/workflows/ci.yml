@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Format and analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-flutter
+      - name: Format
+        run: dart format --output=none --set-exit-if-changed .
+      # `dart analyze`, not `flutter analyze`: only it runs the riverpod_lint plugin.
+      - name: Analyze
+        run: dart analyze --fatal-infos
+
+  codegen:
+    name: Generated code is current
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-flutter
+      - name: Localizations
+        run: flutter gen-l10n
+      - name: ekp_api models
+        working-directory: packages/ekp_api
+        run: dart run build_runner build --delete-conflicting-outputs
+      - name: App database
+        run: dart run build_runner build --delete-conflicting-outputs
+      # build_runner writes *.g.dart at 80 columns.
+      - name: Format
+        run: dart format .
+      - name: Compare with the commit
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git status --short
+            git diff
+            echo "::error::Generated files differ from the commit. Run flutter gen-l10n, dart run build_runner build --delete-conflicting-outputs (in packages/ekp_api and at the root) and dart format ., then commit the result."
+            exit 1
+          fi
+
+  test-app:
+    name: App tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-flutter
+      - run: flutter test --coverage
+      - uses: actions/upload-artifact@v5
+        with:
+          name: coverage-app
+          path: coverage/lcov.info
+          if-no-files-found: ignore
+
+  test-packages:
+    name: ${{ matrix.package }} tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [ekp_api, ekp_crypto]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-flutter
+      # The fixtures are loaded by paths relative to the package directory.
+      - working-directory: packages/${{ matrix.package }}
+        run: dart test
+
+  build:
+    name: Build APK (${{ matrix.flavor }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor: [gms, foss]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-flutter
+      # As in the F-Droid recipe. A pub cache of its own keeps the patched plugins out of the cached one.
+      - name: Remove Google Play Services
+        if: matrix.flavor == 'foss'
+        run: |
+          echo "PUB_CACHE=$GITHUB_WORKSPACE/.pub-cache" >> "$GITHUB_ENV"
+          export PUB_CACHE="$GITHUB_WORKSPACE/.pub-cache"
+          flutter pub get
+          sh tool/fdroid/strip_gms.sh
+      # Without android/key.properties the release build is signed with the debug key; that is enough here.
+      - run: flutter build apk --release
+      - name: Check for GMS
+        if: matrix.flavor == 'foss'
+        run: sh tool/ci/check_no_gms.sh

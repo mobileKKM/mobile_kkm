@@ -1,0 +1,175 @@
+name: Release
+
+# A tag vX.Y.Z (the version name in pubspec.yaml) builds both APKs, signs them with the release key and puts
+# them into a draft release. Run by hand, it builds and signs the same files as artifacts and releases nothing.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.read.outputs.name }}
+      code: ${{ steps.read.outputs.code }}
+      prerelease: ${{ steps.read.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: read
+        run: |
+          version=$(sed -n 's/^version: *//p' pubspec.yaml)
+          name=${version%%+*}
+          code=${version##*+}
+          if [ -z "$name" ] || [ "$name" = "$version" ]; then
+            echo "::error::pubspec.yaml has no version of the form X.Y.Z+N"
+            exit 1
+          fi
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "$GITHUB_REF_NAME" != "v$name" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec.yaml's version $name (expected v$name)"
+            exit 1
+          fi
+          case "$name" in *-*) prerelease=true ;; *) prerelease=false ;; esac
+          {
+            echo "name=$name"
+            echo "code=$code"
+            echo "prerelease=$prerelease"
+          } >> "$GITHUB_OUTPUT"
+
+  apk:
+    name: Signed APK (${{ matrix.flavor }})
+    needs: [checks, version]
+    runs-on: ubuntu-latest
+    # The signing secrets live in this environment; restrict it to the v* tags (and main for the manual run).
+    environment: release
+    strategy:
+      matrix:
+        flavor: [gms, foss]
+    env:
+      APK: build/app/outputs/flutter-apk/app-release.apk
+      OUT: mobileKKM-${{ needs.version.outputs.name }}-${{ matrix.flavor }}.apk
+    steps:
+      - uses: actions/checkout@v5
+
+      # Gradle signs with the debug key when android/key.properties is missing, so stop before that can happen.
+      - name: Release key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          CERT_SHA256: ${{ vars.RELEASE_CERT_SHA256 }}
+        run: |
+          for v in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD CERT_SHA256; do
+            if [ -z "$(printenv "$v")" ]; then
+              echo "::error::$v is not set (secrets and variables of the 'release' environment)"
+              exit 1
+            fi
+          done
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/release.jks
+          # storeFile is resolved inside android/app.
+          cat > android/key.properties <<EOF
+          storeFile=release.jks
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+
+      - uses: ./.github/actions/setup-flutter
+
+      - name: Remove Google Play Services
+        if: matrix.flavor == 'foss'
+        run: |
+          echo "PUB_CACHE=$GITHUB_WORKSPACE/.pub-cache" >> "$GITHUB_ENV"
+          export PUB_CACHE="$GITHUB_WORKSPACE/.pub-cache"
+          flutter pub get
+          sh tool/fdroid/strip_gms.sh
+
+      # The aztec key relay: another instance than relay.mobilekkm.app (variable, for a fork) and its token
+      # (secret). Only what is set goes in: an empty address would replace the app's default with nothing.
+      - name: Relay settings
+        env:
+          RELAY_URL: ${{ vars.AZTEC_KEY_RELAY_URL }}
+          RELAY_TOKEN: ${{ secrets.AZTEC_KEY_RELAY_TOKEN }}
+        run: |
+          jq -n --arg url "$RELAY_URL" --arg token "$RELAY_TOKEN" '
+            {AZTEC_KEY_RELAY_URL: $url, AZTEC_KEY_RELAY_TOKEN: $token} | with_entries(select(.value != ""))
+          ' > "$RUNNER_TEMP/dart_defines.json"
+          if [ -n "$RELAY_URL" ]; then echo "Relay: $RELAY_URL"; else echo "Relay: the app's default"; fi
+
+      - name: Build APK
+        run: flutter build apk --release --dart-define-from-file="$RUNNER_TEMP/dart_defines.json"
+
+      - name: Check signature
+        run: sh tool/ci/check_signer.sh "$APK" "${{ vars.RELEASE_CERT_SHA256 }}"
+
+      - name: Check for GMS
+        if: matrix.flavor == 'foss'
+        run: sh tool/ci/check_no_gms.sh
+
+      - run: mv "$APK" "$OUT"
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: apk-${{ matrix.flavor }}
+          path: ${{ env.OUT }}
+          if-no-files-found: error
+
+      # For a manual upload to Google Play; not part of the GitHub release.
+      - name: Build app bundle
+        if: matrix.flavor == 'gms'
+        run: flutter build appbundle --release --dart-define-from-file="$RUNNER_TEMP/dart_defines.json"
+
+      - if: matrix.flavor == 'gms'
+        uses: actions/upload-artifact@v5
+        with:
+          name: aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+
+      - name: Remove release key
+        if: always()
+        run: rm -f android/key.properties android/app/release.jks "$RUNNER_TEMP/dart_defines.json"
+
+  release:
+    name: Draft release
+    needs: [version, apk]
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: apk-*
+          path: dist
+          merge-multiple: true
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NAME: ${{ needs.version.outputs.name }}
+          CODE: ${{ needs.version.outputs.code }}
+          PRERELEASE: ${{ needs.version.outputs.prerelease }}
+        run: |
+          (cd dist && sha256sum -- *.apk > SHA256SUMS)
+          set -- --draft --verify-tag --title "mobileKKM $NAME"
+          changelog="fastlane/metadata/android/en-US/changelogs/$CODE.txt"
+          if [ -f "$changelog" ]; then
+            set -- "$@" --notes-file "$changelog"
+          else
+            set -- "$@" --generate-notes
+          fi
+          if [ "$PRERELEASE" = true ]; then
+            set -- "$@" --prerelease
+          fi
+          gh release create "$GITHUB_REF_NAME" "$@" dist/*.apk dist/SHA256SUMS
