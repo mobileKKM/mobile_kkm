@@ -1,0 +1,1 @@
+Nieoficjalna aplikacja open-source do mobilnych biletów okresowych w Krakowie.

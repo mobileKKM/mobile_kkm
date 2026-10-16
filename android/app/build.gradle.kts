@@ -54,6 +54,13 @@ android {
             signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
+
+    // AGP puts a dependency list, encrypted with a Google key, into the APK's signing block. F-Droid rejects it as
+    // an opaque blob; Play reads it from the bundle, so the bundle keeps it.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = true
+    }
 }
 
 kotlin {

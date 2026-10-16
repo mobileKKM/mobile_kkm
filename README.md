@@ -67,6 +67,36 @@ flutter test
 (cd packages/ekp_crypto && dart test)
 ```
 
+## Releases
+
+The app keeps the application ID of the old WebView app,
+`de.codebucket.mkkm`, so it updates over it. That app reached version
+code 23; every release raises the `+N` in `pubspec.yaml` above the last
+one uploaded anywhere.
+
+```bash
+flutter build apk --release        # GitHub releases and F-Droid
+flutter build appbundle --release  # Google Play
+```
+
+Both are signed with the release key from `android/key.properties`
+(gitignored), the same key as the old app's.
+
+- **Store texts and images:** `fastlane/metadata/android/<locale>/`,
+  read by F-Droid and copied into the Play Console by hand (no fastlane
+  needed). Each release adds `changelogs/<version code>.txt` in `en-US`
+  and `pl-PL`. The icon and the feature graphic are the old
+  app's, as on its Play listing; screenshots are still to come.
+- **F-Droid:** `tool/fdroid/de.codebucket.mkkm.yml` is a draft of the
+  build recipe for [fdroiddata](https://gitlab.com/fdroid/fdroiddata).
+  F-Droid builds with Flutter 3.47.5 (its `srclibs`); keep that in step
+  with the version a release is built with. `geolocator_android` and
+  `maplibre_gl` pull in Google Play Services, which F-Droid does not
+  allow, so the recipe runs `tool/fdroid/strip_gms.sh` on a fresh pub
+  cache after `flutter pub get`. Both plugins then use Android's own
+  location provider. The script fails when a plugin update moved what it
+  patches, rather than letting GMS through.
+
 ## License
 
 Copyright (C) 2026 David Sn

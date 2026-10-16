@@ -1,0 +1,13 @@
+mobileKKM is an unofficial app for managing period tickets on public transport in Kraków.
+
+- Sign in with your existing eKP account or create a new one
+- Create your mKKM card to buy period tickets and keep them on your phone
+- Access your tickets offline (an internet connection is required only during ticket inspections)
+- See live vehicle positions and departures on the map
+- Free and open-source, licensed under the GPL-3.0
+
+If your Karta Krakowska status is linked to your mKKM card, the app will conveniently display it as well.
+
+Disclaimer: mobileKKM is developed independently and is not affiliated with, endorsed by, or connected to ZTP Kraków or MPK Kraków. The app communicates with the official servers, which the operator may change or block access to at any time.
+
+Source code: https://github.com/mobileKKM/mobile_kkm

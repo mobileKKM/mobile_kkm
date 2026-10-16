@@ -1,0 +1,13 @@
+mobileKKM to nieoficjalna aplikacja do obsługi biletów okresowych krakowskiej komunikacji miejskiej.
+
+- Zaloguj się za pomocą istniejącego konta eKP lub utwórz nowe
+- Utwórz nośnik mKKM, aby kupować bilety okresowe i przechowywać je w telefonie
+- Miej dostęp do swoich biletów offline (połączenie z internetem jest wymagane tylko podczas kontroli biletów)
+- Sprawdzaj na mapie pozycje pojazdów na żywo oraz tablice odjazdów
+- Darmowa i otwartoźródłowa (open-source), na licencji GPL-3.0
+
+Jeśli posiadasz status Karty Krakowskiej zapisany na swoim koncie mKKM, aplikacja również go wyświetli.
+
+Zastrzeżenie: mobileKKM jest rozwijana niezależnie i nie jest powiązana, wspierana ani autoryzowana przez ZTP Kraków czy MPK Kraków. Aplikacja korzysta z tych samych serwerów co oficjalne rozwiązanie, do których operator może w każdej chwili zablokować dostęp lub zmienić ich działanie.
+
+Kod źródłowy: https://github.com/mobileKKM/mobile_kkm

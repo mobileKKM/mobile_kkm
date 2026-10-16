@@ -1,0 +1,55 @@
+# Draft of metadata/de.codebucket.mkkm.yml for the merge request to
+# https://gitlab.com/fdroid/fdroiddata. The copy there is the one F-Droid uses;
+# keep this one in step with it. Store texts and images come from
+# fastlane/metadata/android/ in this repository.
+#
+# Per release: tag the commit vX.Y.Z (UpdateCheckMode reads the tags) and keep
+# srclibs on the Flutter version the release was built with.
+Categories:
+  - Public Transport
+  - Pass Wallet
+License: GPL-3.0-or-later
+AuthorName: David Sn
+WebSite: https://mobilekkm.app
+SourceCode: https://github.com/mobileKKM/mobile_kkm
+IssueTracker: https://github.com/mobileKKM/mobile_kkm/issues
+Changelog: https://github.com/mobileKKM/mobile_kkm/releases
+Donate:
+  - https://github.com/sponsors/divadsn
+  - https://www.paypal.me/divadsn
+
+AutoName: mobileKKM
+
+AntiFeatures:
+  NonFreeNet:
+    en-US: Relies on the proprietary eKP ticketing service of ZTP / MPK Kraków.
+    pl: Korzysta z zamkniętego systemu biletowego eKP ZTP / MPK Kraków.
+
+RepoType: git
+Repo: https://github.com/mobileKKM/mobile_kkm.git
+
+Builds:
+  - versionName: 2.0.0
+    versionCode: 24
+    commit: v2.0.0
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.47.5
+    rm:
+      - ios
+    prebuild:
+      # The release build falls back to the debug key without android/key.properties; F-Droid signs it itself.
+      - sed -i -e '/signingConfig = /d' android/app/build.gradle.kts
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - sh tool/fdroid/strip_gms.sh
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]+$
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 2.0.0
+CurrentVersionCode: 24
