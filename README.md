@@ -1,5 +1,7 @@
 # mobileKKM
 
+[![CI](https://github.com/mobileKKM/mobile_kkm/actions/workflows/ci.yml/badge.svg)](https://github.com/mobileKKM/mobile_kkm/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/mobileKKM/mobile_kkm?include_prereleases)](https://github.com/mobileKKM/mobile_kkm/releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
 
 Unofficial, community-built **FOSS software for the mKKM / EKP system** of
