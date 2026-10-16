@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:clock/clock.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -51,6 +52,9 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
   Timer? _timer;
   int _secondsLeft = 0;
 
+  /// When [_secondsLeft] was counted.
+  DateTime _countedAt = clock.now();
+
   /// The time ran out and the screen is on its way out.
   bool _closed = false;
 
@@ -98,12 +102,13 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
     } else if (code == null) {
       _state.value = const CodeLoading();
     } else if (_captured) {
-      _state.value = CodeHidden(id: code.png, secondsLeft: _secondsLeft, lifetime: code.lifetime);
+      _state.value = CodeHidden(id: code.png, secondsLeft: _secondsLeft, lifetime: code.lifetime, since: _countedAt);
     } else {
       _state.value = CodeShown(
         id: code.png,
         secondsLeft: _secondsLeft,
         lifetime: code.lifetime,
+        since: _countedAt,
         code: Image.memory(
           code.png,
           key: const Key('status-code'),
@@ -133,7 +138,7 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
       final response = await ref.read(ekpClientProvider).account.inhabitantContract();
       final png = Uint8List.fromList(response.decodeContractPng());
       if (png.isNotEmpty) {
-        final now = DateTime.now();
+        final now = clock.now();
         var life = response.expirationDate?.difference(now);
         // Missing, already over or too far off: the device's clock is not
         // the server's, and the code is good for what the server gives one.
@@ -164,6 +169,7 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
       _code = code;
       _error = null;
       _secondsLeft = _remaining(code);
+      _countedAt = clock.now();
       // Ticks a full second apart from here on, so the first one does not
       // land part-way through the ring's first second and make it skip.
       _timer?.cancel();
@@ -186,7 +192,7 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
   /// ticks: they stop while the app is in the background. Rounded up: 0
   /// means over.
   static int _remaining(_Code code) =>
-      (code.expiresAt.difference(DateTime.now()).inMicroseconds / Duration.microsecondsPerSecond).ceil();
+      (code.expiresAt.difference(clock.now()).inMicroseconds / Duration.microsecondsPerSecond).ceil();
 
   void _tick() {
     final code = _code;
@@ -196,6 +202,7 @@ class _CityCardCodeScreenState extends ConsumerState<CityCardCodeScreen> {
     final left = math.min(_secondsLeft - 1, _remaining(code));
     if (left > 0) {
       _secondsLeft = left;
+      _countedAt = clock.now();
       _publish();
       return;
     }

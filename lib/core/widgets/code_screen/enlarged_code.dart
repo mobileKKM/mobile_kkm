@@ -211,6 +211,7 @@ class _EnlargedCodeState extends State<_EnlargedCode> {
       id: state.id,
       left: state.left,
       leftNext: state.leftNext,
+      since: state.since,
       track: _track,
       color: state.low ? _warning : _progress,
       stroke: 8 * scale,

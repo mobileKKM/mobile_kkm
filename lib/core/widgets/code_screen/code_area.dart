@@ -145,6 +145,7 @@ class _Box extends StatelessWidget {
       id: running?.id,
       left: running?.left ?? 0,
       leftNext: running?.leftNext ?? 0,
+      since: running?.since,
       track: scheme.secondaryContainer,
       color: running != null && running.low ? scheme.error : scheme.primary,
       stroke: 10 * scale,

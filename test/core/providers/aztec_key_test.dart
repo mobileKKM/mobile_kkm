@@ -238,6 +238,8 @@ void main() {
       final app = await pumpApp(tester, adapter, session: signedInSession);
       final before = app.relay.requests.length;
       await _openControl(tester);
+      // Nor do the screen's own tries again.
+      await tester.pump(const Duration(seconds: 3));
 
       expect(app.relay.requests, hasLength(before));
     });

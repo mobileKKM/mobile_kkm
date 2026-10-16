@@ -39,6 +39,20 @@ CodeState _state(WidgetTester tester) => tester.widget<CodeArea>(find.byType(Cod
 /// The time the code on the screen has left, as `m:ss`.
 String _time(WidgetTester tester) => (_state(tester) as CodeRunning).time;
 
+/// Sends the app to the background, as a switch to another app does.
+void _leave(WidgetTester tester) {
+  for (final state in [AppLifecycleState.inactive, AppLifecycleState.hidden, AppLifecycleState.paused]) {
+    tester.binding.handleAppLifecycleStateChanged(state);
+  }
+}
+
+/// Brings it back.
+void _return(WidgetTester tester) {
+  for (final state in [AppLifecycleState.hidden, AppLifecycleState.inactive, AppLifecycleState.resumed]) {
+    tester.binding.handleAppLifecycleStateChanged(state);
+  }
+}
+
 void main() {
   testWidgets('shows whose ticket it is, what kind, and its code', (tester) async {
     final adapter = _adapter()..reply('POST', _contract, 200, _contractJson);
@@ -269,6 +283,66 @@ void main() {
     expect(find.byType(BarcodeWidget), findsOneWidget);
   });
 
+  testWidgets('a code that ran out while the app was away is replaced on return', (tester) async {
+    final adapter = _adapter()..reply('POST', _contract, 200, _contractJson);
+    final app = await _open(tester, adapter);
+    await tester.pump(const Duration(seconds: 40));
+    expect(_time(tester), '0:50');
+
+    _leave(tester);
+    await tester.pump(const Duration(minutes: 2));
+    // Nothing is asked while away: the phone may have frozen the app.
+    expect(adapter.requestsTo(_contract), hasLength(1));
+
+    _return(tester);
+    await tester.pump();
+    expect(find.text('Getting your code…'), findsOneWidget);
+    await pumpWithCode(tester);
+    expect(app.location, Routes.ticketControl(networkGuid));
+    expect(find.byType(BarcodeWidget), findsOneWidget);
+    expect(_time(tester), '1:30');
+    expect(adapter.requestsTo(_contract), hasLength(2));
+  });
+
+  testWidgets('a code with time left goes on after the app was away', (tester) async {
+    final adapter = _adapter()..reply('POST', _contract, 200, _contractJson);
+    await _open(tester, adapter);
+
+    _leave(tester);
+    await tester.pump(const Duration(seconds: 80));
+    _return(tester);
+    await tester.pump(const Duration(milliseconds: 100));
+    // By the clock, and the next one is asked for since little is left.
+    expect(_time(tester), '0:10');
+    expect(find.byType(BarcodeWidget), findsOneWidget);
+    expect(adapter.requestsTo(_contract), hasLength(2));
+
+    await tester.pump(const Duration(seconds: 10));
+    await tester.pump();
+    expect(_time(tester), '1:30');
+  });
+
+  testWidgets('a request without an answer is tried again before the app says so', (tester) async {
+    final adapter = _adapter()..reply('POST', _contract, 200, _contractJson);
+    await _open(tester, adapter);
+    _leave(tester);
+    await tester.pump(const Duration(minutes: 2));
+    // The connection did not survive the time away.
+    adapter.fail('POST', _contract);
+
+    _return(tester);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(adapter.requestsTo(_contract), hasLength(2));
+    expect(find.text('Getting your code…'), findsOneWidget);
+
+    adapter.reply('POST', _contract, 200, _contractJson);
+    await tester.pump(const Duration(seconds: 1));
+    await pumpWithCode(tester);
+    expect(adapter.requestsTo(_contract), hasLength(3));
+    expect(find.byType(BarcodeWidget), findsOneWidget);
+    expect(find.text('The code could not be loaded. Check your connection and try again.'), findsNothing);
+  });
+
   testWidgets('the screen is kept out of screenshots while it is open', (tester) async {
     final adapter = _adapter()..reply('POST', _contract, 200, _contractJson);
     final app = await pumpApp(tester, adapter, session: signedInSession);
@@ -332,8 +406,13 @@ void main() {
   testWidgets('without an answer it is the app that says so', (tester) async {
     final adapter = _adapter()..fail('POST', _contract);
     await _open(tester, adapter);
+    // Asked twice more first, a second and two seconds later.
+    expect(find.text('Getting your code…'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pump();
 
     expect(find.text('The code could not be loaded. Check your connection and try again.'), findsOneWidget);
+    expect(adapter.requestsTo(_contract), hasLength(3));
   });
 
   testWidgets('a code that cannot be read can be asked for again', (tester) async {

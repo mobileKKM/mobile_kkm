@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:clock/clock.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -27,6 +28,11 @@ import 'package:mobile_kkm/l10n/app_localizations.dart';
 /// [codeLifetime] of its own, so there is normally always a code to scan.
 /// Only when that fails is the code dropped, for the reason and a way to
 /// try again.
+///
+/// While the app is away (hidden) the time is not counted and nothing is
+/// fetched: the phone may have frozen the app, and a request from there
+/// fails. Back on the screen the code goes on if it still has time, and is
+/// replaced otherwise.
 class TicketControlScreen extends ConsumerStatefulWidget {
   const TicketControlScreen({super.key, required this.ticketGuid});
 
@@ -75,6 +81,14 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
   Timer? _timer;
   int _secondsLeft = 0;
 
+  /// When [_secondsLeft] was counted.
+  DateTime _countedAt = clock.now();
+
+  /// The app is hidden: the timer stands, and a fetch that ends meanwhile
+  /// is kept for the return.
+  bool _away = false;
+  late final AppLifecycleListener _lifecycle;
+
   late final ScanDisplay _display;
   late final ScreenSecurity _security;
   StreamSubscription<bool>? _captureChanges;
@@ -100,11 +114,15 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
         _publish();
       }
     });
+    // Hidden, not inactive: the notification shade or a glance at the app
+    // switcher leaves the code running.
+    _lifecycle = AppLifecycleListener(onHide: _leave, onShow: _return);
     unawaited(_fetch());
   }
 
   @override
   void dispose() {
+    _lifecycle.dispose();
     _timer?.cancel();
     unawaited(_captureChanges?.cancel());
     unawaited(_security.setSecure(false));
@@ -125,12 +143,14 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
         id: code.token,
         secondsLeft: _secondsLeft,
         lifetime: TicketControlScreen.codeLifetime.inSeconds,
+        since: _countedAt,
       );
     } else {
       _state.value = CodeShown(
         id: code.token,
         secondsLeft: _secondsLeft,
         lifetime: TicketControlScreen.codeLifetime.inSeconds,
+        since: _countedAt,
         code: BarcodeWidget(
           key: const Key('ticket-code'),
           barcode: Barcode.aztec(),
@@ -155,17 +175,12 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
     _Fetched? code;
     Object? error;
     try {
-      final response = await ref
-          .read(aztecKeyProvider.notifier)
-          .guard(
-            () => ref.read(ekpClientProvider).tickets.contract(widget.ticketGuid),
-            refused: (response) => response.code != null || response.decodeAztec() == null,
-          );
+      final response = await _contract();
       // A refusal arrives as a reply like any other.
       if (response.code != null) {
         error = response.message;
       } else if (response.decodeAztec() case final token?) {
-        code = (token: token, fetchedAt: DateTime.now());
+        code = (token: token, fetchedAt: clock.now());
       }
     } on Exception catch (exception) {
       error = exception;
@@ -175,51 +190,114 @@ class _TicketControlScreenState extends ConsumerState<TicketControlScreen> {
     }
     _fetching = false;
     if (code == null) {
-      // The code on the screen stays until its time is up; see _tick.
+      // The code on the screen stays until its time is up; see _advance.
       _error = error;
       _fetchFailed = true;
-      _failed = _code == null;
-    } else if (_code == null) {
+      // Away, it is asked again on the return instead.
+      _failed = _code == null && !_away;
+    } else if (_code == null && !_away) {
       _show(code);
     } else {
+      // Away, it is shown on the return if it is still fresh then.
       _next = code;
     }
     _publish();
   }
 
+  /// The pauses before a request without an answer is sent again. The first
+  /// one after the app was away often goes out on a connection that died
+  /// meanwhile, or before the phone is back on the network.
+  static const _retryAfter = [Duration(seconds: 1), Duration(seconds: 2)];
+
+  /// Asks for the contract, again after each of [_retryAfter] while there is
+  /// no answer. What the server says is not asked again.
+  Future<TicketContractResponse> _contract() async {
+    for (var attempt = 0; ; attempt++) {
+      try {
+        return await ref
+            .read(aztecKeyProvider.notifier)
+            .guard(
+              () => ref.read(ekpClientProvider).tickets.contract(widget.ticketGuid),
+              refused: (response) => response.code != null || response.decodeAztec() == null,
+            );
+      } on EkpNetworkException catch (error, stack) {
+        if (attempt >= _retryAfter.length) {
+          rethrow;
+        }
+        await Future<void>.delayed(_retryAfter[attempt]);
+        // Gone meanwhile: nobody is waiting for another try.
+        if (!mounted) {
+          Error.throwWithStackTrace(error, stack);
+        }
+      }
+    }
+  }
+
   /// Whether [code] can still be shown for a whole [TicketControlScreen.codeLifetime]
   /// before an inspector's scanner stops taking it.
   static bool _fresh(_Fetched code) =>
-      DateTime.now().difference(code.fetchedAt) <= TicketControlScreen.codeValidity - TicketControlScreen.codeLifetime;
+      clock.now().difference(code.fetchedAt) <= TicketControlScreen.codeValidity - TicketControlScreen.codeLifetime;
 
   /// Puts [code] on the screen. Its time there runs from now, also for one
   /// that was fetched ahead.
   void _show(_Fetched code) {
-    _code = (token: code.token, expiresAt: DateTime.now().add(TicketControlScreen.codeLifetime));
+    _code = (token: code.token, expiresAt: clock.now().add(TicketControlScreen.codeLifetime));
     _next = null;
     _error = null;
     _fetchFailed = false;
     _secondsLeft = TicketControlScreen.codeLifetime.inSeconds;
-    // Ticks a full second apart from here on, so the first one does not land
-    // part-way through the ring's first second and make it skip.
+    _countedAt = clock.now();
+    _startTimer();
+  }
+
+  /// Ticks a full second apart from now on, so the first one does not land
+  /// part-way through the ring's second and make it skip.
+  void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+  }
+
+  void _leave() {
+    _away = true;
+    _timer?.cancel();
+  }
+
+  /// Back from being away: the code goes on with the time it still has, or
+  /// makes way for the one fetched ahead or a new one. Whatever failed
+  /// before is asked again, as on opening the screen.
+  void _return() {
+    _away = false;
+    _fetchFailed = false;
+    _failed = false;
+    final code = _code;
+    if (code == null) {
+      _advance(0);
+      return;
+    }
+    _startTimer();
+    _advance(math.min(_secondsLeft, _remaining(code)));
   }
 
   /// The seconds [code] still has on the screen. By the clock, not by
   /// counting ticks: they stop while the app is in the background. Rounded
   /// up: a fresh code has its whole lifetime, and 0 means over.
   static int _remaining(_Code code) =>
-      (code.expiresAt.difference(DateTime.now()).inMicroseconds / Duration.microsecondsPerSecond).ceil();
+      (code.expiresAt.difference(clock.now()).inMicroseconds / Duration.microsecondsPerSecond).ceil();
 
   void _tick() {
     final code = _code;
     if (code == null) {
       return;
     }
-    final left = math.min(_secondsLeft - 1, _remaining(code));
-    if (left > 0) {
+    _advance(math.min(_secondsLeft - 1, _remaining(code)));
+  }
+
+  /// Moves the code on the screen to [left] seconds; at 0, or without a
+  /// code, the next one takes over or is fetched.
+  void _advance(int left) {
+    if (_code != null && left > 0) {
       _secondsLeft = left;
+      _countedAt = clock.now();
       _publish();
       // One attempt per code: a failed one is reported when the time is up.
       if (left <= TicketControlScreen.renewAhead.inSeconds && _next == null && !_fetchFailed) {

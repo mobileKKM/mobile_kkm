@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:clock/clock.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -21,7 +22,7 @@ const _code = Key('status-code');
 
 /// A code as the server sends it: a picture, and the moment it runs out.
 Map<String, dynamic> _contractJson({Duration? life}) => {
-  'expirationDate': life == null ? null : DateTime.now().add(life).millisecondsSinceEpoch,
+  'expirationDate': life == null ? null : clock.now().add(life).millisecondsSinceEpoch,
   'contract': base64Encode(onePixelPng),
   'code': null,
   'message': null,
@@ -159,8 +160,13 @@ void main() {
     });
 
     testWidgets('is good until the moment the server names, then the screen closes', (tester) async {
-      final adapter = _adapter()..reply('GET', _contract, 200, _contractJson(life: const Duration(seconds: 40)));
-      final app = await _openCode(tester, adapter);
+      final adapter = _adapter();
+      final app = await _open(tester, adapter);
+      // The moment counted from here: the start-up takes seconds of the
+      // test's clock too.
+      adapter.reply('GET', _contract, 200, _contractJson(life: const Duration(seconds: 40)));
+      await tester.tap(find.widgetWithText(FilledButton, 'Show status code'));
+      await pumpWithCode(tester);
       final scheme = Theme.of(tester.element(find.byType(CodeArea))).colorScheme;
       CodeRing ring() => tester.widget<CodeRing>(find.byType(CodeRing));
       expect((_state(tester) as CodeRunning).time, '0:40');

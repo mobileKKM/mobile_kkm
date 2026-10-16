@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ui' show lerpDouble;
 
+import 'package:clock/clock.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// The outline of a code's box as its timer: full at the start, its end
@@ -10,6 +12,7 @@ class CodeRing extends StatefulWidget {
     required this.id,
     required this.left,
     required this.leftNext,
+    required this.since,
     required this.track,
     required this.color,
     required this.stroke,
@@ -26,6 +29,10 @@ class CodeRing extends StatefulWidget {
   /// What [left] will be a second from now. The ring spends the second on
   /// its way there, so that it is empty when the time is, not a second late.
   final double leftNext;
+
+  /// When the second from [left] to [leftNext] began; null while there is
+  /// no time running.
+  final DateTime? since;
   final Color track;
   final Color color;
   final double stroke;
@@ -54,7 +61,10 @@ class _CodeRingState extends State<CodeRing> with SingleTickerProviderStateMixin
     super.didUpdateWidget(old);
     // Not on every rebuild: one in the middle of a second leaves the ring
     // on its way.
-    if (widget.id != old.id || widget.left != old.left || widget.leftNext != old.leftNext) {
+    if (widget.id != old.id ||
+        widget.left != old.left ||
+        widget.leftNext != old.leftNext ||
+        widget.since != old.since) {
       // A renewed code fills the ring in from empty; the first one, after
       // loading, starts full at once.
       _run(sweepIn: old.id != null && widget.id != null && widget.id != old.id);
@@ -67,7 +77,9 @@ class _CodeRingState extends State<CodeRing> with SingleTickerProviderStateMixin
   /// two are the same while the ring runs. They are not after it stood
   /// still, under another route or with the app in the background, and
   /// then the ring is where it belongs at once instead of hurrying there.
-  /// A new code starts at its own share the same way.
+  /// A new code starts at its own share the same way, and so does a ring
+  /// built part-way through a second (the enlarged code): it starts where
+  /// that second has got to, so that the next one does not make it jump.
   void _run({bool sweepIn = false}) {
     final run = ++_runs;
     if (sweepIn) {
@@ -82,18 +94,38 @@ class _CodeRingState extends State<CodeRing> with SingleTickerProviderStateMixin
   int _runs = 0;
 
   Future<void> _sweep(int run) async {
-    await _shown.animateTo(widget.left, duration: _sweepTime, curve: Curves.easeOut);
+    // To where the time will be when the sweep is over.
+    await _shown.animateTo(_position(_sweepTime).left, duration: _sweepTime, curve: Curves.easeOut);
     // Another second began meanwhile and has taken over.
     if (mounted && run == _runs) {
       // The rest of the second, so it still ends where the next one starts.
-      _drain(const Duration(seconds: 1) - _sweepTime);
+      _drain();
     }
   }
 
-  void _drain([Duration duration = const Duration(seconds: 1)]) {
-    _shown.value = widget.left;
-    // A second per second: the ring moves evenly, not in jumps.
-    unawaited(_shown.animateTo(widget.leftNext, duration: duration));
+  void _drain() {
+    final (:left, :rest) = _position();
+    _shown.value = left;
+    if (rest > Duration.zero) {
+      // A second per second: the ring moves evenly, not in jumps.
+      unawaited(_shown.animateTo(widget.leftNext, duration: rest));
+    }
+  }
+
+  static const _second = Duration(seconds: 1);
+
+  /// Where the ring belongs [ahead] from now, and what is left of its
+  /// second from there.
+  ({double left, Duration rest}) _position([Duration ahead = Duration.zero]) {
+    final since = widget.since;
+    var into = since == null ? Duration.zero : clock.now().add(ahead).difference(since);
+    if (into < Duration.zero) {
+      into = Duration.zero;
+    } else if (into > _second) {
+      into = _second;
+    }
+    final share = into.inMicroseconds / _second.inMicroseconds;
+    return (left: lerpDouble(widget.left, widget.leftNext, share)!, rest: _second - into);
   }
 
   @override

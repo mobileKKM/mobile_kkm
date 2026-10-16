@@ -14,7 +14,7 @@ final class CodeLoading extends CodeState {
 
 /// There is a code, and its time is running.
 sealed class CodeRunning extends CodeState {
-  const CodeRunning({required this.id, required this.secondsLeft, required this.lifetime});
+  const CodeRunning({required this.id, required this.secondsLeft, required this.lifetime, required this.since});
 
   /// From here on the ring is drawn as a warning.
   static const lowSeconds = 15;
@@ -25,6 +25,11 @@ sealed class CodeRunning extends CodeState {
 
   /// All of the code's time, in seconds.
   final int lifetime;
+
+  /// When [secondsLeft] was counted. From then on the ring spends a second
+  /// on its way from [left] to [leftNext], also a ring that is only built
+  /// part-way through it.
+  final DateTime since;
 
   /// The share of the code's time still ahead.
   double get left => lifetime <= 0 ? 0 : (secondsLeft / lifetime).clamp(0, 1);
@@ -40,7 +45,13 @@ sealed class CodeRunning extends CodeState {
 
 /// The code, to be scanned.
 final class CodeShown extends CodeRunning {
-  const CodeShown({required super.id, required super.secondsLeft, required super.lifetime, required this.code});
+  const CodeShown({
+    required super.id,
+    required super.secondsLeft,
+    required super.lifetime,
+    required super.since,
+    required this.code,
+  });
 
   /// Black on transparent; it is laid on a white panel.
   final Widget code;
@@ -48,7 +59,7 @@ final class CodeShown extends CodeRunning {
 
 /// There is a code, but the screen is being recorded or mirrored (iOS).
 final class CodeHidden extends CodeRunning {
-  const CodeHidden({required super.id, required super.secondsLeft, required super.lifetime});
+  const CodeHidden({required super.id, required super.secondsLeft, required super.lifetime, required super.since});
 }
 
 /// There is no code and none on its way.
