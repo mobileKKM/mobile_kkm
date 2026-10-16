@@ -1,13 +1,14 @@
 name: Set up Flutter
-description: Java 17 and the pinned Flutter SDK, then `flutter pub get` for the whole workspace.
+description: Java 21 and the pinned Flutter SDK, then `flutter pub get` for the whole workspace.
 
 runs:
   using: composite
   steps:
+    # 21, not the app's 17: maplibre_gl compiles its Java for 21 (`invalid source release: 21` with 17).
     - uses: actions/setup-java@v5
       with:
         distribution: temurin
-        java-version: '17'
+        java-version: '21'
 
     # Keep on the Flutter version releases are built with, the same as `srclibs: flutter@…` in
     # tool/fdroid/de.codebucket.mkkm.yml.
