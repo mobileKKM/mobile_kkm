@@ -208,7 +208,7 @@ class _Details extends StatelessWidget {
             Symbols.add_shopping_cart_rounded,
             l10n.ticketActionBuyAgain,
             l10n.ticketActionBuySimilarHint,
-            () => context.push(Routes.buy),
+            () => context.push(Routes.buySimilar(transactionCode)),
           ),
       ] else ...[
         if (canChangeLineOf(detail))
@@ -228,14 +228,14 @@ class _Details extends StatelessWidget {
               l10n.ticketActionExtendHint(
                 DateFormat.MMMd(locale).format(expiry.add(const Duration(seconds: 1)).toLocal()),
               ),
-              () => context.push(Routes.buy),
+              () => context.push(Routes.buyExtend(transactionCode)),
             )
           else
             action(
               Symbols.add_shopping_cart_rounded,
               l10n.ticketActionBuySimilar,
               l10n.ticketActionBuySimilarHint,
-              () => context.push(Routes.buy),
+              () => context.push(Routes.buySimilar(transactionCode)),
             ),
         if (detail.canReturn ?? false)
           action(

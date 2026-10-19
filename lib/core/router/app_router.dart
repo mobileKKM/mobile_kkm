@@ -26,6 +26,8 @@ import 'package:mobile_kkm/features/city_card/screens/city_card_screen.dart';
 import 'package:mobile_kkm/features/debug/screens/debug_screen.dart';
 import 'package:mobile_kkm/features/home/screens/home_screen.dart';
 import 'package:mobile_kkm/features/map/screens/map_screen.dart';
+import 'package:mobile_kkm/features/purchase/models/purchase_selection.dart';
+import 'package:mobile_kkm/features/purchase/screens/buy_screen.dart';
 import 'package:mobile_kkm/features/shell/widgets/main_shell.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
 import 'package:mobile_kkm/features/tickets/screens/ticket_change_line_screen.dart';
@@ -120,8 +122,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.accountEdit, builder: (context, state) => const EditAccountScreen()),
       GoRoute(path: Routes.accountChangePassword, builder: (context, state) => const ChangePasswordScreen()),
       GoRoute(path: Routes.accountDelete, builder: (context, state) => const DeleteAccountScreen()),
+      GoRoute(
+        path: Routes.buy,
+        builder: (context, state) => BuyScreen(entry: purchaseEntryOf(state.uri)),
+        // Check and pay comes with the next step.
+        routes: [
+          GoRoute(
+            path: 'pay',
+            builder: (context, state) => ComingSoonScreen(title: AppLocalizations.of(context).payTitle),
+          ),
+        ],
+      ),
       // Not built yet.
-      _comingSoon(Routes.buy, (l10n) => l10n.navBuy),
       _comingSoon(Routes.subscription, (l10n) => l10n.subscriptionTitle),
       GoRoute(
         path: Routes.login,
@@ -206,4 +218,16 @@ String? redirectFor(Uri uri, AuthStatus status, {bool outdated = false, CardGate
     },
     AuthStatus.unauthenticated => Routes.isPublic(path) ? null : Routes.login,
   };
+}
+
+/// How `/buy` was opened: `?extend=` or `?similar=` a transaction code.
+PurchaseEntry purchaseEntryOf(Uri uri) {
+  final query = uri.queryParameters;
+  if (query['extend'] case final code? when code.isNotEmpty) {
+    return PurchaseEntry.extend(code);
+  }
+  if (query['similar'] case final code? when code.isNotEmpty) {
+    return PurchaseEntry.similar(code);
+  }
+  return const PurchaseEntry.fresh();
 }

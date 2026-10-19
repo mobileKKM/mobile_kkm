@@ -15,6 +15,19 @@ abstract final class Routes {
   static const cityCardCode = '$cityCard/code';
 
   static const buy = '/buy';
+
+  /// Check and pay for the ticket priced on [buy] (passed as `extra`).
+  static const buyPay = '$buy/pay';
+
+  /// The purchase form filled in from a ticket, to extend it or to buy one
+  /// like it.
+  static String buyExtend(String transactionCode) =>
+      Uri(path: buy, queryParameters: {'extend': transactionCode}).toString();
+  static String buySimilar(String transactionCode) =>
+      Uri(path: buy, queryParameters: {'similar': transactionCode}).toString();
+
+  /// The payment's status screens.
+  static const payment = '/payment';
   static const subscription = '/subscription';
 
   /// The mKKM card set-up: all a signed-in user gets until the account has
@@ -42,6 +55,9 @@ abstract final class Routes {
   static String ticket(String transactionCode) => '$_ticketPrefix${Uri.encodeComponent(transactionCode)}';
   static String ticketReturn(String transactionCode) => '${ticket(transactionCode)}/return';
   static String ticketChangeLine(String transactionCode) => '${ticket(transactionCode)}/change-line';
+
+  /// Pay for a ticket that waits for its payment.
+  static String ticketPay(String transactionCode) => '${ticket(transactionCode)}/pay';
 
   /// The ticket's code, for an inspector.
   static String ticketControl(String ticketGuid) => '$_ticketControlPrefix${Uri.encodeComponent(ticketGuid)}';
@@ -86,6 +102,8 @@ abstract final class Routes {
         cityCard,
         cityCardCode,
         buy,
+        buyPay,
+        payment,
         subscription,
       }.contains(path) ||
       path.startsWith(_ticketPrefix) ||

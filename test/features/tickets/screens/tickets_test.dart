@@ -331,9 +331,9 @@ void main() {
     await tester.tap(find.widgetWithText(FloatingActionButton, 'Buy ticket'));
     await tester.pumpAndSettle();
     expect(app.location, '/buy');
-    expect(find.text('Coming soon'), findsOneWidget);
+    expect(find.text('Buy a ticket'), findsOneWidget);
 
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Close'));
     await tester.pumpAndSettle();
     expect(app.location, '/tickets');
     await tester.tap(find.text('Active'));
