@@ -230,3 +230,28 @@ in-app payments.
   what can be bought.
 - **Keep the 30-day rule for extensions** in the date picker rather than waiting for the server to
   refuse.
+
+## Further findings
+
+Read from the bundle and checked against the captures while mobileKKM's own purchase was built.
+
+- **Inhabitant fares map by hand, or by `groupId`.** The prefill replaces kind 21 with 2 and 22 with
+  14 in code, because the configuration sells the base kinds (2, 14, 17) also to inhabitants and
+  only the calculation and the ticket carry 21 / 22. The kind dictionary says the same with data:
+  21 and 2 are both `groupId` 1, 22 and 14 both 2. A line ticket (no `specialTransportLine`,
+  neither `isNetwork` nor `isMetropolitan`) is prefilled as the network type.
+- **`ignoreWarnings` defaults to `false`.** The pay call sends `false` unless told otherwise; only
+  the repeat after the "Ponowienie płatności" dialog sends `true`. (The two captured calls sent
+  `true`.)
+- **`tickets/calculate` can refuse with HTTP 200.** The HTTP wrapper merges the body with the
+  status, and the calculation is treated as refused when its `code` is truthy or the status isn't
+  200. Known codes get the app's own text (`PurchaseImpossible`, `NoCitizenStatus`,
+  `InvalidValidFrom`, `NotFoundTicket`), a `fields` object gets "Proszę poprawnie wybrać rodzaj i
+  typ biletu", anything else the server's `message`. No captured reply had a `code`; the shape of
+  `fields` is unknown.
+- **`processing` is the client's own status.** The pending-payment store (module 721: `setTicket`,
+  `checkTicket`, `removeTicket`) keeps `[{ticketGuid}]` in AsyncStorage under `ticket-pending`, so it
+  survives restarts. After every list fetch each stored ticket that is still `pending` is shown as
+  `processing` and polled again in ten seconds; one with any other status is removed; one missing
+  from the list is kept, with no expiry. The server never sends `processing`.
+
