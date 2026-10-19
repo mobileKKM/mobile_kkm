@@ -21,6 +21,7 @@ import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
+import 'package:mobile_kkm/features/purchase/services/last_payment_method_store.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -72,6 +73,7 @@ Future<void> main() async {
         packageInfoProvider.overrideWithValue(package),
         tokenStoreProvider.overrideWithValue(SecureTokenStore(storage)),
         userDataCacheProvider.overrideWithValue(SecureUserDataCache(storage)),
+        lastPaymentMethodStoreProvider.overrideWithValue(SecureLastPaymentMethodStore(storage)),
         appDatabaseProvider.overrideWithValue(AppDatabase(driftDatabase(name: 'mobile_kkm'))),
         dictionaryCacheProvider.overrideWithValue(
           FileDictionaryCache(Directory('${support.path}${Platform.pathSeparator}dictionaries')),

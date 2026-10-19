@@ -76,21 +76,31 @@ void main() {
     expect(cache.data?.userData?.firstName, 'Janusz');
   });
 
-  testWidgets('signing out clears the cached copy and the stored photo', (tester) async {
+  testWidgets('signing out clears the cached copy, the stored photo and the last payment method', (tester) async {
     final adapter = FakeAdapter()
       ..reply('GET', '/account/user-data', 200, _userData('Jan'))
       ..reply('POST', '/auth/logout', 200);
     final cache = InMemoryUserDataCache();
     final photos = FakePhotoCache();
-    await pumpApp(tester, adapter, session: signedInSession, userDataCache: cache, photoCache: photos);
+    final method = InMemoryLastPaymentMethodStore('150');
+    await pumpApp(
+      tester,
+      adapter,
+      session: signedInSession,
+      userDataCache: cache,
+      photoCache: photos,
+      lastPaymentMethod: method,
+    );
     expect(cache.data, isNotNull);
     expect(photos.cleared, 0);
+    expect(method.groupId, '150');
 
     await signOut(tester);
 
     expect(find.widgetWithText(FilledButton, 'Sign in'), findsOneWidget);
     expect(cache.data, isNull);
     expect(photos.cleared, 1);
+    expect(method.groupId, isNull);
   });
 
   testWidgets('a background refresh answered after the sign-out is not stored', (tester) async {

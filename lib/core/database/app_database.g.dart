@@ -394,14 +394,197 @@ class TicketsCompanion extends UpdateCompanion<TicketRow> {
   }
 }
 
+class $PaymentsTable extends Payments with TableInfo<$PaymentsTable, PaymentRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PaymentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _ticketGuidMeta = const VerificationMeta('ticketGuid');
+  @override
+  late final GeneratedColumn<String> ticketGuid = GeneratedColumn<String>(
+    'ticket_guid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _madeAtMeta = const VerificationMeta('madeAt');
+  @override
+  late final GeneratedColumn<DateTime> madeAt = GeneratedColumn<DateTime>(
+    'made_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [ticketGuid, madeAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'payments';
+  @override
+  VerificationContext validateIntegrity(Insertable<PaymentRow> instance, {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('ticket_guid')) {
+      context.handle(_ticketGuidMeta, ticketGuid.isAcceptableOrUnknown(data['ticket_guid']!, _ticketGuidMeta));
+    } else if (isInserting) {
+      context.missing(_ticketGuidMeta);
+    }
+    if (data.containsKey('made_at')) {
+      context.handle(_madeAtMeta, madeAt.isAcceptableOrUnknown(data['made_at']!, _madeAtMeta));
+    } else if (isInserting) {
+      context.missing(_madeAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {ticketGuid};
+  @override
+  PaymentRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PaymentRow(
+      ticketGuid: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}ticket_guid'])!,
+      madeAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}made_at'])!,
+    );
+  }
+
+  @override
+  $PaymentsTable createAlias(String alias) {
+    return $PaymentsTable(attachedDatabase, alias);
+  }
+}
+
+class PaymentRow extends DataClass implements Insertable<PaymentRow> {
+  final String ticketGuid;
+
+  /// When the success link arrived.
+  final DateTime madeAt;
+  const PaymentRow({required this.ticketGuid, required this.madeAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['ticket_guid'] = Variable<String>(ticketGuid);
+    map['made_at'] = Variable<DateTime>(madeAt);
+    return map;
+  }
+
+  PaymentsCompanion toCompanion(bool nullToAbsent) {
+    return PaymentsCompanion(ticketGuid: Value(ticketGuid), madeAt: Value(madeAt));
+  }
+
+  factory PaymentRow.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PaymentRow(
+      ticketGuid: serializer.fromJson<String>(json['ticketGuid']),
+      madeAt: serializer.fromJson<DateTime>(json['madeAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'ticketGuid': serializer.toJson<String>(ticketGuid),
+      'madeAt': serializer.toJson<DateTime>(madeAt),
+    };
+  }
+
+  PaymentRow copyWith({String? ticketGuid, DateTime? madeAt}) =>
+      PaymentRow(ticketGuid: ticketGuid ?? this.ticketGuid, madeAt: madeAt ?? this.madeAt);
+  PaymentRow copyWithCompanion(PaymentsCompanion data) {
+    return PaymentRow(
+      ticketGuid: data.ticketGuid.present ? data.ticketGuid.value : this.ticketGuid,
+      madeAt: data.madeAt.present ? data.madeAt.value : this.madeAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PaymentRow(')
+          ..write('ticketGuid: $ticketGuid, ')
+          ..write('madeAt: $madeAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(ticketGuid, madeAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PaymentRow && other.ticketGuid == this.ticketGuid && other.madeAt == this.madeAt);
+}
+
+class PaymentsCompanion extends UpdateCompanion<PaymentRow> {
+  final Value<String> ticketGuid;
+  final Value<DateTime> madeAt;
+  final Value<int> rowid;
+  const PaymentsCompanion({
+    this.ticketGuid = const Value.absent(),
+    this.madeAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PaymentsCompanion.insert({required String ticketGuid, required DateTime madeAt, this.rowid = const Value.absent()})
+    : ticketGuid = Value(ticketGuid),
+      madeAt = Value(madeAt);
+  static Insertable<PaymentRow> custom({
+    Expression<String>? ticketGuid,
+    Expression<DateTime>? madeAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (ticketGuid != null) 'ticket_guid': ticketGuid,
+      if (madeAt != null) 'made_at': madeAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PaymentsCompanion copyWith({Value<String>? ticketGuid, Value<DateTime>? madeAt, Value<int>? rowid}) {
+    return PaymentsCompanion(
+      ticketGuid: ticketGuid ?? this.ticketGuid,
+      madeAt: madeAt ?? this.madeAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (ticketGuid.present) {
+      map['ticket_guid'] = Variable<String>(ticketGuid.value);
+    }
+    if (madeAt.present) {
+      map['made_at'] = Variable<DateTime>(madeAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PaymentsCompanion(')
+          ..write('ticketGuid: $ticketGuid, ')
+          ..write('madeAt: $madeAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $TicketsTable tickets = $TicketsTable(this);
+  late final $PaymentsTable payments = $PaymentsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables => allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [tickets];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [tickets, payments];
 }
 
 typedef $$TicketsTableCreateCompanionBuilder = TicketsCompanion Function({
@@ -598,9 +781,124 @@ typedef $$TicketsTableProcessedTableManager =
       TicketRow,
       PrefetchHooks Function()
     >;
+typedef $$PaymentsTableCreateCompanionBuilder = PaymentsCompanion Function({
+  required String ticketGuid,
+  required DateTime madeAt,
+  Value<int> rowid,
+});
+typedef $$PaymentsTableUpdateCompanionBuilder = PaymentsCompanion Function({
+  Value<String> ticketGuid,
+  Value<DateTime> madeAt,
+  Value<int> rowid,
+});
+
+class $$PaymentsTableFilterComposer extends Composer<_$AppDatabase, $PaymentsTable> {
+  $$PaymentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get ticketGuid =>
+      $composableBuilder(column: $table.ticketGuid, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get madeAt =>
+      $composableBuilder(column: $table.madeAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$PaymentsTableOrderingComposer extends Composer<_$AppDatabase, $PaymentsTable> {
+  $$PaymentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get ticketGuid =>
+      $composableBuilder(column: $table.ticketGuid, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get madeAt =>
+      $composableBuilder(column: $table.madeAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$PaymentsTableAnnotationComposer extends Composer<_$AppDatabase, $PaymentsTable> {
+  $$PaymentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get ticketGuid => $composableBuilder(column: $table.ticketGuid, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get madeAt => $composableBuilder(column: $table.madeAt, builder: (column) => column);
+}
+
+class $$PaymentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PaymentsTable,
+          PaymentRow,
+          $$PaymentsTableFilterComposer,
+          $$PaymentsTableOrderingComposer,
+          $$PaymentsTableAnnotationComposer,
+          $$PaymentsTableCreateCompanionBuilder,
+          $$PaymentsTableUpdateCompanionBuilder,
+          (PaymentRow, BaseReferences<_$AppDatabase, $PaymentsTable, PaymentRow>),
+          PaymentRow,
+          PrefetchHooks Function()
+        > {
+  $$PaymentsTableTableManager(_$AppDatabase db, $PaymentsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () => $$PaymentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$PaymentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$PaymentsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> ticketGuid = const Value.absent(),
+            Value<DateTime> madeAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) => PaymentsCompanion(ticketGuid: ticketGuid, madeAt: madeAt, rowid: rowid),
+          createCompanionCallback: ({
+            required String ticketGuid,
+            required DateTime madeAt,
+            Value<int> rowid = const Value.absent(),
+          }) => PaymentsCompanion.insert(ticketGuid: ticketGuid, madeAt: madeAt, rowid: rowid),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PaymentsTable, PaymentRow>(table),
+                  BaseReferences<_$AppDatabase, $PaymentsTable, PaymentRow>(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PaymentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PaymentsTable,
+      PaymentRow,
+      $$PaymentsTableFilterComposer,
+      $$PaymentsTableOrderingComposer,
+      $$PaymentsTableAnnotationComposer,
+      $$PaymentsTableCreateCompanionBuilder,
+      $$PaymentsTableUpdateCompanionBuilder,
+      (PaymentRow, BaseReferences<_$AppDatabase, $PaymentsTable, PaymentRow>),
+      PaymentRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$TicketsTableTableManager get tickets => $$TicketsTableTableManager(_db, _db.tickets);
+  $$PaymentsTableTableManager get payments => $$PaymentsTableTableManager(_db, _db.payments);
 }

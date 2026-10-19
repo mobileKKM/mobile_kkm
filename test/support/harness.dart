@@ -31,6 +31,7 @@ import 'package:mobile_kkm/features/account/services/photo_cache.dart';
 import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
 import 'package:mobile_kkm/features/map/models/map_view_controller.dart';
 import 'package:mobile_kkm/features/map/providers/map_providers.dart';
+import 'package:mobile_kkm/features/purchase/services/last_payment_method_store.dart';
 
 import 'fake_adapter.dart';
 import 'sample_data.dart';
@@ -65,6 +66,21 @@ class InMemoryUserDataCache implements UserDataCache {
 
   @override
   Future<void> clear() async => data = null;
+}
+
+class InMemoryLastPaymentMethodStore implements LastPaymentMethodStore {
+  InMemoryLastPaymentMethodStore([this.groupId]);
+
+  String? groupId;
+
+  @override
+  Future<String?> read() async => groupId;
+
+  @override
+  Future<void> write(String groupId) async => this.groupId = groupId;
+
+  @override
+  Future<void> clear() async => groupId = null;
 }
 
 /// Keeps the dictionaries as the JSON text a file would hold.
@@ -285,6 +301,7 @@ Future<App> pumpApp(
   LinkSettings? linkSettings,
   List<Uri>? openedUrls,
   UserDataCache? userDataCache,
+  LastPaymentMethodStore? lastPaymentMethod,
   DictionaryCache? dictionaryCache,
   AppDatabase? database,
   PhotoCache? photoCache,
@@ -341,6 +358,7 @@ Future<App> pumpApp(
       ),
       linkSettingsProvider.overrideWithValue(linkSettings ?? FakeLinkSettings()),
       userDataCacheProvider.overrideWithValue(userDataCache ?? InMemoryUserDataCache()),
+      lastPaymentMethodStoreProvider.overrideWithValue(lastPaymentMethod ?? InMemoryLastPaymentMethodStore()),
       appDatabaseProvider.overrideWithValue(db),
       dictionaryCacheProvider.overrideWithValue(dictionaryCache ?? InMemoryDictionaryCache()),
       aztecKeyRelayProvider.overrideWithValue(

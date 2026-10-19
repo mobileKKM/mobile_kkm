@@ -7,6 +7,7 @@ import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/providers/database_provider.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/features/auth/providers/auth_controller.dart';
+import 'package:mobile_kkm/features/purchase/services/payments_dao.dart';
 import 'package:mobile_kkm/features/tickets/services/tickets_dao.dart';
 
 final ticketsDaoProvider = Provider<TicketsDao>((ref) => TicketsDao(ref.watch(appDatabaseProvider)));
@@ -120,6 +121,7 @@ class TicketSyncController extends Notifier<TicketSyncState> {
       await sync();
     } else if (status == AuthStatus.unauthenticated) {
       await ref.read(ticketsDaoProvider).clear();
+      await ref.read(paymentsDaoProvider).clear();
       if (ref.mounted) {
         state = const TicketSyncState();
       }

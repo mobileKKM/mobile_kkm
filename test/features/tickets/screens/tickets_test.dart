@@ -6,6 +6,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
+import 'package:mobile_kkm/features/purchase/services/payments_dao.dart';
 import 'package:mobile_kkm/features/tickets/services/tickets_dao.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_skeletons.dart';
@@ -340,14 +341,16 @@ void main() {
     expect(find.widgetWithText(FloatingActionButton, 'Buy ticket'), findsOneWidget);
   });
 
-  testWidgets('signing out empties the ticket store', (tester) async {
+  testWidgets('signing out empties the ticket store and the payment marks', (tester) async {
     final adapter = _adapter([validTicket()])..reply('POST', '/auth/logout', 200);
     final app = await pumpApp(tester, adapter, session: signedInSession);
+    await PaymentsDao(app.database).markMade('feedface', DateTime(2025, 10, 1));
     expect(await app.database.select(app.database.tickets).get(), hasLength(1));
 
     await signOut(tester);
 
     expect(await app.database.select(app.database.tickets).get(), isEmpty);
+    expect(await app.database.select(app.database.payments).get(), isEmpty);
   });
 
   group('the history list', () {
