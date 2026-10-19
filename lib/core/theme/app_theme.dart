@@ -265,6 +265,30 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         headerHeadlineStyle: text.headlineLarge,
       ),
+      // Filter chips (the purchase form's lines and durations): M3's own
+      // geometry, 32 high with a leading check when selected.
+      chipTheme: ChipThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        side: WidgetStateBorderSide.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return BorderSide.none;
+          }
+          return BorderSide(color: states.contains(WidgetState.disabled) ? disabledFill : scheme.outline);
+        }),
+        color: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? scheme.secondaryContainer : Colors.transparent,
+        ),
+        labelStyle: body(14, 20, FontWeight.w500).copyWith(
+          color: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return disabledContent;
+            }
+            return states.contains(WidgetState.selected) ? scheme.onSecondaryContainer : scheme.onSurfaceVariant;
+          }),
+        ),
+        checkmarkColor: scheme.onSecondaryContainer,
+        showCheckmark: true,
+      ),
       dividerTheme: DividerThemeData(color: scheme.outlineVariant, thickness: 1, space: 1),
     );
   }

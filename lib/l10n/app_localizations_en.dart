@@ -1296,4 +1296,295 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteDoneTitle => 'Account deleted';
+
+  @override
+  String get buyTitle => 'Buy a ticket';
+
+  @override
+  String get extendTitle => 'Extend ticket';
+
+  @override
+  String get buyType => 'Ticket type';
+
+  @override
+  String get buyFare => 'Fare';
+
+  @override
+  String get buyZone => 'Zone';
+
+  @override
+  String get buyZoneSub => 'Choose every zone you need';
+
+  @override
+  String buyZonesNotTogether(String zones, String missing) {
+    return 'Strefa $zones aren’t sold together. Add Strefa $missing to travel in both.';
+  }
+
+  @override
+  String buyFareZones(String fare, String sets) {
+    return '$fare is sold for Strefa $sets.';
+  }
+
+  @override
+  String buyDiscountZones(String zones) {
+    return 'The Karta Krakowska discount is for Strefa $zones only.';
+  }
+
+  @override
+  String buyZoneList(String rest, String last) {
+    return '$rest and $last';
+  }
+
+  @override
+  String get buyLines => 'Lines';
+
+  @override
+  String get buyAllLines => 'All lines';
+
+  @override
+  String buyLineCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count lines', one: '1 line');
+    return '$_temp0';
+  }
+
+  @override
+  String buyLinesSub(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Choose $count lines',
+      one: 'Choose 1 line',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String buyLinesChosen(int chosen, int count) {
+    return '$chosen of $count chosen';
+  }
+
+  @override
+  String get buyAddLine => 'Add line';
+
+  @override
+  String get buyAlsoZoneII => '+ Strefa II';
+
+  @override
+  String get buyDuration => 'Duration';
+
+  @override
+  String buyMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count months', one: '1 month');
+    return '$_temp0';
+  }
+
+  @override
+  String buyDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count days', one: '1 day');
+    return '$_temp0';
+  }
+
+  @override
+  String get buyStarts => 'Starts';
+
+  @override
+  String get buyDate => 'Date';
+
+  @override
+  String buyStartsRange(String first, String last) {
+    return 'Any day from $first to $last';
+  }
+
+  @override
+  String buyExtendRange(String first, String last) {
+    return 'From $first, the day after your ticket ends, to $last';
+  }
+
+  @override
+  String get buyNeedType => 'Choose a ticket type';
+
+  @override
+  String get buyNeedFare => 'Choose a fare';
+
+  @override
+  String get buyNeedZone => 'Choose where you travel';
+
+  @override
+  String get buyNeedLines => 'Choose the lines';
+
+  @override
+  String buyNeedMoreLines(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Choose $count more lines',
+      one: 'Choose 1 more line',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get buyNeedDuration => 'Choose how long';
+
+  @override
+  String get buyCalculating => 'Calculating…';
+
+  @override
+  String get buyPrice => 'Price';
+
+  @override
+  String get buyContinue => 'Continue';
+
+  @override
+  String get buyPrefilled => 'Filled in from your ticket. The new one starts the day after it ends.';
+
+  @override
+  String get buyOffline => 'Buying a ticket needs a connection.';
+
+  @override
+  String get buyLoadFailed => 'The ticket options could not be loaded.';
+
+  @override
+  String get buyFieldErrors => 'Please choose the fare and type correctly.';
+
+  @override
+  String get payTitle => 'Check and pay';
+
+  @override
+  String get payTicketTitle => 'Pay for ticket';
+
+  @override
+  String payTicketLines(int count, String lines) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Lines $lines', one: 'Line $lines');
+    return '$_temp0';
+  }
+
+  @override
+  String get payValidFrom => 'Valid from';
+
+  @override
+  String get payValidUntil => 'Valid until';
+
+  @override
+  String get payProduct => 'Product';
+
+  @override
+  String get payValidOn => 'Valid on';
+
+  @override
+  String get payEveryDay => 'Every day';
+
+  @override
+  String payDaysAWeek(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count days a week', one: '1 day a week');
+    return '$_temp0';
+  }
+
+  @override
+  String get payMethod => 'Payment method';
+
+  @override
+  String get payLastUsed => 'Last used';
+
+  @override
+  String get payTransfer => 'Bank transfer';
+
+  @override
+  String get payChooseBank => 'Choose your bank';
+
+  @override
+  String get payChange => 'Change';
+
+  @override
+  String get payBankSheetTitle => 'Choose your bank';
+
+  @override
+  String get payBankSheetSub => 'Online transfer through tPay';
+
+  @override
+  String payButton(String price) {
+    return 'Pay $price';
+  }
+
+  @override
+  String get payOpening => 'Opening payment…';
+
+  @override
+  String get payMethodsFailed => 'Payment methods could not be loaded.';
+
+  @override
+  String get payHowAndroid => 'You pay on tPay’s secure page in your browser. mobileKKM opens again when you’re done.';
+
+  @override
+  String get payHowIos => 'You pay on tPay’s secure page in Safari. Tap Done when you’ve finished to come back.';
+
+  @override
+  String get payLinkHint =>
+      'To come back here by itself after paying, allow mobileKKM to open ekp.mpk.krakow.pl links.';
+
+  @override
+  String get paySimilar => 'You already have a similar ticket that is valid for part of this period.';
+
+  @override
+  String get payRejected => 'The payment didn’t go through. Choose a method and try again.';
+
+  @override
+  String get payFinishing => 'Finishing your purchase…';
+
+  @override
+  String get payFinishingBody => 'This takes a moment.';
+
+  @override
+  String get payChecking => 'Checking your payment…';
+
+  @override
+  String get payNotYet => 'We can’t see your payment yet';
+
+  @override
+  String get payNotYetBody =>
+      'If you paid, it can take a few minutes to arrive. Until then, the ticket waits in Tickets as awaiting payment.';
+
+  @override
+  String get payAgain => 'Pay again';
+
+  @override
+  String get payCheckAgain => 'Check again';
+
+  @override
+  String get payBackToTickets => 'Back to tickets';
+
+  @override
+  String get payMade => 'Payment made.';
+
+  @override
+  String get payReady => 'Your ticket is ready.';
+
+  @override
+  String get payRepeatTitle => 'Pay again?';
+
+  @override
+  String get payRepeatBody =>
+      'We’re still waiting to hear about your last payment for this ticket. Pay again only if you’re sure it didn’t go through.';
+
+  @override
+  String get payAlreadyPaid => 'This ticket is already paid.';
+
+  @override
+  String lineChosen(int chosen, int count) {
+    return 'Chosen $chosen of $count';
+  }
+
+  @override
+  String get lineDone => 'Done';
+
+  @override
+  String get lineZoneI => 'Strefa I';
+
+  @override
+  String get lineAlsoZoneII => 'also Strefa II';
+
+  @override
+  String lineRemove(String line) {
+    return 'Remove line $line';
+  }
 }

@@ -14,6 +14,7 @@ class MessageBanner extends StatelessWidget {
     this.icon,
     this.actionLabel,
     this.onAction,
+    this.actionIcon,
   });
 
   final String message;
@@ -23,6 +24,10 @@ class MessageBanner extends StatelessWidget {
   final IconData? icon;
   final String? actionLabel;
   final VoidCallback? onAction;
+
+  /// With it the action is a tonal button with this icon, under the text,
+  /// rather than a text button.
+  final IconData? actionIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +55,21 @@ class MessageBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(message, style: style),
-                  if (actionLabel != null)
+                  if (actionLabel != null && actionIcon != null) ...[
+                    const SizedBox(height: 10),
+                    FilledButton.tonalIcon(
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(0, 40),
+                        padding: const EdgeInsetsDirectional.only(start: 12, end: 16),
+                        iconSize: 18,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        textStyle: style?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      onPressed: onAction,
+                      icon: Icon(actionIcon),
+                      label: Text(actionLabel!),
+                    ),
+                  ] else if (actionLabel != null)
                     TextButton(
                       style: TextButton.styleFrom(
                         foregroundColor: foreground,

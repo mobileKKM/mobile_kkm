@@ -2389,6 +2389,480 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account deleted'**
   String get deleteDoneTitle;
+
+  /// No description provided for @buyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy a ticket'**
+  String get buyTitle;
+
+  /// No description provided for @extendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend ticket'**
+  String get extendTitle;
+
+  /// No description provided for @buyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket type'**
+  String get buyType;
+
+  /// No description provided for @buyFare.
+  ///
+  /// In en, this message translates to:
+  /// **'Fare'**
+  String get buyFare;
+
+  /// No description provided for @buyZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Zone'**
+  String get buyZone;
+
+  /// No description provided for @buyZoneSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose every zone you need'**
+  String get buyZoneSub;
+
+  /// No description provided for @buyZonesNotTogether.
+  ///
+  /// In en, this message translates to:
+  /// **'Strefa {zones} aren’t sold together. Add Strefa {missing} to travel in both.'**
+  String buyZonesNotTogether(String zones, String missing);
+
+  /// No description provided for @buyFareZones.
+  ///
+  /// In en, this message translates to:
+  /// **'{fare} is sold for Strefa {sets}.'**
+  String buyFareZones(String fare, String sets);
+
+  /// No description provided for @buyDiscountZones.
+  ///
+  /// In en, this message translates to:
+  /// **'The Karta Krakowska discount is for Strefa {zones} only.'**
+  String buyDiscountZones(String zones);
+
+  /// No description provided for @buyZoneList.
+  ///
+  /// In en, this message translates to:
+  /// **'{rest} and {last}'**
+  String buyZoneList(String rest, String last);
+
+  /// No description provided for @buyLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Lines'**
+  String get buyLines;
+
+  /// No description provided for @buyAllLines.
+  ///
+  /// In en, this message translates to:
+  /// **'All lines'**
+  String get buyAllLines;
+
+  /// No description provided for @buyLineCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 line} other{{count} lines}}'**
+  String buyLineCount(int count);
+
+  /// No description provided for @buyLinesSub.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Choose 1 line} other{Choose {count} lines}}'**
+  String buyLinesSub(int count);
+
+  /// No description provided for @buyLinesChosen.
+  ///
+  /// In en, this message translates to:
+  /// **'{chosen} of {count} chosen'**
+  String buyLinesChosen(int chosen, int count);
+
+  /// No description provided for @buyAddLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Add line'**
+  String get buyAddLine;
+
+  /// No description provided for @buyAlsoZoneII.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Strefa II'**
+  String get buyAlsoZoneII;
+
+  /// No description provided for @buyDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get buyDuration;
+
+  /// No description provided for @buyMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String buyMonths(int count);
+
+  /// No description provided for @buyDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String buyDays(int count);
+
+  /// No description provided for @buyStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get buyStarts;
+
+  /// No description provided for @buyDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get buyDate;
+
+  /// No description provided for @buyStartsRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Any day from {first} to {last}'**
+  String buyStartsRange(String first, String last);
+
+  /// No description provided for @buyExtendRange.
+  ///
+  /// In en, this message translates to:
+  /// **'From {first}, the day after your ticket ends, to {last}'**
+  String buyExtendRange(String first, String last);
+
+  /// No description provided for @buyNeedType.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a ticket type'**
+  String get buyNeedType;
+
+  /// No description provided for @buyNeedFare.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a fare'**
+  String get buyNeedFare;
+
+  /// No description provided for @buyNeedZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose where you travel'**
+  String get buyNeedZone;
+
+  /// No description provided for @buyNeedLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the lines'**
+  String get buyNeedLines;
+
+  /// No description provided for @buyNeedMoreLines.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Choose 1 more line} other{Choose {count} more lines}}'**
+  String buyNeedMoreLines(int count);
+
+  /// No description provided for @buyNeedDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how long'**
+  String get buyNeedDuration;
+
+  /// No description provided for @buyCalculating.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculating…'**
+  String get buyCalculating;
+
+  /// No description provided for @buyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get buyPrice;
+
+  /// No description provided for @buyContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get buyContinue;
+
+  /// No description provided for @buyPrefilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled in from your ticket. The new one starts the day after it ends.'**
+  String get buyPrefilled;
+
+  /// No description provided for @buyOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Buying a ticket needs a connection.'**
+  String get buyOffline;
+
+  /// No description provided for @buyLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The ticket options could not be loaded.'**
+  String get buyLoadFailed;
+
+  /// No description provided for @buyFieldErrors.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose the fare and type correctly.'**
+  String get buyFieldErrors;
+
+  /// No description provided for @payTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check and pay'**
+  String get payTitle;
+
+  /// No description provided for @payTicketTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay for ticket'**
+  String get payTicketTitle;
+
+  /// No description provided for @payTicketLines.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Line {lines}} other{Lines {lines}}}'**
+  String payTicketLines(int count, String lines);
+
+  /// No description provided for @payValidFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid from'**
+  String get payValidFrom;
+
+  /// No description provided for @payValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until'**
+  String get payValidUntil;
+
+  /// No description provided for @payProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get payProduct;
+
+  /// No description provided for @payValidOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid on'**
+  String get payValidOn;
+
+  /// No description provided for @payEveryDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Every day'**
+  String get payEveryDay;
+
+  /// No description provided for @payDaysAWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day a week} other{{count} days a week}}'**
+  String payDaysAWeek(int count);
+
+  /// No description provided for @payMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment method'**
+  String get payMethod;
+
+  /// No description provided for @payLastUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last used'**
+  String get payLastUsed;
+
+  /// No description provided for @payTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank transfer'**
+  String get payTransfer;
+
+  /// No description provided for @payChooseBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your bank'**
+  String get payChooseBank;
+
+  /// No description provided for @payChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get payChange;
+
+  /// No description provided for @payBankSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your bank'**
+  String get payBankSheetTitle;
+
+  /// No description provided for @payBankSheetSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Online transfer through tPay'**
+  String get payBankSheetSub;
+
+  /// No description provided for @payButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {price}'**
+  String payButton(String price);
+
+  /// No description provided for @payOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening payment…'**
+  String get payOpening;
+
+  /// No description provided for @payMethodsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment methods could not be loaded.'**
+  String get payMethodsFailed;
+
+  /// No description provided for @payHowAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'You pay on tPay’s secure page in your browser. mobileKKM opens again when you’re done.'**
+  String get payHowAndroid;
+
+  /// No description provided for @payHowIos.
+  ///
+  /// In en, this message translates to:
+  /// **'You pay on tPay’s secure page in Safari. Tap Done when you’ve finished to come back.'**
+  String get payHowIos;
+
+  /// No description provided for @payLinkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'To come back here by itself after paying, allow mobileKKM to open ekp.mpk.krakow.pl links.'**
+  String get payLinkHint;
+
+  /// No description provided for @paySimilar.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have a similar ticket that is valid for part of this period.'**
+  String get paySimilar;
+
+  /// No description provided for @payRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The payment didn’t go through. Choose a method and try again.'**
+  String get payRejected;
+
+  /// No description provided for @payFinishing.
+  ///
+  /// In en, this message translates to:
+  /// **'Finishing your purchase…'**
+  String get payFinishing;
+
+  /// No description provided for @payFinishingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This takes a moment.'**
+  String get payFinishingBody;
+
+  /// No description provided for @payChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your payment…'**
+  String get payChecking;
+
+  /// No description provided for @payNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'We can’t see your payment yet'**
+  String get payNotYet;
+
+  /// No description provided for @payNotYetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you paid, it can take a few minutes to arrive. Until then, the ticket waits in Tickets as awaiting payment.'**
+  String get payNotYetBody;
+
+  /// No description provided for @payAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay again'**
+  String get payAgain;
+
+  /// No description provided for @payCheckAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Check again'**
+  String get payCheckAgain;
+
+  /// No description provided for @payBackToTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to tickets'**
+  String get payBackToTickets;
+
+  /// No description provided for @payMade.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment made.'**
+  String get payMade;
+
+  /// No description provided for @payReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ticket is ready.'**
+  String get payReady;
+
+  /// No description provided for @payRepeatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay again?'**
+  String get payRepeatTitle;
+
+  /// No description provided for @payRepeatBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We’re still waiting to hear about your last payment for this ticket. Pay again only if you’re sure it didn’t go through.'**
+  String get payRepeatBody;
+
+  /// No description provided for @payAlreadyPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket is already paid.'**
+  String get payAlreadyPaid;
+
+  /// No description provided for @lineChosen.
+  ///
+  /// In en, this message translates to:
+  /// **'Chosen {chosen} of {count}'**
+  String lineChosen(int chosen, int count);
+
+  /// No description provided for @lineDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get lineDone;
+
+  /// No description provided for @lineZoneI.
+  ///
+  /// In en, this message translates to:
+  /// **'Strefa I'**
+  String get lineZoneI;
+
+  /// No description provided for @lineAlsoZoneII.
+  ///
+  /// In en, this message translates to:
+  /// **'also Strefa II'**
+  String get lineAlsoZoneII;
+
+  /// No description provided for @lineRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove line {line}'**
+  String lineRemove(String line);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

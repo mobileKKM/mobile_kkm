@@ -15,6 +15,7 @@ class LeadHeader extends StatelessWidget {
     this.fill = 0,
     this.centered = false,
     this.titleSize = 28,
+    this.spinnerSize = 32,
   });
 
   final String title;
@@ -30,6 +31,9 @@ class LeadHeader extends StatelessWidget {
   final double fill;
   final bool centered;
   final double titleSize;
+
+  /// The spinner's size while [busy].
+  final double spinnerSize;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,7 @@ class LeadHeader extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(24)),
               child: SizedBox.square(
-                dimension: 32,
+                dimension: spinnerSize,
                 child: CircularProgressIndicator(strokeWidth: 3, color: foreground),
               ),
             )
