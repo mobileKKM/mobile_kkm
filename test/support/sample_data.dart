@@ -2,6 +2,9 @@
 /// sanitized fixtures of `ekp_api`.
 library;
 
+import 'dart:convert';
+import 'dart:io';
+
 const networkGuid = 'feedfacefeedfacefeedfacefeedface';
 const metropolitanGuid = 'cafebabecafebabecafebabecafebabe';
 const transactionCode = 'NDAwMDAxIzE';
@@ -239,3 +242,7 @@ Map<String, dynamic> relayKeyJson(String pem, {int version = 1, String fingerpri
   'stale': false,
   'bits': 2048,
 };
+
+/// A sanitized fixture of `ekp_api` (`packages/ekp_api/test/fixtures/`).
+Map<String, dynamic> apiFixture(String name) =>
+    jsonDecode(File('packages/ekp_api/test/fixtures/$name.json').readAsStringSync()) as Map<String, dynamic>;

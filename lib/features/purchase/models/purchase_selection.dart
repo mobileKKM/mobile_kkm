@@ -4,6 +4,30 @@ import 'package:ekp_api/ekp_api.dart';
 /// ticket to extend or to buy again.
 enum PurchaseSource { fresh, extend, similar }
 
+/// How the purchase form was opened: the key of its providers.
+class PurchaseEntry {
+  const PurchaseEntry.fresh() : source = PurchaseSource.fresh, transactionCode = null;
+
+  const PurchaseEntry.extend(String this.transactionCode) : source = PurchaseSource.extend;
+
+  const PurchaseEntry.similar(String this.transactionCode) : source = PurchaseSource.similar;
+
+  final PurchaseSource source;
+
+  /// The ticket the form is filled in from.
+  final String? transactionCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is PurchaseEntry && other.source == source && other.transactionCode == transactionCode;
+
+  @override
+  int get hashCode => Object.hash(source, transactionCode);
+
+  @override
+  String toString() => 'PurchaseEntry(${source.name}, $transactionCode)';
+}
+
 /// The sections of the purchase form, in the official order.
 enum PurchaseSection { type, fare, zone, lines, period, start }
 
