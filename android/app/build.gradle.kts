@@ -92,3 +92,8 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Custom Tabs for tPay's payment page (MainActivity); not a GMS library.
+    implementation("androidx.browser:browser:1.8.0")
+}

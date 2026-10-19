@@ -38,7 +38,6 @@ Future<App> _open(
   WidgetTester tester,
   FakeAdapter adapter, {
   CheckoutEntry? entry,
-  List<Uri>? opened,
   FakeLinkSettings? links,
   String? lastMethod,
 }) async {
@@ -46,7 +45,6 @@ Future<App> _open(
     tester,
     adapter,
     session: signedInSession,
-    openedUrls: opened,
     linkSettings: links ?? FakeLinkSettings(enabled: true),
     lastPaymentMethod: InMemoryLastPaymentMethodStore(lastMethod),
     tall: true,
@@ -64,8 +62,7 @@ Map<String, dynamic> _body(FakeAdapter adapter, String path) =>
 void main() {
   testWidgets('the summary, nothing chosen, then BLIK: buy and open tPay', (tester) async {
     final adapter = _adapter();
-    final opened = <Uri>[];
-    final app = await _open(tester, adapter, opened: opened);
+    final app = await _open(tester, adapter);
 
     expect(find.text('Check and pay'), findsOneWidget);
     expect(find.text('All lines · Strefa I'), findsOneWidget);
@@ -82,7 +79,7 @@ void main() {
     await tapVisible(tester, _payButton);
 
     expect(_body(adapter, '/tickets/buy')['tPayPaymentGroupId'], '150');
-    expect(opened.single.host, 'secure.tpay.com');
+    expect(app.paymentBrowser.opened.single.host, 'secure.tpay.com');
 
     // Bought: from now on Pay pays, and leaving goes to the tickets.
     await tapVisible(tester, _payButton);

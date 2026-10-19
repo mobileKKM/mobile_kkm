@@ -5,6 +5,9 @@ import 'package:mobile_kkm/core/providers/database_provider.dart';
 
 final paymentsDaoProvider = Provider<PaymentsDao>((ref) => PaymentsDao(ref.watch(appDatabaseProvider)));
 
+/// The payments marked as made, by ticket guid.
+final paymentMarksProvider = StreamProvider<Map<String, DateTime>>((ref) => ref.watch(paymentsDaoProvider).watchAll());
+
 /// Reads and writes the "payment made" marks.
 class PaymentsDao {
   PaymentsDao(this._db);

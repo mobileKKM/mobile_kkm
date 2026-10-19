@@ -17,6 +17,7 @@ import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/dictionaries/dictionary_cache.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/core/platform/payment_browser.dart';
 import 'package:mobile_kkm/core/platform/photo_picker.dart';
 import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
@@ -237,6 +238,39 @@ class FakeScreenSecurity extends ScreenSecurity {
 }
 
 /// Notes when the display was turned up and kept awake.
+/// The payment browser: records what it opened, and plays the return link,
+/// the closing, or a return link the app was started with.
+class FakePaymentBrowser implements PaymentBrowser {
+  FakePaymentBrowser({this.initial});
+
+  final opened = <Uri>[];
+  var closed = 0;
+
+  /// What [initialReturn] hands out once.
+  Uri? initial;
+  final _events = StreamController<PaymentBrowserEvent>.broadcast();
+
+  void returnTo(Uri url) => _events.add(PaymentReturned(url));
+
+  void closeByUser() => _events.add(const PaymentBrowserClosed());
+
+  @override
+  Stream<PaymentBrowserEvent> get events => _events.stream;
+
+  @override
+  Future<void> open(Uri url, {required Color toolbarColor, required Color tintColor}) async => opened.add(url);
+
+  @override
+  Future<void> close() async => closed++;
+
+  @override
+  Future<Uri?> initialReturn() async {
+    final url = initial;
+    initial = null;
+    return url;
+  }
+}
+
 class FakeScanDisplay extends ScanDisplay {
   /// Every change asked for, in order.
   final changes = <bool>[];
@@ -270,6 +304,7 @@ class App {
     this.scanDisplay,
     this.savedIdentities,
     this.container,
+    this.paymentBrowser,
   );
 
   /// The path of the screen on top.
@@ -291,6 +326,9 @@ class App {
 
   /// For providers that no screen shows.
   final ProviderContainer container;
+
+  /// tPay's page: what was opened, and its return link or closing.
+  final FakePaymentBrowser paymentBrowser;
 }
 
 /// Pumps the whole app on a phone-sized surface, backed by [adapter].
@@ -308,6 +346,7 @@ Future<App> pumpApp(
   LocationService? location,
   PhotoPicker? photoPicker,
   FakeAdapter? relay,
+  FakePaymentBrowser? paymentBrowser,
   AztecKeyStore? aztecKeyStore,
   bool settle = true,
   bool tall = false,
@@ -326,6 +365,7 @@ Future<App> pumpApp(
     await store.write(session);
   }
   late final ProviderContainer container;
+  final browser = paymentBrowser ?? FakePaymentBrowser();
   final client = EkpClient(
     dio: Dio(BaseOptions(baseUrl: 'https://ekp.test'))..httpClientAdapter = adapter,
     tokenStore: store,
@@ -374,6 +414,7 @@ Future<App> pumpApp(
       photoPickerProvider.overrideWithValue(photoPicker ?? FakePhotoPicker()),
       screenSecurityProvider.overrideWithValue(screen),
       scanDisplayProvider.overrideWithValue(scanDisplay),
+      paymentBrowserProvider.overrideWithValue(browser),
       appVersionProvider.overrideWith((ref) => '1.2.3 (45)'),
       // Records instead of launching a browser.
       urlOpenerProvider.overrideWithValue((url) async {
@@ -405,6 +446,7 @@ Future<App> pumpApp(
     scanDisplay,
     savedIdentities,
     container,
+    browser,
   );
 }
 

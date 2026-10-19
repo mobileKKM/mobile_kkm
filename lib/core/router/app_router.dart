@@ -29,6 +29,7 @@ import 'package:mobile_kkm/features/map/screens/map_screen.dart';
 import 'package:mobile_kkm/features/purchase/models/purchase_selection.dart';
 import 'package:mobile_kkm/features/purchase/screens/buy_screen.dart';
 import 'package:mobile_kkm/features/purchase/screens/checkout_screen.dart';
+import 'package:mobile_kkm/features/purchase/screens/payment_status_screen.dart';
 import 'package:mobile_kkm/features/purchase/services/checkout_controller.dart';
 import 'package:mobile_kkm/features/shell/widgets/main_shell.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
@@ -140,6 +141,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+      GoRoute(path: Routes.payment, builder: (context, state) => const PaymentStatusScreen()),
       // Not built yet.
       _comingSoon(Routes.subscription, (l10n) => l10n.subscriptionTitle),
       GoRoute(

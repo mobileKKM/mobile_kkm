@@ -7,11 +7,19 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    private var paymentChannel: MethodChannel? = null
+
+    /// A return link that came before Dart could take it: a cold start
+    /// after the app was killed during the payment.
+    private var pendingReturn: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // Flutter's first frame is the same picture as the system splash, so
         // drop the system's fade-out rather than cross-fading into it.
@@ -19,6 +27,18 @@ class MainActivity : FlutterActivity() {
             splashScreen.setOnExitAnimationListener { it.remove() }
         }
         super.onCreate(savedInstanceState)
+        pendingReturn = intent?.getStringExtra(EXTRA_PAYMENT_RETURN)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val url = intent.getStringExtra(EXTRA_PAYMENT_RETURN) ?: return
+        val channel = paymentChannel
+        if (channel == null) {
+            pendingReturn = url
+        } else {
+            channel.invokeMethod("returned", url)
+        }
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -34,6 +54,44 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+        paymentChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, PAYMENT_CHANNEL).apply {
+            setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "open" -> {
+                        openPayment(
+                            call.argument<String>("url")!!,
+                            call.argument<Number>("toolbarColor")!!.toInt(),
+                        )
+                        result.success(null)
+                    }
+                    // The return link closes the tab; nothing else to close.
+                    "close" -> result.success(null)
+                    "initialReturn" -> {
+                        result.success(pendingReturn)
+                        pendingReturn = null
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+        }
+    }
+
+    override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
+        paymentChannel?.setMethodCallHandler(null)
+        paymentChannel = null
+        super.cleanUpFlutterEngine(flutterEngine)
+    }
+
+    /// tPay's page in a Custom Tab over the app, in the app's colours, with
+    /// its title and without sharing.
+    private fun openPayment(url: String, toolbarColor: Int) {
+        val colors = CustomTabColorSchemeParams.Builder().setToolbarColor(toolbarColor).build()
+        CustomTabsIntent.Builder()
+            .setDefaultColorSchemeParams(colors)
+            .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+            .setShowTitle(true)
+            .build()
+            .launchUrl(this, Uri.parse(url))
     }
 
     /// Whether links to [host] open in this app. Before Android 12 unverified
@@ -59,7 +117,11 @@ class MainActivity : FlutterActivity() {
         startActivity(Intent(action, Uri.parse("package:$packageName")))
     }
 
-    private companion object {
-        const val LINKS_CHANNEL = "de.codebucket.mkkm/links"
+    companion object {
+        private const val LINKS_CHANNEL = "de.codebucket.mkkm/links"
+        private const val PAYMENT_CHANNEL = "de.codebucket.mkkm/payment"
+
+        /// The return link, from PaymentReturnActivity.
+        const val EXTRA_PAYMENT_RETURN = "de.codebucket.mkkm.PAYMENT_RETURN"
     }
 }

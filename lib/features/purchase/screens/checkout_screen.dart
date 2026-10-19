@@ -74,9 +74,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     }
     switch (outcome) {
       case CheckoutOpen(:final paymentUrl, :final ticketGuid):
+        final scheme = Theme.of(context).colorScheme;
         await ref
             .read(paymentSessionProvider.notifier)
-            .open(Uri.parse(paymentUrl), ticketGuid: ticketGuid, checkout: widget.entry);
+            .open(
+              Uri.parse(paymentUrl),
+              ticketGuid: ticketGuid,
+              checkout: widget.entry,
+              toolbarColor: scheme.surfaceContainer,
+              tintColor: scheme.primary,
+            );
       case CheckoutConfirmRepeat():
         if (await showPayAgainDialog(context) && mounted) {
           await _pay(ignoreWarnings: true);
