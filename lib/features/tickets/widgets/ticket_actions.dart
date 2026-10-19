@@ -99,8 +99,10 @@ class TicketActions extends ConsumerWidget {
             textStyle: WidgetStatePropertyAll(text),
             padding: const WidgetStatePropertyAll(padding),
           ),
-          // The payment itself belongs to the purchase flow.
-          onPressed: () => context.push(Routes.buy),
+          onPressed: switch (ticket.transactionCode) {
+            final code? => () => context.push(Routes.ticketPay(code)),
+            null => null,
+          },
           icon: const Icon(Symbols.payments_rounded),
           label: Text(l10n.ticketActionContinuePayment, textAlign: TextAlign.center),
         );

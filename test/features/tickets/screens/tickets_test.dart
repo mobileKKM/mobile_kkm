@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
+import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/features/purchase/services/payments_dao.dart';
 import 'package:mobile_kkm/features/tickets/services/tickets_dao.dart';
@@ -560,12 +561,12 @@ void main() {
       expect(find.text('Payment confirmed.'), findsOneWidget);
       expect(find.widgetWithText(FilledButton, 'Assign to device'), findsOneWidget);
 
-      // Not built yet.
       adapter.reply('GET', _list, 200, ticketsReply([pending]));
       await pullToRefresh(tester);
       await tester.tap(find.widgetWithText(FilledButton, 'Continue payment'));
       await tester.pumpAndSettle();
-      expect(app.location, '/buy');
+      expect(app.location, Routes.ticketPay(transactionCode));
+      expect(find.text('Pay for ticket'), findsOneWidget);
     });
   });
 

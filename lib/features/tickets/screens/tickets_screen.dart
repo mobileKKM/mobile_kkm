@@ -15,6 +15,7 @@ import 'package:mobile_kkm/core/widgets/empty_state_card.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
+import 'package:mobile_kkm/features/purchase/widgets/purchase_notices.dart';
 import 'package:mobile_kkm/features/tickets/models/stored_ticket.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
@@ -44,40 +45,42 @@ class _TicketsScreenState extends ConsumerState<TicketsScreen> {
     // scaffold, which lifts the floating button over them, and not to the
     // shell's, which would draw them across it.
     return ScaffoldMessenger(
-      child: Scaffold(
-        appBar: AppBar(
-          // Its "scrolled under" tint only follows scrolling, and each list starts at the top: start over with the list.
-          key: ValueKey(_past),
-          title: Text(l10n.navTickets),
-          // Part of the bar, so that it takes the bar's tint when a list scrolls under it.
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(56),
-            child: Padding(
-              // Material's own button: 40 high in a touch target of 48.
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: SegmentedButton<bool>(
-                expandedInsets: EdgeInsets.zero,
-                selectedIcon: const Icon(Symbols.check_rounded, size: 18),
-                segments: [
-                  ButtonSegment(value: false, label: Text(l10n.ticketsActive)),
-                  ButtonSegment(value: true, label: Text(l10n.ticketsHistory)),
-                ],
-                selected: {_past},
-                onSelectionChanged: (selection) => setState(() => _past = selection.first),
+      child: PurchaseNotices(
+        child: Scaffold(
+          appBar: AppBar(
+            // Its "scrolled under" tint only follows scrolling, and each list starts at the top: start over with the list.
+            key: ValueKey(_past),
+            title: Text(l10n.navTickets),
+            // Part of the bar, so that it takes the bar's tint when a list scrolls under it.
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(56),
+              child: Padding(
+                // Material's own button: 40 high in a touch target of 48.
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: SegmentedButton<bool>(
+                  expandedInsets: EdgeInsets.zero,
+                  selectedIcon: const Icon(Symbols.check_rounded, size: 18),
+                  segments: [
+                    ButtonSegment(value: false, label: Text(l10n.ticketsActive)),
+                    ButtonSegment(value: true, label: Text(l10n.ticketsHistory)),
+                  ],
+                  selected: {_past},
+                  onSelectionChanged: (selection) => setState(() => _past = selection.first),
+                ),
               ),
             ),
           ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: _past || hasTickets
+              ? FloatingActionButton.extended(
+                  heroTag: 'buy-ticket',
+                  onPressed: () => context.push(Routes.buy),
+                  icon: const Icon(Symbols.add_shopping_cart_rounded),
+                  label: Text(l10n.navBuy),
+                )
+              : null,
+          body: _past ? const _TicketHistory() : const _ActiveTickets(),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: _past || hasTickets
-            ? FloatingActionButton.extended(
-                heroTag: 'buy-ticket',
-                onPressed: () => context.push(Routes.buy),
-                icon: const Icon(Symbols.add_shopping_cart_rounded),
-                label: Text(l10n.navBuy),
-              )
-            : null,
-        body: _past ? const _TicketHistory() : const _ActiveTickets(),
       ),
     );
   }

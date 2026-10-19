@@ -28,6 +28,8 @@ import 'package:mobile_kkm/features/home/screens/home_screen.dart';
 import 'package:mobile_kkm/features/map/screens/map_screen.dart';
 import 'package:mobile_kkm/features/purchase/models/purchase_selection.dart';
 import 'package:mobile_kkm/features/purchase/screens/buy_screen.dart';
+import 'package:mobile_kkm/features/purchase/screens/checkout_screen.dart';
+import 'package:mobile_kkm/features/purchase/services/checkout_controller.dart';
 import 'package:mobile_kkm/features/shell/widgets/main_shell.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
 import 'package:mobile_kkm/features/tickets/screens/ticket_change_line_screen.dart';
@@ -103,6 +105,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => TicketReturnScreen(transactionCode: state.pathParameters['transactionCode']!),
           ),
           GoRoute(
+            path: 'pay',
+            builder: (context, state) => TicketPayScreen(transactionCode: state.pathParameters['transactionCode']!),
+          ),
+          GoRoute(
             path: 'change-line',
             builder: (context, state) =>
                 TicketChangeLineScreen(transactionCode: state.pathParameters['transactionCode']!),
@@ -125,11 +131,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: Routes.buy,
         builder: (context, state) => BuyScreen(entry: purchaseEntryOf(state.uri)),
-        // Check and pay comes with the next step.
         routes: [
           GoRoute(
             path: 'pay',
-            builder: (context, state) => ComingSoonScreen(title: AppLocalizations.of(context).payTitle),
+            // The priced choice comes along; without it (a restored stack) the form starts again.
+            redirect: (context, state) => state.extra is CheckoutEntry ? null : Routes.buy,
+            builder: (context, state) => CheckoutScreen(entry: state.extra! as CheckoutEntry),
           ),
         ],
       ),
