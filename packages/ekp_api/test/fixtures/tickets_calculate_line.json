@@ -1,0 +1,30 @@
+{
+  "commodityIndex": "352453301",
+  "commodityName": "Bilet norm. mieszk. 1-mies. 1 linia st. I",
+  "symbol": null,
+  "price": 72.0,
+  "validFrom": "2025-10-27T23:00:00Z",
+  "validTo": "2025-11-27T22:59:59Z",
+  "daysPeriod": 7,
+  "forCitizen": true,
+  "ticketKindCode": 21,
+  "ticketNumberOfLineCode": 1,
+  "ticketPeriodCode": 1,
+  "specialTransportLine": null,
+  "isNetwork": false,
+  "isMetropolitan": false,
+  "lines": [
+    {
+      "line": 52,
+      "second_zone": false,
+      "has_second_zone": false,
+      "is_tram": true,
+      "is_bus": false
+    }
+  ],
+  "hasSimilarTicket": false,
+  "commodityId": 2101,
+  "priceListPeriodId": 9,
+  "customerCode": 100001,
+  "similarTickets": []
+}

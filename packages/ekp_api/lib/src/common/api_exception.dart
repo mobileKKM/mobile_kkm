@@ -49,21 +49,27 @@ sealed class EkpApiException implements Exception {
       return EkpNetworkException(message: e.message, cause: e);
     }
 
-    final fields = _fieldsOf(response.data);
-    final message = fields['message'] is String ? fields['message'] as String : null;
+    final body = _bodyOf(response.data);
+    final message = body['message'] is String ? body['message'] as String : null;
     // /tickets history 400s use `exceptionCode` instead of `code`.
-    final code = fields['code'] ?? fields['exceptionCode'];
-    final errorToken = fields['errorToken'] is String ? fields['errorToken'] as String : null;
+    final code = body['code'] ?? body['exceptionCode'];
+    final errorToken = body['errorToken'] is String ? body['errorToken'] as String : null;
 
     if (response.statusCode == 401) {
       return EkpUnauthorizedException(message: message, statusCode: response.statusCode, code: code);
     }
-    return EkpHttpException(message: message, statusCode: response.statusCode, code: code, errorToken: errorToken);
+    return EkpHttpException(
+      message: message,
+      statusCode: response.statusCode,
+      code: code,
+      errorToken: errorToken,
+      fields: body['fields'],
+    );
   }
 
   /// The error body as a map. A request made for a plain response, as
   /// those whose success has no body are, gets its error body as text too.
-  static Map<String, dynamic> _fieldsOf(Object? body) {
+  static Map<String, dynamic> _bodyOf(Object? body) {
     if (body is Map<String, dynamic>) {
       return body;
     }
@@ -114,7 +120,12 @@ class EkpUnauthorizedException extends EkpApiException {
 
 /// Any non-2xx response other than 401.
 class EkpHttpException extends EkpApiException {
-  const EkpHttpException({super.message, super.statusCode, super.code, super.errorToken});
+  const EkpHttpException({super.message, super.statusCode, super.code, super.errorToken, this.fields});
+
+  /// Per-field errors of a refused selection (`tickets/calculate`). Only
+  /// its name is known (the official client reads it); never captured, so
+  /// kept raw.
+  final Object? fields;
 }
 
 /// The stored session could not be recovered (both recover and refresh

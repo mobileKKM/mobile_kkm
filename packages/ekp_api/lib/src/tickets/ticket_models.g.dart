@@ -405,12 +405,17 @@ _TicketCalculation _$TicketCalculationFromJson(Map<String, dynamic> json) => _Ti
   specialTransportLine: json['specialTransportLine'] as String?,
   isNetwork: json['isNetwork'] as bool?,
   isMetropolitan: json['isMetropolitan'] as bool?,
-  lines: json['lines'] as List<dynamic>? ?? const <dynamic>[],
+  lines:
+      (json['lines'] as List<dynamic>?)?.map((e) => TransportLine.fromJson(e as Map<String, dynamic>)).toList() ??
+      const <TransportLine>[],
   hasSimilarTicket: json['hasSimilarTicket'] as bool?,
   commodityId: (json['commodityId'] as num?)?.toInt(),
   priceListPeriodId: (json['priceListPeriodId'] as num?)?.toInt(),
   customerCode: (json['customerCode'] as num?)?.toInt(),
   similarTickets: json['similarTickets'] as List<dynamic>? ?? const <dynamic>[],
+  code: json['code'],
+  message: json['message'] as String?,
+  fields: json['fields'],
 );
 
 Map<String, dynamic> _$TicketCalculationToJson(_TicketCalculation instance) => <String, dynamic>{
@@ -434,6 +439,9 @@ Map<String, dynamic> _$TicketCalculationToJson(_TicketCalculation instance) => <
   'priceListPeriodId': instance.priceListPeriodId,
   'customerCode': instance.customerCode,
   'similarTickets': instance.similarTickets,
+  'code': instance.code,
+  'message': instance.message,
+  'fields': instance.fields,
 };
 
 _PurchaseUrls _$PurchaseUrlsFromJson(Map<String, dynamic> json) => _PurchaseUrls(

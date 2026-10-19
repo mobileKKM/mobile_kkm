@@ -283,12 +283,49 @@ void main() {
       expect(res.hasCracovCardPrivilege, isNotNull);
     });
 
+    test('TicketSalesConfiguration parses the privileged configuration', () {
+      final res = TicketSalesConfiguration.fromJson(fixture('sales_config_privileged'));
+      expect(res.hasCracovCardPrivilege, isTrue);
+      final oneLine = res.ticketNumberOfLines.firstWhere((o) => o.code == 1);
+      expect(oneLine.selectableLines, isTrue);
+      expect(oneLine.sumLinesToSelection, 1);
+      expect(oneLine.isNetwork, isTrue);
+      expect(oneLine.isMetropolitan, isFalse);
+      expect(res.ticketPeriods.map((p) => p.code), [1, 2, 3, 6, 12]);
+      expect(res.ticketPeriods.last.useDescription, isTrue);
+      final network = res.specialTransportLines.first;
+      expect(network.specialTransportLine, '1001');
+      expect(network.isNetwork, isTrue);
+      expect(res.priceListConfigurations.where((p) => p.ticketPeriodCode == 12).map((p) => p.ticketKindCode), [14]);
+    });
+
+    test('TicketCalculation types the chosen lines', () {
+      final res = TicketCalculation.fromJson(fixture('tickets_calculate_line'));
+      expect(
+        res.lines.single,
+        const TransportLine(line: 52, secondZone: false, hasSecondZone: false, isTram: true, isBus: false),
+      );
+      expect(res.specialTransportLine, isNull);
+      expect(res.isRefused, isFalse);
+    });
+
+    test('TicketCalculation is refused only on a truthy code', () {
+      for (final code in [null, 0, '', false]) {
+        expect(TicketCalculation.fromJson({'code': code, 'price': 1.0}).isRefused, isFalse, reason: '$code');
+      }
+      for (final code in [2, 'NoCitizenStatus', true]) {
+        expect(TicketCalculation.fromJson({'code': code}).isRefused, isTrue, reason: '$code');
+      }
+    });
+
     test('TicketCalculation parses echoed effective kind', () {
       final res = TicketCalculation.fromJson(fixture('tickets_calculate'));
       expect(res.price, 99.0);
       expect(res.commodityName, 'Bilet norm. mieszk. 1-mies. sieciowy st. I');
       expect(res.ticketKindCode, 21, reason: 'server maps requested kind 2 → effective 21 for residents');
       expect(res.hasSimilarTicket, isFalse);
+      expect(res.lines, isEmpty);
+      expect(res.isRefused, isFalse);
     });
 
     test('TicketPurchaseResponse parses pending buy + tpay urls', () {
