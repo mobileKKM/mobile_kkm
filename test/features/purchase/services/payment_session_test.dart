@@ -91,7 +91,7 @@ void main() {
     expect(app.location, Routes.tickets);
     expect(find.text('Payment made.'), findsOneWidget);
     expect(await _marks(app), contains(_guid));
-    expect(find.text('Processing payment'), findsOneWidget);
+    expect(find.text('Payment processing'), findsOneWidget);
     expect(find.text('Continue payment'), findsNothing);
 
     // Polled every 10 s until the server lists it as paid.
@@ -99,14 +99,14 @@ void main() {
     await tester.pump(const Duration(seconds: 10));
     await tester.pumpAndSettle();
     expect(adapter.requestsTo(_list).length, before + 1);
-    expect(find.text('Processing payment'), findsOneWidget);
+    expect(find.text('Payment processing'), findsOneWidget);
 
     adapter.reply('GET', _list, 200, ticketsReply([_active()]));
     await tester.pump(const Duration(seconds: 10));
     await tester.pumpAndSettle();
     expect(await _marks(app), isEmpty);
     expect(find.text('Your ticket is ready.'), findsOneWidget);
-    expect(find.text('Processing payment'), findsNothing);
+    expect(find.text('Payment processing'), findsNothing);
   });
 
   testWidgets('rejected: reported, back on Check and pay with the notice', (tester) async {
@@ -193,7 +193,7 @@ void main() {
     expect(adapter.requestsTo('/payments/check'), hasLength(1));
     expect(app.location, Routes.tickets);
     expect(find.textContaining('Payment confirmed'), findsOneWidget);
-    expect(find.text('Processing payment'), findsNothing);
+    expect(find.text('Payment processing'), findsNothing);
     debugDefaultTargetPlatformOverride = null;
   });
 

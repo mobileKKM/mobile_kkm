@@ -187,17 +187,18 @@ class TicketActions extends ConsumerWidget {
   Future<void> _checkPayment(BuildContext context, WidgetRef ref, String guid) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    String message;
     try {
       final result = await ref.read(ticketActionsProvider.notifier).checkPayment(guid);
-      message = switch (result.status) {
-        PaymentCheckStatus.confirmed => l10n.ticketPaymentConfirmed,
-        PaymentCheckStatus.pending => result.message ?? l10n.ticketPaymentPending,
-      };
+      switch (result.status) {
+        case PaymentCheckStatus.confirmed:
+          showAppSnackBar(messenger, l10n.ticketPaymentConfirmed, kind: SnackKind.success);
+        case PaymentCheckStatus.pending:
+          // The server's own wording (Polish only).
+          showAppSnackBar(messenger, result.message ?? l10n.ticketPaymentPending, kind: SnackKind.error);
+      }
     } on Exception catch (error) {
-      message = describeError(l10n, error);
+      showAppSnackBar(messenger, describeError(l10n, error), kind: SnackKind.error);
     }
-    showAppSnackBar(messenger, message);
   }
 }
 

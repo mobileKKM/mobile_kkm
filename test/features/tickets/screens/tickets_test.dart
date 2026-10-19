@@ -558,7 +558,7 @@ void main() {
         ..reply('GET', _list, 200, ticketsReply([validTicket(canAssign: true)]));
       await tester.tap(find.widgetWithText(OutlinedButton, 'Check payment'));
       await tester.pumpAndSettle();
-      expect(find.text('Payment confirmed.'), findsOneWidget);
+      expect(find.text('Payment confirmed. Your ticket is ready.'), findsOneWidget);
       expect(find.widgetWithText(FilledButton, 'Assign to device'), findsOneWidget);
 
       adapter.reply('GET', _list, 200, ticketsReply([pending]));

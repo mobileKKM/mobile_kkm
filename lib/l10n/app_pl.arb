@@ -135,7 +135,7 @@
   "ticketActionBuySimilar": "Kup podobny",
   "ticketActionExtend": "Przedłuż bilet",
   "ticketAssignError": "Wystąpił błąd podczas powiązywania biletu, spróbuj ponownie.",
-  "ticketPaymentConfirmed": "Płatność została zrealizowana.",
+  "ticketPaymentConfirmed": "Płatność potwierdzona. Bilet jest gotowy.",
   "ticketPaymentPending": "Brak zaksięgowanej płatności.",
   "ticketCantAssign": "Bilet jest już powiązany z dwiema przeglądarkami/urządzeniami. Brak możliwości powiązania obecnego urządzenia. Użyj poprzednio powiązanych przeglądarek/urządzeń lub skontaktuj się z Infolinią MPK S.A. tel. 12 19 150.",
   "ticketDetailsTitle": "Szczegóły biletu",

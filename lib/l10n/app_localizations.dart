@@ -779,7 +779,7 @@ abstract class AppLocalizations {
   /// No description provided for @ticketStatusProcessing.
   ///
   /// In en, this message translates to:
-  /// **'Processing payment'**
+  /// **'Payment processing'**
   String get ticketStatusProcessing;
 
   /// No description provided for @ticketStatusAssignedElsewhere.
@@ -839,7 +839,7 @@ abstract class AppLocalizations {
   /// No description provided for @ticketPaymentConfirmed.
   ///
   /// In en, this message translates to:
-  /// **'Payment confirmed.'**
+  /// **'Payment confirmed. Your ticket is ready.'**
   String get ticketPaymentConfirmed;
 
   /// No description provided for @ticketPaymentPending.

@@ -435,7 +435,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketAssignError => 'Wystąpił błąd podczas powiązywania biletu, spróbuj ponownie.';
 
   @override
-  String get ticketPaymentConfirmed => 'Płatność została zrealizowana.';
+  String get ticketPaymentConfirmed => 'Płatność potwierdzona. Bilet jest gotowy.';
 
   @override
   String get ticketPaymentPending => 'Brak zaksięgowanej płatności.';

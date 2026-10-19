@@ -393,7 +393,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketPinned => 'Pinned';
 
   @override
-  String get ticketStatusProcessing => 'Processing payment';
+  String get ticketStatusProcessing => 'Payment processing';
 
   @override
   String get ticketStatusAssignedElsewhere => 'Assigned to other devices';
@@ -423,7 +423,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketAssignError => 'The ticket could not be assigned. Try again.';
 
   @override
-  String get ticketPaymentConfirmed => 'Payment confirmed.';
+  String get ticketPaymentConfirmed => 'Payment confirmed. Your ticket is ready.';
 
   @override
   String get ticketPaymentPending => 'No payment has been booked yet.';
