@@ -28,37 +28,47 @@ import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// Pay for a ticket that waits for its payment ("Pay for ticket"), found by
 /// its transaction code among the stored tickets.
+///
+/// The card's Continue payment hands over the ticket's [details] once
+/// loaded, so the screen opens complete; reached any other way, it loads
+/// them itself first.
 class TicketPayScreen extends ConsumerWidget {
-  const TicketPayScreen({super.key, required this.transactionCode});
+  const TicketPayScreen({super.key, required this.transactionCode, this.details});
 
   final String transactionCode;
+  final TicketDetailResponse? details;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final stored = ref.watch(storedTicketProvider(transactionCode));
     final guid = stored?.ticket.ticketGuid;
-    if (guid == null) {
-      final l10n = AppLocalizations.of(context);
-      return Scaffold(
-        appBar: AppBar(title: Text(l10n.payTicketTitle)),
-        body: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-          children: [EmptyStateCard(icon: Symbols.error_rounded, title: l10n.ticketDetailsFailed, quiet: true)],
-        ),
-      );
+    final details = this.details ?? ref.watch(ticketDetailProvider(transactionCode)).value;
+    final failed = this.details == null && ref.watch(ticketDetailProvider(transactionCode)).hasError;
+    if (guid == null || failed) {
+      return _bare(l10n, EmptyStateCard(icon: Symbols.error_rounded, title: l10n.ticketDetailsFailed, quiet: true));
     }
-    return CheckoutScreen(entry: CheckoutEntry.pay(guid), transactionCode: transactionCode);
+    if (details == null) {
+      return _bare(l10n, SkeletonPulse(label: l10n.payTicketTitle, child: const SkeletonBox(height: 280, radius: 28)));
+    }
+    return CheckoutScreen(entry: CheckoutEntry.pay(guid), transactionCode: transactionCode, details: details);
   }
+
+  Widget _bare(AppLocalizations l10n, Widget child) => Scaffold(
+    appBar: AppBar(title: Text(l10n.payTicketTitle)),
+    body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 24), children: [child]),
+  );
 }
 
 /// Check and pay (25b): what is bought, how it is paid, and Pay.
 class CheckoutScreen extends ConsumerStatefulWidget {
-  const CheckoutScreen({super.key, required this.entry, this.transactionCode});
+  const CheckoutScreen({super.key, required this.entry, this.transactionCode, this.details});
 
   final CheckoutEntry entry;
 
-  /// The ticket paid for, when it was bought before.
+  /// The ticket paid for, when it was bought before, and its details.
   final String? transactionCode;
+  final TicketDetailResponse? details;
 
   @override
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -109,7 +119,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(checkoutProvider(widget.entry));
     final buying = widget.entry.choice != null;
-    final summary = _Summary(entry: widget.entry, transactionCode: widget.transactionCode);
+    final summary = _Summary(entry: widget.entry, transactionCode: widget.transactionCode, details: widget.details);
     final price = summary.price(ref);
     final methods = state.methods;
     final failure = state.failure;
@@ -244,12 +254,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 }
 
 /// The ticket summary: from the calculation for a new ticket, from the
-/// stored ticket (and its details, once known) for one bought before.
+/// stored ticket and its details for one bought before.
 class _Summary extends ConsumerWidget {
-  const _Summary({required this.entry, this.transactionCode});
+  const _Summary({required this.entry, this.transactionCode, this.details});
 
   final CheckoutEntry entry;
   final String? transactionCode;
+  final TicketDetailResponse? details;
 
   /// The price on the Pay button.
   String? price(WidgetRef ref) {
@@ -301,9 +312,8 @@ class _Summary extends ConsumerWidget {
     if (ticket == null) {
       return const SizedBox.shrink();
     }
-    final code = transactionCode!;
     final scopes = ref.watch(ticketLineScopesProvider).value;
-    final product = ref.watch(ticketDetailProvider(code)).value?.ticketEkp?.productName;
+    final product = details?.ticketEkp?.productName;
     return PurchaseSummaryCard(
       title: ticketScope(l10n, ticket, zone: ticketZone(ticket.ticketNumberOfLineCode, scopes)),
       subtitle: [?ticketFare(ticket, kinds), ?ticketPeriod(ticket, periods)].join(' · '),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
@@ -37,6 +38,49 @@ Future<void> _priced(WidgetTester tester) async {
 FilledButton _continue(WidgetTester tester) => tester.widget(find.widgetWithText(FilledButton, 'Continue'));
 
 FilterChip _chip(WidgetTester tester, String label) => tester.widget(find.widgetWithText(FilterChip, label));
+
+/// The privileged configuration plus a made-up "2 linie - Strefa I"
+/// (code 2, sold where 1 line is), as the design's 25a/L1–L6 show it.
+Map<String, dynamic> _twoLineConfig() {
+  final config = apiFixture('sales_config_privileged');
+  final options = (config['ticketNumberOfLines'] as List).cast<Map<String, dynamic>>();
+  final prices = (config['priceListConfigurations'] as List).cast<Map<String, dynamic>>();
+  return {
+    ...config,
+    'ticketNumberOfLines': [
+      ...options,
+      {
+        ...options.firstWhere((option) => option['code'] == 1),
+        'code': 2,
+        'description': '2 linie - Strefa I',
+        'urbanLineQty': 2,
+        'sumLinesToSelection': 2,
+      },
+    ],
+    'priceListConfigurations': [
+      ...prices,
+      for (final price in prices)
+        if (price['ticketNumberOfLineCode'] == 1) {...price, 'ticketNumberOfLineCode': 2},
+    ],
+  };
+}
+
+/// Ticks [line] in the line search and closes it with Done.
+Future<void> _pickLine(WidgetTester tester, String line) async {
+  await tapVisible(tester, find.text('Add line'));
+  await tester.enterText(find.byType(TextField), line);
+  await tester.pump(const Duration(milliseconds: 300));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(line).last);
+  await tester.pump();
+  await tester.tap(find.text('Done'));
+  await tester.pumpAndSettle();
+}
+
+final _form = find.byType(SingleChildScrollView);
+
+ScrollPosition _list(WidgetTester tester) =>
+    tester.state<ScrollableState>(find.descendant(of: _form, matching: find.byType(Scrollable)).last).position;
 
 void main() {
   testWidgets('with the status: the discount, one line, a duration, priced', (tester) async {
@@ -225,5 +269,97 @@ void main() {
     await tapVisible(tester, find.text('Extend ticket'));
     await tester.pumpAndSettle();
     expect(app.router.state.uri.toString(), Routes.buyExtend(transactionCode));
+  });
+
+  testWidgets('two lines: chosen one by one; Duration once both are there (25a/L2, L5, L6)', (tester) async {
+    final adapter = FakeAdapter()
+      ..reply('GET', _config, 200, _twoLineConfig())
+      ..reply('POST', _calculate, 200, apiFixture('tickets_calculate'))
+      ..reply('GET', '/dictionary/transport-line', 200, {
+        'lines': [
+          {'line': 5, 'second_zone': false, 'is_tram': true, 'is_bus': false},
+          {'line': 52, 'second_zone': false, 'is_tram': true, 'is_bus': false},
+        ],
+      });
+    await _open(tester, adapter);
+    await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Normalny'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(FilterChip, '1 line'), findsOneWidget);
+
+    await tapVisible(tester, find.widgetWithText(FilterChip, '2 lines'));
+    expect(find.text('Choose 2 lines'), findsOneWidget);
+    expect(find.text('Choose 2 more lines'), findsOneWidget);
+
+    await _pickLine(tester, '5');
+    expect(find.text('1 of 2 chosen'), findsOneWidget);
+    expect(find.text('Choose 1 more line'), findsOneWidget);
+    expect(find.text('Add line'), findsOneWidget);
+    expect(find.text('Duration'), findsNothing);
+
+    await _pickLine(tester, '52');
+    expect(find.text('2 of 2 chosen'), findsOneWidget);
+    expect(find.text('Add line'), findsNothing);
+    expect(find.text('Choose how long'), findsOneWidget);
+
+    // Down to one line: the first one stays.
+    await tapVisible(tester, find.widgetWithText(FilterChip, '1 line'));
+    expect(find.text('1 of 1 chosen'), findsOneWidget);
+    expect(find.byTooltip('Remove line 5'), findsOneWidget);
+    expect(find.byTooltip('Remove line 52'), findsNothing);
+  });
+
+  group('a new section scrolls into view', () {
+    testWidgets('only as far as its heading and first row, when hidden', (tester) async {
+      final app = await _open(tester, _adapter());
+      tester.view.physicalSize = const Size(1080, 1260);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Normalny'));
+      await tester.pumpAndSettle();
+      expect(app.location, Routes.buy);
+
+      final before = _list(tester).pixels;
+      await tapVisible(tester, find.widgetWithText(FilterChip, 'All lines'));
+      final position = _list(tester);
+      expect(position.pixels, greaterThan(before));
+      // The first chip sits just above the bottom of the list, not at the top.
+      final list = tester.getRect(_form.last);
+      final firstRow = tester.getRect(find.widgetWithText(FilterChip, '1 month'));
+      expect(firstRow.bottom, lessThanOrEqualTo(list.bottom));
+      expect(firstRow.bottom, greaterThan(list.bottom - 64));
+    });
+
+    testWidgets('not at all when it is already in view', (tester) async {
+      await _open(tester, _adapter());
+      await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+      await tester.pumpAndSettle();
+      expect(_list(tester).pixels, 0);
+    });
+
+    testWidgets('stops as soon as the user takes hold of the list', (tester) async {
+      await _open(tester, _adapter());
+      tester.view.physicalSize = const Size(1080, 1260);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Normalny'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.widgetWithText(FilterChip, 'All lines'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilterChip, 'All lines'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      final hold = await tester.startGesture(tester.getCenter(find.text('Lines')), kind: PointerDeviceKind.touch);
+      final held = _list(tester).pixels;
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(_list(tester).pixels, held);
+      await hold.up();
+      await tester.pumpAndSettle();
+    });
   });
 }

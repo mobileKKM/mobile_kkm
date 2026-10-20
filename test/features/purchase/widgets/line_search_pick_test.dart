@@ -65,6 +65,45 @@ void main() {
     expect((await result)?.map((line) => line.line), [52]);
   });
 
+  testWidgets('two lines: at the limit the rest is disabled, unticking one frees a place', (tester) async {
+    await pumpApp(tester, adapter, session: signedInSession);
+    final result = await _open(tester, max: 2, picked: const [TransportLine(line: 5, isTram: true)]);
+    expect(find.text('Chosen 1 of 2'), findsOneWidget);
+    await _search(tester, '5');
+
+    await tester.tap(find.text('52'));
+    await tester.pump();
+    expect(find.text('Chosen 2 of 2'), findsOneWidget);
+    final boxes = find.byType(Checkbox);
+    expect([for (var i = 0; i < 3; i++) tester.widget<Checkbox>(boxes.at(i)).onChanged != null], [true, true, false]);
+    // Disabled in the theme's colour, not faded by hand.
+    expect(find.byType(Opacity), findsNothing);
+    final disabled = Theme.of(tester.element(boxes.first)).disabledColor;
+    expect(tester.widget<Text>(find.text('502')).style?.color, disabled);
+    await tester.tap(find.text('502'));
+    await tester.pump();
+    expect(find.text('Chosen 2 of 2'), findsOneWidget);
+
+    await tester.tap(find.text('5').last);
+    await tester.pump();
+    await tester.tap(find.text('502'));
+    await tester.pump();
+    await tester.tap(find.text('Done'));
+    await tester.pumpAndSettle();
+    expect((await result)?.map((line) => line.line), [52, 502]);
+  });
+
+  testWidgets('Done works before the limit', (tester) async {
+    await pumpApp(tester, adapter, session: signedInSession);
+    final result = await _open(tester, max: 2);
+    await _search(tester, '5');
+    await tester.tap(find.text('52'));
+    await tester.pump();
+    await tester.tap(find.text('Done'));
+    await tester.pumpAndSettle();
+    expect((await result)?.map((line) => line.line), [52]);
+  });
+
   testWidgets('a picked line can be removed from its chip', (tester) async {
     await pumpApp(tester, adapter, session: signedInSession);
     final result = await _open(tester, picked: const [TransportLine(line: 52, isTram: true)]);

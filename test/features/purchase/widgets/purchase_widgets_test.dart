@@ -152,6 +152,33 @@ void main() {
       expect(find.text('Calculating…'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
+
+    testWidgets('Calculating… fades to the price, and a new price replaces it in place', (tester) async {
+      final calculation = TicketCalculation.fromJson(apiFixture('tickets_calculate'));
+      final choice = TicketChoice(
+        validFrom: DateTime(2025, 10, 28),
+        ticketNumberOfLineCode: 3,
+        ticketKindCode: 2,
+        ticketPeriodCode: 1,
+        lines: const [],
+      );
+      await _pump(tester, PriceBar(price: const PriceCalculating(), hint: '', onContinue: () {}));
+      await _pump(tester, PriceBar(price: PricePriced(calculation, choice), hint: '', onContinue: () {}));
+      // Half way through both are there, one fading out, the other in.
+      await tester.pump(const Duration(milliseconds: 75));
+      expect(find.text('Calculating…'), findsOneWidget);
+      expect(find.text('99,00\u00a0zł'), findsOneWidget);
+      await tester.pump(PriceBar.fadeDuration);
+      expect(find.text('Calculating…'), findsNothing);
+
+      final dearer = PricePriced(calculation.copyWith(price: 120), choice);
+      await _pump(tester, PriceBar(price: dearer, hint: '', onContinue: () {}));
+      await tester.pump(const Duration(milliseconds: 75));
+      expect(find.text('99,00\u00a0zł'), findsOneWidget);
+      expect(find.text('120,00\u00a0zł'), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(find.text('99,00\u00a0zł'), findsNothing);
+    });
   });
 
   testWidgets('a disabled tile does not react; a selected one has a check', (tester) async {

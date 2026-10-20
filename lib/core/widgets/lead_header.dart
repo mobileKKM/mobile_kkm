@@ -9,39 +9,47 @@ class LeadHeader extends StatelessWidget {
     required this.title,
     this.body,
     this.icon,
-    this.busy = false,
     this.tileColor,
     this.iconColor,
     this.fill = 0,
     this.centered = false,
     this.titleSize = 28,
-    this.spinnerSize = 32,
-  });
+  }) : busy = false;
+
+  /// Waiting for the server (activation, a payment): a spinner on
+  /// secondaryContainer and a smaller centred title. Every waiting screen
+  /// uses this one, so that they stay alike.
+  const LeadHeader.waiting({super.key, required this.title, this.body})
+    : icon = null,
+      busy = true,
+      tileColor = null,
+      iconColor = null,
+      fill = 0,
+      centered = true,
+      titleSize = 22;
 
   final String title;
   final String? body;
   final IconData? icon;
 
-  /// A spinner in the tile, instead of [icon].
+  /// A spinner in the tile, instead of [icon] ([LeadHeader.waiting]).
   final bool busy;
 
-  /// primaryContainer with primaryFixed on it unless given.
+  /// primaryContainer with primaryFixed on it unless given
+  /// (secondaryContainer with onSecondaryContainer while [busy]).
   final Color? tileColor;
   final Color? iconColor;
   final double fill;
   final bool centered;
   final double titleSize;
 
-  /// The spinner's size while [busy].
-  final double spinnerSize;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final align = centered ? TextAlign.center : TextAlign.start;
-    final background = tileColor ?? scheme.primaryContainer;
-    final foreground = iconColor ?? scheme.primaryFixed;
+    final background = tileColor ?? (busy ? scheme.secondaryContainer : scheme.primaryContainer);
+    final foreground = iconColor ?? (busy ? scheme.onSecondaryContainer : scheme.primaryFixed);
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
       child: Column(
@@ -54,7 +62,7 @@ class LeadHeader extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(24)),
               child: SizedBox.square(
-                dimension: spinnerSize,
+                dimension: 32,
                 child: CircularProgressIndicator(strokeWidth: 3, color: foreground),
               ),
             )

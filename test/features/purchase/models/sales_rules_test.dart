@@ -331,6 +331,47 @@ void main() {
     });
   });
 
+  group('a product with two lines (made up, as the design\'s 25a/L1–L6)', () {
+    // Product 1 again as "2 linie - Strefa I", code 2, sold where 1 is.
+    final base = privileged.config;
+    final one = base.ticketNumberOfLines.firstWhere((option) => option.code == 1);
+    final rules = SalesRules(
+      base.copyWith(
+        ticketNumberOfLines: [
+          ...base.ticketNumberOfLines,
+          one.copyWith(code: 2, description: '2 linie - Strefa I', urbanLineQty: 2, sumLinesToSelection: 2),
+        ],
+        priceListConfigurations: [
+          ...base.priceListConfigurations,
+          for (final entry in base.priceListConfigurations)
+            if (entry.ticketNumberOfLineCode == 1) entry.copyWith(ticketNumberOfLineCode: 2),
+        ],
+      ),
+    );
+    const line13 = TransportLine(line: 13, secondZone: false, hasSecondZone: false, isTram: true, isBus: false);
+
+    test('Lines: All lines, 1 line, 2 lines', () {
+      expect(rules.lineChoices(network, {0}).map((o) => o.code), [3, 1, 2]);
+      expect(rules.optionSold(network, aktywizujacy, rules.lineChoices(network, {0}).last), isFalse);
+    });
+
+    test('Duration waits for both lines', () {
+      final none = rules.reconcile(select(type: network, kind: normalny, lineOption: 2));
+      expect(rules.linesLeft(none), 2);
+      expect(rules.nextMissing(none), PurchaseSection.lines);
+      final oneOfTwo = rules.reconcile(none.copyWith(lines: [line52]));
+      expect(rules.linesLeft(oneOfTwo), 1);
+      expect(rules.nextMissing(oneOfTwo), PurchaseSection.lines);
+      final both = rules.reconcile(none.copyWith(lines: [line52, line13]));
+      expect(rules.nextMissing(both), PurchaseSection.period);
+    });
+
+    test('switching to 1 line keeps the first line', () {
+      final both = rules.reconcile(select(type: network, kind: normalny, lineOption: 2, lines: [line52, line13]));
+      expect(rules.reconcile(both.copyWith(lineOption: () => 1)).lines, [line52]);
+    });
+  });
+
   group('prefill', () {
     test('an inhabitant fare maps through the kind group: 21 → Normalny, 22 → Ulgowy', () {
       for (final (kind, expected) in [(21, normalny), (22, ulgowy)]) {

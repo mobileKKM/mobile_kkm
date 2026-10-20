@@ -5,8 +5,8 @@ import 'package:ekp_api/ekp_api.dart';
 class PaymentMethods {
   const PaymentMethods({required this.tiles, required this.banks});
 
-  /// Sorts [list] for a phone that offers Apple Pay ([ios]) or Google Pay.
-  /// Both keep the server's order.
+  /// Sorts [list] for a phone that offers Apple Pay ([ios]) or Google Pay:
+  /// the tiles in [tileOrder], the banks in the server's order.
   factory PaymentMethods.from(BankListResponse list, {required bool ios}) {
     final hidden = ios ? googlePay : applePay;
     final tiles = <Bank>[];
@@ -16,8 +16,9 @@ class PaymentMethods {
       if (id == null || id == hidden) {
         continue;
       }
-      (tileGroups.contains(id) ? tiles : banks).add(bank);
+      (tileOrder.contains(id) ? tiles : banks).add(bank);
     }
+    tiles.sort((a, b) => tileOrder.indexOf(a.id!).compareTo(tileOrder.indexOf(b.id!)));
     return PaymentMethods(tiles: tiles, banks: banks);
   }
 
@@ -31,8 +32,9 @@ class PaymentMethods {
   /// iOS only.
   static const applePay = '170';
 
-  /// The groups shown as tiles; every other group is a bank.
-  static const tileGroups = {blik, card, visaMobile, googlePay, applePay};
+  /// The groups shown as tiles, in the design's order (the wallet second);
+  /// every other group is a bank.
+  static const tileOrder = [blik, googlePay, applePay, card, visaMobile];
 
   final List<Bank> tiles;
   final List<Bank> banks;

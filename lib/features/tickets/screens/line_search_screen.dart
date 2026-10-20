@@ -324,10 +324,13 @@ class _LineRow extends StatelessWidget {
     final kind = picked == null
         ? lineKind(l10n, line)
         : '${lineKind(l10n, line)} · ${(line.secondZone ?? false) ? l10n.lineAlsoZoneII : l10n.lineZoneI}';
-    return Opacity(
-      opacity: onTicket || full ? 0.5 : 1,
+    // Disabled in the theme's disabled colour; the Checkbox and the
+    // InkWell show their own disabled states.
+    final disabled = enabled ? null : theme.disabledColor;
+    return Semantics(
+      enabled: enabled,
       child: Material(
-        color: scheme.surfaceContainer,
+        color: picked ?? false ? scheme.secondaryContainer : scheme.surfaceContainer,
         borderRadius: BorderRadius.vertical(top: first ? outer : inner, bottom: last ? outer : inner),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -338,7 +341,7 @@ class _LineRow extends StatelessWidget {
               padding: const EdgeInsetsDirectional.only(start: 12, end: 16),
               child: Row(
                 children: [
-                  IconTile(lineIcon(line), size: 40),
+                  IconTile(lineIcon(line), size: 40, foreground: disabled),
                   const SizedBox(width: 14),
                   SizedBox(
                     width: 56,
@@ -347,12 +350,18 @@ class _LineRow extends StatelessWidget {
                       maxLines: 1,
                       softWrap: false,
                       overflow: TextOverflow.visible,
-                      style: theme.textTheme.titleLarge?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: disabled,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
                     ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
-                    child: Text(kind, style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+                    child: Text(
+                      kind,
+                      style: theme.textTheme.bodyMedium?.copyWith(color: disabled ?? scheme.onSurfaceVariant),
+                    ),
                   ),
                   if (onTicket) ...[
                     const SizedBox(width: 8),

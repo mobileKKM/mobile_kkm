@@ -51,7 +51,7 @@ void main() {
     await _checkout(tester, app);
 
     final state = _state(app);
-    expect(state.methods.value?.tiles.map((b) => b.id), ['103', '150', '166', '171']);
+    expect(state.methods.value?.tiles.map((b) => b.id), ['150', '166', '103', '171']);
     expect(state.selected, isNull);
     expect(state.lastUsed, isNull);
   });

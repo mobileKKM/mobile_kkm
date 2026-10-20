@@ -178,6 +178,12 @@ void main() {
         ticketsReply([
           {...validTicket(), 'status': 'pending', 'price': 99.0},
         ]),
+      )
+      ..reply(
+        'GET',
+        '/tickets/$transactionCode',
+        200,
+        ticketDetailJson({...validTicket(), 'status': 'pending'}, paid: false),
       );
 
     testWidgets('Continue payment opens it and pays, never buys', (tester) async {
@@ -197,6 +203,50 @@ void main() {
       await tapVisible(tester, _payButton);
       expect(fake.requestsTo('/tickets/buy'), isEmpty);
       expect(_body(fake, '/tickets/pay')['ignoreWarnings'], isFalse);
+    });
+
+    testWidgets('Continue payment waits for the details, busy, and opens complete', (tester) async {
+      final fake = adapter();
+      final release = fake.hold('GET', '/tickets/$transactionCode');
+      final app = await pumpApp(
+        tester,
+        fake,
+        session: signedInSession,
+        linkSettings: FakeLinkSettings(enabled: true),
+        lastPaymentMethod: InMemoryLastPaymentMethodStore('150'),
+      );
+      await openTab(tester, 'Tickets');
+      await tester.ensureVisible(find.text('Continue payment'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Continue payment'));
+      await tester.pump();
+      expect(app.location, Routes.tickets);
+      final pay = find.ancestor(of: find.text('Continue payment'), matching: find.byType(FilledButton));
+      expect(find.descendant(of: pay, matching: find.byType(CircularProgressIndicator)), findsOneWidget);
+      final check = find.ancestor(of: find.text('Check payment'), matching: find.byType(OutlinedButton));
+      expect(tester.widget<OutlinedButton>(check).onPressed, isNull);
+
+      release();
+      await tester.pumpAndSettle();
+      expect(app.location, Routes.ticketPay(transactionCode));
+      expect(find.text('Product'), findsOneWidget);
+    });
+
+    testWidgets('Continue payment stays put when the details fail, and says why', (tester) async {
+      final fake = adapter()..reply('GET', '/tickets/$transactionCode', 400, {'message': 'Nie znaleziono biletu'});
+      final app = await pumpApp(
+        tester,
+        fake,
+        session: signedInSession,
+        linkSettings: FakeLinkSettings(enabled: true),
+        lastPaymentMethod: InMemoryLastPaymentMethodStore('150'),
+      );
+      await openTab(tester, 'Tickets');
+      await tapVisible(tester, find.text('Continue payment'));
+      expect(app.location, Routes.tickets);
+      expect(find.text('Nie znaleziono biletu'), findsOneWidget);
+      final pay = find.ancestor(of: find.text('Continue payment'), matching: find.byType(FilledButton));
+      expect(find.descendant(of: pay, matching: find.byType(CircularProgressIndicator)), findsNothing);
     });
 
     testWidgets('code 5 asks, then pays with ignoreWarnings', (tester) async {

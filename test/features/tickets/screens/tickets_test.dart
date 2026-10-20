@@ -561,7 +561,9 @@ void main() {
       expect(find.text('Payment confirmed. Your ticket is ready.'), findsOneWidget);
       expect(find.widgetWithText(FilledButton, 'Assign to device'), findsOneWidget);
 
-      adapter.reply('GET', _list, 200, ticketsReply([pending]));
+      adapter
+        ..reply('GET', _list, 200, ticketsReply([pending]))
+        ..reply('GET', '/tickets/$transactionCode', 200, ticketDetailJson(pending, paid: false));
       await pullToRefresh(tester);
       await tester.tap(find.widgetWithText(FilledButton, 'Continue payment'));
       await tester.pumpAndSettle();

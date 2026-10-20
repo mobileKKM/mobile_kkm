@@ -1,3 +1,4 @@
+import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -107,7 +108,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: 'pay',
-            builder: (context, state) => TicketPayScreen(transactionCode: state.pathParameters['transactionCode']!),
+            builder: (context, state) => TicketPayScreen(
+              transactionCode: state.pathParameters['transactionCode']!,
+              details: switch (state.extra) {
+                final TicketDetailResponse details => details,
+                _ => null,
+              },
+            ),
           ),
           GoRoute(
             path: 'change-line',

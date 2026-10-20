@@ -47,14 +47,7 @@ class _ActivateScreenState extends ConsumerState<ActivateScreen> {
         final error = snapshot.error;
         final Widget body;
         if (!done) {
-          body = LeadHeader(
-            busy: true,
-            centered: true,
-            title: l10n.activateInProgress,
-            titleSize: 22,
-            tileColor: scheme.secondaryContainer,
-            iconColor: scheme.onSecondaryContainer,
-          );
+          body = LeadHeader.waiting(title: l10n.activateInProgress);
         } else if (error == null) {
           body = LeadHeader(
             icon: Symbols.check_circle_rounded,

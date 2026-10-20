@@ -27,6 +27,7 @@ Map<String, dynamic> _active() => {..._pending(), 'status': 'active'};
 
 FakeAdapter _adapter() => FakeAdapter()
   ..reply('GET', _list, 200, ticketsReply([_pending()]))
+  ..reply('GET', '/tickets/${_pending()['transactionCode']}', 200, ticketDetailJson(_pending(), paid: false))
   ..reply('GET', '/payments/banks', 200, apiFixture('banks'))
   ..reply('POST', '/tickets/pay', 200, apiFixture('pay_response'))
   ..reply('POST', '/payments/result', 200)

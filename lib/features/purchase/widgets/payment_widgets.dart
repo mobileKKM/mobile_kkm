@@ -486,17 +486,17 @@ class PaymentStatusView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          LeadHeader(
-            title: title,
-            body: body,
-            busy: waiting,
-            spinnerSize: 36,
-            icon: Symbols.hourglass_top_rounded,
-            centered: true,
-            titleSize: waiting ? 22 : 28,
-            tileColor: waiting ? scheme.secondaryContainer : scheme.tertiaryFixed,
-            iconColor: waiting ? scheme.onSecondaryContainer : scheme.onTertiaryFixed,
-          ),
+          if (waiting)
+            LeadHeader.waiting(title: title, body: body)
+          else
+            LeadHeader(
+              title: title,
+              body: body,
+              icon: Symbols.hourglass_top_rounded,
+              centered: true,
+              tileColor: scheme.tertiaryFixed,
+              iconColor: scheme.onTertiaryFixed,
+            ),
           if (notice != null) ...[const SizedBox(height: 20), notice!],
         ],
       ),

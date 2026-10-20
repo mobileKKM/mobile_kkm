@@ -10,6 +10,8 @@ import 'package:mobile_kkm/l10n/app_localizations.dart';
 class PriceBar extends StatelessWidget {
   const PriceBar({super.key, required this.price, required this.hint, required this.onContinue});
 
+  static const fadeDuration = Duration(milliseconds: 150);
+
   final PriceState price;
 
   /// What to answer next; empty while loading.
@@ -28,6 +30,7 @@ class PriceBar extends StatelessWidget {
 
     final Widget status = switch (price) {
       PriceCalculating() => Row(
+        key: const ValueKey('calculating'),
         children: [
           SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2, color: scheme.primary)),
           const SizedBox(width: 8),
@@ -35,6 +38,7 @@ class PriceBar extends StatelessWidget {
         ],
       ),
       PricePriced(:final calculation) => MergeSemantics(
+        key: ValueKey(('price', calculation.price)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -47,7 +51,7 @@ class PriceBar extends StatelessWidget {
           ],
         ),
       ),
-      PriceIdle() || PriceRefused() => Text(hint, style: quiet),
+      PriceIdle() || PriceRefused() => Text(hint, key: ValueKey(('hint', hint)), style: quiet),
     };
 
     return Material(
@@ -87,7 +91,18 @@ class PriceBar extends StatelessWidget {
                 constraints: const BoxConstraints(minHeight: 56),
                 child: Row(
                   children: [
-                    Expanded(child: Semantics(liveRegion: true, child: status)),
+                    Expanded(
+                      child: Semantics(
+                        liveRegion: true,
+                        // Calculating… to the price, and one price to the next.
+                        child: AnimatedSwitcher(
+                          duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : fadeDuration,
+                          layoutBuilder: (current, previous) =>
+                              Stack(alignment: AlignmentDirectional.centerStart, children: [...previous, ?current]),
+                          child: status,
+                        ),
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     FilledButton(
                       style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 28)),

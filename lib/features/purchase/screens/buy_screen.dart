@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:clock/clock.dart';
 import 'package:ekp_api/ekp_api.dart';
+import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -179,36 +181,91 @@ class _Form extends ConsumerStatefulWidget {
   ConsumerState<_Form> createState() => _FormState();
 }
 
-class _FormState extends ConsumerState<_Form> {
+class _FormState extends ConsumerState<_Form> with SingleTickerProviderStateMixin {
+  /// How much of a new section has to show: its heading and its first row
+  /// (a tile; less where the whole section is lower).
+  static const _firstRow = 64.0;
+
   final _headings = {for (final section in PurchaseSection.values) section: GlobalKey()};
+  final _sectionKeys = {for (final section in PurchaseSection.values) section: GlobalKey()};
+  final _scroll = ScrollController();
+
+  /// Scrolls along with a reveal, from [_from] to [_to].
+  late final _follow = AnimationController(vsync: this, duration: _Reveal.showDuration)..addListener(_onFollow);
+  double _from = 0;
+  double _to = 0;
+
+  /// Pointers on the list: while the user holds it, it is theirs.
+  int _pointers = 0;
 
   PurchaseFormController get _controller => ref.read(purchaseFormProvider(widget.entry).notifier);
+
+  @override
+  void dispose() {
+    _follow.dispose();
+    _scroll.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(_Form old) {
     super.didUpdateWidget(old);
     final before = old.form.visibleSections.toSet();
     final added = widget.form.visibleSections.where((section) => !before.contains(section)).toList();
-    if (added.isEmpty) {
+    if (added.isNotEmpty) {
+      // Once laid out, with the section at its full height inside the reveal.
+      WidgetsBinding.instance.addPostFrameCallback((_) => _showSection(added.first));
+    }
+  }
+
+  /// Scrolls just far enough to show [section]'s heading and first row
+  /// above the bar, only if they are hidden, and never while the user is
+  /// scrolling.
+  void _showSection(PurchaseSection section) {
+    final box = _sectionKeys[section]?.currentContext?.findRenderObject();
+    final heading = _headings[section]?.currentContext?.findRenderObject();
+    if (!mounted || !_scroll.hasClients || box is! RenderBox || heading is! RenderBox) {
       return;
     }
-    // Once laid out: just enough scrolling to show the new section's heading.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final context = _headings[added.first]?.currentContext;
-      if (!mounted || context == null) {
-        return;
-      }
-      final instant = MediaQuery.disableAnimationsOf(context);
-      unawaited(
-        Scrollable.ensureVisible(
-          context,
-          duration: instant ? Duration.zero : _Reveal.showDuration,
-          curve: Easing.emphasizedDecelerate,
-          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-        ),
-      );
-    });
+    final position = _scroll.position;
+    if (_pointers > 0 || position.isScrollingNotifier.value) {
+      return;
+    }
+    final shown = heading.size.height + math.min(box.size.height - heading.size.height, _firstRow);
+    final viewport = RenderAbstractViewport.of(box);
+    final target = viewport.getOffsetToReveal(box, 1, rect: Offset.zero & Size(box.size.width, shown)).offset;
+    if (target <= position.pixels) {
+      return;
+    }
+    if (MediaQuery.disableAnimationsOf(context)) {
+      position.jumpTo(math.min(target, position.maxScrollExtent));
+      return;
+    }
+    _from = position.pixels;
+    _to = target;
+    unawaited(_follow.forward(from: 0));
   }
+
+  /// One step of the scroll, on the reveal's curve; as far as the list
+  /// reaches yet, as it grows with the section.
+  void _onFollow() {
+    if (!_scroll.hasClients) {
+      return;
+    }
+    final position = _scroll.position;
+    final t = Easing.emphasizedDecelerate.transform(_follow.value);
+    final pixels = math.min(_from + (_to - _from) * t, position.maxScrollExtent);
+    if (pixels > position.pixels) {
+      position.jumpTo(pixels);
+    }
+  }
+
+  void _onPointerDown(PointerDownEvent _) {
+    _pointers++;
+    _follow.stop();
+  }
+
+  void _onPointerUp(PointerEvent _) => _pointers = math.max(0, _pointers - 1);
 
   Future<void> _pickLines(SalesLineOption option) async {
     final lines = await Navigator.of(context).push<List<TransportLine>>(
@@ -404,20 +461,34 @@ class _FormState extends ConsumerState<_Form> {
     };
 
     final announcement = widget.announcement;
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-      children: [
-        if (announcement != null) ...[_Announcement(announcement), const SizedBox(height: 16)],
-        if (form.prefilled && form.bounds.extending) ...[
-          MessageBanner(l10n.buyPrefilled, kind: BannerKind.info, icon: Symbols.event_repeat_rounded),
-          const SizedBox(height: 16),
-        ],
-        for (final MapEntry(key: section, value: child) in sections.entries)
-          _Reveal(
-            visible: visible.contains(section),
-            child: Padding(padding: const EdgeInsets.only(bottom: 16), child: child),
-          ),
-      ],
+    return Listener(
+      onPointerDown: _onPointerDown,
+      onPointerUp: _onPointerUp,
+      onPointerCancel: _onPointerUp,
+      // Not lazy: a section further down than the list has built yet must
+      // still be measured to be scrolled to.
+      child: SingleChildScrollView(
+        controller: _scroll,
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (announcement != null) ...[_Announcement(announcement), const SizedBox(height: 16)],
+            if (form.prefilled && form.bounds.extending) ...[
+              MessageBanner(l10n.buyPrefilled, kind: BannerKind.info, icon: Symbols.event_repeat_rounded),
+              const SizedBox(height: 16),
+            ],
+            for (final MapEntry(key: section, value: child) in sections.entries)
+              _Reveal(
+                visible: visible.contains(section),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: KeyedSubtree(key: _sectionKeys[section], child: child),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
