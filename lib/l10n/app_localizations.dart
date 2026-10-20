@@ -2750,11 +2750,53 @@ abstract class AppLocalizations {
   /// **'You already have a similar ticket that is valid for part of this period.'**
   String get paySimilar;
 
-  /// No description provided for @payRejected.
+  /// No description provided for @payScreenTitle.
   ///
   /// In en, this message translates to:
-  /// **'The payment didn’t go through. Choose a method and try again.'**
-  String get payRejected;
+  /// **'Payment'**
+  String get payScreenTitle;
+
+  /// No description provided for @payOpeningTpay.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening tPay…'**
+  String get payOpeningTpay;
+
+  /// No description provided for @payOpenBodyAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'When you finish paying, mobileKKM brings you back here by itself.'**
+  String get payOpenBodyAndroid;
+
+  /// No description provided for @payOpenBodyAndroidNoLink.
+  ///
+  /// In en, this message translates to:
+  /// **'When you finish paying, close the payment page to come back here.'**
+  String get payOpenBodyAndroidNoLink;
+
+  /// No description provided for @payOpenBodyIos.
+  ///
+  /// In en, this message translates to:
+  /// **'When you finish paying, tap Done to come back here.'**
+  String get payOpenBodyIos;
+
+  /// No description provided for @payRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The payment didn’t go through'**
+  String get payRejectedTitle;
+
+  /// No description provided for @payRejectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again, or choose another payment method.'**
+  String get payRejectedBody;
+
+  /// No description provided for @payTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get payTryAgain;
 
   /// No description provided for @payFinishing.
   ///

@@ -1567,7 +1567,28 @@ class AppLocalizationsPl extends AppLocalizations {
       'Posiadasz już podobny bilet obowiązujący częściowo w okresie na który chcesz kupić nowy bilet.';
 
   @override
-  String get payRejected => 'Płatność nie doszła do skutku. Wybierz metodę i spróbuj ponownie.';
+  String get payScreenTitle => 'Płatność';
+
+  @override
+  String get payOpeningTpay => 'Otwieramy tPay…';
+
+  @override
+  String get payOpenBodyAndroid => 'Po zakończeniu płatności mobileKKM sam wróci na ten ekran.';
+
+  @override
+  String get payOpenBodyAndroidNoLink => 'Po zakończeniu płatności zamknij stronę płatności, aby tu wrócić.';
+
+  @override
+  String get payOpenBodyIos => 'Po zakończeniu płatności stuknij Gotowe, aby tu wrócić.';
+
+  @override
+  String get payRejectedTitle => 'Płatność nie doszła do skutku';
+
+  @override
+  String get payRejectedBody => 'Spróbuj ponownie lub wybierz inną metodę płatności.';
+
+  @override
+  String get payTryAgain => 'Spróbuj ponownie';
 
   @override
   String get payFinishing => 'Kończymy zakup…';

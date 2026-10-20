@@ -462,6 +462,11 @@ Future<void> tapVisible(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
+/// A frame, and time for a route to come or go, on a screen with a spinner
+/// up (the Payment screen while tPay opens or a check runs), which never
+/// settles.
+Future<void> pumpWithSpinner(WidgetTester tester) => pumpWithCode(tester);
+
 /// A frame, and time for a route to come or go: in `pumpAndSettle`'s place
 /// on a screen with a code up, whose ring moves for as long as it is open
 /// and so never settles.

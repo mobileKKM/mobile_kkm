@@ -18,11 +18,12 @@ import 'package:mobile_kkm/features/purchase/services/payments_dao.dart';
 import 'package:mobile_kkm/features/tickets/providers/tickets_providers.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 
+/// What the Payment screen shows.
 enum PaymentPhase {
   idle,
 
-  /// tPay's page is open.
-  inBrowser,
+  /// tPay's page is open over the Payment screen.
+  opening,
 
   /// The success link came: reporting it and reloading the tickets.
   finishing,
@@ -30,12 +31,21 @@ enum PaymentPhase {
   /// The browser closed without a link: asking `payments/check`.
   checking,
 
+  /// tPay's rejected link came.
+  rejected,
+
   /// Three checks found no payment.
-  notYet,
+  notBooked,
 }
 
 class PaymentSession {
-  const PaymentSession({this.phase = PaymentPhase.idle, this.ticketGuid, this.checkout, this.message});
+  const PaymentSession({
+    this.phase = PaymentPhase.idle,
+    this.ticketGuid,
+    this.checkout,
+    this.message,
+    this.linksAllowed,
+  });
 
   final PaymentPhase phase;
   final String? ticketGuid;
@@ -46,25 +56,33 @@ class PaymentSession {
   /// The server's word on a payment it hasn't booked.
   final String? message;
 
+  /// Android: whether tPay's return links open the app, read when the
+  /// payment opens; null on iOS.
+  final bool? linksAllowed;
+
   PaymentSession copyWith({PaymentPhase? phase, String? Function()? message}) => PaymentSession(
     phase: phase ?? this.phase,
     ticketGuid: ticketGuid,
     checkout: checkout,
     message: message == null ? this.message : message(),
+    linksAllowed: linksAllowed,
   );
 }
 
-/// A payment on tPay's page, from opening it to its outcome (25c, 25d).
+/// A payment on tPay's page, from opening it to its outcome, all shown on
+/// one Payment screen that tPay opens over (28a, 28b).
 ///
 /// * A return link (Android) is reported with `payments/result`; success
 ///   marks the payment as made (the card shows it as being booked) and ends
-///   on Tickets, rejection goes back to Check and pay.
+///   on Tickets, rejection says so on the Payment screen.
 /// * The browser closing without one (Android: the app is back and no link
 ///   came within [returnWait]; iOS: Done, or the app back in front) asks
 ///   `payments/check` now, after 5 s and after 10 s, then gives up as
-///   "Not yet".
+///   not booked. Leaving meanwhile doesn't stop the checks.
 /// * A return link the app was started with after being killed is still
 ///   reported and marked.
+///
+/// The Payment screen never pays: going back hands over to Check and pay.
 class PaymentSessionController extends Notifier<PaymentSession> {
   static const returnWait = Duration(seconds: 1);
   static const checkAfter = [Duration.zero, Duration(seconds: 5), Duration(seconds: 5)];
@@ -95,7 +113,8 @@ class PaymentSessionController extends Notifier<PaymentSession> {
 
   bool get _android => defaultTargetPlatform == TargetPlatform.android;
 
-  /// Opens tPay's page for [ticketGuid], bought or paid on [checkout].
+  /// Pushes the Payment screen and opens tPay's page over it, for
+  /// [ticketGuid], bought or paid on [checkout].
   Future<void> open(
     Uri url, {
     required String ticketGuid,
@@ -104,15 +123,28 @@ class PaymentSessionController extends Notifier<PaymentSession> {
     required Color tintColor,
   }) async {
     _cancel();
-    state = PaymentSession(phase: PaymentPhase.inBrowser, ticketGuid: ticketGuid, checkout: checkout);
-    await ref.read(paymentBrowserProvider).open(url, toolbarColor: toolbarColor, tintColor: tintColor);
+    final router = ref.read(routerProvider);
+    final browser = ref.read(paymentBrowserProvider);
+    final settings = ref.read(linkSettingsProvider);
+    final linksAllowed = settings.isSupported ? await settings.canOpenLinks() : null;
+    if (!ref.mounted) {
+      return;
+    }
+    state = PaymentSession(
+      phase: PaymentPhase.opening,
+      ticketGuid: ticketGuid,
+      checkout: checkout,
+      linksAllowed: linksAllowed,
+    );
+    unawaited(router.push(Routes.payment));
+    await browser.open(url, toolbarColor: toolbarColor, tintColor: tintColor);
   }
 
-  /// Asks `payments/check` three times again (Not yet's Check again).
+  /// Asks `payments/check` three times again (Not booked's Check again).
   void checkAgain() => _startChecks();
 
-  /// Back to Check and pay, which still holds the ticket.
-  void payAgain() {
+  /// Back to Check and pay, which still holds the ticket and the method.
+  void back() {
     _cancel();
     state = state.copyWith(phase: PaymentPhase.idle);
     final router = ref.read(routerProvider);
@@ -123,11 +155,17 @@ class PaymentSessionController extends Notifier<PaymentSession> {
     }
   }
 
-  void backToTickets() {
-    _cancel();
-    state = state.copyWith(phase: PaymentPhase.idle);
+  /// To Tickets, where the ticket waits for its payment. Checks still
+  /// running go on: a payment they find is said there.
+  void leave() {
+    if (state.phase != PaymentPhase.checking) {
+      _cancel();
+      state = state.copyWith(phase: PaymentPhase.idle);
+    }
     ref.read(routerProvider).go(Routes.tickets);
   }
+
+  bool get _onPayment => ref.read(routerProvider).state.uri.path == Routes.payment;
 
   void _cancel() {
     _run++;
@@ -141,14 +179,14 @@ class PaymentSessionController extends Notifier<PaymentSession> {
         _returnTimer?.cancel();
         unawaited(_onReturn(url));
       case PaymentBrowserClosed():
-        if (state.phase == PaymentPhase.inBrowser) {
+        if (state.phase == PaymentPhase.opening) {
           _startChecks();
         }
     }
   }
 
   void _onResume() {
-    if (state.phase != PaymentPhase.inBrowser) {
+    if (state.phase != PaymentPhase.opening) {
       return;
     }
     if (_android) {
@@ -188,15 +226,13 @@ class PaymentSessionController extends Notifier<PaymentSession> {
     _cancel();
     final client = ref.read(ekpClientProvider);
     final router = ref.read(routerProvider);
-    final checkout = state.checkout;
     final fromSession = state.phase != PaymentPhase.idle;
     final type = url.queryParameters['type'] ?? '2';
 
     if (!success) {
-      state = state.copyWith(phase: PaymentPhase.idle);
       // Said at once; nothing waits for the report.
-      if (checkout != null && fromSession) {
-        ref.read(checkoutProvider(checkout).notifier).markRejected();
+      if (fromSession) {
+        state = state.copyWith(phase: PaymentPhase.rejected);
       } else {
         router.go(Routes.tickets);
       }
@@ -204,10 +240,12 @@ class PaymentSessionController extends Notifier<PaymentSession> {
       return;
     }
 
-    state = PaymentSession(phase: PaymentPhase.finishing, ticketGuid: id, checkout: checkout);
-    if (fromSession) {
-      unawaited(router.push(Routes.payment));
-    }
+    state = PaymentSession(
+      phase: PaymentPhase.finishing,
+      ticketGuid: id,
+      checkout: state.checkout,
+      linksAllowed: state.linksAllowed,
+    );
     final dao = ref.read(paymentsDaoProvider);
     final sync = ref.read(ticketSyncProvider.notifier);
     final notices = ref.read(purchaseNoticeProvider.notifier);
@@ -222,8 +260,11 @@ class PaymentSessionController extends Notifier<PaymentSession> {
       return;
     }
     notices.add(PurchaseNotice.paymentMade);
+    final here = _onPayment;
     state = state.copyWith(phase: PaymentPhase.idle);
-    router.go(Routes.tickets);
+    if (!fromSession || here) {
+      router.go(Routes.tickets);
+    }
   }
 
   /// `payments/result`, as the official client posts it. A failure changes
@@ -244,9 +285,9 @@ class PaymentSessionController extends Notifier<PaymentSession> {
     _cancel();
     final run = _run;
     final router = ref.read(routerProvider);
-    final onStatus = router.state.uri.path == Routes.payment;
+    final onPayment = _onPayment;
     state = state.copyWith(phase: PaymentPhase.checking, message: () => null);
-    if (!onStatus) {
+    if (!onPayment) {
       unawaited(router.push(Routes.payment));
     }
     _scheduleCheck(guid, run, 0);
@@ -277,15 +318,19 @@ class PaymentSessionController extends Notifier<PaymentSession> {
         return;
       }
       notices.add(PurchaseNotice.paymentConfirmed);
+      // Left for Tickets meanwhile: the notice waits there.
+      final here = _onPayment;
       state = state.copyWith(phase: PaymentPhase.idle);
-      router.go(Routes.tickets);
+      if (here) {
+        router.go(Routes.tickets);
+      }
       return;
     }
     if (attempt + 1 < checkAfter.length) {
       _scheduleCheck(guid, run, attempt + 1);
       return;
     }
-    state = state.copyWith(phase: PaymentPhase.notYet, message: () => result?.message);
+    state = state.copyWith(phase: PaymentPhase.notBooked, message: () => result?.message);
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
+import 'package:mobile_kkm/features/purchase/screens/payment_screen.dart';
 import 'package:mobile_kkm/features/purchase/services/payments_dao.dart';
 
 import '../../../support/fake_adapter.dart';
@@ -33,7 +34,8 @@ FakeAdapter _adapter() => FakeAdapter()
   ..reply('POST', '/payments/result', 200)
   ..reply('POST', '/payments/check', 400, {'code': 2, 'message': 'Brak zaksięgowanej płatności.'});
 
-/// Signed in, on Pay for ticket with BLIK chosen, and tPay opened.
+/// Signed in (on Home), on Pay for ticket with BLIK chosen, and tPay
+/// opened over the Payment screen.
 Future<App> _paying(WidgetTester tester, FakeAdapter adapter, {FakePaymentBrowser? browser}) async {
   final app = await pumpApp(
     tester,
@@ -47,9 +49,23 @@ Future<App> _paying(WidgetTester tester, FakeAdapter adapter, {FakePaymentBrowse
   unawaited(app.router.push(Routes.ticketPay(transactionCode)));
   await tester.pumpAndSettle();
   await tester.tap(find.widgetWithText(FilledButton, 'Pay 99,00 zł'));
-  await tester.pumpAndSettle();
+  await pumpWithSpinner(tester);
   expect(app.paymentBrowser.opened, hasLength(1));
+  expect(app.location, Routes.payment);
   return app;
+}
+
+/// The Payment screen's own button for [tooltip] (the screen under it has
+/// one too).
+Finder _leading(String tooltip) => find.descendant(of: find.byType(PaymentScreen), matching: find.byTooltip(tooltip));
+
+/// Three checks that find nothing, ending as not booked.
+Future<void> _checkThrice(WidgetTester tester) async {
+  await _leaveAndReturn(tester);
+  await tester.pump(const Duration(seconds: 1));
+  await tester.pump(const Duration(seconds: 5));
+  await tester.pump(const Duration(seconds: 5));
+  await tester.pumpAndSettle();
 }
 
 /// The app goes to the background for the browser and comes back.
@@ -83,12 +99,22 @@ Map<String, dynamic> _resultBody(FakeAdapter adapter) =>
 void main() {
   testWidgets('Android success: reported, marked, processing until booked, then ready', (tester) async {
     final adapter = _adapter();
+    final release = adapter.hold('POST', '/payments/result');
     final app = await _paying(tester, adapter);
 
+    // The same screen finishes, with nothing to go back to.
     app.paymentBrowser.returnTo(_success);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    expect(app.location, Routes.payment);
+    expect(find.text('Finishing your purchase…'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(app.location, Routes.payment);
 
+    release();
+    await tester.pumpAndSettle();
     expect(_resultBody(adapter), {'id': _guid, 'type': '2', 'result': 'Success'});
+    // Started from Home, it ends on Tickets all the same.
     expect(app.location, Routes.tickets);
     expect(find.text('Payment made.'), findsOneWidget);
     expect(await _marks(app), contains(_guid));
@@ -110,7 +136,7 @@ void main() {
     expect(find.text('Payment processing'), findsNothing);
   });
 
-  testWidgets('rejected: reported, back on Check and pay with the notice', (tester) async {
+  testWidgets('rejected: reported and said on Payment; Back and Try again go to Check and pay', (tester) async {
     final adapter = _adapter();
     final app = await _paying(tester, adapter);
 
@@ -118,9 +144,27 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(_resultBody(adapter)['result'], 'Error');
-    expect(app.location, Routes.ticketPay(transactionCode));
-    expect(find.text('The payment didn’t go through. Choose a method and try again.'), findsOneWidget);
+    expect(app.location, Routes.payment);
+    expect(find.text('The payment didn’t go through'), findsOneWidget);
+    expect(find.text('Try again, or choose another payment method.'), findsOneWidget);
+    expect(_leading('Back'), findsOneWidget);
     expect(await _marks(app), isEmpty);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(app.location, Routes.ticketPay(transactionCode));
+
+    // Check and pay pays again, for a fresh link.
+    await tester.tap(find.widgetWithText(FilledButton, 'Pay 99,00 zł'));
+    await pumpWithSpinner(tester);
+    expect(adapter.requestsTo('/tickets/pay'), hasLength(2));
+    expect(app.location, Routes.payment);
+
+    app.paymentBrowser.returnTo(_rejected);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Try again'));
+    await tester.pumpAndSettle();
+    expect(app.location, Routes.ticketPay(transactionCode));
   });
 
   testWidgets('closed without a link: three checks, Not yet, then Check again finds it', (tester) async {
@@ -132,6 +176,7 @@ void main() {
     await tester.pump();
     expect(app.location, Routes.payment);
     expect(find.text('Checking your payment…'), findsOneWidget);
+    expect(_leading('Close'), findsOneWidget);
     expect(adapter.requestsTo('/payments/check'), hasLength(1));
 
     await tester.pump(const Duration(seconds: 5));
@@ -142,6 +187,7 @@ void main() {
     expect(adapter.requestsTo('/payments/check'), hasLength(3));
     expect(find.text('We can’t see your payment yet'), findsOneWidget);
     expect(find.text('Brak zaksięgowanej płatności.'), findsOneWidget);
+    expect(_leading('Back'), findsOneWidget);
 
     adapter
       ..reply('POST', '/payments/check', 200)
@@ -152,20 +198,52 @@ void main() {
     expect(find.textContaining('Payment confirmed'), findsOneWidget);
   });
 
-  testWidgets('Not yet: Pay again goes back to Check and pay', (tester) async {
+  testWidgets('not booked: Pay again and Back go to Check and pay, Back to tickets to Tickets', (tester) async {
+    final adapter = _adapter();
+    final app = await _paying(tester, adapter);
+
+    await _checkThrice(tester);
+    expect(find.text('We can’t see your payment yet'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Pay again'));
+    await tester.pumpAndSettle();
+    expect(app.location, Routes.ticketPay(transactionCode));
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Pay 99,00 zł'));
+    await pumpWithSpinner(tester);
+    await _checkThrice(tester);
+    await tester.tap(_leading('Back'));
+    await tester.pumpAndSettle();
+    expect(app.location, Routes.ticketPay(transactionCode));
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Pay 99,00 zł'));
+    await pumpWithSpinner(tester);
+    await _checkThrice(tester);
+    await tester.tap(find.text('Back to tickets'));
+    await tester.pumpAndSettle();
+    expect(app.location, Routes.tickets);
+  });
+
+  testWidgets('leaving while it checks: the checks go on and a payment found is said on Tickets', (tester) async {
     final adapter = _adapter();
     final app = await _paying(tester, adapter);
 
     await _leaveAndReturn(tester);
     await tester.pump(const Duration(seconds: 1));
-    await tester.pump(const Duration(seconds: 5));
-    await tester.pump(const Duration(seconds: 5));
+    await tester.pump();
+    expect(adapter.requestsTo('/payments/check'), hasLength(1));
+    // System Back is the close button here.
+    await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
-    expect(find.text('We can’t see your payment yet'), findsOneWidget);
+    expect(app.location, Routes.tickets);
 
-    await tester.tap(find.widgetWithText(FilledButton, 'Pay again'));
+    adapter
+      ..reply('POST', '/payments/check', 200)
+      ..reply('GET', _list, 200, ticketsReply([_active()]));
+    await tester.pump(const Duration(seconds: 5));
     await tester.pumpAndSettle();
-    expect(app.location, Routes.ticketPay(transactionCode));
+    expect(adapter.requestsTo('/payments/check'), hasLength(2));
+    expect(app.location, Routes.tickets);
+    expect(find.textContaining('Payment confirmed'), findsOneWidget);
   });
 
   testWidgets('a return link right after the app is back: no checks', (tester) async {
@@ -186,6 +264,7 @@ void main() {
     addTearDown(() => debugDefaultTargetPlatformOverride = null);
     final adapter = _adapter()..reply('POST', '/payments/check', 200);
     final app = await _paying(tester, adapter);
+    expect(find.text('When you finish paying, tap Done to come back here.'), findsOneWidget);
 
     adapter.reply('GET', _list, 200, ticketsReply([_active()]));
     app.paymentBrowser.closeByUser();

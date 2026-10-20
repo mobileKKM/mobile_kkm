@@ -26,7 +26,7 @@ abstract final class Routes {
   static String buySimilar(String transactionCode) =>
       Uri(path: buy, queryParameters: {'similar': transactionCode}).toString();
 
-  /// The payment's status screens.
+  /// Payment: tPay opens over it, and it shows how the payment went.
   static const payment = '/payment';
   static const subscription = '/subscription';
 

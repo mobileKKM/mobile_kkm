@@ -45,7 +45,6 @@ class CheckoutState {
     this.ticketGuid,
     this.busy = false,
     this.failure,
-    this.rejected = false,
   });
 
   /// `payments/banks`, sorted for this platform.
@@ -66,9 +65,6 @@ class CheckoutState {
   /// Why the last buy or pay failed, for the notice on top.
   final Object? failure;
 
-  /// tPay sent the user back with a rejected payment.
-  final bool rejected;
-
   /// The ticket exists on the server.
   bool get bought => ticketGuid != null;
 
@@ -79,7 +75,6 @@ class CheckoutState {
     String? Function()? ticketGuid,
     bool? busy,
     Object? Function()? failure,
-    bool? rejected,
   }) => CheckoutState(
     methods: methods ?? this.methods,
     selected: selected == null ? this.selected : selected(),
@@ -87,7 +82,6 @@ class CheckoutState {
     ticketGuid: ticketGuid == null ? this.ticketGuid : ticketGuid(),
     busy: busy ?? this.busy,
     failure: failure == null ? this.failure : failure(),
-    rejected: rejected ?? this.rejected,
   );
 }
 
@@ -168,9 +162,6 @@ class CheckoutController extends Notifier<CheckoutState> {
 
   void select(String groupId) => state = state.copyWith(selected: () => groupId);
 
-  /// tPay sent the user back with a rejected payment.
-  void markRejected() => state = state.copyWith(rejected: true, failure: () => null);
-
   /// Buys the ticket the first time, pays for it after that.
   /// [ignoreWarnings] only after the user agreed to pay again.
   Future<CheckoutOutcome?> pay({bool ignoreWarnings = false}) async {
@@ -182,7 +173,7 @@ class CheckoutController extends Notifier<CheckoutState> {
     final store = ref.read(lastPaymentMethodStoreProvider);
     final status = ref.read(appStatusProvider.notifier);
     final sync = ref.read(ticketSyncProvider.notifier);
-    state = state.copyWith(busy: true, failure: () => null, rejected: false);
+    state = state.copyWith(busy: true, failure: () => null);
     CheckoutOutcome outcome;
     try {
       final guid = state.ticketGuid;

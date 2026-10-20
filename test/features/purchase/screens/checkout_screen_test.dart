@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/features/purchase/models/sales_rules.dart';
+import 'package:mobile_kkm/features/purchase/screens/payment_screen.dart';
 import 'package:mobile_kkm/features/purchase/services/checkout_controller.dart';
 
 import '../../../support/fake_adapter.dart';
@@ -32,7 +34,10 @@ FakeAdapter _adapter() => FakeAdapter()
   ..reply('GET', '/tickets/ticket-sales-configuration/100001', 200, apiFixture('sales_config_privileged'))
   ..reply('GET', '/payments/banks', 200, apiFixture('banks'))
   ..reply('POST', '/tickets/buy', 200, apiFixture('buy_response'))
-  ..reply('POST', '/tickets/pay', 200, apiFixture('pay_response'));
+  ..reply('POST', '/tickets/pay', 200, apiFixture('pay_response'))
+  ..reply('POST', '/payments/result', 200);
+
+final _rejected = Uri.parse('https://ekp.mpk.krakow.pl/payment/rejected?id=$_guid&type=2');
 
 Future<App> _open(
   WidgetTester tester,
@@ -56,11 +61,19 @@ Future<App> _open(
 
 Finder get _payButton => find.widgetWithText(FilledButton, 'Pay 99,00 zł');
 
+/// Taps Pay; the Payment screen it opens has a spinner up.
+Future<void> _tapPay(WidgetTester tester) async {
+  await tester.ensureVisible(_payButton);
+  await tester.pumpAndSettle();
+  await tester.tap(_payButton);
+  await pumpWithSpinner(tester);
+}
+
 Map<String, dynamic> _body(FakeAdapter adapter, String path) =>
     adapter.requestsTo(path).last.data as Map<String, dynamic>;
 
 void main() {
-  testWidgets('the summary, nothing chosen, then BLIK: buy and open tPay', (tester) async {
+  testWidgets('the summary, nothing chosen, then BLIK: buy, and Payment opens tPay', (tester) async {
     final adapter = _adapter();
     final app = await _open(tester, adapter);
 
@@ -76,25 +89,87 @@ void main() {
 
     await tester.tap(find.text('BLIK'));
     await tester.pump();
-    await tapVisible(tester, _payButton);
+    await _tapPay(tester);
 
     expect(_body(adapter, '/tickets/buy')['tPayPaymentGroupId'], '150');
+    expect(app.location, Routes.payment);
+    expect(find.text('Opening tPay…'), findsOneWidget);
+    expect(find.text('When you finish paying, mobileKKM brings you back here by itself.'), findsOneWidget);
     expect(app.paymentBrowser.opened.single.host, 'secure.tpay.com');
+    // Nothing to go back to while tPay opens.
+    expect(find.descendant(of: find.byType(PaymentScreen), matching: find.byTooltip('Back')), findsNothing);
+    await tester.binding.handlePopRoute();
+    await pumpWithSpinner(tester);
+    expect(app.location, Routes.payment);
+
+    // Rejected: back on Check and pay, the same method chosen.
+    app.paymentBrowser.returnTo(_rejected);
+    await tester.pumpAndSettle();
+    expect(find.text('The payment didn’t go through'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Try again'));
+    await tester.pumpAndSettle();
+    expect(app.location, Routes.buyPay);
 
     // Bought: from now on Pay pays, and leaving goes to the tickets.
-    await tapVisible(tester, _payButton);
+    await _tapPay(tester);
     expect(adapter.requestsTo('/tickets/buy'), hasLength(1));
     expect(_body(adapter, '/tickets/pay'), {'id': _guid, 'ignoreWarnings': false, 'tPayPaymentGroupId': '150'});
+    expect(app.paymentBrowser.opened, hasLength(2));
 
+    app.paymentBrowser.returnTo(_rejected);
+    await tester.pumpAndSettle();
+    await tester.tap(find.descendant(of: find.byType(PaymentScreen), matching: find.byTooltip('Back')));
+    await tester.pumpAndSettle();
+    expect(app.location, Routes.buyPay);
     await tester.pageBack();
     await tester.pumpAndSettle();
     expect(app.location, Routes.tickets);
+  });
+
+  testWidgets('while the order goes out the screen is locked and Back is ignored', (tester) async {
+    final adapter = _adapter();
+    final release = adapter.hold('POST', '/tickets/buy');
+    final app = await _open(tester, adapter, lastMethod: '150');
+
+    await tester.ensureVisible(_payButton);
+    await tester.pumpAndSettle();
+    await tester.tap(_payButton);
+    await tester.pump();
+    expect(find.text('Opening payment…'), findsOneWidget);
+    await tester.tap(find.text('Google Pay'), warnIfMissed: false);
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(app.location, Routes.buyPay);
+
+    release();
+    await pumpWithSpinner(tester);
+    expect(_body(adapter, '/tickets/buy')['tPayPaymentGroupId'], '150');
+    expect(app.location, Routes.payment);
+  });
+
+  testWidgets('links not allowed: Payment says to close the page', (tester) async {
+    final app = await _open(tester, _adapter(), links: FakeLinkSettings(), lastMethod: '150');
+    await _tapPay(tester);
+    expect(app.location, Routes.payment);
+    expect(find.text('When you finish paying, close the payment page to come back here.'), findsOneWidget);
   });
 
   testWidgets('the method used last is chosen and says so', (tester) async {
     await _open(tester, _adapter(), lastMethod: '103');
     expect(find.text('Last used'), findsOneWidget);
     expect(tester.widget<FilledButton>(_payButton).onPressed, isNotNull);
+  });
+
+  testWidgets('a bank used last is chosen in the bank row and says so', (tester) async {
+    final adapter = _adapter();
+    await _open(tester, adapter, lastMethod: '160');
+    expect(find.text('mBank'), findsOneWidget);
+    expect(find.text('Change'), findsOneWidget);
+    expect(find.text('Last used'), findsOneWidget);
+    // No tile is chosen.
+    expect(find.byIcon(Symbols.check_circle_rounded), findsNothing);
+    await _tapPay(tester);
+    expect(_body(adapter, '/tickets/buy')['tPayPaymentGroupId'], '160');
   });
 
   testWidgets('a bank from the sheet', (tester) async {
@@ -109,7 +184,7 @@ void main() {
 
     expect(find.text('mBank'), findsOneWidget);
     expect(find.text('Change'), findsOneWidget);
-    await tapVisible(tester, _payButton);
+    await _tapPay(tester);
     expect(_body(adapter, '/tickets/buy')['tPayPaymentGroupId'], '160');
   });
 
@@ -200,7 +275,7 @@ void main() {
       expect(app.location, Routes.ticketPay(transactionCode));
       expect(find.text('Pay for ticket'), findsOneWidget);
 
-      await tapVisible(tester, _payButton);
+      await _tapPay(tester);
       expect(fake.requestsTo('/tickets/buy'), isEmpty);
       expect(_body(fake, '/tickets/pay')['ignoreWarnings'], isFalse);
     });
@@ -266,8 +341,9 @@ void main() {
       expect(find.text('Pay again?'), findsOneWidget);
       fake.reply('POST', '/tickets/pay', 200, apiFixture('pay_response'));
       await tester.tap(find.widgetWithText(FilledButton, 'Pay again'));
-      await tester.pumpAndSettle();
+      await pumpWithSpinner(tester);
       expect(_body(fake, '/tickets/pay')['ignoreWarnings'], isTrue);
+      expect(app.location, Routes.payment);
     });
 
     testWidgets('already paid: Tickets says so', (tester) async {

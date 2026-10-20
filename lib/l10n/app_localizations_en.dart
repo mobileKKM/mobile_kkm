@@ -1526,7 +1526,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paySimilar => 'You already have a similar ticket that is valid for part of this period.';
 
   @override
-  String get payRejected => 'The payment didn’t go through. Choose a method and try again.';
+  String get payScreenTitle => 'Payment';
+
+  @override
+  String get payOpeningTpay => 'Opening tPay…';
+
+  @override
+  String get payOpenBodyAndroid => 'When you finish paying, mobileKKM brings you back here by itself.';
+
+  @override
+  String get payOpenBodyAndroidNoLink => 'When you finish paying, close the payment page to come back here.';
+
+  @override
+  String get payOpenBodyIos => 'When you finish paying, tap Done to come back here.';
+
+  @override
+  String get payRejectedTitle => 'The payment didn’t go through';
+
+  @override
+  String get payRejectedBody => 'Try again, or choose another payment method.';
+
+  @override
+  String get payTryAgain => 'Try again';
 
   @override
   String get payFinishing => 'Finishing your purchase…';

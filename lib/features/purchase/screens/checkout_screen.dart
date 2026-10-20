@@ -130,7 +130,6 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       if (calculation?.hasSimilarTicket ?? false)
         MessageBanner(l10n.paySimilar, kind: BannerKind.info, icon: Symbols.warning_rounded),
       if (failure != null) MessageBanner(describeError(l10n, failure)),
-      if (state.rejected) MessageBanner(l10n.payRejected, icon: Symbols.credit_card_off_rounded),
       summary,
       Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -152,7 +151,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   ],
                 ),
                 if (value.banks.isNotEmpty) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   BankRow(
                     bank: value.isBank(state.selected) ? value.byId(state.selected) : null,
                     lastUsed: value.isBank(state.lastUsed) && state.lastUsed == state.selected,
@@ -211,18 +210,22 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             : IconButton(
                 tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 icon: const Icon(Symbols.close_rounded),
-                onPressed: () => context.pop(),
+                onPressed: state.busy ? null : () => context.pop(),
               ),
         title: Text(buying ? l10n.payTitle : l10n.payTicketTitle),
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-              children: [
-                for (final (index, child) in children.indexed) ...[if (index > 0) const SizedBox(height: 16), child],
-              ],
+            // While the order goes out, the screen stays as it is.
+            child: AbsorbPointer(
+              absorbing: state.busy,
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                children: [
+                  for (final (index, child) in children.indexed) ...[if (index > 0) const SizedBox(height: 16), child],
+                ],
+              ),
             ),
           ),
           BottomActionBar(
@@ -236,15 +239,14 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         ],
       ),
     );
-    if (!buying) {
-      return scaffold;
-    }
-    // Once bought, the ticket waits in Tickets: leaving goes there, not
-    // back to the form that would buy it again.
+    // Back is ignored while the order goes out. Once bought, the ticket
+    // waits in Tickets: leaving goes there, not back to the form that would
+    // buy it again.
+    final bought = buying && state.bought;
     return PopScope(
-      canPop: !state.bought,
+      canPop: !state.busy && !bought,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
+        if (!didPop && bought && !ref.read(checkoutProvider(widget.entry)).busy) {
           context.go(Routes.tickets);
         }
       },

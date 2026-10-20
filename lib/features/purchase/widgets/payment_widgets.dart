@@ -75,7 +75,10 @@ class MethodTile extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
+          // Stretched to a taller neighbour, the tile keeps its content in
+          // the middle.
           child: Stack(
+            alignment: AlignmentDirectional.centerStart,
             children: [
               ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 64),
@@ -185,7 +188,7 @@ class BankRow extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 64),
             child: Padding(
-              padding: const EdgeInsetsDirectional.only(start: 12, end: 8, top: 10, bottom: 10),
+              padding: EdgeInsetsDirectional.only(start: 12, end: selected ? 8 : 4, top: 10, bottom: 10),
               child: Row(
                 children: [
                   if (bank != null)
@@ -211,9 +214,12 @@ class BankRow extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
+                        const SizedBox(height: 2),
                         Text(bank == null ? l10n.payChooseBank : l10n.payTransfer, style: small),
-                        if (lastUsed)
+                        if (lastUsed) ...[
+                          const SizedBox(height: 2),
                           Text(l10n.payLastUsed, style: theme.textTheme.labelMedium?.copyWith(color: scheme.primary)),
+                        ],
                       ],
                     ),
                   ),
@@ -463,36 +469,50 @@ class PurchaseSummaryCard extends StatelessWidget {
   }
 }
 
-/// A payment status screen (Finishing, Checking, Not yet): the activation
-/// screens' centred layout, no app bar.
+/// A state of the Payment screen: its app bar over the activation
+/// screens' centred layout.
 class PaymentStatusView extends StatelessWidget {
-  const PaymentStatusView({super.key, required this.title, this.body, this.waiting = true, this.notice, this.bottom});
+  const PaymentStatusView({
+    super.key,
+    required this.title,
+    this.body,
+    this.icon,
+    this.leading,
+    this.notice,
+    this.bottom,
+  });
 
   final String title;
   final String? body;
 
-  /// A spinner on the waiting tone; else the payment tone's hourglass.
-  final bool waiting;
+  /// On the payment tone; without one a spinner on the waiting tone.
+  final IconData? icon;
+
+  /// The app bar's button; the slot stays empty without one, so the title
+  /// keeps its place.
+  final Widget? leading;
   final Widget? notice;
   final Widget? bottom;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final icon = this.icon;
     return AuthPage(
-      showAppBar: false,
+      title: AppLocalizations.of(context).payScreenTitle,
+      leading: leading ?? const SizedBox.shrink(),
       centered: true,
       bottom: bottom,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (waiting)
+          if (icon == null)
             LeadHeader.waiting(title: title, body: body)
           else
             LeadHeader(
               title: title,
               body: body,
-              icon: Symbols.hourglass_top_rounded,
+              icon: icon,
               centered: true,
               tileColor: scheme.tertiaryFixed,
               iconColor: scheme.onTertiaryFixed,
