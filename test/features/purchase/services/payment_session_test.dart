@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -46,7 +47,12 @@ Future<App> _paying(WidgetTester tester, FakeAdapter adapter, {FakePaymentBrowse
     paymentBrowser: browser,
     tall: true,
   );
-  unawaited(app.router.push(Routes.ticketPay(transactionCode)));
+  unawaited(
+    app.router.push(
+      Routes.ticketPay(transactionCode),
+      extra: TicketDetailResponse.fromJson(ticketDetailJson(_pending(), paid: false)),
+    ),
+  );
   await tester.pumpAndSettle();
   await tester.tap(find.widgetWithText(FilledButton, 'Pay 99,00 zł'));
   await pumpWithSpinner(tester);
@@ -295,15 +301,6 @@ void main() {
   });
 
   group('marks', () {
-    testWidgets('one older than an hour is dropped', (tester) async {
-      final adapter = _adapter();
-      final app = await pumpApp(tester, adapter, session: signedInSession);
-      await PaymentsDao(app.database).markMade(_guid, DateTime.now().subtract(const Duration(hours: 2)));
-      await tester.pump(const Duration(seconds: 10));
-      await tester.pumpAndSettle();
-      expect(await _marks(app), isEmpty);
-    });
-
     testWidgets('one whose ticket is gone after a sync is dropped', (tester) async {
       final adapter = _adapter()..reply('GET', _list, 200, ticketsReply([]));
       final app = await pumpApp(tester, adapter, session: signedInSession);

@@ -59,6 +59,10 @@ Future<App> _open(
   return app;
 }
 
+/// What Continue payment hands over for the pending ticket.
+TicketDetailResponse _details() =>
+    TicketDetailResponse.fromJson(ticketDetailJson({...validTicket(), 'status': 'pending'}, paid: false));
+
 Finder get _payButton => find.widgetWithText(FilledButton, 'Pay 99,00 zł');
 
 /// Taps Pay; the Payment screen it opens has a spinner up.
@@ -78,6 +82,7 @@ void main() {
     final app = await _open(tester, adapter);
 
     expect(find.text('Check and pay'), findsOneWidget);
+    expect(app.paymentLogos.requested, contains('https://secure.tpay.com/_/g/150.png'));
     expect(find.text('All lines · Strefa I'), findsOneWidget);
     expect(find.text('Bilet norm. mieszk. 1-mies. sieciowy st. I'), findsOneWidget);
     expect(find.text('Every day'), findsOneWidget);
@@ -324,6 +329,14 @@ void main() {
       expect(find.descendant(of: pay, matching: find.byType(CircularProgressIndicator)), findsNothing);
     });
 
+    testWidgets('without the details it is the ticket details screen', (tester) async {
+      final app = await pumpApp(tester, adapter(), session: signedInSession);
+      unawaited(app.router.push(Routes.ticketPay(transactionCode)));
+      await tester.pumpAndSettle();
+      expect(app.location, Routes.ticket(transactionCode));
+      expect(find.text('Pay for ticket'), findsNothing);
+    });
+
     testWidgets('code 5 asks, then pays with ignoreWarnings', (tester) async {
       final fake = adapter()
         ..reply('POST', '/tickets/pay', 400, {'code': 5, 'message': 'System oczekuje na potwierdzenie'});
@@ -334,7 +347,7 @@ void main() {
         linkSettings: FakeLinkSettings(enabled: true),
         lastPaymentMethod: InMemoryLastPaymentMethodStore('150'),
       );
-      unawaited(app.router.push(Routes.ticketPay(transactionCode)));
+      unawaited(app.router.push(Routes.ticketPay(transactionCode), extra: _details()));
       await tester.pumpAndSettle();
 
       await tapVisible(tester, _payButton);
@@ -355,7 +368,7 @@ void main() {
         linkSettings: FakeLinkSettings(enabled: true),
         lastPaymentMethod: InMemoryLastPaymentMethodStore('150'),
       );
-      unawaited(app.router.push(Routes.ticketPay(transactionCode)));
+      unawaited(app.router.push(Routes.ticketPay(transactionCode), extra: _details()));
       await tester.pumpAndSettle();
 
       await tapVisible(tester, _payButton);

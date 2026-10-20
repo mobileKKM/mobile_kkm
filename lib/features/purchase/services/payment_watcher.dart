@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/features/auth/providers/auth_controller.dart';
@@ -13,12 +12,11 @@ import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 /// paid: asks for the tickets every [interval] while there are any (signed
 /// in and online), then drops each mark and says the ticket is ready.
 ///
-/// Beyond the official client, which keeps its marks for good: a mark whose
-/// ticket is gone after a sync, or older than [giveUpAfter], is dropped,
-/// so that a lost confirmation does not leave the card "processing".
+/// Beyond the official client, which keeps a mark whose ticket is missing
+/// from the list for good: such a mark is dropped after a sync, since the
+/// poll runs while any mark is kept.
 class PaymentWatcher extends Notifier<void> {
   static const interval = Duration(seconds: 10);
-  static const giveUpAfter = Duration(hours: 1);
 
   @override
   void build() {
@@ -46,7 +44,6 @@ class PaymentWatcher extends Notifier<void> {
     final dao = ref.read(paymentsDaoProvider);
     final notices = ref.read(purchaseNoticeProvider.notifier);
     final synced = ref.read(ticketSyncProvider).lastSyncedAt;
-    final now = clock.now();
     for (final MapEntry(key: guid, value: madeAt) in marks.entries) {
       final stored = tickets.where((stored) => stored.ticket.ticketGuid == guid).firstOrNull;
       final status = stored?.ticket.status;
@@ -56,8 +53,6 @@ class PaymentWatcher extends Notifier<void> {
           notices.add(PurchaseNotice.ticketReady);
         }
       } else if (stored == null && synced != null && synced.isAfter(madeAt)) {
-        await dao.remove(guid);
-      } else if (now.difference(madeAt) > giveUpAfter) {
         await dao.remove(guid);
       }
     }

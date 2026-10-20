@@ -27,37 +27,29 @@ import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// Pay for a ticket that waits for its payment ("Pay for ticket"), found by
-/// its transaction code among the stored tickets.
-///
-/// The card's Continue payment hands over the ticket's [details] once
-/// loaded, so the screen opens complete; reached any other way, it loads
-/// them itself first.
+/// its transaction code among the stored tickets. Continue payment loads the
+/// ticket's [details] first, so the screen opens complete.
 class TicketPayScreen extends ConsumerWidget {
-  const TicketPayScreen({super.key, required this.transactionCode, this.details});
+  const TicketPayScreen({super.key, required this.transactionCode, required this.details});
 
   final String transactionCode;
-  final TicketDetailResponse? details;
+  final TicketDetailResponse details;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final stored = ref.watch(storedTicketProvider(transactionCode));
-    final guid = stored?.ticket.ticketGuid;
-    final details = this.details ?? ref.watch(ticketDetailProvider(transactionCode)).value;
-    final failed = this.details == null && ref.watch(ticketDetailProvider(transactionCode)).hasError;
-    if (guid == null || failed) {
-      return _bare(l10n, EmptyStateCard(icon: Symbols.error_rounded, title: l10n.ticketDetailsFailed, quiet: true));
-    }
-    if (details == null) {
-      return _bare(l10n, SkeletonPulse(label: l10n.payTicketTitle, child: const SkeletonBox(height: 280, radius: 28)));
+    final guid = ref.watch(storedTicketProvider(transactionCode))?.ticket.ticketGuid;
+    if (guid == null) {
+      final l10n = AppLocalizations.of(context);
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.payTicketTitle)),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          children: [EmptyStateCard(icon: Symbols.error_rounded, title: l10n.ticketDetailsFailed, quiet: true)],
+        ),
+      );
     }
     return CheckoutScreen(entry: CheckoutEntry.pay(guid), transactionCode: transactionCode, details: details);
   }
-
-  Widget _bare(AppLocalizations l10n, Widget child) => Scaffold(
-    appBar: AppBar(title: Text(l10n.payTicketTitle)),
-    body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 24), children: [child]),
-  );
 }
 
 /// Check and pay (25b): what is bought, how it is paid, and Pay.

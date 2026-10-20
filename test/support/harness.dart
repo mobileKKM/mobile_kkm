@@ -33,6 +33,7 @@ import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
 import 'package:mobile_kkm/features/map/models/map_view_controller.dart';
 import 'package:mobile_kkm/features/map/providers/map_providers.dart';
 import 'package:mobile_kkm/features/purchase/services/last_payment_method_store.dart';
+import 'package:mobile_kkm/features/purchase/services/payment_logos.dart';
 
 import 'fake_adapter.dart';
 import 'sample_data.dart';
@@ -154,6 +155,17 @@ class FakePhotoCache implements PhotoCache {
 
   @override
   Future<void> clear() async => cleared++;
+}
+
+/// Serves a one-pixel image for any payment logo and notes the URLs.
+class FakePaymentLogos implements PaymentLogos {
+  final requested = <String>[];
+
+  @override
+  ImageProvider image(String url) {
+    requested.add(url);
+    return MemoryImage(onePixelPng);
+  }
 }
 
 /// Stands in for the native map view, which a widget test cannot create.
@@ -305,6 +317,7 @@ class App {
     this.savedIdentities,
     this.container,
     this.paymentBrowser,
+    this.paymentLogos,
   );
 
   /// The path of the screen on top.
@@ -329,6 +342,9 @@ class App {
 
   /// tPay's page: what was opened, and its return link or closing.
   final FakePaymentBrowser paymentBrowser;
+
+  /// The payment logos asked for.
+  final FakePaymentLogos paymentLogos;
 }
 
 /// Pumps the whole app on a phone-sized surface, backed by [adapter].
@@ -383,6 +399,7 @@ Future<App> pumpApp(
   final map = FakeMapView();
   final screen = FakeScreenSecurity();
   final scanDisplay = FakeScanDisplay();
+  final paymentLogos = FakePaymentLogos();
   final savedIdentities = <SavedIdentity>[];
   container = ProviderContainer(
     overrides: [
@@ -409,6 +426,7 @@ Future<App> pumpApp(
       ),
       aztecKeyStoreProvider.overrideWithValue(aztecKeyStore ?? InMemoryAztecKeyStore()),
       photoCacheProvider.overrideWithValue(photoCache ?? FakePhotoCache()),
+      paymentLogosProvider.overrideWithValue(paymentLogos),
       mapViewProvider.overrideWithValue(map.build),
       locationServiceProvider.overrideWithValue(location ?? FakeLocationService()),
       photoPickerProvider.overrideWithValue(photoPicker ?? FakePhotoPicker()),
@@ -447,6 +465,7 @@ Future<App> pumpApp(
     savedIdentities,
     container,
     browser,
+    paymentLogos,
   );
 }
 

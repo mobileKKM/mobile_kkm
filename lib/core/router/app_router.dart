@@ -106,14 +106,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'return',
             builder: (context, state) => TicketReturnScreen(transactionCode: state.pathParameters['transactionCode']!),
           ),
+          // Continue payment opens it with the ticket's details; without
+          // them it is the ticket details screen.
           GoRoute(
             path: 'pay',
+            redirect: (context, state) =>
+                state.extra is TicketDetailResponse ? null : Routes.ticket(state.pathParameters['transactionCode']!),
             builder: (context, state) => TicketPayScreen(
               transactionCode: state.pathParameters['transactionCode']!,
-              details: switch (state.extra) {
-                final TicketDetailResponse details => details,
-                _ => null,
-              },
+              details: state.extra! as TicketDetailResponse,
             ),
           ),
           GoRoute(

@@ -1,6 +1,8 @@
 import 'package:ekp_api/ekp_api.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 import 'package:mobile_kkm/core/widgets/lead_header.dart';
@@ -12,7 +14,7 @@ import 'package:mobile_kkm/l10n/app_localizations.dart';
 String logoUrlOf(Bank bank) => bank.img ?? 'https://secure.tpay.com/_/g/${bank.id}.png';
 
 /// A payment logo on a white plate, white in both themes.
-class LogoPlate extends StatelessWidget {
+class LogoPlate extends ConsumerWidget {
   const LogoPlate({super.key, required this.bank, this.width = 56, this.height = 36});
 
   final Bank bank;
@@ -20,19 +22,21 @@ class LogoPlate extends StatelessWidget {
   final double height;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final radius = BorderRadius.circular(8);
     return Container(
       width: width,
       height: height,
-      // The logo within 48 × 28 on the small plate, 64 × 32 on the large.
+      // The logo within 48 × 28 on the small plate, 64 × 32 on the large;
+      // the border lies over the plate's edge, not inside it.
       padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.circular(8),
+      decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: radius),
+      foregroundDecoration: BoxDecoration(
+        borderRadius: radius,
         border: Border.all(color: const Color(0x14000000)),
       ),
-      child: Image.network(
-        logoUrlOf(bank),
+      child: Image(
+        image: ref.watch(paymentLogosProvider).image(logoUrlOf(bank)),
         fit: BoxFit.contain,
         semanticLabel: bank.name,
         errorBuilder: (context, _, _) => const SizedBox.shrink(),
