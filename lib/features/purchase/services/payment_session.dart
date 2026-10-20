@@ -194,12 +194,13 @@ class PaymentSessionController extends Notifier<PaymentSession> {
 
     if (!success) {
       state = state.copyWith(phase: PaymentPhase.idle);
-      await _report(client, id, type, 'Error');
+      // Said at once; nothing waits for the report.
       if (checkout != null && fromSession) {
         ref.read(checkoutProvider(checkout).notifier).markRejected();
       } else {
         router.go(Routes.tickets);
       }
+      await _report(client, id, type, 'Error');
       return;
     }
 
