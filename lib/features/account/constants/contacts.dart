@@ -12,8 +12,11 @@ abstract final class Contacts {
   /// The app's source code, linked from the first start notice.
   static final sourceUri = Uri.parse('https://github.com/mobileKKM/mobile_kkm');
 
-  /// Where new versions of the app are published.
-  static final releasesUri = Uri.parse('https://github.com/mobileKKM/mobile_kkm/releases');
+  /// Where new versions of the app are published: the GitHub releases, unless the build names its own store with
+  /// `--dart-define=UPDATE_URL=…` (F-Droid, Google Play).
+  static final releasesUri = Uri.parse(
+    const String.fromEnvironment('UPDATE_URL', defaultValue: 'https://github.com/mobileKKM/mobile_kkm/releases'),
+  );
 
   /// Where the city explains how to get Karta Krakowska. The app cannot
   /// grant the status itself.

@@ -52,7 +52,8 @@ Builds:
     build:
       - export PUB_CACHE=$(pwd)/.pub-cache
       # As release.yml builds it: ARM only, Dart debug info left out of the APK.
-      - $$flutter$$/bin/flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/symbols
+      # The update screen leads to F-Droid, not to the GitHub releases.
+      - $$flutter$$/bin/flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/symbols --dart-define=UPDATE_URL=https://f-droid.org/packages/de.codebucket.mkkm/
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9.]+$

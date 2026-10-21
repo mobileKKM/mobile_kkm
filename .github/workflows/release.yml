@@ -132,10 +132,12 @@ jobs:
           path: build/symbols
           if-no-files-found: error
 
-      # For a manual upload to Google Play; not part of the GitHub release.
+      # For a manual upload to Google Play; not part of the GitHub release. The update screen leads to the Play Store.
       - name: Build app bundle
         if: matrix.flavor == 'gms'
-        run: flutter build appbundle --release --dart-define-from-file="$RUNNER_TEMP/dart_defines.json"
+        run: >-
+          flutter build appbundle --release --dart-define-from-file="$RUNNER_TEMP/dart_defines.json"
+          --dart-define=UPDATE_URL=https://play.google.com/store/apps/details?id=de.codebucket.mkkm
 
       - if: matrix.flavor == 'gms'
         uses: actions/upload-artifact@v5
