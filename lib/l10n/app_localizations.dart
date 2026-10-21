@@ -149,7 +149,7 @@ abstract class AppLocalizations {
   /// No description provided for @passwordsDontMatch.
   ///
   /// In en, this message translates to:
-  /// **'The passwords do not match'**
+  /// **'The passwords don’t match.'**
   String get passwordsDontMatch;
 
   /// No description provided for @passwordRuleMinLength.
@@ -227,7 +227,7 @@ abstract class AppLocalizations {
   /// No description provided for @noAccountPrompt.
   ///
   /// In en, this message translates to:
-  /// **'Don\'t have an account?'**
+  /// **'Don’t have an account?'**
   String get noAccountPrompt;
 
   /// No description provided for @registerLink.
@@ -353,7 +353,7 @@ abstract class AppLocalizations {
   /// No description provided for @noPeselCheckbox.
   ///
   /// In en, this message translates to:
-  /// **'I don\'t have a PESEL number'**
+  /// **'I don’t have a PESEL number'**
   String get noPeselCheckbox;
 
   /// No description provided for @birthDateLabel.
@@ -1541,7 +1541,7 @@ abstract class AppLocalizations {
   /// No description provided for @debugDeviceNameHint.
   ///
   /// In en, this message translates to:
-  /// **'Leave empty for this device\'s own name'**
+  /// **'Leave empty for this device’s own name'**
   String get debugDeviceNameHint;
 
   /// No description provided for @debugSave.
@@ -1625,13 +1625,13 @@ abstract class AppLocalizations {
   /// No description provided for @cardSetupWelcome.
   ///
   /// In en, this message translates to:
-  /// **'Hi {name}! Mobile tickets are stored on a virtual card, the mKKM. Your account doesn\'t have one yet.'**
+  /// **'Hi {name}! Mobile tickets are stored on a virtual card, the mKKM. Your account doesn’t have one yet.'**
   String cardSetupWelcome(String name);
 
   /// No description provided for @cardSetupWelcomeAnonymous.
   ///
   /// In en, this message translates to:
-  /// **'Mobile tickets are stored on a virtual card, the mKKM. Your account doesn\'t have one yet.'**
+  /// **'Mobile tickets are stored on a virtual card, the mKKM. Your account doesn’t have one yet.'**
   String get cardSetupWelcomeAnonymous;
 
   /// No description provided for @cardSetupBenefitTicketsTitle.
@@ -1667,7 +1667,7 @@ abstract class AppLocalizations {
   /// No description provided for @cardSetupBenefitTimeBody.
   ///
   /// In en, this message translates to:
-  /// **'Your home address and a photo. It\'s free.'**
+  /// **'Your home address and a photo. It’s free.'**
   String get cardSetupBenefitTimeBody;
 
   /// No description provided for @cardSetupCreate.
@@ -1787,7 +1787,7 @@ abstract class AppLocalizations {
   /// No description provided for @cardSetupPhotoHint.
   ///
   /// In en, this message translates to:
-  /// **'It\'s used to check that the card is yours.'**
+  /// **'It’s used to check that the card is yours.'**
   String get cardSetupPhotoHint;
 
   /// No description provided for @cardPhotoFormats.
@@ -2426,22 +2426,70 @@ abstract class AppLocalizations {
   /// **'Choose every zone you need'**
   String get buyZoneSub;
 
+  /// No description provided for @buyZoneName.
+  ///
+  /// In en, this message translates to:
+  /// **'Zone {zone}'**
+  String buyZoneName(String zone);
+
+  /// No description provided for @buyTypeDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket with the Karta Krakowska discount'**
+  String get buyTypeDiscount;
+
+  /// No description provided for @buyTypeDiscountSub.
+  ///
+  /// In en, this message translates to:
+  /// **'All or chosen KMK lines in the chosen zone'**
+  String get buyTypeDiscountSub;
+
+  /// No description provided for @buyTypeNoDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket without the Karta Krakowska discount'**
+  String get buyTypeNoDiscount;
+
+  /// No description provided for @buyTypeNoDiscountSub.
+  ///
+  /// In en, this message translates to:
+  /// **'All KMK lines in the chosen zone, plus regional trains'**
+  String get buyTypeNoDiscountSub;
+
+  /// No description provided for @fareStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get fareStandard;
+
+  /// No description provided for @fareReduced.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduced'**
+  String get fareReduced;
+
+  /// No description provided for @fareActivation.
+  ///
+  /// In en, this message translates to:
+  /// **'Activation'**
+  String get fareActivation;
+
   /// No description provided for @buyZonesNotTogether.
   ///
   /// In en, this message translates to:
-  /// **'Strefa {zones} aren’t sold together. Add Strefa {missing} to travel in both.'**
+  /// **'Zones {zones} aren’t sold together. Add Zone {missing} to travel in both.'**
   String buyZonesNotTogether(String zones, String missing);
 
   /// No description provided for @buyFareZones.
   ///
   /// In en, this message translates to:
-  /// **'{fare} is sold for Strefa {sets}.'**
+  /// **'{fare} is sold for zones {sets}.'**
   String buyFareZones(String fare, String sets);
 
   /// No description provided for @buyDiscountZones.
   ///
   /// In en, this message translates to:
-  /// **'The Karta Krakowska discount is for Strefa {zones} only.'**
+  /// **'The Karta Krakowska discount is for Zone {zones} only.'**
   String buyDiscountZones(String zones);
 
   /// No description provided for @buyZoneList.
@@ -2489,7 +2537,7 @@ abstract class AppLocalizations {
   /// No description provided for @buyAlsoZoneII.
   ///
   /// In en, this message translates to:
-  /// **'+ Strefa II'**
+  /// **'+ Zone II'**
   String get buyAlsoZoneII;
 
   /// No description provided for @buyDuration.
@@ -2891,13 +2939,13 @@ abstract class AppLocalizations {
   /// No description provided for @lineZoneI.
   ///
   /// In en, this message translates to:
-  /// **'Strefa I'**
+  /// **'Zone I'**
   String get lineZoneI;
 
   /// No description provided for @lineAlsoZoneII.
   ///
   /// In en, this message translates to:
-  /// **'also Strefa II'**
+  /// **'also Zone II'**
   String get lineAlsoZoneII;
 
   /// No description provided for @lineRemove.

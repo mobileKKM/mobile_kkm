@@ -37,7 +37,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get passwordTooWeak => 'Hasło nie spełnia wymagań';
 
   @override
-  String get passwordsDontMatch => 'Hasła nie są takie same';
+  String get passwordsDontMatch => 'Hasła nie są identyczne.';
 
   @override
   String passwordRuleMinLength(int count) {
@@ -405,7 +405,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketPinned => 'Przypięty';
 
   @override
-  String get ticketStatusProcessing => 'Trwa przetwarzanie płatności';
+  String get ticketStatusProcessing => 'Przetwarzanie płatności';
 
   @override
   String get ticketStatusAssignedElsewhere => 'Powiązany z innymi urządzeniami';
@@ -1334,6 +1334,32 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get buyZoneSub => 'Zaznacz wszystkie potrzebne strefy';
+
+  @override
+  String buyZoneName(String zone) {
+    return 'Strefa $zone';
+  }
+
+  @override
+  String get buyTypeDiscount => 'Bilet ze zniżką Karty Krakowskiej';
+
+  @override
+  String get buyTypeDiscountSub => 'Wszystkie lub wybrane linie KMK w wybranej strefie';
+
+  @override
+  String get buyTypeNoDiscount => 'Bilet bez zniżki Karty Krakowskiej';
+
+  @override
+  String get buyTypeNoDiscountSub => 'Wszystkie linie KMK w wybranej strefie oraz Koleje Regionalne';
+
+  @override
+  String get fareStandard => 'Normalny';
+
+  @override
+  String get fareReduced => 'Ulgowy';
+
+  @override
+  String get fareActivation => 'Aktywizujący';
 
   @override
   String buyZonesNotTogether(String zones, String missing) {

@@ -153,11 +153,20 @@ class SalesRules {
   }
 
   /// The zones [option] covers.
-  static Set<int> zonesOf(SalesLineOption option) => {
-    if ((option.urbanLineQty ?? -1) >= 0) 0,
-    if ((option.suburbanLineQty ?? -1) >= 0) 1,
-    if ((option.suburban2LineQty ?? -1) >= 0) 2,
+  static Set<int> zonesOf(SalesLineOption option) =>
+      zonesFromQty(option.urbanLineQty, option.suburbanLineQty, option.suburban2LineQty);
+
+  /// The zones a product covers, from its line counts per zone (≥ 0 means
+  /// covered, -1 not). The configuration's products and the line-scope
+  /// dictionary carry the same three fields.
+  static Set<int> zonesFromQty(int? urban, int? suburban, int? suburban2) => {
+    if ((urban ?? -1) >= 0) 0,
+    if ((suburban ?? -1) >= 0) 1,
+    if ((suburban2 ?? -1) >= 0) 2,
   };
+
+  /// "II": the zone's numeral.
+  static String numeral(int zone) => _numerals[zone];
 
   static bool _matches(SpecialTransportLine type, bool? isNetwork, bool? isMetropolitan) =>
       (type.isNetwork == true && isNetwork == true) || (type.isMetropolitan == true && isMetropolitan == true);
@@ -537,27 +546,6 @@ class SalesRules {
       lines: product.selectableLines == true ? selection.lines : const [],
       specialTransportLine: selection.type,
     );
-  }
-
-  /// "Strefa II": the zone part of the description of the product covering
-  /// only that zone ("Wszystkie linie - Strefa II"), else "Strefa II".
-  String zoneLabel(int zone) {
-    for (final option in config.ticketNumberOfLines) {
-      if (_sameSet(zonesOf(option), {zone})) {
-        final parts = (option.description ?? '').split(' - ');
-        if (parts.length >= 2 && parts.last.trim().isNotEmpty) {
-          return parts.last.trim();
-        }
-      }
-    }
-    return 'Strefa ${_numerals[zone]}';
-  }
-
-  /// "II": [zoneLabel] without its "Strefa", for joined sets ("I+II").
-  String zoneNumeral(int zone) {
-    final label = zoneLabel(zone);
-    const prefix = 'Strefa ';
-    return label.startsWith(prefix) ? label.substring(prefix.length) : label;
   }
 
   static DateTime? _dayOf(DateTime? value) {

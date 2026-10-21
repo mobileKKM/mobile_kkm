@@ -47,8 +47,8 @@ void main() {
     expect(find.text('Chosen 0 of 1'), findsOneWidget);
 
     await _search(tester, '5');
-    expect(find.text('Tram · Strefa I'), findsNWidgets(2));
-    expect(find.text('Bus · also Strefa II'), findsOneWidget);
+    expect(find.text('Tram · Zone I'), findsNWidgets(2));
+    expect(find.text('Bus · also Zone II'), findsOneWidget);
 
     await tester.tap(find.text('52'));
     await tester.pump();

@@ -14,20 +14,47 @@ String joinList(AppLocalizations l10n, List<String> items) {
   return l10n.buyZoneList(items.sublist(0, items.length - 1).join(', '), items.last);
 }
 
-/// "I+II+III": a set of zones by their numerals.
-String zoneSet(SalesRules rules, Iterable<int> zones) => [for (final zone in zones) rules.zoneNumeral(zone)].join('+');
+/// "Zone II" / "Strefa II": a zone tile.
+String zoneName(AppLocalizations l10n, int zone) => l10n.buyZoneName(SalesRules.numeral(zone));
+
+/// "I+II+III": a set of zones by their numerals, in order.
+String zoneSet(Iterable<int> zones) => [for (final zone in zones.toList()..sort()) SalesRules.numeral(zone)].join('+');
+
+/// A fare by its kind code: the known ones translated, any other as the
+/// server names it ([fallback]).
+String fareLabel(AppLocalizations l10n, int? code, String? fallback) => switch (code) {
+  2 => l10n.fareStandard,
+  14 => l10n.fareReduced,
+  17 => l10n.fareActivation,
+  _ => fallback ?? '',
+};
+
+/// A ticket type's title: the discount (network) and no-discount
+/// (metropolitan) types translated, any other as the server names it.
+String typeTitle(AppLocalizations l10n, SpecialTransportLine type) => switch (type) {
+  SpecialTransportLine(isNetwork: true) => l10n.buyTypeDiscount,
+  SpecialTransportLine(isMetropolitan: true) => l10n.buyTypeNoDiscount,
+  _ => type.buttonName ?? type.name ?? '',
+};
+
+/// A ticket type's line under the title, as [typeTitle].
+String? typeSub(AppLocalizations l10n, SpecialTransportLine type) => switch (type) {
+  SpecialTransportLine(isNetwork: true) => l10n.buyTypeDiscountSub,
+  SpecialTransportLine(isMetropolitan: true) => l10n.buyTypeNoDiscountSub,
+  _ => type.description,
+};
 
 /// The text of a note under the zone tiles.
-String zoneNoteText(AppLocalizations l10n, SalesRules rules, ZoneNote note) => switch (note) {
+String zoneNoteText(AppLocalizations l10n, ZoneNote note) => switch (note) {
   UnsoldZonesNote(:final zones, :final missing) => l10n.buyZonesNotTogether(
-    joinList(l10n, [for (final zone in zones) rules.zoneNumeral(zone)]),
-    joinList(l10n, [for (final zone in missing) rules.zoneNumeral(zone)]),
+    joinList(l10n, [for (final zone in zones) SalesRules.numeral(zone)]),
+    joinList(l10n, [for (final zone in missing) SalesRules.numeral(zone)]),
   ),
   FareZonesNote(:final kind, :final sets) => l10n.buyFareZones(
-    kind.description ?? '',
-    joinList(l10n, [for (final set in sets) zoneSet(rules, set)]),
+    fareLabel(l10n, kind.code, kind.description),
+    joinList(l10n, [for (final set in sets) zoneSet(set)]),
   ),
-  DiscountNote(:final zones) => l10n.buyDiscountZones(zoneSet(rules, zones)),
+  DiscountNote(:final zones) => l10n.buyDiscountZones(zoneSet(zones)),
 };
 
 /// A duration chip: the period's own description when it asks for it

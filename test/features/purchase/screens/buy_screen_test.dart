@@ -91,14 +91,14 @@ void main() {
     expect(find.text('Choose a ticket type'), findsOneWidget);
     expect(_continue(tester).onPressed, isNull);
 
-    await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+    await tapVisible(tester, find.text('Ticket with the Karta Krakowska discount'));
     await tester.pumpAndSettle();
     expect(find.text('Fare'), findsOneWidget);
     expect(find.text('Choose a fare'), findsOneWidget);
 
-    await tester.tap(find.text('Normalny'));
+    await tester.tap(find.text('Standard'));
     await tester.pumpAndSettle();
-    expect(find.text('The Karta Krakowska discount is for Strefa I only.'), findsOneWidget);
+    expect(find.text('The Karta Krakowska discount is for Zone I only.'), findsOneWidget);
     expect(find.text('Choose the lines'), findsOneWidget);
 
     await tapVisible(tester, find.widgetWithText(FilterChip, '1 line'));
@@ -144,30 +144,30 @@ void main() {
     expect(find.text('Ticket type'), findsNothing);
     expect(find.text('Fare'), findsOneWidget);
 
-    await tester.tap(find.text('Normalny'));
+    await tester.tap(find.text('Standard'));
     await tester.pumpAndSettle();
     expect(find.text('Choose every zone you need'), findsOneWidget);
-    await tester.tap(find.text('Strefa I'));
-    await tester.tap(find.text('Strefa III'));
+    await tester.tap(find.text('Zone I'));
+    await tester.tap(find.text('Zone III'));
     await tester.pumpAndSettle();
-    expect(find.text('Strefa I and III aren’t sold together. Add Strefa II to travel in both.'), findsOneWidget);
+    expect(find.text('Zones I and III aren’t sold together. Add Zone II to travel in both.'), findsOneWidget);
     expect(find.text('Choose where you travel'), findsOneWidget);
 
-    await tester.tap(find.text('Strefa III'));
-    await tester.tap(find.text('Strefa I'));
-    await tester.tap(find.text('Aktywizujący'));
-    await tester.tap(find.text('Strefa II'));
+    await tester.tap(find.text('Zone III'));
+    await tester.tap(find.text('Zone I'));
+    await tester.tap(find.text('Activation'));
+    await tester.tap(find.text('Zone II'));
     await tester.pumpAndSettle();
-    expect(find.text('Aktywizujący is sold for Strefa I, I+II and I+II+III.'), findsOneWidget);
+    expect(find.text('Activation is sold for zones I, I+II and I+II+III.'), findsOneWidget);
   });
 
   testWidgets('the price is asked once after quick changes; a refusal shows above the bar', (tester) async {
     final adapter = _adapter(config: 'sales_config')
       ..reply('POST', _calculate, 400, {'message': 'Można posiadać tylko 2 aktywne bilety w tym samym czasie.'});
     await _open(tester, adapter);
-    await tester.tap(find.text('Normalny'));
+    await tester.tap(find.text('Standard'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Strefa I'));
+    await tester.tap(find.text('Zone I'));
     await tester.pumpAndSettle();
     // Taps within the debounce: a settle would let it run out in between.
     await tester.ensureVisible(find.widgetWithText(FilterChip, '3 months'));
@@ -190,9 +190,9 @@ void main() {
         'fields': {'ticketKindCode': 'x'},
       });
     await _open(tester, adapter);
-    await tester.tap(find.text('Normalny'));
+    await tester.tap(find.text('Standard'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Strefa I'));
+    await tester.tap(find.text('Zone I'));
     await tester.pumpAndSettle();
     await tapVisible(tester, find.widgetWithText(FilterChip, '1 month'));
     await _priced(tester);
@@ -282,9 +282,9 @@ void main() {
         ],
       });
     await _open(tester, adapter);
-    await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+    await tapVisible(tester, find.text('Ticket with the Karta Krakowska discount'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Normalny'));
+    await tester.tap(find.text('Standard'));
     await tester.pumpAndSettle();
     expect(find.widgetWithText(FilterChip, '1 line'), findsOneWidget);
 
@@ -315,9 +315,9 @@ void main() {
       final app = await _open(tester, _adapter());
       tester.view.physicalSize = const Size(1080, 1260);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+      await tapVisible(tester, find.text('Ticket with the Karta Krakowska discount'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Normalny'));
+      await tester.tap(find.text('Standard'));
       await tester.pumpAndSettle();
       expect(app.location, Routes.buy);
 
@@ -341,9 +341,9 @@ void main() {
       await _open(tester, _adapter());
       tester.view.physicalSize = const Size(1080, 1260);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+      await tapVisible(tester, find.text('Ticket with the Karta Krakowska discount'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Normalny'));
+      await tester.tap(find.text('Standard'));
       await tester.pumpAndSettle();
 
       // One line: no new section, but Add line appears below the chips.
@@ -358,7 +358,7 @@ void main() {
 
     testWidgets('not at all when it is already in view', (tester) async {
       await _open(tester, _adapter());
-      await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+      await tapVisible(tester, find.text('Ticket with the Karta Krakowska discount'));
       await tester.pumpAndSettle();
       expect(_list(tester).pixels, 0);
     });
@@ -367,9 +367,9 @@ void main() {
       await _open(tester, _adapter());
       tester.view.physicalSize = const Size(1080, 1260);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+      await tapVisible(tester, find.text('Ticket with the Karta Krakowska discount'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Normalny'));
+      await tester.tap(find.text('Standard'));
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.widgetWithText(FilterChip, 'All lines'));
       await tester.pumpAndSettle();

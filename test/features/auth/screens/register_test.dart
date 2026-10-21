@@ -5,7 +5,7 @@ import 'package:mobile_kkm/features/auth/constants/information_obligation.dart';
 import '../../../support/fake_adapter.dart';
 import '../../../support/harness.dart';
 
-const _noPesel = "I don't have a PESEL number";
+const _noPesel = 'I don’t have a PESEL number';
 const _consent = 'Akceptuję regulamin';
 
 FakeAdapter _adapter() => FakeAdapter()
@@ -233,7 +233,7 @@ void main() {
     await _submit(tester);
 
     expect(find.text('The e-mail addresses do not match'), findsOneWidget);
-    expect(find.text('The passwords do not match'), findsOneWidget);
+    expect(find.text('The passwords don’t match.'), findsOneWidget);
     expect(_registerRequests(adapter), isEmpty);
   });
 

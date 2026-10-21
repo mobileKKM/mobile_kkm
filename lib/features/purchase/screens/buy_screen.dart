@@ -370,7 +370,7 @@ class _FormState extends ConsumerState<_Form> {
           children: [
             heading(PurchaseSection.type, l10n.buyType),
             TypeRadioGroup(
-              options: [for (final t in rules.types) (title: t.buttonName ?? t.name ?? '', sub: t.description)],
+              options: [for (final t in rules.types) (title: typeTitle(l10n, t), sub: typeSub(l10n, t))],
               selected: typeIndex < 0 ? null : typeIndex,
               onSelect: (index) => controller.setType(rules.types[index].specialTransportLine!),
             ),
@@ -384,7 +384,7 @@ class _FormState extends ConsumerState<_Form> {
             children: [
               for (final k in rules.kinds)
                 ChoiceTile(
-                  label: k.description ?? '',
+                  label: fareLabel(l10n, k.code, k.description),
                   selected: k.code == kind,
                   enabled: rules.kindAvailable(type, k.code),
                   onTap: () => controller.setKind(k.code!),
@@ -401,7 +401,7 @@ class _FormState extends ConsumerState<_Form> {
             children: [
               for (var zone = 0; zone < SalesRules.zoneCount; zone++)
                 ChoiceTile(
-                  label: rules.zoneLabel(zone),
+                  label: zoneName(l10n, zone),
                   selected: zones.contains(zone),
                   enabled: rules.zoneAvailable(type, kind, zone),
                   exclusive: false,
@@ -416,14 +416,14 @@ class _FormState extends ConsumerState<_Form> {
           for (final note in rules.notes(s)) ...[
             const SizedBox(height: 12),
             switch (note) {
-              DiscountNote() => PurchaseCaption(icon: Symbols.percent_rounded, text: zoneNoteText(l10n, rules, note)),
+              DiscountNote() => PurchaseCaption(icon: Symbols.percent_rounded, text: zoneNoteText(l10n, note)),
               UnsoldZonesNote() => MessageBanner(
-                zoneNoteText(l10n, rules, note),
+                zoneNoteText(l10n, note),
                 kind: BannerKind.info,
                 icon: Symbols.info_rounded,
               ),
               FareZonesNote() => MessageBanner(
-                zoneNoteText(l10n, rules, note),
+                zoneNoteText(l10n, note),
                 kind: BannerKind.info,
                 icon: Symbols.block_rounded,
               ),

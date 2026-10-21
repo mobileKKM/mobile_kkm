@@ -37,7 +37,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordTooWeak => 'The password does not meet the requirements';
 
   @override
-  String get passwordsDontMatch => 'The passwords do not match';
+  String get passwordsDontMatch => 'The passwords don’t match.';
 
   @override
   String passwordRuleMinLength(int count) {
@@ -103,7 +103,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPasswordLink => 'Forgot password?';
 
   @override
-  String get noAccountPrompt => 'Don\'t have an account?';
+  String get noAccountPrompt => 'Don’t have an account?';
 
   @override
   String get registerLink => 'Create account';
@@ -166,7 +166,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peselInvalid => 'Enter a valid PESEL number';
 
   @override
-  String get noPeselCheckbox => 'I don\'t have a PESEL number';
+  String get noPeselCheckbox => 'I don’t have a PESEL number';
 
   @override
   String get birthDateLabel => 'Date of birth';
@@ -842,7 +842,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debugDeviceName => 'Device name';
 
   @override
-  String get debugDeviceNameHint => 'Leave empty for this device\'s own name';
+  String get debugDeviceNameHint => 'Leave empty for this device’s own name';
 
   @override
   String get debugSave => 'Save';
@@ -888,12 +888,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String cardSetupWelcome(String name) {
-    return 'Hi $name! Mobile tickets are stored on a virtual card, the mKKM. Your account doesn\'t have one yet.';
+    return 'Hi $name! Mobile tickets are stored on a virtual card, the mKKM. Your account doesn’t have one yet.';
   }
 
   @override
   String get cardSetupWelcomeAnonymous =>
-      'Mobile tickets are stored on a virtual card, the mKKM. Your account doesn\'t have one yet.';
+      'Mobile tickets are stored on a virtual card, the mKKM. Your account doesn’t have one yet.';
 
   @override
   String get cardSetupBenefitTicketsTitle => 'Buy and keep tickets in the app';
@@ -911,7 +911,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardSetupBenefitTimeTitle => 'Takes about a minute';
 
   @override
-  String get cardSetupBenefitTimeBody => 'Your home address and a photo. It\'s free.';
+  String get cardSetupBenefitTimeBody => 'Your home address and a photo. It’s free.';
 
   @override
   String get cardSetupCreate => 'Create mKKM card';
@@ -974,7 +974,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardSetupPhotoTitle => 'Add your photo';
 
   @override
-  String get cardSetupPhotoHint => 'It\'s used to check that the card is yours.';
+  String get cardSetupPhotoHint => 'It’s used to check that the card is yours.';
 
   @override
   String get cardPhotoFormats => 'JPG, PNG or WebP, up to 5 MB';
@@ -1316,18 +1316,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buyZoneSub => 'Choose every zone you need';
 
   @override
+  String buyZoneName(String zone) {
+    return 'Zone $zone';
+  }
+
+  @override
+  String get buyTypeDiscount => 'Ticket with the Karta Krakowska discount';
+
+  @override
+  String get buyTypeDiscountSub => 'All or chosen KMK lines in the chosen zone';
+
+  @override
+  String get buyTypeNoDiscount => 'Ticket without the Karta Krakowska discount';
+
+  @override
+  String get buyTypeNoDiscountSub => 'All KMK lines in the chosen zone, plus regional trains';
+
+  @override
+  String get fareStandard => 'Standard';
+
+  @override
+  String get fareReduced => 'Reduced';
+
+  @override
+  String get fareActivation => 'Activation';
+
+  @override
   String buyZonesNotTogether(String zones, String missing) {
-    return 'Strefa $zones aren’t sold together. Add Strefa $missing to travel in both.';
+    return 'Zones $zones aren’t sold together. Add Zone $missing to travel in both.';
   }
 
   @override
   String buyFareZones(String fare, String sets) {
-    return '$fare is sold for Strefa $sets.';
+    return '$fare is sold for zones $sets.';
   }
 
   @override
   String buyDiscountZones(String zones) {
-    return 'The Karta Krakowska discount is for Strefa $zones only.';
+    return 'The Karta Krakowska discount is for Zone $zones only.';
   }
 
   @override
@@ -1367,7 +1393,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buyAddLine => 'Add line';
 
   @override
-  String get buyAlsoZoneII => '+ Strefa II';
+  String get buyAlsoZoneII => '+ Zone II';
 
   @override
   String get buyDuration => 'Duration';
@@ -1599,10 +1625,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lineDone => 'Done';
 
   @override
-  String get lineZoneI => 'Strefa I';
+  String get lineZoneI => 'Zone I';
 
   @override
-  String get lineAlsoZoneII => 'also Strefa II';
+  String get lineAlsoZoneII => 'also Zone II';
 
   @override
   String lineRemove(String line) {

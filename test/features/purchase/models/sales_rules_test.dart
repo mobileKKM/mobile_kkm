@@ -269,9 +269,18 @@ void main() {
       expect(notPrivileged.notes(notPrivileged.reconcile(select(zones: {0, 2}))), isEmpty);
     });
 
-    test('zone labels come from the descriptions', () {
-      expect([for (var z = 0; z < 3; z++) privileged.zoneLabel(z)], ['Strefa I', 'Strefa II', 'Strefa III']);
-      expect([for (var z = 0; z < 3; z++) privileged.zoneNumeral(z)], ['I', 'II', 'III']);
+    test('zones come from the line counts, not the description', () {
+      expect([for (var z = 0; z < 3; z++) SalesRules.numeral(z)], ['I', 'II', 'III']);
+      expect(SalesRules.zonesFromQty(0, -1, 0), {0, 2});
+      expect(SalesRules.zonesFromQty(1, null, -1), {0});
+      const option = SalesLineOption(
+        code: 63,
+        description: 'Bilet',
+        urbanLineQty: 0,
+        suburbanLineQty: 0,
+        suburban2LineQty: 0,
+      );
+      expect(SalesRules.zonesOf(option), {0, 1, 2});
     });
   });
 

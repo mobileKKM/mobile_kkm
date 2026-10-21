@@ -28,7 +28,7 @@ Future<void> _pump(WidgetTester tester, Widget child) => tester.pumpWidget(
 );
 
 String _note(AppLocalizations l10n, SalesRules rules, PurchaseSelection selection) =>
-    zoneNoteText(l10n, rules, rules.notes(rules.reconcile(selection)).single);
+    zoneNoteText(l10n, rules.notes(rules.reconcile(selection)).single);
 
 void main() {
   setUpAll(initializeDateFormatting);
@@ -38,7 +38,7 @@ void main() {
       const selection = PurchaseSelection(kind: 2, zones: {0, 2});
       expect(
         _note(en, notPrivileged, selection),
-        'Strefa I and III aren’t sold together. Add Strefa II to travel in both.',
+        'Zones I and III aren’t sold together. Add Zone II to travel in both.',
       );
       expect(
         _note(pl, notPrivileged, selection),
@@ -48,15 +48,43 @@ void main() {
 
     test('Aktywizujący outside its zones', () {
       const selection = PurchaseSelection(kind: 17, zones: {1});
-      expect(_note(en, notPrivileged, selection), 'Aktywizujący is sold for Strefa I, I+II and I+II+III.');
+      expect(_note(en, notPrivileged, selection), 'Activation is sold for zones I, I+II and I+II+III.');
       expect(_note(pl, notPrivileged, selection), 'Bilet Aktywizujący jest sprzedawany na Strefy I, I+II i I+II+III.');
     });
 
     test('the discount', () {
       const selection = PurchaseSelection(type: '1001', kind: 2);
-      expect(_note(en, privileged, selection), 'The Karta Krakowska discount is for Strefa I only.');
+      expect(_note(en, privileged, selection), 'The Karta Krakowska discount is for Zone I only.');
       expect(_note(pl, privileged, selection), 'Zniżka Karty Krakowskiej obejmuje tylko Strefę I.');
     });
+  });
+
+  test('option labels are translated; unknown ones keep the server text', () {
+    expect([for (var z = 0; z < 3; z++) zoneName(en, z)], ['Zone I', 'Zone II', 'Zone III']);
+    expect([for (var z = 0; z < 3; z++) zoneName(pl, z)], ['Strefa I', 'Strefa II', 'Strefa III']);
+    expect(zoneSet({2, 0, 1}), 'I+II+III');
+    expect(
+      [for (final k in privileged.kinds) fareLabel(en, k.code, k.description)],
+      ['Standard', 'Reduced', 'Activation'],
+    );
+    expect(
+      [for (final k in privileged.kinds) fareLabel(pl, k.code, k.description)],
+      ['Normalny', 'Ulgowy', 'Aktywizujący'],
+    );
+    expect(fareLabel(en, 99, 'Socjalny'), 'Socjalny');
+    expect(
+      [for (final t in privileged.types) typeTitle(en, t)],
+      ['Ticket with the Karta Krakowska discount', 'Ticket without the Karta Krakowska discount'],
+    );
+    expect(
+      [for (final t in privileged.types) typeSub(pl, t)],
+      [
+        'Wszystkie lub wybrane linie KMK w wybranej strefie',
+        'Wszystkie linie KMK w wybranej strefie oraz Koleje Regionalne',
+      ],
+    );
+    const other = SpecialTransportLine(specialTransportLine: '1009', buttonName: 'Inny', description: 'Opis');
+    expect((typeTitle(en, other), typeSub(en, other)), ('Inny', 'Opis'));
   });
 
   test('period and line labels', () {

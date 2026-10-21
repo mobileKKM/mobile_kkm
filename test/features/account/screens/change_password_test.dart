@@ -68,12 +68,12 @@ void main() {
     await tester.tap(field('Repeat new password'));
     await tester.enterText(field('Repeat new password'), 'Krakow');
     await tester.pump();
-    expect(find.text('The passwords do not match'), findsNothing);
+    expect(find.text('The passwords don’t match.'), findsNothing);
 
     await tester.tap(field('Current password'));
     await tester.pump();
 
-    expect(find.text('The passwords do not match'), findsOneWidget);
+    expect(find.text('The passwords don’t match.'), findsOneWidget);
   });
 
   testWidgets('changing it leads back to Account, still signed in', (tester) async {
