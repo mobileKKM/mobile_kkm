@@ -25,7 +25,7 @@
   "retry": "Try again",
 
   "loginTitle": "Sign in",
-  "loginSubtitle": "Use your EKP passenger account",
+  "loginSubtitle": "Use your eKP passenger account",
   "loginSubmit": "Sign in",
   "forgotPasswordLink": "Forgot password?",
   "noAccountPrompt": "Don’t have an account?",
@@ -85,7 +85,7 @@
   "continueToLogin": "Go to sign in",
 
   "updateRequiredTitle": "Update required",
-  "updateRequiredBody": "This version of mobileKKM is no longer supported by the EKP service. Install the latest version to keep using the app.",
+  "updateRequiredBody": "This version of mobileKKM is no longer supported by the eKP service. Install the latest version to keep using the app.",
   "updateRequiredAction": "Get the latest version",
 
   "navHome": "Home",
@@ -199,7 +199,7 @@
   "accountSectionSecurity": "Security",
   "accountEdit": "Edit account",
   "accountRegulations": "Regulations",
-  "regulationsAccount": "EKP account regulations",
+  "regulationsAccount": "eKP account regulations",
   "regulationsPurchase": "Online ticket sales regulations",
   "regulationsSubscription": "Half-year ticket regulations",
   "regulationsLoadError": "The regulations could not be loaded.",
@@ -270,7 +270,7 @@
   "registerSubmitting": "Creating account…",
   "resetBody": "Choose a new password for your account.",
   "under16Title": "Finish on the website",
-  "under16Body": "People under 16 can only register on the EKP website. It opens with your details filled in.",
+  "under16Body": "People under 16 can only register on the eKP website. It opens with your details filled in.",
   "under16Action": "Open website",
 
   "logoutConfirmTitle": "Sign out?",
@@ -553,13 +553,13 @@
   "lineRemove": "Remove line {line}",
   "@lineRemove": {"placeholders": {"line": {"type": "String"}}},
   "firstStartTitle": "Before you start",
-  "firstStartBody": "mobileKKM is a community-made app for Kraków’s EKP ticket system.",
+  "firstStartBody": "mobileKKM is a community-made app for Kraków’s eKP ticket system.",
   "firstStartUnofficialTitle": "Unofficial",
   "firstStartUnofficialBody": "Not made by or affiliated with ZTP or MPK. The official app is mobilna KKM.",
   "firstStartOpenSourceTitle": "Open source",
-  "firstStartOpenSourceBody": "Licensed under GPL-3.0; anyone can read the code on GitHub. Your login goes only to the EKP service.",
+  "firstStartOpenSourceBody": "Licensed under GPL-3.0; anyone can read the code on GitHub. Your login goes only to the eKP service.",
   "firstStartNoWarrantyTitle": "No warranty",
-  "firstStartNoWarrantyBody": "Provided as is. The developer isn’t liable for failed purchases, fines or issues with your EKP account.",
+  "firstStartNoWarrantyBody": "Provided as is. The developer isn’t liable for failed purchases, fines or issues with your eKP account.",
   "firstStartAccept": "I understand",
   "viewSourceCode": "View source code"
 }

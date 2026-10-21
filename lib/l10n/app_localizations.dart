@@ -209,7 +209,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Use your EKP passenger account'**
+  /// **'Use your eKP passenger account'**
   String get loginSubtitle;
 
   /// No description provided for @loginSubmit.
@@ -521,7 +521,7 @@ abstract class AppLocalizations {
   /// No description provided for @updateRequiredBody.
   ///
   /// In en, this message translates to:
-  /// **'This version of mobileKKM is no longer supported by the EKP service. Install the latest version to keep using the app.'**
+  /// **'This version of mobileKKM is no longer supported by the eKP service. Install the latest version to keep using the app.'**
   String get updateRequiredBody;
 
   /// No description provided for @updateRequiredAction.
@@ -1139,7 +1139,7 @@ abstract class AppLocalizations {
   /// No description provided for @regulationsAccount.
   ///
   /// In en, this message translates to:
-  /// **'EKP account regulations'**
+  /// **'eKP account regulations'**
   String get regulationsAccount;
 
   /// No description provided for @regulationsPurchase.
@@ -1463,7 +1463,7 @@ abstract class AppLocalizations {
   /// No description provided for @under16Body.
   ///
   /// In en, this message translates to:
-  /// **'People under 16 can only register on the EKP website. It opens with your details filled in.'**
+  /// **'People under 16 can only register on the eKP website. It opens with your details filled in.'**
   String get under16Body;
 
   /// No description provided for @under16Action.
@@ -2957,7 +2957,7 @@ abstract class AppLocalizations {
   /// No description provided for @firstStartBody.
   ///
   /// In en, this message translates to:
-  /// **'mobileKKM is a community-made app for Kraków’s EKP ticket system.'**
+  /// **'mobileKKM is a community-made app for Kraków’s eKP ticket system.'**
   String get firstStartBody;
 
   /// No description provided for @firstStartUnofficialTitle.
@@ -2981,7 +2981,7 @@ abstract class AppLocalizations {
   /// No description provided for @firstStartOpenSourceBody.
   ///
   /// In en, this message translates to:
-  /// **'Licensed under GPL-3.0; anyone can read the code on GitHub. Your login goes only to the EKP service.'**
+  /// **'Licensed under GPL-3.0; anyone can read the code on GitHub. Your login goes only to the eKP service.'**
   String get firstStartOpenSourceBody;
 
   /// No description provided for @firstStartNoWarrantyTitle.
@@ -2993,7 +2993,7 @@ abstract class AppLocalizations {
   /// No description provided for @firstStartNoWarrantyBody.
   ///
   /// In en, this message translates to:
-  /// **'Provided as is. The developer isn’t liable for failed purchases, fines or issues with your EKP account.'**
+  /// **'Provided as is. The developer isn’t liable for failed purchases, fines or issues with your eKP account.'**
   String get firstStartNoWarrantyBody;
 
   /// No description provided for @firstStartAccept.

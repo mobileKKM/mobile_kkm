@@ -132,7 +132,7 @@ void main() {
 
     await tapVisible(tester, find.widgetWithText(GroupRow, 'Regulations'));
     expect(find.byType(LinkTile), findsNWidgets(3));
-    await tester.tap(find.text('EKP account regulations'));
+    await tester.tap(find.text('eKP account regulations'));
     await tester.pumpAndSettle();
     await _follow(tester, 'Regulations', 'Online ticket sales regulations');
     await _follow(tester, 'Regulations', 'Half-year ticket regulations');
@@ -154,7 +154,7 @@ void main() {
     await tester.tap(find.text('Try again'));
     await tester.pumpAndSettle();
 
-    expect(find.text('EKP account regulations'), findsOneWidget);
+    expect(find.text('eKP account regulations'), findsOneWidget);
   });
 
   testWidgets('the contact rows lead to MPK and to the developer', (tester) async {

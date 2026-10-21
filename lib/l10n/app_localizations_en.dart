@@ -94,7 +94,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginTitle => 'Sign in';
 
   @override
-  String get loginSubtitle => 'Use your EKP passenger account';
+  String get loginSubtitle => 'Use your eKP passenger account';
 
   @override
   String get loginSubmit => 'Sign in';
@@ -257,7 +257,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateRequiredBody =>
-      'This version of mobileKKM is no longer supported by the EKP service. Install the latest version to keep using the app.';
+      'This version of mobileKKM is no longer supported by the eKP service. Install the latest version to keep using the app.';
 
   @override
   String get updateRequiredAction => 'Get the latest version';
@@ -590,7 +590,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountRegulations => 'Regulations';
 
   @override
-  String get regulationsAccount => 'EKP account regulations';
+  String get regulationsAccount => 'eKP account regulations';
 
   @override
   String get regulationsPurchase => 'Online ticket sales regulations';
@@ -801,7 +801,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get under16Body =>
-      'People under 16 can only register on the EKP website. It opens with your details filled in.';
+      'People under 16 can only register on the eKP website. It opens with your details filled in.';
 
   @override
   String get under16Action => 'Open website';
@@ -1634,7 +1634,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firstStartTitle => 'Before you start';
 
   @override
-  String get firstStartBody => 'mobileKKM is a community-made app for Kraków’s EKP ticket system.';
+  String get firstStartBody => 'mobileKKM is a community-made app for Kraków’s eKP ticket system.';
 
   @override
   String get firstStartUnofficialTitle => 'Unofficial';
@@ -1647,14 +1647,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firstStartOpenSourceBody =>
-      'Licensed under GPL-3.0; anyone can read the code on GitHub. Your login goes only to the EKP service.';
+      'Licensed under GPL-3.0; anyone can read the code on GitHub. Your login goes only to the eKP service.';
 
   @override
   String get firstStartNoWarrantyTitle => 'No warranty';
 
   @override
   String get firstStartNoWarrantyBody =>
-      'Provided as is. The developer isn’t liable for failed purchases, fines or issues with your EKP account.';
+      'Provided as is. The developer isn’t liable for failed purchases, fines or issues with your eKP account.';
 
   @override
   String get firstStartAccept => 'I understand';

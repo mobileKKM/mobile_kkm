@@ -107,7 +107,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get loginTitle => 'Logowanie';
 
   @override
-  String get loginSubtitle => 'Użyj swojego konta pasażera EKP';
+  String get loginSubtitle => 'Użyj swojego konta pasażera eKP';
 
   @override
   String get loginSubmit => 'Zaloguj się';
@@ -269,7 +269,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get updateRequiredBody =>
-      'Ta wersja mobileKKM nie jest już obsługiwana przez system EKP. Zainstaluj najnowszą wersję, aby dalej korzystać z aplikacji.';
+      'Ta wersja mobileKKM nie jest już obsługiwana przez system eKP. Zainstaluj najnowszą wersję, aby dalej korzystać z aplikacji.';
 
   @override
   String get updateRequiredAction => 'Pobierz najnowszą wersję';
@@ -820,7 +820,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get under16Body =>
-      'Osoby poniżej 16 roku życia mogą założyć konto tylko na stronie EKP. Otworzy się z uzupełnionymi danymi.';
+      'Osoby poniżej 16 roku życia mogą założyć konto tylko na stronie eKP. Otworzy się z uzupełnionymi danymi.';
 
   @override
   String get under16Action => 'Otwórz stronę';
@@ -1676,7 +1676,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get firstStartBody =>
-      'mobileKKM to aplikacja tworzona przez społeczność dla krakowskiego systemu biletowego EKP.';
+      'mobileKKM to aplikacja tworzona przez społeczność dla krakowskiego systemu biletowego eKP.';
 
   @override
   String get firstStartUnofficialTitle => 'Nieoficjalna';
@@ -1690,14 +1690,14 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get firstStartOpenSourceBody =>
-      'Licencja GPL-3.0, kod jest publicznie dostępny na GitHubie. Dane logowania trafiają tylko do systemu EKP.';
+      'Licencja GPL-3.0, kod jest publicznie dostępny na GitHubie. Dane logowania trafiają tylko do systemu eKP.';
 
   @override
   String get firstStartNoWarrantyTitle => 'Bez gwarancji';
 
   @override
   String get firstStartNoWarrantyBody =>
-      'Udostępniana w obecnej postaci. Twórca nie odpowiada za nieudane zakupy, mandaty ani problemy z kontem EKP.';
+      'Udostępniana w obecnej postaci. Twórca nie odpowiada za nieudane zakupy, mandaty ani problemy z kontem eKP.';
 
   @override
   String get firstStartAccept => 'Rozumiem';

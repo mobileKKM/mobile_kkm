@@ -21,7 +21,7 @@
   "retry": "Spróbuj ponownie",
 
   "loginTitle": "Logowanie",
-  "loginSubtitle": "Użyj swojego konta pasażera EKP",
+  "loginSubtitle": "Użyj swojego konta pasażera eKP",
   "loginSubmit": "Zaloguj się",
   "forgotPasswordLink": "Nie pamiętasz hasła?",
   "noAccountPrompt": "Nie masz konta?",
@@ -79,7 +79,7 @@
   "continueToLogin": "Przejdź do logowania",
 
   "updateRequiredTitle": "Wymagana aktualizacja",
-  "updateRequiredBody": "Ta wersja mobileKKM nie jest już obsługiwana przez system EKP. Zainstaluj najnowszą wersję, aby dalej korzystać z aplikacji.",
+  "updateRequiredBody": "Ta wersja mobileKKM nie jest już obsługiwana przez system eKP. Zainstaluj najnowszą wersję, aby dalej korzystać z aplikacji.",
   "updateRequiredAction": "Pobierz najnowszą wersję",
 
   "navHome": "Start",
@@ -256,7 +256,7 @@
   "registerSubmitting": "Zakładamy konto…",
   "resetBody": "Wybierz nowe hasło do swojego konta.",
   "under16Title": "Dokończ na stronie",
-  "under16Body": "Osoby poniżej 16 roku życia mogą założyć konto tylko na stronie EKP. Otworzy się z uzupełnionymi danymi.",
+  "under16Body": "Osoby poniżej 16 roku życia mogą założyć konto tylko na stronie eKP. Otworzy się z uzupełnionymi danymi.",
   "under16Action": "Otwórz stronę",
 
   "logoutConfirmTitle": "Wylogować się?",
@@ -516,13 +516,13 @@
   "lineAlsoZoneII": "także Strefa II",
   "lineRemove": "Usuń linię {line}",
   "firstStartTitle": "Zanim zaczniesz",
-  "firstStartBody": "mobileKKM to aplikacja tworzona przez społeczność dla krakowskiego systemu biletowego EKP.",
+  "firstStartBody": "mobileKKM to aplikacja tworzona przez społeczność dla krakowskiego systemu biletowego eKP.",
   "firstStartUnofficialTitle": "Nieoficjalna",
   "firstStartUnofficialBody": "Nie jest tworzona przez ZTP ani MPK i nie jest z nimi powiązana. Oficjalna aplikacja to mobilna KKM.",
   "firstStartOpenSourceTitle": "Otwarte źródło",
-  "firstStartOpenSourceBody": "Licencja GPL-3.0, kod jest publicznie dostępny na GitHubie. Dane logowania trafiają tylko do systemu EKP.",
+  "firstStartOpenSourceBody": "Licencja GPL-3.0, kod jest publicznie dostępny na GitHubie. Dane logowania trafiają tylko do systemu eKP.",
   "firstStartNoWarrantyTitle": "Bez gwarancji",
-  "firstStartNoWarrantyBody": "Udostępniana w obecnej postaci. Twórca nie odpowiada za nieudane zakupy, mandaty ani problemy z kontem EKP.",
+  "firstStartNoWarrantyBody": "Udostępniana w obecnej postaci. Twórca nie odpowiada za nieudane zakupy, mandaty ani problemy z kontem eKP.",
   "firstStartAccept": "Rozumiem",
   "viewSourceCode": "Zobacz kod źródłowy"
 }
