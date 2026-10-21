@@ -79,7 +79,7 @@ abstract final class Routes {
 
   static String sent(String route, String email) => Uri(path: route, queryParameters: {'email': email}).toString();
 
-  /// The in-app route for a link from an EKP e-mail.
+  /// The in-app route for a link from an eKP e-mail.
   static String forEmailLink(EmailLink link) => switch (link.kind) {
     EmailLinkKind.activate => activate(link.token),
     EmailLinkKind.resetPassword => resetPassword(link.token),

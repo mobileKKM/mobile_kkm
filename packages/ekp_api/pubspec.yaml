@@ -1,5 +1,5 @@
 name: ekp_api
-description: Unofficial Dart client for the EKP (mKKM) API of ZTP / MPK Kraków.
+description: Unofficial Dart client for the eKP (mKKM) API of ZTP / MPK Kraków.
 version: 0.1.0
 publish_to: 'none'
 

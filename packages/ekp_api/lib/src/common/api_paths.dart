@@ -1,4 +1,4 @@
-/// All EKP API endpoint paths observed in the wild.
+/// All eKP API endpoint paths observed in the wild.
 abstract final class EkpApiPaths {
   EkpApiPaths._();
 

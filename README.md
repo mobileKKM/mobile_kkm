@@ -4,20 +4,20 @@
 [![Latest release](https://img.shields.io/github/v/release/mobileKKM/mobile_kkm?include_prereleases)](https://github.com/mobileKKM/mobile_kkm/releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
 
-Unofficial, community-built **FOSS software for the mKKM / EKP system** of
+Unofficial, community-built **FOSS software for the mKKM / eKP system** of
 ZTP / MPK Kraków — reverse-engineered from the official Android client,
 with the long-term goal of a free and open replacement app.
 
 > [!WARNING]
 > This project is not affiliated with, endorsed by, or connected to
-> ZTP Kraków, MPK Kraków, or the operators of the mKKM/EKP system. It is
+> ZTP Kraków, MPK Kraków, or the operators of the mKKM/eKP system. It is
 > independent interoperability research. Use at your own risk; the
 > backend can change or block unofficial clients at any time.
 
 ## Status
 
 The project consists of the [`ekp-dart`](./packages/README.md)
-foundation — a pure-Dart API client for the EKP backend plus the crypto
+foundation — a pure-Dart API client for the eKP backend plus the crypto
 helpers for its encrypted endpoints — and the Flutter application at the
 repository root (Android and iOS). The app so far covers the brand theme
 and the signed-out flows: login, account registration and password reset.
@@ -26,7 +26,7 @@ and the signed-out flows: login, account registration and password reset.
 
 | Package | What it does |
 |---|---|
-| [`ekp_api`](./packages/ekp_api/README.md) | Pure-Dart client for the EKP backend: auth with silent re-auth, tickets (incl. the encrypted `assign-e` / `contract-e` endpoints), payments, account, dictionaries, invoices, subscriptions — `dio`-based, `freezed` response models mirroring the observed wire format. |
+| [`ekp_api`](./packages/ekp_api/README.md) | Pure-Dart client for the eKP backend: auth with silent re-auth, tickets (incl. the encrypted `assign-e` / `contract-e` endpoints), payments, account, dictionaries, invoices, subscriptions — `dio`-based, `freezed` response models mirroring the observed wire format. |
 | [`ekp_crypto`](./packages/ekp_crypto/README.md) | Crypto for the encrypted mKKM endpoints: RSA-2048-wrapped request payloads and AES-128-CBC contract decryption yielding the AZTEC ticket token, with a documented key-rotation procedure. |
 
 ## Repository layout
@@ -108,6 +108,6 @@ under the terms of the GNU General Public License as published by the
 Free Software Foundation, either version 3 of the License, or (at your
 option) any later version. See [LICENSE](./LICENSE) for the full text.
 
-This project exists to keep client software for the mKKM/EKP system free
+This project exists to keep client software for the mKKM/eKP system free
 and open — per the GPL, any derivative of these packages must be
 distributed under the same terms.

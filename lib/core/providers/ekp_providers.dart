@@ -64,7 +64,7 @@ class AztecKeyInUse {
 
 final aztecKeyInUseProvider = Provider<AztecKeyInUse>((ref) => AztecKeyInUse());
 
-/// The one client for the EKP backend, with its session.
+/// The one client for the eKP backend, with its session.
 final ekpClientProvider = Provider<EkpClient>((ref) {
   final key = ref.watch(aztecKeyInUseProvider);
   final client = EkpClient(

@@ -1,4 +1,4 @@
-/// Crypto helpers for the mKKM (EKP) encrypted endpoints.
+/// Crypto helpers for the mKKM (eKP) encrypted endpoints.
 ///
 /// See [EkpAztecCrypto] for the scheme and the package README for the
 /// reverse-engineering background and key-rotation procedure.

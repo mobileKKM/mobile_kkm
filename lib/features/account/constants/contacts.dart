@@ -1,6 +1,6 @@
 /// Where the account screen's contact rows lead.
 abstract final class Contacts {
-  /// The MPK S.A. helpline and EKP mailbox, as given in the official app.
+  /// The MPK S.A. helpline and eKP mailbox, as given in the official app.
   static const mpkPhone = '12 19 150';
   static final mpkPhoneUri = Uri(scheme: 'tel', path: '+481219150');
   static const mpkEmail = 'ekp@mpk.krakow.pl';

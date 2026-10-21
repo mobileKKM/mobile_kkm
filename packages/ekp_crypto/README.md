@@ -1,12 +1,12 @@
 # ekp_crypto
 
-Crypto helpers for the **encrypted mKKM (EKP) endpoints** — the scheme the
+Crypto helpers for the **encrypted mKKM (eKP) endpoints** — the scheme the
 official Android client (`pl.krakow.kkm.m` 1.6.10) uses to bind a purchased
 ticket to a device (`POST mkkm/tickets/assign-e`) and to fetch the AZTEC
 ticket code (`POST mkkm/tickets/contract-e`).
 
 > Unofficial reverse-engineering project, not affiliated with or endorsed
-> by the operators of mKKM/EKP. Everything below was recovered from the
+> by the operators of mKKM/eKP. Everything below was recovered from the
 > official app (Hermes bytecode decompilation, `libCppModule.so` string
 > extraction, passive traffic observation) and verified against real
 > traffic; the raw captures are not part of this repository. Pure Dart,

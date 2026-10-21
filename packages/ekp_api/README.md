@@ -1,6 +1,6 @@
 # ekp_api
 
-Unofficial, community-built Dart client for the **EKP** (Elektroniczne Konto
+Unofficial, community-built Dart client for the **eKP** (Elektroniczne Konto
 Pasażera) backend that powers the mKKM mobile app of ZTP / MPK Kraków.
 
 > **Disclaimer:** This is an unofficial project, not affiliated with or

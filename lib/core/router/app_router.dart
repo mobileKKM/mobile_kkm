@@ -224,7 +224,7 @@ String? redirectFor(
     return Routes.firstStartThen(next);
   }
 
-  // A link from an EKP e-mail, delivered by the platform's deep linking.
+  // A link from an eKP e-mail, delivered by the platform's deep linking.
   final link = EmailLink.tryParse(uri);
   if (link != null) {
     return Routes.forEmailLink(link);

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-/// Host of the activation / password reset links in the EKP e-mails.
+/// Host of the activation / password reset links in the eKP e-mails.
 const ekpLinkHost = 'ekp.mpk.krakow.pl';
 
 /// Android's per-app "Open supported links" setting for [ekpLinkHost].

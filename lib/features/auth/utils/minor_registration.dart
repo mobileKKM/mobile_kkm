@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 
-/// The age below which an account can only be opened on the EKP website.
+/// The age below which an account can only be opened on the eKP website.
 const _fullAge = 16;
 
 /// Whether someone born on [birthDate] is under 16 at [now].

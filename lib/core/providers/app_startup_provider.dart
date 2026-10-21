@@ -27,7 +27,7 @@ class AppStatus {
   final String? message;
 }
 
-/// Whether the EKP service can be used right now.
+/// Whether the eKP service can be used right now.
 class AppStatusController extends Notifier<AppStatus> {
   Future<void>? _running;
 

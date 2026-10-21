@@ -4,7 +4,7 @@ import 'package:mobile_kkm/core/crypto/aztec_key.dart';
 /// The service that hands out the current [AztecKey], so the app need not
 /// ask Firebase for it (see the aztec-key-relay project).
 ///
-/// Deliberately not the EKP client: nothing that identifies the device or
+/// Deliberately not the eKP client: nothing that identifies the device or
 /// the session is sent here.
 class AztecKeyRelay {
   /// [userAgent] names the app to the relay, whose firewall turns away

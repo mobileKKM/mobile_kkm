@@ -1,6 +1,6 @@
 name: ekp_crypto
 description: >-
-  Crypto helpers for the mKKM (EKP) encrypted endpoints: RSA-wrapped request
+  Crypto helpers for the mKKM (eKP) encrypted endpoints: RSA-wrapped request
   payloads for assign-e/contract-e and AES-128-CBC AZTEC contract decryption.
   Reverse-engineered from the official Android client for interoperability.
 version: 0.1.0

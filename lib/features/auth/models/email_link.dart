@@ -1,6 +1,6 @@
 enum EmailLinkKind { activate, resetPassword }
 
-/// An account link from an EKP e-mail:
+/// An account link from an eKP e-mail:
 /// `https://ekp.mpk.krakow.pl/konto-uzytkownika/activate,<token>.html` or
 /// `.../konto-uzytkownika/reset,<token>.html`.
 class EmailLink {

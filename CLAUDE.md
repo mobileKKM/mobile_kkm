@@ -4,7 +4,7 @@ Guidance for Claude Code (claude.ai/code) in this repository.
 
 ## What this is
 
-mobileKKM: an unofficial GPL-3.0 Flutter client (Android + iOS) for the mKKM / EKP ticketing backend of ZTP / MPK Kraków, reverse-engineered from the official Android app. A [pub workspace](https://dart.dev/tools/pub/workspaces); dependency direction app → `ekp_api` → `ekp_crypto`:
+mobileKKM: an unofficial GPL-3.0 Flutter client (Android + iOS) for the mKKM / eKP ticketing backend of ZTP / MPK Kraków, reverse-engineered from the official Android app. A [pub workspace](https://dart.dev/tools/pub/workspaces); dependency direction app → `ekp_api` → `ekp_crypto`:
 
 - `.` (`mobile_kkm`) — the app. Built: signed-out flows, mKKM card set-up, the signed-in shell (Home, Tickets, Map, Account), ticket details / return / line change / control (AZTEC), purchase and tPay payment, Karta Krakowska, account edit / password / delete, MapLibre map, hidden debug menu.
   Not built: vehicles, stops with departures, stop search; reconnect detection (planned: `connectivity_plus` → `AppStatusController.check()`); 5+1 (Home shows its card greyed out, "in a later version"; no route). The map shows an always-visible preview notice until those arrive.

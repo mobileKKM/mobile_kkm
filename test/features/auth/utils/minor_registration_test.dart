@@ -26,7 +26,7 @@ void main() {
       expect(uri(site: 'https://ekp.test').host, 'ekp.test');
     });
 
-    test('is on the EKP site when the config is not there', () {
+    test('is on the eKP site when the config is not there', () {
       expect(uri().host, 'ekp.mpk.krakow.pl');
       expect(uri(site: '').host, 'ekp.mpk.krakow.pl');
     });

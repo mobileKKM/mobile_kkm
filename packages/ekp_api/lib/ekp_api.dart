@@ -1,4 +1,4 @@
-/// Unofficial Dart client for the EKP (mKKM) API of ZTP / MPK Kraków.
+/// Unofficial Dart client for the eKP (mKKM) API of ZTP / MPK Kraków.
 library;
 
 export 'src/account/account_api.dart';

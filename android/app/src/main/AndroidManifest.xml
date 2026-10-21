@@ -34,7 +34,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- Account activation / password reset links from the EKP
+            <!-- Account activation / password reset links from the eKP
                  e-mails. Not our domain, so no autoVerify: on Android 12+
                  the user has to enable "Open supported links" once (see
                  MainActivity's links channel). -->

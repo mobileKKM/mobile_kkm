@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'auth_session.freezed.dart';
 part 'auth_session.g.dart';
 
-/// An authenticated EKP session as returned by `auth/login`,
+/// An authenticated eKP session as returned by `auth/login`,
 /// `auth/token/recover` and `auth/token/refresh`.
 @freezed
 abstract class AuthSession with _$AuthSession {
