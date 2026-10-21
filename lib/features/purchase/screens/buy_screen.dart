@@ -209,15 +209,37 @@ class _FormState extends ConsumerState<_Form> {
   @override
   void didUpdateWidget(_Form old) {
     super.didUpdateWidget(old);
-    final before = old.form.visibleSections.toSet();
-    final added = widget.form.visibleSections.where((section) => !before.contains(section)).toList();
-    if (added.isNotEmpty) {
-      // Once laid out: the section is there at its full height.
-      WidgetsBinding.instance.addPostFrameCallback((_) => _showSections(added.first, added.last));
+    if (identical(old.form, widget.form)) {
+      return;
     }
+    final before = old.form.visibleSections.toSet();
+    final heights = {for (final section in before) section: _heightOf(section)};
+    final visible = widget.form.visibleSections;
+    // Once laid out: a new section is there at its full height. A section
+    // that grew in place (Add line, a zone note) is shown the same way.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      final changed = [
+        for (final section in visible)
+          if (!before.contains(section) || _grew(heights[section], _heightOf(section))) section,
+      ];
+      if (changed.isNotEmpty) {
+        _showSections(changed.first, changed.last);
+      }
+    });
   }
 
-  /// Scrolls just far enough to show the new sections [first] to [last]
+  /// The section's height as last laid out, or null when it is not.
+  double? _heightOf(PurchaseSection section) {
+    final box = _sectionKeys[section]?.currentContext?.findRenderObject();
+    return box is RenderBox && box.hasSize ? box.size.height : null;
+  }
+
+  static bool _grew(double? before, double? now) => before != null && now != null && now > before + 0.5;
+
+  /// Scrolls just far enough to show the new or grown sections [first] to [last]
   /// whole above the bar, only if they are hidden, and not while the list is
   /// moving; never so far that [first]'s heading leaves the top. A touch on
   /// the list stops the scroll.

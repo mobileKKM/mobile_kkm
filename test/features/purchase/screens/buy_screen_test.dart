@@ -337,6 +337,25 @@ void main() {
       expect(_list(tester).pixels, _list(tester).maxScrollExtent);
     });
 
+    testWidgets('and so does a section that grows in place', (tester) async {
+      await _open(tester, _adapter());
+      tester.view.physicalSize = const Size(1080, 1260);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Normalny'));
+      await tester.pumpAndSettle();
+
+      // One line: no new section, but Add line appears below the chips.
+      final before = _list(tester).pixels;
+      await tapVisible(tester, find.widgetWithText(FilterChip, '1 line'));
+      expect(find.text('Add line'), findsOneWidget);
+      expect(_list(tester).pixels, greaterThan(before));
+      final list = tester.getRect(_form.last);
+      expect(tester.getRect(find.text('Add line')).bottom, lessThanOrEqualTo(list.bottom));
+      expect(tester.getRect(find.text('Lines')).top, greaterThanOrEqualTo(list.top));
+    });
+
     testWidgets('not at all when it is already in view', (tester) async {
       await _open(tester, _adapter());
       await tester.tap(find.text('Bilet ze zniżką Karty Krakowskiej'));
