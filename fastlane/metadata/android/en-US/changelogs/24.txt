@@ -1,0 +1,9 @@
+First beta of the rebuilt app.
+
+- Buy period tickets in the app and pay with BLIK, card, Google Pay or bank transfer
+- Tickets are synced to your phone for offline use; control codes work online only
+- Account, mKKM card set-up and Karta Krakowska status
+- Map preview: vehicles and departures are not available yet
+- The 5+1 subscription is not available yet
+
+This is a beta; please report problems on GitHub.

@@ -1,0 +1,9 @@
+Pierwsza wersja beta przebudowanej aplikacji.
+
+- Kupuj bilety okresowe w aplikacji i płać BLIK-iem, kartą, Google Pay lub przelewem
+- Bilety są synchronizowane z telefonem do użycia offline; kody kontroli działają tylko online
+- Konto, konfiguracja karty mKKM i status Karty Krakowskiej
+- Podgląd mapy: pojazdy i odjazdy nie są jeszcze dostępne
+- Subskrypcja 5+1 nie jest jeszcze dostępna
+
+To wersja beta; problemy zgłaszaj na GitHubie.
