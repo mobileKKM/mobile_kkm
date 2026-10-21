@@ -197,8 +197,14 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final canPay = methods.hasValue && state.selected != null;
     final scaffold = Scaffold(
       appBar: AppBar(
+        // Our own back button, so it greys out while busy like Close does
+        // (the AppBar's would look tappable while PopScope ignores it).
         leading: buying
-            ? null
+            ? IconButton(
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                icon: const BackButtonIcon(),
+                onPressed: state.busy ? null : () => unawaited(Navigator.maybePop(context)),
+              )
             : IconButton(
                 tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 icon: const Icon(Symbols.close_rounded),

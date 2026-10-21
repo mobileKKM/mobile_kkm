@@ -126,7 +126,7 @@ void main() {
     await tester.tap(find.descendant(of: find.byType(PaymentScreen), matching: find.byTooltip('Back')));
     await tester.pumpAndSettle();
     expect(app.location, Routes.buyPay);
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
     expect(app.location, Routes.tickets);
   });
@@ -142,6 +142,7 @@ void main() {
     await tester.pump();
     expect(find.text('Opening payment…'), findsOneWidget);
     await tester.tap(find.text('Google Pay'), warnIfMissed: false);
+    expect(tester.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.arrow_back)).onPressed, isNull);
     await tester.binding.handlePopRoute();
     await tester.pump();
     expect(app.location, Routes.buyPay);
@@ -201,7 +202,7 @@ void main() {
     await tapVisible(tester, _payButton);
     expect(find.text('Można posiadać tylko 2 aktywne bilety w tym samym czasie.'), findsOneWidget);
     // Nothing was bought: back goes where it came from, not to the tickets.
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
     expect(app.location, Routes.home);
   });
