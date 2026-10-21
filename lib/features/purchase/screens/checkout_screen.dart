@@ -17,7 +17,6 @@ import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
 import 'package:mobile_kkm/core/widgets/submit_button.dart';
 import 'package:mobile_kkm/features/purchase/models/payment_methods.dart';
 import 'package:mobile_kkm/features/purchase/providers/purchase_notice_provider.dart';
-import 'package:mobile_kkm/features/purchase/providers/purchase_providers.dart';
 import 'package:mobile_kkm/features/purchase/services/checkout_controller.dart';
 import 'package:mobile_kkm/features/purchase/services/payment_session.dart';
 import 'package:mobile_kkm/features/purchase/widgets/payment_widgets.dart';
@@ -281,23 +280,21 @@ class _Summary extends ConsumerWidget {
     final periods = ref.watch(ticketPeriodsProvider).value;
     String daysLabel(int? days) => days == null || days == 7 ? l10n.payEveryDay : l10n.payDaysAWeek(days);
 
+    final scopes = ref.watch(ticketLineScopesProvider).value;
     final calculation = entry.calculation;
-    final choice = entry.choice;
-    if (calculation != null && choice != null) {
-      final rules = ref.watch(salesConfigurationProvider).value;
-      final option = rules?.config.ticketNumberOfLines
-          .where((o) => o.code == choice.ticketNumberOfLineCode)
-          .firstOrNull;
-      final zone = (option?.description ?? '').split(' - ').last.trim();
-      final lines = [for (final line in choice.lines) ?line.line];
-      final scope = lines.isEmpty ? l10n.buyAllLines : l10n.payTicketLines(lines.length, lines.join(', '));
-      final kind =
-          kinds?.kinds.where((k) => k.code == calculation.ticketKindCode).firstOrNull?.description ??
-          rules?.kinds.where((k) => k.code == choice.ticketKindCode).firstOrNull?.description;
-      final period = rules?.config.ticketPeriods.where((p) => p.code == choice.ticketPeriodCode).firstOrNull;
+    if (calculation != null) {
       return PurchaseSummaryCard(
-        title: zone.isEmpty ? scope : '$scope · $zone',
-        subtitle: [?kind, ?period?.description].join(' · '),
+        title: scopeTitle(
+          l10n,
+          lines: calculation.lines,
+          isNetwork: calculation.isNetwork,
+          isMetropolitan: calculation.isMetropolitan,
+          zone: ticketZone(calculation.ticketNumberOfLineCode, scopes),
+        ),
+        subtitle: [
+          ?ticketFare(calculation.ticketKindCode, kinds),
+          ?ticketPeriod(calculation.ticketPeriodCode, periods),
+        ].join(' · '),
         fields: [
           (label: l10n.payValidFrom, value: _when(locale, calculation.validFrom)),
           (label: l10n.payValidUntil, value: _when(locale, calculation.validTo)),
@@ -312,11 +309,13 @@ class _Summary extends ConsumerWidget {
     if (ticket == null) {
       return const SizedBox.shrink();
     }
-    final scopes = ref.watch(ticketLineScopesProvider).value;
     final product = details?.ticketEkp?.productName;
     return PurchaseSummaryCard(
       title: ticketScope(l10n, ticket, zone: ticketZone(ticket.ticketNumberOfLineCode, scopes)),
-      subtitle: [?ticketFare(ticket, kinds), ?ticketPeriod(ticket, periods)].join(' · '),
+      subtitle: [
+        ?ticketFare(ticket.ticketKindCode, kinds),
+        ?ticketPeriod(ticket.ticketPeriodCode, periods),
+      ].join(' · '),
       fields: [
         (label: l10n.payValidFrom, value: _when(locale, ticket.startDate)),
         (label: l10n.payValidUntil, value: _when(locale, ticket.endDate)),

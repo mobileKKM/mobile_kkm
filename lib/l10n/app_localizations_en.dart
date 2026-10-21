@@ -1480,12 +1480,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get payTicketTitle => 'Pay for ticket';
 
   @override
-  String payTicketLines(int count, String lines) {
-    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Lines $lines', one: 'Line $lines');
-    return '$_temp0';
-  }
-
-  @override
   String get payValidFrom => 'Valid from';
 
   @override

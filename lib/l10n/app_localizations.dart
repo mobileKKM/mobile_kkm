@@ -2672,12 +2672,6 @@ abstract class AppLocalizations {
   /// **'Pay for ticket'**
   String get payTicketTitle;
 
-  /// No description provided for @payTicketLines.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{Line {lines}} other{Lines {lines}}}'**
-  String payTicketLines(int count, String lines);
-
   /// No description provided for @payValidFrom.
   ///
   /// In en, this message translates to:

@@ -469,7 +469,6 @@
   "buyFieldErrors": "Proszę poprawnie wybrać rodzaj i typ biletu.",
   "payTitle": "Sprawdź i zapłać",
   "payTicketTitle": "Opłać bilet",
-  "payTicketLines": "{count, plural, =1{Linia {lines}} other{Linie {lines}}}",
   "payValidFrom": "Ważny od",
   "payValidUntil": "Ważny do",
   "payProduct": "Produkt",

@@ -1514,12 +1514,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get payTicketTitle => 'Opłać bilet';
 
   @override
-  String payTicketLines(int count, String lines) {
-    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Linie $lines', one: 'Linia $lines');
-    return '$_temp0';
-  }
-
-  @override
   String get payValidFrom => 'Ważny od';
 
   @override

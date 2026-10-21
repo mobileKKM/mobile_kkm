@@ -142,14 +142,30 @@ String? ticketZone(int? lineScopeCode, TicketNumberOfLineListResponse? scopes) {
 
 /// What the ticket covers: its lines or its network, and the zone when
 /// [zone] is known.
-String ticketScope(AppLocalizations l10n, MkkmTicket ticket, {String? zone}) {
-  final lines = [for (final line in ticket.lines) ?line.line];
+String ticketScope(AppLocalizations l10n, MkkmTicket ticket, {String? zone}) => scopeTitle(
+  l10n,
+  lines: ticket.lines,
+  isNetwork: ticket.isNetwork,
+  isMetropolitan: ticket.isMetropolitan,
+  zone: zone,
+);
+
+/// [ticketScope] from the flags and [lines] alone, for a ticket not bought
+/// yet (checkout reads them from the calculation).
+String scopeTitle(
+  AppLocalizations l10n, {
+  required List<TransportLine> lines,
+  bool? isNetwork,
+  bool? isMetropolitan,
+  String? zone,
+}) {
+  final numbers = [for (final line in lines) ?line.line];
   final String scope;
-  if (ticket.isMetropolitan ?? false) {
+  if (isMetropolitan ?? false) {
     scope = l10n.ticketTitleMetropolitan;
-  } else if (lines.isNotEmpty) {
-    scope = l10n.ticketTitleLines(lines.length, lines.join(', '));
-  } else if (ticket.isNetwork ?? false) {
+  } else if (numbers.isNotEmpty) {
+    scope = l10n.ticketTitleLines(numbers.length, numbers.join(', '));
+  } else if (isNetwork ?? false) {
     scope = l10n.ticketTitleNetwork;
   } else {
     scope = l10n.ticketTitleGeneric;
@@ -157,11 +173,11 @@ String ticketScope(AppLocalizations l10n, MkkmTicket ticket, {String? zone}) {
   return zone == null || zone.isEmpty ? scope : '$scope · $zone';
 }
 
-/// The fare a ticket was sold at, e.g. `Normalny`, from the ticket kind
+/// The fare of [kindCode], e.g. `Normalny`, from the ticket kind
 /// dictionary (Polish only). Null until that is there.
-String? ticketFare(MkkmTicket ticket, TicketKindListResponse? kinds) {
+String? ticketFare(int? kindCode, TicketKindListResponse? kinds) {
   for (final kind in kinds?.kinds ?? const <TicketKind>[]) {
-    if (kind.code == ticket.ticketKindCode) {
+    if (kindCode != null && kind.code == kindCode) {
       final description = kind.description;
       return description == null || description.isEmpty ? null : description;
     }
@@ -169,11 +185,11 @@ String? ticketFare(MkkmTicket ticket, TicketKindListResponse? kinds) {
   return null;
 }
 
-/// How long a ticket was sold for, e.g. `Jeden miesiąc`, from the period
+/// The period of [periodCode], e.g. `Jeden miesiąc`, from the period
 /// dictionary (Polish only). Null until that is there.
-String? ticketPeriod(MkkmTicket ticket, TicketPeriodListResponse? periods) {
+String? ticketPeriod(int? periodCode, TicketPeriodListResponse? periods) {
   for (final period in periods?.list ?? const <TicketPeriod>[]) {
-    if (period.code == ticket.ticketPeriodCode) {
+    if (periodCode != null && period.code == periodCode) {
       final description = period.description;
       return description == null || description.isEmpty ? null : description;
     }
@@ -186,7 +202,7 @@ String? ticketPeriod(MkkmTicket ticket, TicketPeriodListResponse? periods) {
 /// is not used: it only comes with a ticket's details, so a ticket would
 /// read differently there than in the list. Null until a dictionary is there.
 String? ticketProduct(MkkmTicket ticket, {TicketKindListResponse? kinds, TicketPeriodListResponse? periods}) {
-  final parts = [?ticketFare(ticket, kinds), ?ticketPeriod(ticket, periods)];
+  final parts = [?ticketFare(ticket.ticketKindCode, kinds), ?ticketPeriod(ticket.ticketPeriodCode, periods)];
   return parts.isEmpty ? null : parts.join(' · ');
 }
 

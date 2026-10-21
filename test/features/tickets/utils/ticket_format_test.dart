@@ -226,8 +226,8 @@ void main() {
     final named = listed.copyWith(productName: 'Bilet norm. 1-mies. sieciowy');
     expect(ticketProduct(named, kinds: kinds, periods: periods), 'Normalny · Jeden miesiąc');
     expect(ticketProduct(named), isNull);
-    expect(ticketFare(listed, kinds), 'Normalny');
-    expect(ticketPeriod(listed, periods), 'Jeden miesiąc');
+    expect(ticketFare(listed.ticketKindCode, kinds), 'Normalny');
+    expect(ticketPeriod(listed.ticketPeriodCode, periods), 'Jeden miesiąc');
   });
 
   test('a price is written the Polish way in every language', () {

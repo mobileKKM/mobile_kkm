@@ -33,6 +33,13 @@ CheckoutEntry _entry({bool similar = false}) => CheckoutEntry.buy(
 FakeAdapter _adapter() => FakeAdapter()
   ..reply('GET', '/tickets/ticket-sales-configuration/100001', 200, apiFixture('sales_config_privileged'))
   ..reply('GET', '/payments/banks', 200, apiFixture('banks'))
+  ..reply('GET', '/dictionary/ticket-kind-list', 200, {
+    'kinds': [
+      {'code': 21, 'description': 'Normalny'},
+    ],
+  })
+  ..reply('GET', '/dictionary/ticket-period-list', 200, ticketPeriodsJson)
+  ..reply('GET', '/dictionary/ticket-number-of-line-list', 200, lineScopesJson)
   ..reply('POST', '/tickets/buy', 200, apiFixture('buy_response'))
   ..reply('POST', '/tickets/pay', 200, apiFixture('pay_response'))
   ..reply('POST', '/payments/result', 200);
@@ -83,7 +90,8 @@ void main() {
 
     expect(find.text('Check and pay'), findsOneWidget);
     expect(app.paymentLogos.requested, contains('https://secure.tpay.com/_/g/150.png'));
-    expect(find.text('All lines · Strefa I'), findsOneWidget);
+    expect(find.text('Network ticket · Strefa I'), findsOneWidget);
+    expect(find.text('Normalny · Jeden miesiąc'), findsOneWidget);
     expect(find.text('Bilet norm. mieszk. 1-mies. sieciowy st. I'), findsOneWidget);
     expect(find.text('Every day'), findsOneWidget);
     expect(

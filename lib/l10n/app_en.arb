@@ -502,8 +502,6 @@
   "buyFieldErrors": "Please choose the fare and type correctly.",
   "payTitle": "Check and pay",
   "payTicketTitle": "Pay for ticket",
-  "payTicketLines": "{count, plural, =1{Line {lines}} other{Lines {lines}}}",
-  "@payTicketLines": {"placeholders": {"count": {"type": "int"}, "lines": {"type": "String"}}},
   "payValidFrom": "Valid from",
   "payValidUntil": "Valid until",
   "payProduct": "Product",
