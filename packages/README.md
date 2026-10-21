@@ -1,16 +1,17 @@
 # ekp-dart
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
+[![License: GPL v3 or later](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](./LICENSE)
 
 Unofficial, community-built **FOSS tooling for the mKKM / eKP system** of
 ZTP / MPK Kraków — a Dart API client and the crypto helpers for its
 encrypted endpoints, reverse-engineered from the official Android client
 with the long-term goal of an FOSS replacement app.
 
-> **Disclaimer:** This project is not affiliated with, endorsed by, or
-> connected to ZTP Kraków, MPK Kraków, or the operators of the mKKM/eKP
-> system. It is independent interoperability research. Use at your own
-> risk; the backend can change or block unofficial clients at any time.
+> [!WARNING]
+> This project is not affiliated with, endorsed by, or connected to
+> ZTP Kraków, MPK Kraków, or the operators of the mKKM/eKP system. It is
+> independent interoperability research. Use at your own risk; the
+> backend can change or block unofficial clients at any time.
 
 ## Packages
 

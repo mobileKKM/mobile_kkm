@@ -2,7 +2,9 @@
 
 [![CI](https://github.com/mobileKKM/mobile_kkm/actions/workflows/ci.yml/badge.svg)](https://github.com/mobileKKM/mobile_kkm/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/release/mobileKKM/mobile_kkm?include_prereleases)](https://github.com/mobileKKM/mobile_kkm/releases)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
+[![License: GPL v3 or later](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](./LICENSE)
+[![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS-3DDC84)](#status)
 
 Unofficial, community-built **FOSS software for the mKKM / eKP system** of
 ZTP / MPK Kraków — reverse-engineered from the official Android client,
@@ -16,11 +18,35 @@ with the long-term goal of a free and open replacement app.
 
 ## Status
 
-The project consists of the [`ekp-dart`](./packages/README.md)
-foundation — a pure-Dart API client for the eKP backend plus the crypto
-helpers for its encrypted endpoints — and the Flutter application at the
-repository root (Android and iOS). The app so far covers the brand theme
-and the signed-out flows: login, account registration and password reset.
+Version 2.0.0 is a pre-release rewrite of the old WebView app, as a native
+Flutter client for Android and iOS. It is built on the
+[`ekp_api`](./packages/ekp_api/README.md) and
+[`ekp_crypto`](./packages/ekp_crypto/README.md) packages.
+
+**Works today**
+
+- Signed-out flows: login, registration, account activation, password reset
+  (including the e-mail links), first start notice.
+- mKKM card set-up for new and detached accounts.
+- Home, Tickets, Map and Account tabs.
+- Tickets: list, details, return, line change, ticket control (AZTEC code).
+- Purchase with the sales rules read from the server, paid through tPay.
+- Karta Krakowska status and code.
+- Account: edit, photo, password, delete.
+- Transit map (MapLibre / OpenFreeMap) with location on request.
+- Polish and English, light and dark theme, Material 3 with the app's own
+  design system.
+
+**Not built yet**
+
+- Vehicles, stops with departures and stop search (the map shows a preview
+  notice until they arrive).
+- 5+1 subscription (Home shows it greyed out).
+- Reconnect detection after being offline.
+
+**Known limitation:** a payment is not restored if the OS killed the app
+while tPay was open. A return link on a cold start is still reported;
+otherwise the start-up sync and the card cover it.
 
 ## Packages
 
@@ -33,9 +59,13 @@ and the signed-out flows: login, account registration and password reset.
 
 ```
 lib/                  Flutter application
-  core/               shared code: api, platform, providers, router, theme, widgets
+  core/               shared code: api, crypto, database, platform, providers,
+                      router, theme, widgets
   features/<name>/    one folder per feature, split by kind: screens/, providers/,
-                      widgets/, models/, utils/, constants/
+                      widgets/, models/, utils/, constants/, services/
+android/, ios/        platform projects (payment browser channel, link handling)
+fastlane/metadata/    store listing texts, changelogs and images (en-US, pl-PL)
+test/                 app tests over a fake HTTP adapter and in-memory database
 assets/branding/      icon and logo sources (SVG)
 tool/                 render_branding.sh, which rasterises them into the Android/iOS
                       launcher icons, in-app logo and splash logo
@@ -59,8 +89,10 @@ resolution — one `pub get`, one lockfile, one analysis context.
 # resolve the whole workspace (app + packages), from the repo root
 flutter pub get
 
-# static analysis — covers every workspace member in one context
-flutter analyze
+# static analysis from the root; `dart analyze`, not `flutter analyze`,
+# because only it runs the riverpod_lint plugin
+dart analyze
+dart format .
 
 # tests — the app suite runs from the root, each package from its own
 # directory (ekp_api's tests load fixtures relative to the package dir)
@@ -77,9 +109,14 @@ code 23; every release raises the `+N` in `pubspec.yaml` above the last
 one uploaded anywhere.
 
 ```bash
-flutter build apk --release        # GitHub releases and F-Droid
-flutter build appbundle --release  # Google Play
+flutter build apk --release --target-platform android-arm,android-arm64 \
+  --split-debug-info=build/symbols   # GitHub releases and F-Droid
+flutter build appbundle --release    # Google Play
 ```
+
+Tags `v<version name>` run `release.yml`, which builds a Google-services
+(`-gms.apk`) and a FOSS (`-foss.apk`) APK, checks the signer, and creates a
+draft release with `SHA256SUMS`. The bundle is uploaded to Play by hand.
 
 Both are signed with the release key from `android/key.properties`
 (gitignored), the same key as the old app's.
