@@ -9,6 +9,9 @@ abstract final class Contacts {
   static const issuesLabel = 'github.com/mobileKKM/mobile_kkm';
   static final issuesUri = Uri.parse('https://github.com/mobileKKM/mobile_kkm/issues');
 
+  /// The app's source code, linked from the first start notice.
+  static final sourceUri = Uri.parse('https://github.com/mobileKKM/mobile_kkm');
+
   /// Where new versions of the app are published.
   static final releasesUri = Uri.parse('https://github.com/mobileKKM/mobile_kkm/releases');
 

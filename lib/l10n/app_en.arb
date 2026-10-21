@@ -551,5 +551,15 @@
   "lineZoneI": "Zone I",
   "lineAlsoZoneII": "also Zone II",
   "lineRemove": "Remove line {line}",
-  "@lineRemove": {"placeholders": {"line": {"type": "String"}}}
+  "@lineRemove": {"placeholders": {"line": {"type": "String"}}},
+  "firstStartTitle": "Before you start",
+  "firstStartBody": "mobileKKM is a community-made app for Kraków’s EKP ticket system.",
+  "firstStartUnofficialTitle": "Unofficial",
+  "firstStartUnofficialBody": "Not made by or affiliated with ZTP or MPK. The official app is mobilna KKM.",
+  "firstStartOpenSourceTitle": "Open source",
+  "firstStartOpenSourceBody": "Licensed under GPL-3.0; anyone can read the code on GitHub. Your login goes only to the EKP service.",
+  "firstStartNoWarrantyTitle": "No warranty",
+  "firstStartNoWarrantyBody": "Provided as is. The developer isn’t liable for failed purchases, fines or issues with your EKP account.",
+  "firstStartAccept": "I understand",
+  "viewSourceCode": "View source code"
 }

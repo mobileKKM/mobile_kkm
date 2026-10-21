@@ -2947,6 +2947,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove line {line}'**
   String lineRemove(String line);
+
+  /// No description provided for @firstStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you start'**
+  String get firstStartTitle;
+
+  /// No description provided for @firstStartBody.
+  ///
+  /// In en, this message translates to:
+  /// **'mobileKKM is a community-made app for Kraków’s EKP ticket system.'**
+  String get firstStartBody;
+
+  /// No description provided for @firstStartUnofficialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unofficial'**
+  String get firstStartUnofficialTitle;
+
+  /// No description provided for @firstStartUnofficialBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Not made by or affiliated with ZTP or MPK. The official app is mobilna KKM.'**
+  String get firstStartUnofficialBody;
+
+  /// No description provided for @firstStartOpenSourceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open source'**
+  String get firstStartOpenSourceTitle;
+
+  /// No description provided for @firstStartOpenSourceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Licensed under GPL-3.0; anyone can read the code on GitHub. Your login goes only to the EKP service.'**
+  String get firstStartOpenSourceBody;
+
+  /// No description provided for @firstStartNoWarrantyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No warranty'**
+  String get firstStartNoWarrantyTitle;
+
+  /// No description provided for @firstStartNoWarrantyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Provided as is. The developer isn’t liable for failed purchases, fines or issues with your EKP account.'**
+  String get firstStartNoWarrantyBody;
+
+  /// No description provided for @firstStartAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand'**
+  String get firstStartAccept;
+
+  /// No description provided for @viewSourceCode.
+  ///
+  /// In en, this message translates to:
+  /// **'View source code'**
+  String get viewSourceCode;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -7,7 +7,7 @@ Guidance for Claude Code (claude.ai/code) in this repository.
 mobileKKM: an unofficial GPL-3.0 Flutter client (Android + iOS) for the mKKM / EKP ticketing backend of ZTP / MPK Kraków, reverse-engineered from the official Android app. A [pub workspace](https://dart.dev/tools/pub/workspaces); dependency direction app → `ekp_api` → `ekp_crypto`:
 
 - `.` (`mobile_kkm`) — the app. Built: signed-out flows, mKKM card set-up, the signed-in shell (Home, Tickets, Map, Account), ticket details / return / line change / control (AZTEC), purchase and tPay payment, Karta Krakowska, account edit / password / delete, MapLibre map, hidden debug menu.
-  Not built: vehicles, stops with departures, stop search; reconnect detection (planned: `connectivity_plus` → `AppStatusController.check()`); 5+1 (`/subscription`, `ComingSoonScreen`); the first-start notice (11h).
+  Not built: vehicles, stops with departures, stop search; reconnect detection (planned: `connectivity_plus` → `AppStatusController.check()`); 5+1 (`/subscription`, `ComingSoonScreen`).
 - `packages/ekp_api` — pure-Dart `dio` client, no Flutter.
 - `packages/ekp_crypto` — pure-Dart crypto for `assign-e` / `contract-e` (RSA-wrapped requests, AES-128-CBC contract → AZTEC token).
 
@@ -81,6 +81,7 @@ Material widgets come from `package:material_ui/material_ui.dart`, not `package:
 
 - **Injection seam:** host providers (`deviceIdentityProvider`, `tokenStoreProvider`, `appDatabaseProvider`, caches and stores) throw by default and are overridden in `main()`. Platform side effects are providers too (`urlOpenerProvider`, `paymentBrowserProvider`, `mapViewProvider`, `screenSecurityProvider`, …) so tests can fake them.
 - **Start-up:** `appStartupProvider` (behind the splash) runs `service-status`, then the config (8 s cap). `appStatusProvider` holds `AppMode`: `offline`, `unavailable`, `outdated`, `online`; only `outdated` blocks (`UpdateRequiredScreen`). **Load nothing else behind the splash**: user data, tickets and the relay key go independently afterwards. `AppStatusBanner` reports the mode, below the app bar.
+- **First start notice** (`/first-start`, 11h): once per install, for everyone (signed in too), after the splash and Update required. The flag is a marker file read in `main()` (`firstStartSeenProvider`); `redirectFor(firstStartSeen:)` holds an e-mail link as `?next=`.
 - **Auth:** `AuthController` mirrors the session stream into `AuthStatus` (`unknown` / `authenticated` / `unauthenticated`); `SignOutReason` feeds the login banner.
 - **Routing:** the pure `redirectFor(uri, status)` (`core/router/app_router.dart`) holds all gating. Register every new screen in `Routes.isSignedIn` or `Routes.isPublic`. A `CardGate` other than `open` confines signed-in users to `/card-setup`. The four tabs are `StatefulShellRoute.indexedStack` branches; other signed-in screens are top-level routes.
 - **Aztec key:** fetched from the relay (`AztecKeyRelay`, own `Dio`, `User-Agent` must be `mobileKKM/<version>` or Cloudflare blocks it), never behind the splash. The client reads the key from `aztecKeyInUseProvider`, a plain holder — not from `AztecKeyController` and not watched (that would rebuild the client and replay the splash). A refused encrypted call asks the relay's `refresh` and retries once if the key changed.

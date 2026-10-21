@@ -30,6 +30,8 @@ import 'package:mobile_kkm/core/router/app_router.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/account/services/photo_cache.dart';
 import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
+import 'package:mobile_kkm/features/first_start/providers/first_start_provider.dart';
+import 'package:mobile_kkm/features/first_start/services/first_start_store.dart';
 import 'package:mobile_kkm/features/map/models/map_view_controller.dart';
 import 'package:mobile_kkm/features/map/providers/map_providers.dart';
 import 'package:mobile_kkm/features/purchase/services/last_payment_method_store.dart';
@@ -83,6 +85,19 @@ class InMemoryLastPaymentMethodStore implements LastPaymentMethodStore {
 
   @override
   Future<void> clear() async => groupId = null;
+}
+
+/// Whether the first start notice was seen; seen unless a test says otherwise.
+class InMemoryFirstStartStore implements FirstStartStore {
+  InMemoryFirstStartStore({this.seen = true});
+
+  bool seen;
+
+  @override
+  Future<bool> read() async => seen;
+
+  @override
+  Future<void> markSeen() async => seen = true;
 }
 
 /// Keeps the dictionaries as the JSON text a file would hold.
@@ -364,6 +379,7 @@ Future<App> pumpApp(
   FakeAdapter? relay,
   FakePaymentBrowser? paymentBrowser,
   AztecKeyStore? aztecKeyStore,
+  InMemoryFirstStartStore? firstStart,
   bool settle = true,
   bool tall = false,
 }) async {
@@ -413,6 +429,10 @@ Future<App> pumpApp(
               savedIdentities.add((deviceId: deviceId, deviceName: deviceName)),
         ),
       ),
+      firstStartSeenProvider.overrideWith(() {
+        final store = firstStart ?? InMemoryFirstStartStore();
+        return FirstStartController(store, seen: store.seen);
+      }),
       linkSettingsProvider.overrideWithValue(linkSettings ?? FakeLinkSettings()),
       userDataCacheProvider.overrideWithValue(userDataCache ?? InMemoryUserDataCache()),
       lastPaymentMethodStoreProvider.overrideWithValue(lastPaymentMethod ?? InMemoryLastPaymentMethodStore()),

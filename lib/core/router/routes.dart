@@ -42,6 +42,14 @@ abstract final class Routes {
 
   /// Where everything leads once the server has stopped serving this client.
   static const updateRequired = '/update-required';
+
+  /// Shown once, after the splash. Only `redirectFor` leads there.
+  static const firstStart = '/first-start';
+
+  /// The notice, then [next] (an e-mail link the app was opened with).
+  static String firstStartThen(String? next) =>
+      next == null ? firstStart : Uri(path: firstStart, queryParameters: {'next': next}).toString();
+
   static const login = '/login';
   static const register = '/register';
   static const registerSent = '/register/sent';

@@ -1628,4 +1628,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String lineRemove(String line) {
     return 'Remove line $line';
   }
+
+  @override
+  String get firstStartTitle => 'Before you start';
+
+  @override
+  String get firstStartBody => 'mobileKKM is a community-made app for Kraków’s EKP ticket system.';
+
+  @override
+  String get firstStartUnofficialTitle => 'Unofficial';
+
+  @override
+  String get firstStartUnofficialBody => 'Not made by or affiliated with ZTP or MPK. The official app is mobilna KKM.';
+
+  @override
+  String get firstStartOpenSourceTitle => 'Open source';
+
+  @override
+  String get firstStartOpenSourceBody =>
+      'Licensed under GPL-3.0; anyone can read the code on GitHub. Your login goes only to the EKP service.';
+
+  @override
+  String get firstStartNoWarrantyTitle => 'No warranty';
+
+  @override
+  String get firstStartNoWarrantyBody =>
+      'Provided as is. The developer isn’t liable for failed purchases, fines or issues with your EKP account.';
+
+  @override
+  String get firstStartAccept => 'I understand';
+
+  @override
+  String get viewSourceCode => 'View source code';
 }

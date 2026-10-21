@@ -25,6 +25,8 @@ import 'package:mobile_kkm/features/card_setup/screens/card_setup_screen.dart';
 import 'package:mobile_kkm/features/city_card/screens/city_card_code_screen.dart';
 import 'package:mobile_kkm/features/city_card/screens/city_card_screen.dart';
 import 'package:mobile_kkm/features/debug/screens/debug_screen.dart';
+import 'package:mobile_kkm/features/first_start/providers/first_start_provider.dart';
+import 'package:mobile_kkm/features/first_start/screens/first_start_screen.dart';
 import 'package:mobile_kkm/features/home/screens/home_screen.dart';
 import 'package:mobile_kkm/features/map/screens/map_screen.dart';
 import 'package:mobile_kkm/features/purchase/models/purchase_selection.dart';
@@ -50,6 +52,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen(appStartupProvider, (_, _) => refresh.value++);
   ref.listen(appStatusProvider.select((status) => status.mode == AppMode.outdated), (_, _) => refresh.value++);
   ref.listen(cardGateProvider, (_, _) => refresh.value++);
+  ref.listen(firstStartSeenProvider, (_, _) => refresh.value++);
 
   final router = GoRouter(
     initialLocation: Routes.splash,
@@ -62,12 +65,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         state.uri,
         started ? ref.read(authControllerProvider).status : AuthStatus.unknown,
         outdated: ref.read(appStatusProvider).mode == AppMode.outdated,
+        firstStartSeen: ref.read(firstStartSeenProvider),
         card: ref.read(cardGateProvider),
       );
     },
     routes: [
       GoRoute(path: Routes.splash, builder: (context, state) => const SplashScreen()),
       GoRoute(path: Routes.updateRequired, builder: (context, state) => const UpdateRequiredScreen()),
+      GoRoute(
+        path: Routes.firstStart,
+        builder: (context, state) => FirstStartScreen(next: state.uri.queryParameters['next']),
+      ),
       // In the place of the whole signed-in area until the account has a card.
       GoRoute(
         path: Routes.cardSetup,
@@ -193,13 +201,36 @@ GoRoute _comingSoon(String path, String Function(AppLocalizations l10n) title) =
 /// [outdated]: the server no longer serves this client. Then there is one
 /// screen, in every auth state and for every link.
 ///
+/// [firstStartSeen]: false until the first start notice is accepted. Once
+/// the app has started, it comes before everything else; an e-mail link
+/// waits behind it.
+///
 /// [card]: whether the signed-in user has an mKKM card. Until they do, the
 /// signed-in area is the card set-up alone; until that is known, nothing
 /// moves.
 @visibleForTesting
-String? redirectFor(Uri uri, AuthStatus status, {bool outdated = false, CardGate card = CardGate.open}) {
+String? redirectFor(
+  Uri uri,
+  AuthStatus status, {
+  bool outdated = false,
+  bool firstStartSeen = true,
+  CardGate card = CardGate.open,
+}) {
   if (outdated) {
     return uri.path == Routes.updateRequired ? null : Routes.updateRequired;
+  }
+
+  if (!firstStartSeen && status != AuthStatus.unknown) {
+    if (uri.path == Routes.firstStart) {
+      return null;
+    }
+    final link = EmailLink.tryParse(uri);
+    final next = link != null
+        ? Routes.forEmailLink(link)
+        : Routes.isEmailLinkTarget(uri.path)
+        ? uri.toString()
+        : null;
+    return Routes.firstStartThen(next);
   }
 
   // A link from an EKP e-mail, delivered by the platform's deep linking.

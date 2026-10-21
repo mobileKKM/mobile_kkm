@@ -21,6 +21,8 @@ import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
 import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
+import 'package:mobile_kkm/features/first_start/providers/first_start_provider.dart';
+import 'package:mobile_kkm/features/first_start/services/first_start_store.dart';
 import 'package:mobile_kkm/features/purchase/services/last_payment_method_store.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -56,6 +58,10 @@ Future<void> main() async {
   final package = await PackageInfo.fromPlatform();
   final support = await getApplicationSupportDirectory();
 
+  // Keep track of whether the first start notice has been seen.
+  final firstStart = FileFirstStartStore(File('${support.path}${Platform.pathSeparator}first_start_seen'));
+  final firstStartSeen = await firstStart.read();
+
   // Decode the splash logo before running the app to avoid a visual glitch.
   await _decodeSplashLogo();
 
@@ -71,6 +77,7 @@ Future<void> main() async {
           ),
         ),
         packageInfoProvider.overrideWithValue(package),
+        firstStartSeenProvider.overrideWith(() => FirstStartController(firstStart, seen: firstStartSeen)),
         tokenStoreProvider.overrideWithValue(SecureTokenStore(storage)),
         userDataCacheProvider.overrideWithValue(SecureUserDataCache(storage)),
         lastPaymentMethodStoreProvider.overrideWithValue(SecureLastPaymentMethodStore(storage)),

@@ -1669,4 +1669,38 @@ class AppLocalizationsPl extends AppLocalizations {
   String lineRemove(String line) {
     return 'Usuń linię $line';
   }
+
+  @override
+  String get firstStartTitle => 'Zanim zaczniesz';
+
+  @override
+  String get firstStartBody =>
+      'mobileKKM to aplikacja tworzona przez społeczność dla krakowskiego systemu biletowego EKP.';
+
+  @override
+  String get firstStartUnofficialTitle => 'Nieoficjalna';
+
+  @override
+  String get firstStartUnofficialBody =>
+      'Nie jest tworzona przez ZTP ani MPK i nie jest z nimi powiązana. Oficjalna aplikacja to mobilna KKM.';
+
+  @override
+  String get firstStartOpenSourceTitle => 'Otwarte źródło';
+
+  @override
+  String get firstStartOpenSourceBody =>
+      'Licencja GPL-3.0, kod jest publicznie dostępny na GitHubie. Dane logowania trafiają tylko do systemu EKP.';
+
+  @override
+  String get firstStartNoWarrantyTitle => 'Bez gwarancji';
+
+  @override
+  String get firstStartNoWarrantyBody =>
+      'Udostępniana w obecnej postaci. Twórca nie odpowiada za nieudane zakupy, mandaty ani problemy z kontem EKP.';
+
+  @override
+  String get firstStartAccept => 'Rozumiem';
+
+  @override
+  String get viewSourceCode => 'Zobacz kod źródłowy';
 }

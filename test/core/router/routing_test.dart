@@ -31,6 +31,39 @@ void main() {
       expect(go('/update-required', AuthStatus.authenticated), '/home');
     });
 
+    group('first start notice', () {
+      String? first(String location, AuthStatus status, {bool outdated = false}) =>
+          redirectFor(Uri.parse(location), status, outdated: outdated, firstStartSeen: false);
+
+      test('comes before everything once the app has started', () {
+        for (final status in [AuthStatus.unauthenticated, AuthStatus.authenticated]) {
+          for (final location in ['/', '/login', '/home', '/card-setup', '/debug']) {
+            expect(first(location, status), '/first-start', reason: '$status $location');
+          }
+          expect(first('/first-start', status), isNull);
+        }
+      });
+
+      test('waits for the splash and gives way to the update screen', () {
+        expect(first('/', AuthStatus.unknown), isNull);
+        expect(first('/first-start', AuthStatus.unknown), '/');
+        expect(first('/login', AuthStatus.unauthenticated, outdated: true), '/update-required');
+      });
+
+      test('holds an e-mail link until accepted', () {
+        expect(
+          first('/konto-uzytkownika/activate,abc.html', AuthStatus.unauthenticated),
+          '/first-start?next=%2Factivate%2Fabc',
+        );
+        expect(first('/reset-password/abc', AuthStatus.authenticated), '/first-start?next=%2Freset-password%2Fabc');
+      });
+
+      test('is left once seen', () {
+        expect(go('/first-start', AuthStatus.unauthenticated), '/login');
+        expect(go('/first-start', AuthStatus.authenticated), '/home');
+      });
+    });
+
     test('the debug menu is open signed in and out, once the app has started', () {
       expect(go('/debug', AuthStatus.unknown), '/');
       expect(go('/debug', AuthStatus.unauthenticated), isNull);
