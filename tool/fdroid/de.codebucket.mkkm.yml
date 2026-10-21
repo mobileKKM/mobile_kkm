@@ -5,6 +5,10 @@
 #
 # Per release: tag the commit vX.Y.Z (UpdateCheckMode reads the tags) and keep
 # srclibs on the Flutter version the release was built with.
+#
+# Betas (vX.Y.Z-beta.N) are not matched by UpdateCheckMode on purpose: auto-update would make them
+# the recommended version. Add their build entries by hand and leave CurrentVersion(Code) on the
+# last stable release, so they only reach users with "Unstable updates" on.
 Categories:
   - Public Transport
   - Pass Wallet
@@ -14,9 +18,7 @@ WebSite: https://mobilekkm.app
 SourceCode: https://github.com/mobileKKM/mobile_kkm
 IssueTracker: https://github.com/mobileKKM/mobile_kkm/issues
 Changelog: https://github.com/mobileKKM/mobile_kkm/releases
-Donate:
-  - https://github.com/sponsors/divadsn
-  - https://www.paypal.me/divadsn
+Donate: https://www.paypal.me/divadsn
 
 AutoName: mobileKKM
 
@@ -29,9 +31,9 @@ RepoType: git
 Repo: https://github.com/mobileKKM/mobile_kkm.git
 
 Builds:
-  - versionName: 2.0.0
+  - versionName: 2.0.0-beta.1
     versionCode: 24
-    commit: v2.0.0
+    commit: 4ad762ee32ac4b829be1e5f882f1940ebcecf1b8
     output: build/app/outputs/flutter-apk/app-release.apk
     srclibs:
       - flutter@3.47.5
@@ -49,6 +51,9 @@ Builds:
       - $$flutter$$/bin/flutter config --no-analytics
       - $$flutter$$/bin/flutter pub get
       - sh tool/fdroid/strip_gms.sh
+      # The scanner rejects files in packages' examples and devtools extensions; the build uses none of them.
+      - find .pub-cache/hosted/pub.dev -type d -name example -prune -exec rm -rf {} +
+      - rm -rf .pub-cache/hosted/pub.dev/*/extension .pub-cache/hosted/pub.dev/archive-*/web
     build:
       - export PUB_CACHE=$(pwd)/.pub-cache
       # As release.yml builds it: ARM only, Dart debug info left out of the APK.
@@ -58,5 +63,5 @@ Builds:
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9.]+$
 UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
-CurrentVersion: 2.0.0
+CurrentVersion: 2.0.0-beta.1
 CurrentVersionCode: 24
