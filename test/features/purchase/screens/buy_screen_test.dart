@@ -311,7 +311,7 @@ void main() {
   });
 
   group('a new section scrolls into view', () {
-    testWidgets('only as far as its heading and first row, when hidden', (tester) async {
+    testWidgets('whole, down to its last row, when hidden', (tester) async {
       final app = await _open(tester, _adapter());
       tester.view.physicalSize = const Size(1080, 1260);
       await tester.pumpAndSettle();
@@ -323,13 +323,18 @@ void main() {
 
       final before = _list(tester).pixels;
       await tapVisible(tester, find.widgetWithText(FilterChip, 'All lines'));
-      final position = _list(tester);
-      expect(position.pixels, greaterThan(before));
-      // The first chip sits just above the bottom of the list, not at the top.
+      expect(_list(tester).pixels, greaterThan(before));
+      // The Duration section's last chip is above the bar, its heading still in view.
       final list = tester.getRect(_form.last);
-      final firstRow = tester.getRect(find.widgetWithText(FilterChip, '1 month'));
-      expect(firstRow.bottom, lessThanOrEqualTo(list.bottom));
-      expect(firstRow.bottom, greaterThan(list.bottom - 64));
+      expect(tester.getRect(find.byType(FilterChip).last).bottom, lessThanOrEqualTo(list.bottom));
+      expect(tester.getRect(find.text('Duration')).top, greaterThanOrEqualTo(list.top));
+
+      // The start date's help text, the end of the form, clears the bar too.
+      await tapVisible(tester, find.widgetWithText(FilterChip, '1 month'));
+      await _priced(tester);
+      final listNow = tester.getRect(_form.last);
+      expect(tester.getRect(find.textContaining('Any day from')).bottom, lessThanOrEqualTo(listNow.bottom));
+      expect(_list(tester).pixels, _list(tester).maxScrollExtent);
     });
 
     testWidgets('not at all when it is already in view', (tester) async {

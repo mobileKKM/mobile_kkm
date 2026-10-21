@@ -182,13 +182,21 @@ class _Form extends ConsumerStatefulWidget {
 }
 
 class _FormState extends ConsumerState<_Form> {
-  /// How much of a new section has to show: its heading and its first row
-  /// (a tile; less where the whole section is lower).
-  static const _firstRow = 64.0;
+  /// Space below a section: its own gap and, after the last, the list's end.
+  static const _sectionGap = 16.0;
+  static const _listEnd = 24.0;
 
   final _headings = {for (final section in PurchaseSection.values) section: GlobalKey()};
   final _sectionKeys = {for (final section in PurchaseSection.values) section: GlobalKey()};
   final _scroll = ScrollController();
+
+  /// The list's height and whether it was scrolled to its end, as last
+  /// measured: when the bar grows (a price, a refusal) the end stays in view.
+  double? _viewport;
+  bool _atEnd = false;
+
+  /// The reveal under way heads for the end of the list.
+  Future<void>? _toEnd;
 
   PurchaseFormController get _controller => ref.read(purchaseFormProvider(widget.entry).notifier);
 
@@ -205,16 +213,17 @@ class _FormState extends ConsumerState<_Form> {
     final added = widget.form.visibleSections.where((section) => !before.contains(section)).toList();
     if (added.isNotEmpty) {
       // Once laid out: the section is there at its full height.
-      WidgetsBinding.instance.addPostFrameCallback((_) => _showSection(added.first));
+      WidgetsBinding.instance.addPostFrameCallback((_) => _showSections(added.first, added.last));
     }
   }
 
-  /// Scrolls just far enough to show [section]'s heading and first row
-  /// above the bar, only if they are hidden, and not while the list is
-  /// moving. A touch on the list stops the scroll.
-  void _showSection(PurchaseSection section) {
-    final box = _sectionKeys[section]?.currentContext?.findRenderObject();
-    final heading = _headings[section]?.currentContext?.findRenderObject();
+  /// Scrolls just far enough to show the new sections [first] to [last]
+  /// whole above the bar, only if they are hidden, and not while the list is
+  /// moving; never so far that [first]'s heading leaves the top. A touch on
+  /// the list stops the scroll.
+  void _showSections(PurchaseSection first, PurchaseSection last) {
+    final box = _sectionKeys[last]?.currentContext?.findRenderObject();
+    final heading = _headings[first]?.currentContext?.findRenderObject();
     if (!mounted || !_scroll.hasClients || box is! RenderBox || heading is! RenderBox) {
       return;
     }
@@ -222,10 +231,10 @@ class _FormState extends ConsumerState<_Form> {
     if (position.isScrollingNotifier.value) {
       return;
     }
-    final shown = heading.size.height + math.min(box.size.height - heading.size.height, _firstRow);
     final viewport = RenderAbstractViewport.of(box);
+    final whole = Offset.zero & Size(box.size.width, box.size.height + _sectionGap + _listEnd);
     final target = math.min(
-      viewport.getOffsetToReveal(box, 1, rect: Offset.zero & Size(box.size.width, shown)).offset,
+      math.min(viewport.getOffsetToReveal(box, 1, rect: whole).offset, viewport.getOffsetToReveal(heading, 0).offset),
       position.maxScrollExtent,
     );
     if (target <= position.pixels) {
@@ -234,8 +243,50 @@ class _FormState extends ConsumerState<_Form> {
     if (MediaQuery.disableAnimationsOf(context)) {
       position.jumpTo(target);
     } else {
-      unawaited(position.animateTo(target, duration: _Reveal.showDuration, curve: Easing.emphasizedDecelerate));
+      _scrollTo(position, target, toEnd: target >= position.maxScrollExtent - 1);
     }
+  }
+
+  void _scrollTo(ScrollPosition position, double target, {required bool toEnd}) {
+    final scroll = position.animateTo(target, duration: _Reveal.showDuration, curve: Easing.emphasizedDecelerate);
+    _toEnd = toEnd ? scroll : null;
+    unawaited(
+      scroll.whenComplete(() {
+        if (_toEnd == scroll) {
+          _toEnd = null;
+        }
+      }),
+    );
+  }
+
+  /// When the list got shorter (the bar grew) while scrolled to its end, or
+  /// on the way there, keeps the end in view.
+  bool _keepEnd(Notification notification) {
+    final ScrollMetrics metrics;
+    switch (notification) {
+      case ScrollMetricsNotification(metrics: final m) || ScrollUpdateNotification(metrics: final m)
+          when m.axis == Axis.vertical:
+        metrics = m;
+      default:
+        return false;
+    }
+    final before = _viewport;
+    if (before != null && metrics.viewportDimension < before && (_atEnd || _toEnd != null)) {
+      final position = _scroll.position;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_scroll.hasClients || position.pixels >= position.maxScrollExtent) {
+          return;
+        }
+        if (_toEnd != null) {
+          _scrollTo(position, position.maxScrollExtent, toEnd: true);
+        } else if (!position.isScrollingNotifier.value) {
+          position.jumpTo(position.maxScrollExtent);
+        }
+      });
+    }
+    _viewport = metrics.viewportDimension;
+    _atEnd = metrics.pixels >= metrics.maxScrollExtent - 1;
+    return false;
   }
 
   Future<void> _pickLines(SalesLineOption option) async {
@@ -434,40 +485,43 @@ class _FormState extends ConsumerState<_Form> {
     final announcement = widget.announcement;
     // Not lazy: a section further down than the list has built yet must
     // still be measured to be scrolled to.
-    return SingleChildScrollView(
-      controller: _scroll,
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (announcement != null) ...[_Announcement(announcement), const SizedBox(height: 16)],
-          if (form.prefilled && form.bounds.extending) ...[
-            MessageBanner(l10n.buyPrefilled, kind: BannerKind.info, icon: Symbols.event_repeat_rounded),
-            const SizedBox(height: 16),
-          ],
-          for (final MapEntry(key: section, value: child) in sections.entries)
-            _Reveal(
-              visible: visible.contains(section),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: KeyedSubtree(key: _sectionKeys[section], child: child),
+    return NotificationListener<Notification>(
+      onNotification: _keepEnd,
+      child: SingleChildScrollView(
+        controller: _scroll,
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, _listEnd),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (announcement != null) ...[_Announcement(announcement), const SizedBox(height: 16)],
+            if (form.prefilled && form.bounds.extending) ...[
+              MessageBanner(l10n.buyPrefilled, kind: BannerKind.info, icon: Symbols.event_repeat_rounded),
+              const SizedBox(height: 16),
+            ],
+            for (final MapEntry(key: section, value: child) in sections.entries)
+              _Reveal(
+                visible: visible.contains(section),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: _sectionGap),
+                  child: KeyedSubtree(key: _sectionKeys[section], child: child),
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
 /// A section that fades in, 8 dp up, at its full height when it becomes
-/// visible (so the list can scroll to it at once), and collapses when it no
-/// longer applies. Shown at once on the first build (a prefilled form) and
-/// with animations off.
+/// visible (so the list can scroll to it at once), and leaves the same way
+/// backwards when it no longer applies (same time, the curve reversed),
+/// fading out, 8 dp down, while its height shrinks away. Shown at once on
+/// the first build (a prefilled form) and with animations off.
 class _Reveal extends StatefulWidget {
   const _Reveal({required this.visible, required this.child});
 
   static const showDuration = Duration(milliseconds: 250);
-  static const hideDuration = Duration(milliseconds: 150);
 
   final bool visible;
   final Widget child;
@@ -480,13 +534,12 @@ class _RevealState extends State<_Reveal> with SingleTickerProviderStateMixin {
   late final _controller = AnimationController(
     vsync: this,
     duration: _Reveal.showDuration,
-    reverseDuration: _Reveal.hideDuration,
     value: widget.visible ? 1 : 0,
   );
   late final _curve = CurvedAnimation(
     parent: _controller,
     curve: Easing.emphasizedDecelerate,
-    reverseCurve: Easing.emphasizedAccelerate,
+    reverseCurve: Easing.emphasizedDecelerate.flipped,
   );
 
   @override
@@ -524,14 +577,19 @@ class _RevealState extends State<_Reveal> with SingleTickerProviderStateMixin {
         if (_controller.isCompleted) {
           return child!;
         }
-        return ClipRect(
-          child: Align(
-            alignment: Alignment.topCenter,
-            // Grows only while collapsing; a new section is there at once.
-            heightFactor: _controller.status == AnimationStatus.reverse ? t.clamp(0, 1) : 1,
-            child: Opacity(
-              opacity: t.clamp(0, 1),
-              child: Transform.translate(offset: Offset(0, 8 * (1 - t)), child: child),
+        final leaving = _controller.status == AnimationStatus.reverse;
+        return IgnorePointer(
+          // A leaving section takes no taps.
+          ignoring: leaving,
+          child: ClipRect(
+            child: Align(
+              alignment: Alignment.topCenter,
+              // Shrinks only while leaving; a new section is there at once.
+              heightFactor: leaving ? t.clamp(0, 1) : 1,
+              child: Opacity(
+                opacity: t.clamp(0, 1),
+                child: Transform.translate(offset: Offset(0, 8 * (1 - t)), child: child),
+              ),
             ),
           ),
         );
