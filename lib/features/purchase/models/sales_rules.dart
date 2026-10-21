@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:ekp_api/ekp_api.dart';
 import 'package:mobile_kkm/features/purchase/models/purchase_selection.dart';
 
@@ -17,10 +18,10 @@ class UnsoldZonesNote extends ZoneNote {
 
   @override
   bool operator ==(Object other) =>
-      other is UnsoldZonesNote && _sameInts(other.zones, zones) && _sameInts(other.missing, missing);
+      other is UnsoldZonesNote && _zoneList.equals(other.zones, zones) && _zoneList.equals(other.missing, missing);
 
   @override
-  int get hashCode => Object.hash(Object.hashAll(zones), Object.hashAll(missing));
+  int get hashCode => Object.hash(_zoneList.hash(zones), _zoneList.hash(missing));
 
   @override
   String toString() => 'UnsoldZonesNote($zones, add $missing)';
@@ -34,14 +35,10 @@ class FareZonesNote extends ZoneNote {
   final List<List<int>> sets;
 
   @override
-  bool operator ==(Object other) =>
-      other is FareZonesNote &&
-      other.kind == kind &&
-      other.sets.length == sets.length &&
-      [for (var i = 0; i < sets.length; i++) _sameInts(other.sets[i], sets[i])].every((same) => same);
+  bool operator ==(Object other) => other is FareZonesNote && other.kind == kind && _zoneLists.equals(other.sets, sets);
 
   @override
-  int get hashCode => Object.hash(kind, Object.hashAll([for (final set in sets) Object.hashAll(set)]));
+  int get hashCode => Object.hash(kind, _zoneLists.hash(sets));
 
   @override
   String toString() => 'FareZonesNote(${kind.description}: $sets)';
@@ -54,10 +51,10 @@ class DiscountNote extends ZoneNote {
   final List<int> zones;
 
   @override
-  bool operator ==(Object other) => other is DiscountNote && _sameInts(other.zones, zones);
+  bool operator ==(Object other) => other is DiscountNote && _zoneList.equals(other.zones, zones);
 
   @override
-  int get hashCode => Object.hashAll(zones);
+  int get hashCode => _zoneList.hash(zones);
 
   @override
   String toString() => 'DiscountNote($zones)';
@@ -91,8 +88,7 @@ class TicketChoice {
       other.ticketNumberOfLineCode == ticketNumberOfLineCode &&
       other.ticketKindCode == ticketKindCode &&
       other.ticketPeriodCode == ticketPeriodCode &&
-      other.lines.length == lines.length &&
-      [for (var i = 0; i < lines.length; i++) other.lines[i] == lines[i]].every((same) => same) &&
+      const ListEquality<TransportLine>().equals(other.lines, lines) &&
       other.specialTransportLine == specialTransportLine;
 
   @override
@@ -101,7 +97,7 @@ class TicketChoice {
     ticketNumberOfLineCode,
     ticketKindCode,
     ticketPeriodCode,
-    Object.hashAll(lines),
+    const ListEquality<TransportLine>().hash(lines),
     specialTransportLine,
   );
 }
@@ -140,17 +136,8 @@ class SalesRules {
 
   List<SalesKindOption> get kinds => config.ticketKinds;
 
-  SpecialTransportLine? typeOf(String? code) {
-    if (code == null) {
-      return null;
-    }
-    for (final type in types) {
-      if (type.specialTransportLine == code) {
-        return type;
-      }
-    }
-    return null;
-  }
+  SpecialTransportLine? typeOf(String? code) =>
+      code == null ? null : types.firstWhereOrNull((type) => type.specialTransportLine == code);
 
   /// The zones [option] covers.
   static Set<int> zonesOf(SalesLineOption option) =>
@@ -219,7 +206,7 @@ class SalesRules {
       return null;
     }
     final first = zonesOf(options.first);
-    return options.every((option) => _sameSet(zonesOf(option), first)) ? first : null;
+    return options.every((option) => _zoneSet.equals(zonesOf(option), first)) ? first : null;
   }
 
   /// Whether the zone tile can be toggled: some product of the type covers
@@ -236,7 +223,7 @@ class SalesRules {
   /// The products of the type covering exactly [zones].
   List<SalesLineOption> optionsForZones(String? type, Set<int> zones) => [
     for (final option in optionsFor(type))
-      if (_sameSet(zonesOf(option), zones)) option,
+      if (_zoneSet.equals(zonesOf(option), zones)) option,
   ];
 
   /// The products of the type covering exactly [zones] that [kind] is sold
@@ -256,8 +243,9 @@ class SalesRules {
     }
     return [
       ...options.where((option) => option.selectableLines != true),
-      ...options.where((option) => option.selectableLines == true).toList()
-        ..sort((a, b) => (a.sumLinesToSelection ?? 0).compareTo(b.sumLinesToSelection ?? 0)),
+      ...options
+          .where((option) => option.selectableLines == true)
+          .sortedBy<num>((option) => option.sumLinesToSelection ?? 0),
     ];
   }
 
@@ -372,28 +360,23 @@ class SalesRules {
       return const [];
     }
     if (optionsForZones(selection.type, zones).isEmpty) {
-      SalesLineOption? smallest;
-      for (final option in optionsFor(selection.type)) {
-        final covered = zonesOf(option);
-        if (covered.containsAll(zones) && (smallest == null || covered.length < zonesOf(smallest).length)) {
-          smallest = option;
-        }
-      }
+      final smallest = minBy(
+        optionsFor(selection.type).where((option) => zonesOf(option).containsAll(zones)),
+        (option) => zonesOf(option).length,
+      );
       if (smallest == null) {
         return const [];
       }
       return [UnsoldZonesNote(zones: _sorted(zones), missing: _sorted(zonesOf(smallest).difference(zones)))];
     }
     if (productsFor(selection.type, kind, zones).isEmpty) {
-      final kindOption = kinds.where((k) => k.code == kind).firstOrNull ?? SalesKindOption(code: kind);
-      final sets = <List<int>>[];
-      for (final option in optionsFor(selection.type)) {
-        final set = _sorted(zonesOf(option));
-        if (optionSold(selection.type, kind, option) && !sets.any((s) => _sameInts(s, set))) {
-          sets.add(set);
-        }
-      }
-      return [FareZonesNote(kind: kindOption, sets: sets)];
+      final kindOption = kinds.firstWhereOrNull((k) => k.code == kind) ?? SalesKindOption(code: kind);
+      final sets = EqualitySet<List<int>>(_zoneList)
+        ..addAll([
+          for (final option in optionsFor(selection.type))
+            if (optionSold(selection.type, kind, option)) _sorted(zonesOf(option)),
+        ]);
+      return [FareZonesNote(kind: kindOption, sets: sets.toList())];
     }
     return const [];
   }
@@ -419,7 +402,7 @@ class SalesRules {
     }
     final fixed = fixedZones(type);
     if (fixed != null) {
-      if (!_sameSet(s.zones, fixed)) {
+      if (!_zoneSet.equals(s.zones, fixed)) {
         s = s.copyWith(zones: fixed);
       }
     } else {
@@ -431,7 +414,7 @@ class SalesRules {
     final zones = zonesIn(s);
     SalesLineOption? lineOption;
     if (s.lineOption != null) {
-      lineOption = lineChoices(type, zones).where((option) => option.code == s.lineOption).firstOrNull;
+      lineOption = lineChoices(type, zones).firstWhereOrNull((option) => option.code == s.lineOption);
       if (lineOption == null || (s.kind != null && !optionSold(type, s.kind, lineOption))) {
         lineOption = null;
         s = s.copyWith(lineOption: () => null);
@@ -467,10 +450,10 @@ class SalesRules {
     final type =
         typeOf(ticket.specialTransportLine) ??
         (ticket.isMetropolitan == true
-            ? types.where((t) => t.isMetropolitan == true).firstOrNull
-            : types.where((t) => t.isNetwork == true).firstOrNull);
+            ? types.firstWhereOrNull((t) => t.isMetropolitan == true)
+            : types.firstWhereOrNull((t) => t.isNetwork == true));
     final typeCode = type?.specialTransportLine;
-    final option = config.ticketNumberOfLines.where((o) => o.code == ticket.ticketNumberOfLineCode).firstOrNull;
+    final option = config.ticketNumberOfLines.firstWhereOrNull((o) => o.code == ticket.ticketNumberOfLineCode);
     return reconcile(
       PurchaseSelection(
         type: typeCode,
@@ -489,17 +472,15 @@ class SalesRules {
     if (code == null || sells(code)) {
       return code;
     }
-    final group = dictionary.where((k) => k.code == code).firstOrNull?.groupId;
+    final group = dictionary.firstWhereOrNull((k) => k.code == code)?.groupId;
     if (group == null) {
       return null;
     }
-    for (final kind in kinds) {
-      final entry = dictionary.where((k) => k.code == kind.code).firstOrNull;
-      if (entry?.groupId == group && sells(kind.code)) {
-        return kind.code;
-      }
-    }
-    return null;
+    return kinds
+        .firstWhereOrNull(
+          (kind) => dictionary.firstWhereOrNull((k) => k.code == kind.code)?.groupId == group && sells(kind.code),
+        )
+        ?.code;
   }
 
   /// The start day's range and default.
@@ -557,18 +538,8 @@ class SalesRules {
   }
 }
 
-bool _sameSet(Set<int> a, Set<int> b) => a.length == b.length && a.containsAll(b);
-
-bool _sameInts(List<int> a, List<int> b) {
-  if (a.length != b.length) {
-    return false;
-  }
-  for (var i = 0; i < a.length; i++) {
-    if (a[i] != b[i]) {
-      return false;
-    }
-  }
-  return true;
-}
+const _zoneSet = SetEquality<int>();
+const _zoneList = ListEquality<int>();
+const _zoneLists = ListEquality<List<int>>(_zoneList);
 
 List<int> _sorted(Iterable<int> zones) => zones.toList()..sort();
