@@ -103,6 +103,7 @@ void main() {
     });
     expect(_state(app).ticketGuid, _guid);
     expect(store.groupId, '150');
+    expect(_state(app).lastUsed, '150');
 
     checkout.select('103');
     final second = await _pay(tester, checkout);
@@ -110,6 +111,7 @@ void main() {
     expect(adapter.requestsTo('/tickets/buy'), hasLength(1));
     expect(_body(adapter, '/tickets/pay'), {'id': _guid, 'ignoreWarnings': false, 'tPayPaymentGroupId': '103'});
     expect(store.groupId, '103');
+    expect(_state(app).lastUsed, '103');
   });
 
   testWidgets('code 5 asks first, then pays with ignoreWarnings', (tester) async {

@@ -198,6 +198,9 @@ class CheckoutController extends Notifier<CheckoutState> {
       }
       if (outcome is CheckoutOpen) {
         await store.write(group);
+        if (ref.mounted) {
+          state = state.copyWith(lastUsed: () => group);
+        }
       }
     } on EkpApiException catch (error) {
       if (error is EkpNetworkException) {
