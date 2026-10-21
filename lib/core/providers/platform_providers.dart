@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/core/platform/payment_browser.dart';
 import 'package:mobile_kkm/core/platform/photo_picker.dart';
 import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
 import 'package:mobile_kkm/core/platform/url_opener.dart';
 import 'package:mobile_kkm/features/account/services/photo_cache.dart';
+import 'package:mobile_kkm/features/purchase/services/payment_logos.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,6 +39,10 @@ final screenSecurityProvider = Provider<ScreenSecurity>(
 /// tests can see it switched on and off.
 final scanDisplayProvider = Provider<ScanDisplay>((ref) => const ScanDisplay());
 
+/// tPay's payment page in the in-app browser. A provider so tests can
+/// play its return link or its closing.
+final paymentBrowserProvider = Provider<PaymentBrowser>((ref) => PaymentBrowser());
+
 /// Opens a web page in the system browser. A provider so tests can capture
 /// the URL instead of launching anything.
 final urlOpenerProvider = Provider<UrlOpener>(
@@ -57,6 +63,10 @@ final appVersionProvider = FutureProvider<String>((ref) async {
 /// The profile photo, from the network and kept on disk. A provider so tests
 /// need neither.
 final photoCacheProvider = Provider<PhotoCache>((ref) => const NetworkPhotoCache());
+
+/// tPay's payment logos, from the network and kept on disk. A provider so
+/// tests need neither.
+final paymentLogosProvider = Provider<PaymentLogos>((ref) => NetworkPaymentLogos());
 
 /// The camera and the gallery, for the photo on the mKKM card. A provider so
 /// tests can hand over a picture of their own.

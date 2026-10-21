@@ -37,7 +37,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get passwordTooWeak => 'Hasło nie spełnia wymagań';
 
   @override
-  String get passwordsDontMatch => 'Hasła nie są takie same';
+  String get passwordsDontMatch => 'Hasła nie są identyczne.';
 
   @override
   String passwordRuleMinLength(int count) {
@@ -405,7 +405,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketPinned => 'Przypięty';
 
   @override
-  String get ticketStatusProcessing => 'Trwa przetwarzanie płatności';
+  String get ticketStatusProcessing => 'Przetwarzanie płatności';
 
   @override
   String get ticketStatusAssignedElsewhere => 'Powiązany z innymi urządzeniami';
@@ -435,7 +435,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ticketAssignError => 'Wystąpił błąd podczas powiązywania biletu, spróbuj ponownie.';
 
   @override
-  String get ticketPaymentConfirmed => 'Płatność została zrealizowana.';
+  String get ticketPaymentConfirmed => 'Płatność potwierdzona. Bilet jest gotowy.';
 
   @override
   String get ticketPaymentPending => 'Brak zaksięgowanej płatności.';
@@ -1316,4 +1316,357 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get deleteDoneTitle => 'Konto usunięte';
+
+  @override
+  String get buyTitle => 'Kup bilet';
+
+  @override
+  String get extendTitle => 'Przedłuż bilet';
+
+  @override
+  String get buyType => 'Typ biletu';
+
+  @override
+  String get buyFare => 'Rodzaj biletu';
+
+  @override
+  String get buyZone => 'Strefa';
+
+  @override
+  String get buyZoneSub => 'Zaznacz wszystkie potrzebne strefy';
+
+  @override
+  String buyZoneName(String zone) {
+    return 'Strefa $zone';
+  }
+
+  @override
+  String get buyTypeDiscount => 'Bilet ze zniżką Karty Krakowskiej';
+
+  @override
+  String get buyTypeDiscountSub => 'Wszystkie lub wybrane linie KMK w wybranej strefie';
+
+  @override
+  String get buyTypeNoDiscount => 'Bilet bez zniżki Karty Krakowskiej';
+
+  @override
+  String get buyTypeNoDiscountSub => 'Wszystkie linie KMK w wybranej strefie oraz Koleje Regionalne';
+
+  @override
+  String get fareStandard => 'Normalny';
+
+  @override
+  String get fareReduced => 'Ulgowy';
+
+  @override
+  String get fareActivation => 'Aktywizujący';
+
+  @override
+  String buyZonesNotTogether(String zones, String missing) {
+    return 'Strefy $zones nie są sprzedawane razem. Dodaj Strefę $missing, aby jeździć w obu.';
+  }
+
+  @override
+  String buyFareZones(String fare, String sets) {
+    return 'Bilet $fare jest sprzedawany na Strefy $sets.';
+  }
+
+  @override
+  String buyDiscountZones(String zones) {
+    return 'Zniżka Karty Krakowskiej obejmuje tylko Strefę $zones.';
+  }
+
+  @override
+  String buyZoneList(String rest, String last) {
+    return '$rest i $last';
+  }
+
+  @override
+  String get buyLines => 'Linie';
+
+  @override
+  String get buyAllLines => 'Wszystkie linie';
+
+  @override
+  String buyLineCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count linii',
+      few: '$count linie',
+      one: '1 linia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String buyLinesSub(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Wybierz $count linii',
+      few: 'Wybierz $count linie',
+      one: 'Wybierz 1 linię',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String buyLinesChosen(int chosen, int count) {
+    return 'Wybrano $chosen z $count';
+  }
+
+  @override
+  String get buyAddLine => 'Dodaj linię';
+
+  @override
+  String get buyAlsoZoneII => '+ Strefa II';
+
+  @override
+  String get buyDuration => 'Długość';
+
+  @override
+  String buyMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count miesięcy',
+      few: '$count miesiące',
+      one: '1 miesiąc',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String buyDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count dni', one: '1 dzień');
+    return '$_temp0';
+  }
+
+  @override
+  String get buyStarts => 'Początek ważności';
+
+  @override
+  String get buyDate => 'Data';
+
+  @override
+  String buyStartsRange(String first, String last) {
+    return 'Dowolny dzień od $first do $last';
+  }
+
+  @override
+  String buyExtendRange(String first, String last) {
+    return 'Od $first, dnia po końcu Twojego biletu, do $last';
+  }
+
+  @override
+  String get buyNeedType => 'Wybierz typ biletu';
+
+  @override
+  String get buyNeedFare => 'Wybierz rodzaj biletu';
+
+  @override
+  String get buyNeedZone => 'Wybierz, gdzie jeździsz';
+
+  @override
+  String get buyNeedLines => 'Wybierz linie';
+
+  @override
+  String buyNeedMoreLines(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Wybierz jeszcze $count linii',
+      few: 'Wybierz jeszcze $count linie',
+      one: 'Wybierz jeszcze 1 linię',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get buyNeedDuration => 'Wybierz długość biletu';
+
+  @override
+  String get buyCalculating => 'Obliczamy cenę…';
+
+  @override
+  String get buyPrice => 'Cena';
+
+  @override
+  String get buyContinue => 'Dalej';
+
+  @override
+  String get buyPrefilled => 'Wypełniono na podstawie Twojego biletu. Nowy zacznie się dzień po jego końcu.';
+
+  @override
+  String get buyOffline => 'Do zakupu biletu potrzebne jest połączenie.';
+
+  @override
+  String get buyLoadFailed => 'Nie udało się wczytać biletów w sprzedaży.';
+
+  @override
+  String get buyFieldErrors => 'Proszę poprawnie wybrać rodzaj i typ biletu.';
+
+  @override
+  String get payTitle => 'Sprawdź i zapłać';
+
+  @override
+  String get payTicketTitle => 'Opłać bilet';
+
+  @override
+  String get payValidFrom => 'Ważny od';
+
+  @override
+  String get payValidUntil => 'Ważny do';
+
+  @override
+  String get payProduct => 'Produkt';
+
+  @override
+  String get payValidOn => 'Obowiązuje';
+
+  @override
+  String get payEveryDay => '7 dni w tygodniu';
+
+  @override
+  String payDaysAWeek(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dni w tygodniu',
+      one: '1 dzień w tygodniu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get payMethod => 'Metoda płatności';
+
+  @override
+  String get payLastUsed => 'Ostatnio używana';
+
+  @override
+  String get payTransfer => 'Przelew bankowy';
+
+  @override
+  String get payChooseBank => 'Wybierz swój bank';
+
+  @override
+  String get payChange => 'Zmień';
+
+  @override
+  String get payBankSheetTitle => 'Wybierz bank';
+
+  @override
+  String get payBankSheetSub => 'Przelew online przez tPay';
+
+  @override
+  String payButton(String price) {
+    return 'Zapłać $price';
+  }
+
+  @override
+  String get payOpening => 'Otwieramy płatność…';
+
+  @override
+  String get payMethodsFailed => 'Nie udało się wczytać metod płatności.';
+
+  @override
+  String get payHowAndroid =>
+      'Płacisz na bezpiecznej stronie tPay w przeglądarce. Po zakończeniu mobileKKM otworzy się ponownie.';
+
+  @override
+  String get payHowIos => 'Płacisz na bezpiecznej stronie tPay w Safari. Po zakończeniu stuknij Gotowe, aby wrócić.';
+
+  @override
+  String get payLinkHint =>
+      'Aby po płatności wrócić tu automatycznie, zezwól mobileKKM na otwieranie linków ekp.mpk.krakow.pl.';
+
+  @override
+  String get paySimilar =>
+      'Posiadasz już podobny bilet obowiązujący częściowo w okresie na który chcesz kupić nowy bilet.';
+
+  @override
+  String get payScreenTitle => 'Płatność';
+
+  @override
+  String get payOpeningTpay => 'Otwieramy tPay…';
+
+  @override
+  String get payOpenBodyAndroid => 'Po zakończeniu płatności mobileKKM sam wróci na ten ekran.';
+
+  @override
+  String get payOpenBodyAndroidNoLink => 'Po zakończeniu płatności zamknij stronę płatności, aby tu wrócić.';
+
+  @override
+  String get payOpenBodyIos => 'Po zakończeniu płatności stuknij Gotowe, aby tu wrócić.';
+
+  @override
+  String get payRejectedTitle => 'Płatność nie doszła do skutku';
+
+  @override
+  String get payRejectedBody => 'Spróbuj ponownie lub wybierz inną metodę płatności.';
+
+  @override
+  String get payTryAgain => 'Spróbuj ponownie';
+
+  @override
+  String get payFinishing => 'Kończymy zakup…';
+
+  @override
+  String get payFinishingBody => 'To potrwa chwilę.';
+
+  @override
+  String get payChecking => 'Sprawdzamy płatność…';
+
+  @override
+  String get payNotYet => 'Nie widzimy jeszcze Twojej płatności';
+
+  @override
+  String get payNotYetBody =>
+      'Jeśli płatność została wykonana, może dotrzeć za kilka minut. Do tego czasu bilet czeka w zakładce Bilety jako oczekujący na płatność.';
+
+  @override
+  String get payAgain => 'Zapłać ponownie';
+
+  @override
+  String get payCheckAgain => 'Sprawdź ponownie';
+
+  @override
+  String get payBackToTickets => 'Wróć do biletów';
+
+  @override
+  String get payMade => 'Zapłacono.';
+
+  @override
+  String get payReady => 'Bilet jest gotowy.';
+
+  @override
+  String get payRepeatTitle => 'Ponowienie płatności';
+
+  @override
+  String get payRepeatBody =>
+      'System oczekuje na potwierdzenie poprzedniej płatności, czy na pewno chcesz ponowić płatność? Zapłać tylko jeżeli masz pewność, że poprzednia płatność nie została sfinalizowana.';
+
+  @override
+  String get payAlreadyPaid => 'Ten bilet jest już opłacony.';
+
+  @override
+  String lineChosen(int chosen, int count) {
+    return 'Wybrano $chosen z $count';
+  }
+
+  @override
+  String get lineDone => 'Gotowe';
+
+  @override
+  String get lineZoneI => 'Strefa I';
+
+  @override
+  String get lineAlsoZoneII => 'także Strefa II';
+
+  @override
+  String lineRemove(String line) {
+    return 'Usuń linię $line';
+  }
 }

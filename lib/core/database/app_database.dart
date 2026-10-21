@@ -23,12 +23,36 @@ class Tickets extends Table {
   Set<Column<Object>> get primaryKey => {ticketGuid};
 }
 
+/// Tickets whose payment the app saw succeed (tPay's return link) while the
+/// server still lists them as `pending`: their cards show the payment as
+/// being booked. Only that fact is kept, like the official client's
+/// `ticket-pending` store.
+@DataClassName('PaymentRow')
+class Payments extends Table {
+  TextColumn get ticketGuid => text()();
+
+  /// When the success link arrived.
+  DateTimeColumn get madeAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {ticketGuid};
+}
+
 /// On-device database. Unencrypted: it holds no personal data (that stays
 /// in the platform keystore), only ticket ids, dates, prices and lines.
-@DriftDatabase(tables: [Tickets])
+@DriftDatabase(tables: [Tickets, Payments])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.createTable(payments);
+      }
+    },
+  );
 }

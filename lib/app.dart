@@ -4,6 +4,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/providers/aztec_key_provider.dart';
 import 'package:mobile_kkm/core/router/app_router.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
+import 'package:mobile_kkm/features/purchase/services/payment_session.dart';
+import 'package:mobile_kkm/features/purchase/services/payment_watcher.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
@@ -18,6 +20,10 @@ class MobileKkmApp extends ConsumerWidget {
     // Alive from the start too: it asks the relay for the ticket code's key
     // once the user is signed in, before a screen needs it.
     ref.listen(aztecKeyProvider, (_, _) {});
+    // Alive from the start: a return link from tPay can come with a cold
+    // start, and marked payments are followed until they are booked.
+    ref.listen(paymentSessionProvider, (_, _) {});
+    ref.listen(paymentWatcherProvider, (_, _) {});
     return MaterialApp.router(
       title: 'mobileKKM',
       theme: AppTheme.light(),

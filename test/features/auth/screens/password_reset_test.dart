@@ -72,7 +72,7 @@ void main() {
     await tester.pump();
     expect(button().onPressed, isNotNull);
     await tapVisible(tester, find.widgetWithText(FilledButton, 'Change password'));
-    expect(find.text('The passwords do not match'), findsOneWidget);
+    expect(find.text('The passwords don’t match.'), findsOneWidget);
 
     await tester.enterText(field('Repeat password'), 'Secret123');
     await tapVisible(tester, find.widgetWithText(FilledButton, 'Change password'));

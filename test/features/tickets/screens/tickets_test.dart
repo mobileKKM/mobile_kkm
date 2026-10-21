@@ -5,7 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/database/app_database.dart';
+import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
+import 'package:mobile_kkm/features/purchase/services/payments_dao.dart';
 import 'package:mobile_kkm/features/tickets/services/tickets_dao.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_card.dart';
 import 'package:mobile_kkm/features/tickets/widgets/ticket_skeletons.dart';
@@ -330,9 +332,9 @@ void main() {
     await tester.tap(find.widgetWithText(FloatingActionButton, 'Buy ticket'));
     await tester.pumpAndSettle();
     expect(app.location, '/buy');
-    expect(find.text('Coming soon'), findsOneWidget);
+    expect(find.text('Buy a ticket'), findsOneWidget);
 
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Close'));
     await tester.pumpAndSettle();
     expect(app.location, '/tickets');
     await tester.tap(find.text('Active'));
@@ -340,14 +342,16 @@ void main() {
     expect(find.widgetWithText(FloatingActionButton, 'Buy ticket'), findsOneWidget);
   });
 
-  testWidgets('signing out empties the ticket store', (tester) async {
+  testWidgets('signing out empties the ticket store and the payment marks', (tester) async {
     final adapter = _adapter([validTicket()])..reply('POST', '/auth/logout', 200);
     final app = await pumpApp(tester, adapter, session: signedInSession);
+    await PaymentsDao(app.database).markMade('feedface', DateTime(2025, 10, 1));
     expect(await app.database.select(app.database.tickets).get(), hasLength(1));
 
     await signOut(tester);
 
     expect(await app.database.select(app.database.tickets).get(), isEmpty);
+    expect(await app.database.select(app.database.payments).get(), isEmpty);
   });
 
   group('the history list', () {
@@ -554,15 +558,17 @@ void main() {
         ..reply('GET', _list, 200, ticketsReply([validTicket(canAssign: true)]));
       await tester.tap(find.widgetWithText(OutlinedButton, 'Check payment'));
       await tester.pumpAndSettle();
-      expect(find.text('Payment confirmed.'), findsOneWidget);
+      expect(find.text('Payment confirmed. Your ticket is ready.'), findsOneWidget);
       expect(find.widgetWithText(FilledButton, 'Assign to device'), findsOneWidget);
 
-      // Not built yet.
-      adapter.reply('GET', _list, 200, ticketsReply([pending]));
+      adapter
+        ..reply('GET', _list, 200, ticketsReply([pending]))
+        ..reply('GET', '/tickets/$transactionCode', 200, ticketDetailJson(pending, paid: false));
       await pullToRefresh(tester);
       await tester.tap(find.widgetWithText(FilledButton, 'Continue payment'));
       await tester.pumpAndSettle();
-      expect(app.location, '/buy');
+      expect(app.location, Routes.ticketPay(transactionCode));
+      expect(find.text('Pay for ticket'), findsOneWidget);
     });
   });
 

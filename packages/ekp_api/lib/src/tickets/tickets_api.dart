@@ -173,9 +173,9 @@ class TicketsApi extends EkpApiService {
   /// ticket. The body is `{id, ignoreWarnings, tPayPaymentGroupId}` with
   /// `id` = ticketGuid.
   ///
-  /// [ignoreWarnings] defaults to `true` because that is what the official
-  /// client sends from its only entry point, the pending ticket's pay
-  /// button (and the only value ever captured).
+  /// Send [ignoreWarnings] `false` first, as the official client's pay call
+  /// does by default, and `true` only to repeat it after the user agreed to
+  /// pay again (the two captured calls sent `true`).
   ///
   /// Two business outcomes are returned, not thrown, whatever HTTP status
   /// carries them (neither was ever captured, so the status is unknown):
@@ -189,7 +189,7 @@ class TicketsApi extends EkpApiService {
   Future<TicketPurchaseResponse> pay({
     required String ticketGuid,
     required String tPayPaymentGroupId,
-    bool ignoreWarnings = true,
+    required bool ignoreWarnings,
   }) async {
     try {
       final response = await dio.post<Map<String, dynamic>>(

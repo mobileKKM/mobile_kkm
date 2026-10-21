@@ -39,7 +39,8 @@ class TicketActions extends ConsumerWidget {
     if (guid == null) {
       return const SizedBox.shrink();
     }
-    final busy = ref.watch(ticketActionsProvider.select((running) => running.contains(guid)));
+    final running = ref.watch(ticketActionsProvider.select((running) => running[guid]));
+    final busy = running != null;
     final now = DateTime.now();
     final start = ticket.startDate;
     final startsLater = start != null && now.isBefore(start);
@@ -93,19 +94,27 @@ class TicketActions extends ConsumerWidget {
         // From the theme, for its font; a bare style would fall back to the system's.
         final text = Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 15);
         const padding = EdgeInsets.symmetric(horizontal: 16, vertical: 8);
-        final pay = FilledButton.icon(
-          style: main.copyWith(
-            iconSize: const WidgetStatePropertyAll(22),
-            textStyle: WidgetStatePropertyAll(text),
-            padding: const WidgetStatePropertyAll(padding),
+        final opening = running == TicketBusy.openPayment;
+        final checking = running == TicketBusy.checkPayment;
+        // Each one at work keeps its colours and ignores taps; the other is off.
+        final pay = AbsorbPointer(
+          absorbing: opening,
+          child: FilledButton.icon(
+            style: main.copyWith(
+              iconSize: const WidgetStatePropertyAll(22),
+              textStyle: WidgetStatePropertyAll(text),
+              padding: const WidgetStatePropertyAll(padding),
+            ),
+            onPressed: switch (ticket.transactionCode) {
+              final code? when !checking => () => unawaited(_continuePayment(context, ref, guid, code)),
+              _ => null,
+            },
+            icon: opening ? _Spinner(palette.onButton) : const Icon(Symbols.payments_rounded),
+            label: Text(l10n.ticketActionContinuePayment, textAlign: TextAlign.center),
           ),
-          // The payment itself belongs to the purchase flow.
-          onPressed: () => context.push(Routes.buy),
-          icon: const Icon(Symbols.payments_rounded),
-          label: Text(l10n.ticketActionContinuePayment, textAlign: TextAlign.center),
         );
         final check = AbsorbPointer(
-          absorbing: busy,
+          absorbing: checking,
           child: OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(56),
@@ -114,9 +123,12 @@ class TicketActions extends ConsumerWidget {
               foregroundColor: palette.high,
               side: BorderSide(color: palette.medium, width: 1.5),
             ),
-            onPressed: () => unawaited(_checkPayment(context, ref, guid)),
-            icon: busy ? _Spinner(palette.high) : const Icon(Symbols.refresh_rounded),
-            label: Text(busy ? l10n.ticketPaymentChecking : l10n.ticketActionCheckPayment, textAlign: TextAlign.center),
+            onPressed: opening ? null : () => unawaited(_checkPayment(context, ref, guid)),
+            icon: checking ? _Spinner(palette.high) : const Icon(Symbols.refresh_rounded),
+            label: Text(
+              checking ? l10n.ticketPaymentChecking : l10n.ticketActionCheckPayment,
+              textAlign: TextAlign.center,
+            ),
           ),
         );
         // Side by side where both fit, one above the other where not.
@@ -182,20 +194,35 @@ class TicketActions extends ConsumerWidget {
     showAppSnackBar(messenger, refusal, kind: SnackKind.error);
   }
 
+  /// Pay for ticket opens only once the details are in (it needs their
+  /// product name), never half filled in.
+  Future<void> _continuePayment(BuildContext context, WidgetRef ref, String guid, String transactionCode) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
+    try {
+      final details = await ref.read(ticketActionsProvider.notifier).detailsForPayment(guid, transactionCode);
+      unawaited(router.push(Routes.ticketPay(transactionCode), extra: details));
+    } on Exception catch (error) {
+      showAppSnackBar(messenger, describeError(l10n, error), kind: SnackKind.error);
+    }
+  }
+
   Future<void> _checkPayment(BuildContext context, WidgetRef ref, String guid) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    String message;
     try {
       final result = await ref.read(ticketActionsProvider.notifier).checkPayment(guid);
-      message = switch (result.status) {
-        PaymentCheckStatus.confirmed => l10n.ticketPaymentConfirmed,
-        PaymentCheckStatus.pending => result.message ?? l10n.ticketPaymentPending,
-      };
+      switch (result.status) {
+        case PaymentCheckStatus.confirmed:
+          showAppSnackBar(messenger, l10n.ticketPaymentConfirmed, kind: SnackKind.success);
+        case PaymentCheckStatus.pending:
+          // The server's own wording (Polish only).
+          showAppSnackBar(messenger, result.message ?? l10n.ticketPaymentPending, kind: SnackKind.error);
+      }
     } on Exception catch (error) {
-      message = describeError(l10n, error);
+      showAppSnackBar(messenger, describeError(l10n, error), kind: SnackKind.error);
     }
-    showAppSnackBar(messenger, message);
   }
 }
 

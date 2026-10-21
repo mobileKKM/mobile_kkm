@@ -65,7 +65,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(app.location, '/buy');
-      expect(find.text('Coming soon'), findsOneWidget);
+      expect(find.text('Buy a ticket'), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
     });
 
@@ -179,7 +179,7 @@ void main() {
   group('quick actions', () {
     for (final (label, location, lands) in [
       ('Tickets', '/tickets', 'Active'),
-      ('Buy ticket', '/buy', 'Coming soon'),
+      ('Buy ticket', '/buy', 'Buy a ticket'),
       ('Karta Krakowska', '/karta-krakowska', 'Show status code'),
       ('Departures', '/map', 'Search for a stop'),
     ]) {

@@ -15,15 +15,18 @@ class TicketActionFailure implements Exception {
   String toString() => 'TicketActionFailure: $message';
 }
 
+/// A card's call under way.
+enum TicketBusy { assign, checkPayment, openPayment }
+
 /// What can be done to a ticket straight from its card. The state is the
-/// guids of the tickets with a call under way.
-class TicketActionsController extends Notifier<Set<String>> {
+/// call under way for each ticket, by guid.
+class TicketActionsController extends Notifier<Map<String, TicketBusy>> {
   @override
-  Set<String> build() => const {};
+  Map<String, TicketBusy> build() => const {};
 
   /// `assign-e`: lets this device show the ticket's code. Throws
   /// [TicketActionFailure] when the server refuses.
-  Future<void> assign(String ticketGuid) => _run(ticketGuid, () async {
+  Future<void> assign(String ticketGuid) => _run(ticketGuid, TicketBusy.assign, () async {
     final response = await ref
         .read(aztecKeyProvider.notifier)
         .guard(
@@ -37,7 +40,7 @@ class TicketActionsController extends Notifier<Set<String>> {
   });
 
   /// `payments/check`: whether a payment for the ticket has arrived.
-  Future<PaymentCheckResult> checkPayment(String ticketGuid) => _run(ticketGuid, () async {
+  Future<PaymentCheckResult> checkPayment(String ticketGuid) => _run(ticketGuid, TicketBusy.checkPayment, () async {
     final result = await ref.read(ekpClientProvider).payments.check(ticketGuid);
     if (result.status == PaymentCheckStatus.confirmed) {
       await _reload();
@@ -45,8 +48,21 @@ class TicketActionsController extends Notifier<Set<String>> {
     return result;
   });
 
-  Future<T> _run<T>(String ticketGuid, Future<T> Function() call) async {
-    state = {...state, ticketGuid};
+  /// The ticket's details, which Pay for ticket needs before it opens
+  /// (the product name): the open details' copy, else fetched.
+  Future<TicketDetailResponse> detailsForPayment(String ticketGuid, String transactionCode) =>
+      _run(ticketGuid, TicketBusy.openPayment, () async {
+        // Listened to, as the provider is dropped once no one is.
+        final details = ref.listen(ticketDetailProvider(transactionCode).future, (_, _) {});
+        try {
+          return await details.read();
+        } finally {
+          details.close();
+        }
+      });
+
+  Future<T> _run<T>(String ticketGuid, TicketBusy busy, Future<T> Function() call) async {
+    state = {...state, ticketGuid: busy};
     try {
       return await call();
     } finally {
@@ -64,4 +80,6 @@ class TicketActionsController extends Notifier<Set<String>> {
   }
 }
 
-final ticketActionsProvider = NotifierProvider<TicketActionsController, Set<String>>(TicketActionsController.new);
+final ticketActionsProvider = NotifierProvider<TicketActionsController, Map<String, TicketBusy>>(
+  TicketActionsController.new,
+);

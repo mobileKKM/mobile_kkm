@@ -362,7 +362,7 @@ class _TicketFacts extends ConsumerWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final zone = ticketZone(ticket.ticketNumberOfLineCode, ref.watch(ticketLineScopesProvider).value);
-    final fare = ticketFare(ticket, ref.watch(ticketKindsProvider).value);
+    final fare = ticketFare(ticket.ticketKindCode, ref.watch(ticketKindsProvider).value);
     final facts = [
       (l10n.ticketControlTicket, ticketScope(l10n, ticket, zone: zone)),
       if (fare != null) (l10n.ticketControlFare, fare),

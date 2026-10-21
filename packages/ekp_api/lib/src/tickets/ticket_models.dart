@@ -21,8 +21,10 @@ enum MkkmTicketStatus {
   active,
   pending,
 
-  /// A payment is being booked. Never captured: the official client checks
-  /// for it and shows a disabled "processing payment" button.
+  /// A payment is being booked. The server never sends it: the official
+  /// client sets it itself on a `pending` ticket whose payment it saw
+  /// succeed (its `ticket-pending` store), until the list reports the
+  /// ticket otherwise, and shows a disabled "processing payment" button.
   processing,
   returned,
   unknown;
@@ -325,10 +327,17 @@ abstract class TicketSalesConfiguration with EkpCodeMessage, _$TicketSalesConfig
 }
 
 /// `POST tickets/calculate` — price preview for a ticket selection.
-/// Note: no `{code, message}` envelope. The echoed `ticketKindCode` may
-/// differ from the request (e.g. requested 2 → effective 21 for inhabitants).
+///
+/// The echoed `ticketKindCode` may differ from the request (e.g. requested
+/// 2 → effective 21 for inhabitants).
+///
+/// No captured reply carries the `{code, message}` envelope, but the
+/// official client treats any reply with a truthy `code` as a refusal, even
+/// on HTTP 200 (see [isRefused]); such a reply has none of the price fields.
 @freezed
-abstract class TicketCalculation with _$TicketCalculation {
+abstract class TicketCalculation with EkpCodeMessage, _$TicketCalculation {
+  const TicketCalculation._();
+
   const factory TicketCalculation({
     String? commodityIndex,
     String? commodityName,
@@ -344,7 +353,9 @@ abstract class TicketCalculation with _$TicketCalculation {
     String? specialTransportLine,
     bool? isNetwork,
     bool? isMetropolitan,
-    @Default(<dynamic>[]) List<dynamic> lines,
+
+    /// The chosen lines of a line-scoped ticket (empty otherwise).
+    @Default(<TransportLine>[]) List<TransportLine> lines,
     bool? hasSimilarTicket,
     int? commodityId,
     int? priceListPeriodId,
@@ -352,9 +363,23 @@ abstract class TicketCalculation with _$TicketCalculation {
 
     /// Element shape unverified (always `[]` in captures) — kept raw.
     @Default(<dynamic>[]) List<dynamic> similarTickets,
+    Object? code,
+    String? message,
+
+    /// Per-field errors of a refusal. Only its name is known (the official
+    /// client reads it); never captured, so kept raw.
+    Object? fields,
   }) = _TicketCalculation;
 
   factory TicketCalculation.fromJson(Map<String, dynamic> json) => _$TicketCalculationFromJson(json);
+
+  /// The server refused the selection: [code] is truthy (as the official
+  /// client judges it: not `null`, `0`, `''` or `false`). Show [message],
+  /// or [fields]; the price fields are empty.
+  bool get isRefused => switch (code) {
+    null || 0 || '' || false => false,
+    _ => true,
+  };
 }
 
 /// `urls` node of `tickets/buy` / `tickets/pay`.

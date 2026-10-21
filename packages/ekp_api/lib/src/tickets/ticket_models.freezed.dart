@@ -4041,8 +4041,11 @@ as String?,
 /// @nodoc
 mixin _$TicketCalculation {
 
- String? get commodityIndex; String? get commodityName; String? get symbol; double? get price; DateTime? get validFrom; DateTime? get validTo; int? get daysPeriod; bool? get forCitizen; int? get ticketKindCode; int? get ticketNumberOfLineCode; int? get ticketPeriodCode; String? get specialTransportLine; bool? get isNetwork; bool? get isMetropolitan; List<dynamic> get lines; bool? get hasSimilarTicket; int? get commodityId; int? get priceListPeriodId; int? get customerCode;/// Element shape unverified (always `[]` in captures) — kept raw.
- List<dynamic> get similarTickets;
+ String? get commodityIndex; String? get commodityName; String? get symbol; double? get price; DateTime? get validFrom; DateTime? get validTo; int? get daysPeriod; bool? get forCitizen; int? get ticketKindCode; int? get ticketNumberOfLineCode; int? get ticketPeriodCode; String? get specialTransportLine; bool? get isNetwork; bool? get isMetropolitan;/// The chosen lines of a line-scoped ticket (empty otherwise).
+ List<TransportLine> get lines; bool? get hasSimilarTicket; int? get commodityId; int? get priceListPeriodId; int? get customerCode;/// Element shape unverified (always `[]` in captures) — kept raw.
+ List<dynamic> get similarTickets; Object? get code; String? get message;/// Per-field errors of a refusal. Only its name is known (the official
+/// client reads it); never captured, so kept raw.
+ Object? get fields;
 /// Create a copy of TicketCalculation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -4056,20 +4059,20 @@ $TicketCalculationCopyWith<TicketCalculation> get copyWith => _$TicketCalculatio
 @override
 bool operator ==(Object other) {
   final _this = this as TicketCalculation;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketCalculation&&(identical(other.commodityIndex, _this.commodityIndex) || other.commodityIndex == _this.commodityIndex)&&(identical(other.commodityName, _this.commodityName) || other.commodityName == _this.commodityName)&&(identical(other.symbol, _this.symbol) || other.symbol == _this.symbol)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.validFrom, _this.validFrom) || other.validFrom == _this.validFrom)&&(identical(other.validTo, _this.validTo) || other.validTo == _this.validTo)&&(identical(other.daysPeriod, _this.daysPeriod) || other.daysPeriod == _this.daysPeriod)&&(identical(other.forCitizen, _this.forCitizen) || other.forCitizen == _this.forCitizen)&&(identical(other.ticketKindCode, _this.ticketKindCode) || other.ticketKindCode == _this.ticketKindCode)&&(identical(other.ticketNumberOfLineCode, _this.ticketNumberOfLineCode) || other.ticketNumberOfLineCode == _this.ticketNumberOfLineCode)&&(identical(other.ticketPeriodCode, _this.ticketPeriodCode) || other.ticketPeriodCode == _this.ticketPeriodCode)&&(identical(other.specialTransportLine, _this.specialTransportLine) || other.specialTransportLine == _this.specialTransportLine)&&(identical(other.isNetwork, _this.isNetwork) || other.isNetwork == _this.isNetwork)&&(identical(other.isMetropolitan, _this.isMetropolitan) || other.isMetropolitan == _this.isMetropolitan)&&const DeepCollectionEquality().equals(other.lines, _this.lines)&&(identical(other.hasSimilarTicket, _this.hasSimilarTicket) || other.hasSimilarTicket == _this.hasSimilarTicket)&&(identical(other.commodityId, _this.commodityId) || other.commodityId == _this.commodityId)&&(identical(other.priceListPeriodId, _this.priceListPeriodId) || other.priceListPeriodId == _this.priceListPeriodId)&&(identical(other.customerCode, _this.customerCode) || other.customerCode == _this.customerCode)&&const DeepCollectionEquality().equals(other.similarTickets, _this.similarTickets));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketCalculation&&(identical(other.commodityIndex, _this.commodityIndex) || other.commodityIndex == _this.commodityIndex)&&(identical(other.commodityName, _this.commodityName) || other.commodityName == _this.commodityName)&&(identical(other.symbol, _this.symbol) || other.symbol == _this.symbol)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.validFrom, _this.validFrom) || other.validFrom == _this.validFrom)&&(identical(other.validTo, _this.validTo) || other.validTo == _this.validTo)&&(identical(other.daysPeriod, _this.daysPeriod) || other.daysPeriod == _this.daysPeriod)&&(identical(other.forCitizen, _this.forCitizen) || other.forCitizen == _this.forCitizen)&&(identical(other.ticketKindCode, _this.ticketKindCode) || other.ticketKindCode == _this.ticketKindCode)&&(identical(other.ticketNumberOfLineCode, _this.ticketNumberOfLineCode) || other.ticketNumberOfLineCode == _this.ticketNumberOfLineCode)&&(identical(other.ticketPeriodCode, _this.ticketPeriodCode) || other.ticketPeriodCode == _this.ticketPeriodCode)&&(identical(other.specialTransportLine, _this.specialTransportLine) || other.specialTransportLine == _this.specialTransportLine)&&(identical(other.isNetwork, _this.isNetwork) || other.isNetwork == _this.isNetwork)&&(identical(other.isMetropolitan, _this.isMetropolitan) || other.isMetropolitan == _this.isMetropolitan)&&const DeepCollectionEquality().equals(other.lines, _this.lines)&&(identical(other.hasSimilarTicket, _this.hasSimilarTicket) || other.hasSimilarTicket == _this.hasSimilarTicket)&&(identical(other.commodityId, _this.commodityId) || other.commodityId == _this.commodityId)&&(identical(other.priceListPeriodId, _this.priceListPeriodId) || other.priceListPeriodId == _this.priceListPeriodId)&&(identical(other.customerCode, _this.customerCode) || other.customerCode == _this.customerCode)&&const DeepCollectionEquality().equals(other.similarTickets, _this.similarTickets)&&const DeepCollectionEquality().equals(other.code, _this.code)&&(identical(other.message, _this.message) || other.message == _this.message)&&const DeepCollectionEquality().equals(other.fields, _this.fields));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as TicketCalculation;
-  return Object.hashAll([runtimeType,_this.commodityIndex,_this.commodityName,_this.symbol,_this.price,_this.validFrom,_this.validTo,_this.daysPeriod,_this.forCitizen,_this.ticketKindCode,_this.ticketNumberOfLineCode,_this.ticketPeriodCode,_this.specialTransportLine,_this.isNetwork,_this.isMetropolitan,const DeepCollectionEquality().hash(_this.lines),_this.hasSimilarTicket,_this.commodityId,_this.priceListPeriodId,_this.customerCode,const DeepCollectionEquality().hash(_this.similarTickets)]);
+  return Object.hashAll([runtimeType,_this.commodityIndex,_this.commodityName,_this.symbol,_this.price,_this.validFrom,_this.validTo,_this.daysPeriod,_this.forCitizen,_this.ticketKindCode,_this.ticketNumberOfLineCode,_this.ticketPeriodCode,_this.specialTransportLine,_this.isNetwork,_this.isMetropolitan,const DeepCollectionEquality().hash(_this.lines),_this.hasSimilarTicket,_this.commodityId,_this.priceListPeriodId,_this.customerCode,const DeepCollectionEquality().hash(_this.similarTickets),const DeepCollectionEquality().hash(_this.code),_this.message,const DeepCollectionEquality().hash(_this.fields)]);
 }
 
 @override
 String toString() {
   final _this = this as TicketCalculation;
-  return 'TicketCalculation(commodityIndex: ${_this.commodityIndex}, commodityName: ${_this.commodityName}, symbol: ${_this.symbol}, price: ${_this.price}, validFrom: ${_this.validFrom}, validTo: ${_this.validTo}, daysPeriod: ${_this.daysPeriod}, forCitizen: ${_this.forCitizen}, ticketKindCode: ${_this.ticketKindCode}, ticketNumberOfLineCode: ${_this.ticketNumberOfLineCode}, ticketPeriodCode: ${_this.ticketPeriodCode}, specialTransportLine: ${_this.specialTransportLine}, isNetwork: ${_this.isNetwork}, isMetropolitan: ${_this.isMetropolitan}, lines: ${_this.lines}, hasSimilarTicket: ${_this.hasSimilarTicket}, commodityId: ${_this.commodityId}, priceListPeriodId: ${_this.priceListPeriodId}, customerCode: ${_this.customerCode}, similarTickets: ${_this.similarTickets})';
+  return 'TicketCalculation(commodityIndex: ${_this.commodityIndex}, commodityName: ${_this.commodityName}, symbol: ${_this.symbol}, price: ${_this.price}, validFrom: ${_this.validFrom}, validTo: ${_this.validTo}, daysPeriod: ${_this.daysPeriod}, forCitizen: ${_this.forCitizen}, ticketKindCode: ${_this.ticketKindCode}, ticketNumberOfLineCode: ${_this.ticketNumberOfLineCode}, ticketPeriodCode: ${_this.ticketPeriodCode}, specialTransportLine: ${_this.specialTransportLine}, isNetwork: ${_this.isNetwork}, isMetropolitan: ${_this.isMetropolitan}, lines: ${_this.lines}, hasSimilarTicket: ${_this.hasSimilarTicket}, commodityId: ${_this.commodityId}, priceListPeriodId: ${_this.priceListPeriodId}, customerCode: ${_this.customerCode}, similarTickets: ${_this.similarTickets}, code: ${_this.code}, message: ${_this.message}, fields: ${_this.fields})';
 }
 
 
@@ -4080,7 +4083,7 @@ abstract mixin class $TicketCalculationCopyWith<$Res>  {
   factory $TicketCalculationCopyWith(TicketCalculation value, $Res Function(TicketCalculation) _then) = _$TicketCalculationCopyWithImpl;
 @useResult
 $Res call({
- String? commodityIndex, String? commodityName, String? symbol, double? price, DateTime? validFrom, DateTime? validTo, int? daysPeriod, bool? forCitizen, int? ticketKindCode, int? ticketNumberOfLineCode, int? ticketPeriodCode, String? specialTransportLine, bool? isNetwork, bool? isMetropolitan, List<dynamic> lines, bool? hasSimilarTicket, int? commodityId, int? priceListPeriodId, int? customerCode, List<dynamic> similarTickets
+ String? commodityIndex, String? commodityName, String? symbol, double? price, DateTime? validFrom, DateTime? validTo, int? daysPeriod, bool? forCitizen, int? ticketKindCode, int? ticketNumberOfLineCode, int? ticketPeriodCode, String? specialTransportLine, bool? isNetwork, bool? isMetropolitan, List<TransportLine> lines, bool? hasSimilarTicket, int? commodityId, int? priceListPeriodId, int? customerCode, List<dynamic> similarTickets, Object? code, String? message, Object? fields
 });
 
 
@@ -4097,7 +4100,7 @@ class _$TicketCalculationCopyWithImpl<$Res>
 
 /// Create a copy of TicketCalculation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? commodityIndex = freezed,Object? commodityName = freezed,Object? symbol = freezed,Object? price = freezed,Object? validFrom = freezed,Object? validTo = freezed,Object? daysPeriod = freezed,Object? forCitizen = freezed,Object? ticketKindCode = freezed,Object? ticketNumberOfLineCode = freezed,Object? ticketPeriodCode = freezed,Object? specialTransportLine = freezed,Object? isNetwork = freezed,Object? isMetropolitan = freezed,Object? lines = null,Object? hasSimilarTicket = freezed,Object? commodityId = freezed,Object? priceListPeriodId = freezed,Object? customerCode = freezed,Object? similarTickets = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? commodityIndex = freezed,Object? commodityName = freezed,Object? symbol = freezed,Object? price = freezed,Object? validFrom = freezed,Object? validTo = freezed,Object? daysPeriod = freezed,Object? forCitizen = freezed,Object? ticketKindCode = freezed,Object? ticketNumberOfLineCode = freezed,Object? ticketPeriodCode = freezed,Object? specialTransportLine = freezed,Object? isNetwork = freezed,Object? isMetropolitan = freezed,Object? lines = null,Object? hasSimilarTicket = freezed,Object? commodityId = freezed,Object? priceListPeriodId = freezed,Object? customerCode = freezed,Object? similarTickets = null,Object? code = freezed,Object? message = freezed,Object? fields = freezed,}) {
   return _then(TicketCalculation(
 commodityIndex: freezed == commodityIndex ? _self.commodityIndex : commodityIndex // ignore: cast_nullable_to_non_nullable
 as String?,commodityName: freezed == commodityName ? _self.commodityName : commodityName // ignore: cast_nullable_to_non_nullable
@@ -4114,12 +4117,13 @@ as int?,specialTransportLine: freezed == specialTransportLine ? _self.specialTra
 as String?,isNetwork: freezed == isNetwork ? _self.isNetwork : isNetwork // ignore: cast_nullable_to_non_nullable
 as bool?,isMetropolitan: freezed == isMetropolitan ? _self.isMetropolitan : isMetropolitan // ignore: cast_nullable_to_non_nullable
 as bool?,lines: null == lines ? _self.lines : lines // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,hasSimilarTicket: freezed == hasSimilarTicket ? _self.hasSimilarTicket : hasSimilarTicket // ignore: cast_nullable_to_non_nullable
+as List<TransportLine>,hasSimilarTicket: freezed == hasSimilarTicket ? _self.hasSimilarTicket : hasSimilarTicket // ignore: cast_nullable_to_non_nullable
 as bool?,commodityId: freezed == commodityId ? _self.commodityId : commodityId // ignore: cast_nullable_to_non_nullable
 as int?,priceListPeriodId: freezed == priceListPeriodId ? _self.priceListPeriodId : priceListPeriodId // ignore: cast_nullable_to_non_nullable
 as int?,customerCode: freezed == customerCode ? _self.customerCode : customerCode // ignore: cast_nullable_to_non_nullable
 as int?,similarTickets: null == similarTickets ? _self.similarTickets : similarTickets // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,
+as List<dynamic>,code: freezed == code ? _self.code : code ,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,fields: freezed == fields ? _self.fields : fields ,
   ));
 }
 
@@ -4204,10 +4208,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? commodityIndex,  String? commodityName,  String? symbol,  double? price,  DateTime? validFrom,  DateTime? validTo,  int? daysPeriod,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<dynamic> lines,  bool? hasSimilarTicket,  int? commodityId,  int? priceListPeriodId,  int? customerCode,  List<dynamic> similarTickets)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? commodityIndex,  String? commodityName,  String? symbol,  double? price,  DateTime? validFrom,  DateTime? validTo,  int? daysPeriod,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<TransportLine> lines,  bool? hasSimilarTicket,  int? commodityId,  int? priceListPeriodId,  int? customerCode,  List<dynamic> similarTickets,  Object? code,  String? message,  Object? fields)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TicketCalculation() when $default != null:
-return $default(_that.commodityIndex,_that.commodityName,_that.symbol,_that.price,_that.validFrom,_that.validTo,_that.daysPeriod,_that.forCitizen,_that.ticketKindCode,_that.ticketNumberOfLineCode,_that.ticketPeriodCode,_that.specialTransportLine,_that.isNetwork,_that.isMetropolitan,_that.lines,_that.hasSimilarTicket,_that.commodityId,_that.priceListPeriodId,_that.customerCode,_that.similarTickets);case _:
+return $default(_that.commodityIndex,_that.commodityName,_that.symbol,_that.price,_that.validFrom,_that.validTo,_that.daysPeriod,_that.forCitizen,_that.ticketKindCode,_that.ticketNumberOfLineCode,_that.ticketPeriodCode,_that.specialTransportLine,_that.isNetwork,_that.isMetropolitan,_that.lines,_that.hasSimilarTicket,_that.commodityId,_that.priceListPeriodId,_that.customerCode,_that.similarTickets,_that.code,_that.message,_that.fields);case _:
   return orElse();
 
 }
@@ -4225,10 +4229,10 @@ return $default(_that.commodityIndex,_that.commodityName,_that.symbol,_that.pric
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? commodityIndex,  String? commodityName,  String? symbol,  double? price,  DateTime? validFrom,  DateTime? validTo,  int? daysPeriod,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<dynamic> lines,  bool? hasSimilarTicket,  int? commodityId,  int? priceListPeriodId,  int? customerCode,  List<dynamic> similarTickets)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? commodityIndex,  String? commodityName,  String? symbol,  double? price,  DateTime? validFrom,  DateTime? validTo,  int? daysPeriod,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<TransportLine> lines,  bool? hasSimilarTicket,  int? commodityId,  int? priceListPeriodId,  int? customerCode,  List<dynamic> similarTickets,  Object? code,  String? message,  Object? fields)  $default,) {final _that = this;
 switch (_that) {
 case _TicketCalculation():
-return $default(_that.commodityIndex,_that.commodityName,_that.symbol,_that.price,_that.validFrom,_that.validTo,_that.daysPeriod,_that.forCitizen,_that.ticketKindCode,_that.ticketNumberOfLineCode,_that.ticketPeriodCode,_that.specialTransportLine,_that.isNetwork,_that.isMetropolitan,_that.lines,_that.hasSimilarTicket,_that.commodityId,_that.priceListPeriodId,_that.customerCode,_that.similarTickets);case _:
+return $default(_that.commodityIndex,_that.commodityName,_that.symbol,_that.price,_that.validFrom,_that.validTo,_that.daysPeriod,_that.forCitizen,_that.ticketKindCode,_that.ticketNumberOfLineCode,_that.ticketPeriodCode,_that.specialTransportLine,_that.isNetwork,_that.isMetropolitan,_that.lines,_that.hasSimilarTicket,_that.commodityId,_that.priceListPeriodId,_that.customerCode,_that.similarTickets,_that.code,_that.message,_that.fields);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -4245,10 +4249,10 @@ return $default(_that.commodityIndex,_that.commodityName,_that.symbol,_that.pric
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? commodityIndex,  String? commodityName,  String? symbol,  double? price,  DateTime? validFrom,  DateTime? validTo,  int? daysPeriod,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<dynamic> lines,  bool? hasSimilarTicket,  int? commodityId,  int? priceListPeriodId,  int? customerCode,  List<dynamic> similarTickets)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? commodityIndex,  String? commodityName,  String? symbol,  double? price,  DateTime? validFrom,  DateTime? validTo,  int? daysPeriod,  bool? forCitizen,  int? ticketKindCode,  int? ticketNumberOfLineCode,  int? ticketPeriodCode,  String? specialTransportLine,  bool? isNetwork,  bool? isMetropolitan,  List<TransportLine> lines,  bool? hasSimilarTicket,  int? commodityId,  int? priceListPeriodId,  int? customerCode,  List<dynamic> similarTickets,  Object? code,  String? message,  Object? fields)?  $default,) {final _that = this;
 switch (_that) {
 case _TicketCalculation() when $default != null:
-return $default(_that.commodityIndex,_that.commodityName,_that.symbol,_that.price,_that.validFrom,_that.validTo,_that.daysPeriod,_that.forCitizen,_that.ticketKindCode,_that.ticketNumberOfLineCode,_that.ticketPeriodCode,_that.specialTransportLine,_that.isNetwork,_that.isMetropolitan,_that.lines,_that.hasSimilarTicket,_that.commodityId,_that.priceListPeriodId,_that.customerCode,_that.similarTickets);case _:
+return $default(_that.commodityIndex,_that.commodityName,_that.symbol,_that.price,_that.validFrom,_that.validTo,_that.daysPeriod,_that.forCitizen,_that.ticketKindCode,_that.ticketNumberOfLineCode,_that.ticketPeriodCode,_that.specialTransportLine,_that.isNetwork,_that.isMetropolitan,_that.lines,_that.hasSimilarTicket,_that.commodityId,_that.priceListPeriodId,_that.customerCode,_that.similarTickets,_that.code,_that.message,_that.fields);case _:
   return null;
 
 }
@@ -4259,8 +4263,8 @@ return $default(_that.commodityIndex,_that.commodityName,_that.symbol,_that.pric
 /// @nodoc
 @JsonSerializable()
 
-class _TicketCalculation implements TicketCalculation {
-  const _TicketCalculation({this.commodityIndex, this.commodityName, this.symbol, this.price, this.validFrom, this.validTo, this.daysPeriod, this.forCitizen, this.ticketKindCode, this.ticketNumberOfLineCode, this.ticketPeriodCode, this.specialTransportLine, this.isNetwork, this.isMetropolitan,  List<dynamic> lines = const <dynamic>[], this.hasSimilarTicket, this.commodityId, this.priceListPeriodId, this.customerCode,  List<dynamic> similarTickets = const <dynamic>[]}): _lines = lines,_similarTickets = similarTickets;
+class _TicketCalculation extends TicketCalculation {
+  const _TicketCalculation({this.commodityIndex, this.commodityName, this.symbol, this.price, this.validFrom, this.validTo, this.daysPeriod, this.forCitizen, this.ticketKindCode, this.ticketNumberOfLineCode, this.ticketPeriodCode, this.specialTransportLine, this.isNetwork, this.isMetropolitan,  List<TransportLine> lines = const <TransportLine>[], this.hasSimilarTicket, this.commodityId, this.priceListPeriodId, this.customerCode,  List<dynamic> similarTickets = const <dynamic>[], this.code, this.message, this.fields}): _lines = lines,_similarTickets = similarTickets,super._();
   factory _TicketCalculation.fromJson(Map<String, dynamic> json) => _$TicketCalculationFromJson(json);
 
 @override final  String? commodityIndex;
@@ -4277,8 +4281,10 @@ class _TicketCalculation implements TicketCalculation {
 @override final  String? specialTransportLine;
 @override final  bool? isNetwork;
 @override final  bool? isMetropolitan;
- final  List<dynamic> _lines;
-@override@JsonKey() List<dynamic> get lines {
+/// The chosen lines of a line-scoped ticket (empty otherwise).
+ final  List<TransportLine> _lines;
+/// The chosen lines of a line-scoped ticket (empty otherwise).
+@override@JsonKey() List<TransportLine> get lines {
   if (_lines is EqualUnmodifiableListView) return _lines;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_lines);
@@ -4297,6 +4303,11 @@ class _TicketCalculation implements TicketCalculation {
   return EqualUnmodifiableListView(_similarTickets);
 }
 
+@override final  Object? code;
+@override final  String? message;
+/// Per-field errors of a refusal. Only its name is known (the official
+/// client reads it); never captured, so kept raw.
+@override final  Object? fields;
 
 /// Create a copy of TicketCalculation
 /// with the given fields replaced by the non-null parameter values.
@@ -4311,18 +4322,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketCalculation&&(identical(other.commodityIndex, commodityIndex) || other.commodityIndex == commodityIndex)&&(identical(other.commodityName, commodityName) || other.commodityName == commodityName)&&(identical(other.symbol, symbol) || other.symbol == symbol)&&(identical(other.price, price) || other.price == price)&&(identical(other.validFrom, validFrom) || other.validFrom == validFrom)&&(identical(other.validTo, validTo) || other.validTo == validTo)&&(identical(other.daysPeriod, daysPeriod) || other.daysPeriod == daysPeriod)&&(identical(other.forCitizen, forCitizen) || other.forCitizen == forCitizen)&&(identical(other.ticketKindCode, ticketKindCode) || other.ticketKindCode == ticketKindCode)&&(identical(other.ticketNumberOfLineCode, ticketNumberOfLineCode) || other.ticketNumberOfLineCode == ticketNumberOfLineCode)&&(identical(other.ticketPeriodCode, ticketPeriodCode) || other.ticketPeriodCode == ticketPeriodCode)&&(identical(other.specialTransportLine, specialTransportLine) || other.specialTransportLine == specialTransportLine)&&(identical(other.isNetwork, isNetwork) || other.isNetwork == isNetwork)&&(identical(other.isMetropolitan, isMetropolitan) || other.isMetropolitan == isMetropolitan)&&const DeepCollectionEquality().equals(other.lines, _lines)&&(identical(other.hasSimilarTicket, hasSimilarTicket) || other.hasSimilarTicket == hasSimilarTicket)&&(identical(other.commodityId, commodityId) || other.commodityId == commodityId)&&(identical(other.priceListPeriodId, priceListPeriodId) || other.priceListPeriodId == priceListPeriodId)&&(identical(other.customerCode, customerCode) || other.customerCode == customerCode)&&const DeepCollectionEquality().equals(other.similarTickets, _similarTickets));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketCalculation&&(identical(other.commodityIndex, commodityIndex) || other.commodityIndex == commodityIndex)&&(identical(other.commodityName, commodityName) || other.commodityName == commodityName)&&(identical(other.symbol, symbol) || other.symbol == symbol)&&(identical(other.price, price) || other.price == price)&&(identical(other.validFrom, validFrom) || other.validFrom == validFrom)&&(identical(other.validTo, validTo) || other.validTo == validTo)&&(identical(other.daysPeriod, daysPeriod) || other.daysPeriod == daysPeriod)&&(identical(other.forCitizen, forCitizen) || other.forCitizen == forCitizen)&&(identical(other.ticketKindCode, ticketKindCode) || other.ticketKindCode == ticketKindCode)&&(identical(other.ticketNumberOfLineCode, ticketNumberOfLineCode) || other.ticketNumberOfLineCode == ticketNumberOfLineCode)&&(identical(other.ticketPeriodCode, ticketPeriodCode) || other.ticketPeriodCode == ticketPeriodCode)&&(identical(other.specialTransportLine, specialTransportLine) || other.specialTransportLine == specialTransportLine)&&(identical(other.isNetwork, isNetwork) || other.isNetwork == isNetwork)&&(identical(other.isMetropolitan, isMetropolitan) || other.isMetropolitan == isMetropolitan)&&const DeepCollectionEquality().equals(other.lines, _lines)&&(identical(other.hasSimilarTicket, hasSimilarTicket) || other.hasSimilarTicket == hasSimilarTicket)&&(identical(other.commodityId, commodityId) || other.commodityId == commodityId)&&(identical(other.priceListPeriodId, priceListPeriodId) || other.priceListPeriodId == priceListPeriodId)&&(identical(other.customerCode, customerCode) || other.customerCode == customerCode)&&const DeepCollectionEquality().equals(other.similarTickets, _similarTickets)&&const DeepCollectionEquality().equals(other.code, code)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.fields, fields));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hashAll([runtimeType,commodityIndex,commodityName,symbol,price,validFrom,validTo,daysPeriod,forCitizen,ticketKindCode,ticketNumberOfLineCode,ticketPeriodCode,specialTransportLine,isNetwork,isMetropolitan,const DeepCollectionEquality().hash(_lines),hasSimilarTicket,commodityId,priceListPeriodId,customerCode,const DeepCollectionEquality().hash(_similarTickets)]);
+    return Object.hashAll([runtimeType,commodityIndex,commodityName,symbol,price,validFrom,validTo,daysPeriod,forCitizen,ticketKindCode,ticketNumberOfLineCode,ticketPeriodCode,specialTransportLine,isNetwork,isMetropolitan,const DeepCollectionEquality().hash(_lines),hasSimilarTicket,commodityId,priceListPeriodId,customerCode,const DeepCollectionEquality().hash(_similarTickets),const DeepCollectionEquality().hash(code),message,const DeepCollectionEquality().hash(fields)]);
 }
 
 @override
 String toString() {
-    return 'TicketCalculation(commodityIndex: $commodityIndex, commodityName: $commodityName, symbol: $symbol, price: $price, validFrom: $validFrom, validTo: $validTo, daysPeriod: $daysPeriod, forCitizen: $forCitizen, ticketKindCode: $ticketKindCode, ticketNumberOfLineCode: $ticketNumberOfLineCode, ticketPeriodCode: $ticketPeriodCode, specialTransportLine: $specialTransportLine, isNetwork: $isNetwork, isMetropolitan: $isMetropolitan, lines: $lines, hasSimilarTicket: $hasSimilarTicket, commodityId: $commodityId, priceListPeriodId: $priceListPeriodId, customerCode: $customerCode, similarTickets: $similarTickets)';
+    return 'TicketCalculation(commodityIndex: $commodityIndex, commodityName: $commodityName, symbol: $symbol, price: $price, validFrom: $validFrom, validTo: $validTo, daysPeriod: $daysPeriod, forCitizen: $forCitizen, ticketKindCode: $ticketKindCode, ticketNumberOfLineCode: $ticketNumberOfLineCode, ticketPeriodCode: $ticketPeriodCode, specialTransportLine: $specialTransportLine, isNetwork: $isNetwork, isMetropolitan: $isMetropolitan, lines: $lines, hasSimilarTicket: $hasSimilarTicket, commodityId: $commodityId, priceListPeriodId: $priceListPeriodId, customerCode: $customerCode, similarTickets: $similarTickets, code: $code, message: $message, fields: $fields)';
 }
 
 
@@ -4333,7 +4344,7 @@ abstract mixin class _$TicketCalculationCopyWith<$Res> implements $TicketCalcula
   factory _$TicketCalculationCopyWith(_TicketCalculation value, $Res Function(_TicketCalculation) _then) = __$TicketCalculationCopyWithImpl;
 @override @useResult
 $Res call({
- String? commodityIndex, String? commodityName, String? symbol, double? price, DateTime? validFrom, DateTime? validTo, int? daysPeriod, bool? forCitizen, int? ticketKindCode, int? ticketNumberOfLineCode, int? ticketPeriodCode, String? specialTransportLine, bool? isNetwork, bool? isMetropolitan, List<dynamic> lines, bool? hasSimilarTicket, int? commodityId, int? priceListPeriodId, int? customerCode, List<dynamic> similarTickets
+ String? commodityIndex, String? commodityName, String? symbol, double? price, DateTime? validFrom, DateTime? validTo, int? daysPeriod, bool? forCitizen, int? ticketKindCode, int? ticketNumberOfLineCode, int? ticketPeriodCode, String? specialTransportLine, bool? isNetwork, bool? isMetropolitan, List<TransportLine> lines, bool? hasSimilarTicket, int? commodityId, int? priceListPeriodId, int? customerCode, List<dynamic> similarTickets, Object? code, String? message, Object? fields
 });
 
 
@@ -4350,7 +4361,7 @@ class __$TicketCalculationCopyWithImpl<$Res>
 
 /// Create a copy of TicketCalculation
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? commodityIndex = freezed,Object? commodityName = freezed,Object? symbol = freezed,Object? price = freezed,Object? validFrom = freezed,Object? validTo = freezed,Object? daysPeriod = freezed,Object? forCitizen = freezed,Object? ticketKindCode = freezed,Object? ticketNumberOfLineCode = freezed,Object? ticketPeriodCode = freezed,Object? specialTransportLine = freezed,Object? isNetwork = freezed,Object? isMetropolitan = freezed,Object? lines = null,Object? hasSimilarTicket = freezed,Object? commodityId = freezed,Object? priceListPeriodId = freezed,Object? customerCode = freezed,Object? similarTickets = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? commodityIndex = freezed,Object? commodityName = freezed,Object? symbol = freezed,Object? price = freezed,Object? validFrom = freezed,Object? validTo = freezed,Object? daysPeriod = freezed,Object? forCitizen = freezed,Object? ticketKindCode = freezed,Object? ticketNumberOfLineCode = freezed,Object? ticketPeriodCode = freezed,Object? specialTransportLine = freezed,Object? isNetwork = freezed,Object? isMetropolitan = freezed,Object? lines = null,Object? hasSimilarTicket = freezed,Object? commodityId = freezed,Object? priceListPeriodId = freezed,Object? customerCode = freezed,Object? similarTickets = null,Object? code = freezed,Object? message = freezed,Object? fields = freezed,}) {
   return _then(_TicketCalculation(
 commodityIndex: freezed == commodityIndex ? _self.commodityIndex : commodityIndex // ignore: cast_nullable_to_non_nullable
 as String?,commodityName: freezed == commodityName ? _self.commodityName : commodityName // ignore: cast_nullable_to_non_nullable
@@ -4367,12 +4378,13 @@ as int?,specialTransportLine: freezed == specialTransportLine ? _self.specialTra
 as String?,isNetwork: freezed == isNetwork ? _self.isNetwork : isNetwork // ignore: cast_nullable_to_non_nullable
 as bool?,isMetropolitan: freezed == isMetropolitan ? _self.isMetropolitan : isMetropolitan // ignore: cast_nullable_to_non_nullable
 as bool?,lines: null == lines ? _self._lines : lines // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,hasSimilarTicket: freezed == hasSimilarTicket ? _self.hasSimilarTicket : hasSimilarTicket // ignore: cast_nullable_to_non_nullable
+as List<TransportLine>,hasSimilarTicket: freezed == hasSimilarTicket ? _self.hasSimilarTicket : hasSimilarTicket // ignore: cast_nullable_to_non_nullable
 as bool?,commodityId: freezed == commodityId ? _self.commodityId : commodityId // ignore: cast_nullable_to_non_nullable
 as int?,priceListPeriodId: freezed == priceListPeriodId ? _self.priceListPeriodId : priceListPeriodId // ignore: cast_nullable_to_non_nullable
 as int?,customerCode: freezed == customerCode ? _self.customerCode : customerCode // ignore: cast_nullable_to_non_nullable
 as int?,similarTickets: null == similarTickets ? _self._similarTickets : similarTickets // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,
+as List<dynamic>,code: freezed == code ? _self.code : code ,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,fields: freezed == fields ? _self.fields : fields ,
   ));
 }
 

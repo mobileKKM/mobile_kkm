@@ -17,6 +17,7 @@ import 'package:mobile_kkm/core/database/app_database.dart';
 import 'package:mobile_kkm/core/dictionaries/dictionary_cache.dart';
 import 'package:mobile_kkm/core/platform/link_settings.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
+import 'package:mobile_kkm/core/platform/payment_browser.dart';
 import 'package:mobile_kkm/core/platform/photo_picker.dart';
 import 'package:mobile_kkm/core/platform/scan_display.dart';
 import 'package:mobile_kkm/core/platform/screen_security.dart';
@@ -31,6 +32,8 @@ import 'package:mobile_kkm/features/account/services/photo_cache.dart';
 import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
 import 'package:mobile_kkm/features/map/models/map_view_controller.dart';
 import 'package:mobile_kkm/features/map/providers/map_providers.dart';
+import 'package:mobile_kkm/features/purchase/services/last_payment_method_store.dart';
+import 'package:mobile_kkm/features/purchase/services/payment_logos.dart';
 
 import 'fake_adapter.dart';
 import 'sample_data.dart';
@@ -65,6 +68,21 @@ class InMemoryUserDataCache implements UserDataCache {
 
   @override
   Future<void> clear() async => data = null;
+}
+
+class InMemoryLastPaymentMethodStore implements LastPaymentMethodStore {
+  InMemoryLastPaymentMethodStore([this.groupId]);
+
+  String? groupId;
+
+  @override
+  Future<String?> read() async => groupId;
+
+  @override
+  Future<void> write(String groupId) async => this.groupId = groupId;
+
+  @override
+  Future<void> clear() async => groupId = null;
 }
 
 /// Keeps the dictionaries as the JSON text a file would hold.
@@ -137,6 +155,17 @@ class FakePhotoCache implements PhotoCache {
 
   @override
   Future<void> clear() async => cleared++;
+}
+
+/// Serves a one-pixel image for any payment logo and notes the URLs.
+class FakePaymentLogos implements PaymentLogos {
+  final requested = <String>[];
+
+  @override
+  ImageProvider image(String url) {
+    requested.add(url);
+    return MemoryImage(onePixelPng);
+  }
 }
 
 /// Stands in for the native map view, which a widget test cannot create.
@@ -221,6 +250,39 @@ class FakeScreenSecurity extends ScreenSecurity {
 }
 
 /// Notes when the display was turned up and kept awake.
+/// The payment browser: records what it opened, and plays the return link,
+/// the closing, or a return link the app was started with.
+class FakePaymentBrowser implements PaymentBrowser {
+  FakePaymentBrowser({this.initial});
+
+  final opened = <Uri>[];
+  var closed = 0;
+
+  /// What [initialReturn] hands out once.
+  Uri? initial;
+  final _events = StreamController<PaymentBrowserEvent>.broadcast();
+
+  void returnTo(Uri url) => _events.add(PaymentReturned(url));
+
+  void closeByUser() => _events.add(const PaymentBrowserClosed());
+
+  @override
+  Stream<PaymentBrowserEvent> get events => _events.stream;
+
+  @override
+  Future<void> open(Uri url, {required Color toolbarColor, required Color tintColor}) async => opened.add(url);
+
+  @override
+  Future<void> close() async => closed++;
+
+  @override
+  Future<Uri?> initialReturn() async {
+    final url = initial;
+    initial = null;
+    return url;
+  }
+}
+
 class FakeScanDisplay extends ScanDisplay {
   /// Every change asked for, in order.
   final changes = <bool>[];
@@ -254,6 +316,8 @@ class App {
     this.scanDisplay,
     this.savedIdentities,
     this.container,
+    this.paymentBrowser,
+    this.paymentLogos,
   );
 
   /// The path of the screen on top.
@@ -275,6 +339,12 @@ class App {
 
   /// For providers that no screen shows.
   final ProviderContainer container;
+
+  /// tPay's page: what was opened, and its return link or closing.
+  final FakePaymentBrowser paymentBrowser;
+
+  /// The payment logos asked for.
+  final FakePaymentLogos paymentLogos;
 }
 
 /// Pumps the whole app on a phone-sized surface, backed by [adapter].
@@ -285,12 +355,14 @@ Future<App> pumpApp(
   LinkSettings? linkSettings,
   List<Uri>? openedUrls,
   UserDataCache? userDataCache,
+  LastPaymentMethodStore? lastPaymentMethod,
   DictionaryCache? dictionaryCache,
   AppDatabase? database,
   PhotoCache? photoCache,
   LocationService? location,
   PhotoPicker? photoPicker,
   FakeAdapter? relay,
+  FakePaymentBrowser? paymentBrowser,
   AztecKeyStore? aztecKeyStore,
   bool settle = true,
   bool tall = false,
@@ -309,6 +381,7 @@ Future<App> pumpApp(
     await store.write(session);
   }
   late final ProviderContainer container;
+  final browser = paymentBrowser ?? FakePaymentBrowser();
   final client = EkpClient(
     dio: Dio(BaseOptions(baseUrl: 'https://ekp.test'))..httpClientAdapter = adapter,
     tokenStore: store,
@@ -326,6 +399,7 @@ Future<App> pumpApp(
   final map = FakeMapView();
   final screen = FakeScreenSecurity();
   final scanDisplay = FakeScanDisplay();
+  final paymentLogos = FakePaymentLogos();
   final savedIdentities = <SavedIdentity>[];
   container = ProviderContainer(
     overrides: [
@@ -341,6 +415,7 @@ Future<App> pumpApp(
       ),
       linkSettingsProvider.overrideWithValue(linkSettings ?? FakeLinkSettings()),
       userDataCacheProvider.overrideWithValue(userDataCache ?? InMemoryUserDataCache()),
+      lastPaymentMethodStoreProvider.overrideWithValue(lastPaymentMethod ?? InMemoryLastPaymentMethodStore()),
       appDatabaseProvider.overrideWithValue(db),
       dictionaryCacheProvider.overrideWithValue(dictionaryCache ?? InMemoryDictionaryCache()),
       aztecKeyRelayProvider.overrideWithValue(
@@ -351,11 +426,13 @@ Future<App> pumpApp(
       ),
       aztecKeyStoreProvider.overrideWithValue(aztecKeyStore ?? InMemoryAztecKeyStore()),
       photoCacheProvider.overrideWithValue(photoCache ?? FakePhotoCache()),
+      paymentLogosProvider.overrideWithValue(paymentLogos),
       mapViewProvider.overrideWithValue(map.build),
       locationServiceProvider.overrideWithValue(location ?? FakeLocationService()),
       photoPickerProvider.overrideWithValue(photoPicker ?? FakePhotoPicker()),
       screenSecurityProvider.overrideWithValue(screen),
       scanDisplayProvider.overrideWithValue(scanDisplay),
+      paymentBrowserProvider.overrideWithValue(browser),
       appVersionProvider.overrideWith((ref) => '1.2.3 (45)'),
       // Records instead of launching a browser.
       urlOpenerProvider.overrideWithValue((url) async {
@@ -387,6 +464,8 @@ Future<App> pumpApp(
     scanDisplay,
     savedIdentities,
     container,
+    browser,
+    paymentLogos,
   );
 }
 
@@ -401,6 +480,11 @@ Future<void> tapVisible(WidgetTester tester, Finder finder) async {
   await tester.tap(finder);
   await tester.pumpAndSettle();
 }
+
+/// A frame, and time for a route to come or go, on a screen with a spinner
+/// up (the Payment screen while tPay opens or a check runs), which never
+/// settles.
+Future<void> pumpWithSpinner(WidgetTester tester) => pumpWithCode(tester);
 
 /// A frame, and time for a route to come or go: in `pumpAndSettle`'s place
 /// on a screen with a code up, whose ring moves for as long as it is open

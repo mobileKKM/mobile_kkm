@@ -520,6 +520,13 @@ void main() {
       expect(res.specialTransportLines, isNotNull);
     });
 
+    test('salesConfiguration parses the privileged configuration', () async {
+      adapter.onGet('/tickets/ticket-sales-configuration', [(200, fixture('sales_config_privileged'))]);
+      final res = await client.tickets.salesConfiguration('100001');
+      expect(res.hasCracovCardPrivilege, isTrue);
+      expect(res.specialTransportLines.map((t) => t.specialTransportLine), ['1001', '1003']);
+    });
+
     test('calculate posts the selection body (UTC validFrom)', () async {
       adapter.onPost('/tickets/calculate', [(200, fixture('tickets_calculate'))]);
       final res = await client.tickets.calculate(
@@ -558,9 +565,99 @@ void main() {
       expect(res.urls, isNotNull);
     });
 
+    test('calculate sends the chosen lines and reads them back', () async {
+      adapter.onPost('/tickets/calculate', [(200, fixture('tickets_calculate_line'))]);
+      final res = await client.tickets.calculate(
+        validFrom: DateTime.utc(2025, 10, 1),
+        ticketNumberOfLineCode: 1,
+        customerCode: '100001',
+        ticketKindCode: 2,
+        ticketPeriodCode: 1,
+        lines: const [TransportLine(line: 52, secondZone: false, hasSecondZone: false, isTram: true, isBus: false)],
+      );
+      expect(res.isRefused, isFalse);
+      expect(res.lines.single.line, 52);
+      final body = bodyOf(requestsTo('/tickets/calculate').single);
+      expect(body['lines'], [
+        {'line': 52, 'second_zone': false, 'has_second_zone': false, 'is_tram': true, 'is_bus': false},
+      ]);
+      expect(body.containsKey('specialTransportLine'), isFalse);
+    });
+
+    test('calculate returns a refusal on HTTP 200 as a value', () async {
+      adapter.onPost('/tickets/calculate', [
+        (
+          200,
+          {
+            'code': 'PurchaseImpossible',
+            'message': 'Zakup biletu nie jest możliwy',
+            'fields': {'validFrom': 'Błąd'},
+          },
+        ),
+      ]);
+      final res = await client.tickets.calculate(
+        validFrom: DateTime.utc(2025, 10, 1),
+        ticketNumberOfLineCode: 3,
+        customerCode: '100001',
+        ticketKindCode: 2,
+        ticketPeriodCode: 1,
+      );
+      expect(res.isRefused, isTrue);
+      expect(res.message, 'Zakup biletu nie jest możliwy');
+      expect(res.fields, {'validFrom': 'Błąd'});
+      expect(res.price, isNull);
+    });
+
+    test('calculate throws an HTTP refusal with its fields', () async {
+      adapter.onPost('/tickets/calculate', [
+        (
+          400,
+          {
+            'code': 'InvalidValidFrom',
+            'message': 'Błędna data',
+            'fields': {'validFrom': 'Błąd'},
+          },
+        ),
+      ]);
+      await expectLater(
+        client.tickets.calculate(
+          validFrom: DateTime.utc(2025, 10, 1),
+          ticketNumberOfLineCode: 3,
+          customerCode: '100001',
+          ticketKindCode: 2,
+          ticketPeriodCode: 1,
+        ),
+        throwsA(
+          isA<EkpHttpException>().having((e) => e.codeAsString, 'code', 'InvalidValidFrom').having(
+            (e) => e.fields,
+            'fields',
+            {'validFrom': 'Błąd'},
+          ),
+        ),
+      );
+    });
+
+    test('pay sends ignoreWarnings false on the first call', () async {
+      adapter.onPost('/tickets/pay', [(200, fixture('pay_response'))]);
+      await client.tickets.pay(
+        ticketGuid: 'feedfacefeedfacefeedfacefeedface',
+        tPayPaymentGroupId: '150',
+        ignoreWarnings: false,
+      );
+      expect(bodyOf(requestsTo('/tickets/pay').single), {
+        'id': 'feedfacefeedfacefeedfacefeedface',
+        'ignoreWarnings': false,
+        'tPayPaymentGroupId': '150',
+      });
+    });
+
     test('pay posts id + ignoreWarnings + group id', () async {
       adapter.onPost('/tickets/pay', [(200, fixture('pay_response'))]);
-      final res = await client.tickets.pay(ticketGuid: 'feedfacefeedfacefeedfacefeedface', tPayPaymentGroupId: '160');
+      final res = await client.tickets.pay(
+        ticketGuid: 'feedfacefeedfacefeedfacefeedface',
+        tPayPaymentGroupId: '160',
+        ignoreWarnings: true,
+      );
       expect(res.ticket, isNotNull);
       expect(bodyOf(requestsTo('/tickets/pay').single), {
         'id': 'feedfacefeedfacefeedfacefeedface',
@@ -575,7 +672,11 @@ void main() {
         (400, {'code': 'AlreadyPaid', 'message': 'Bilet został już opłacony'}),
       ]);
       for (var i = 0; i < 2; i++) {
-        final res = await client.tickets.pay(ticketGuid: 'feedfacefeedfacefeedfacefeedface', tPayPaymentGroupId: '160');
+        final res = await client.tickets.pay(
+          ticketGuid: 'feedfacefeedfacefeedfacefeedface',
+          tPayPaymentGroupId: '160',
+          ignoreWarnings: true,
+        );
         expect(res.isAlreadyPaid, isTrue);
         expect(res.needsRepaymentConfirmation, isFalse);
         expect(res.message, 'Bilet został już opłacony');
@@ -602,14 +703,22 @@ void main() {
         (400, {'code': 2, 'message': 'Błąd'}),
       ]);
       await expectLater(
-        client.tickets.pay(ticketGuid: 'feedfacefeedfacefeedfacefeedface', tPayPaymentGroupId: '160'),
+        client.tickets.pay(
+          ticketGuid: 'feedfacefeedfacefeedfacefeedface',
+          tPayPaymentGroupId: '160',
+          ignoreWarnings: true,
+        ),
         throwsA(isA<EkpHttpException>().having((e) => e.codeAsInt, 'code', 2)),
       );
     });
 
     test('pay leaves both flags unset on a normal reply', () async {
       adapter.onPost('/tickets/pay', [(200, fixture('pay_response'))]);
-      final res = await client.tickets.pay(ticketGuid: 'feedfacefeedfacefeedfacefeedface', tPayPaymentGroupId: '160');
+      final res = await client.tickets.pay(
+        ticketGuid: 'feedfacefeedfacefeedfacefeedface',
+        tPayPaymentGroupId: '160',
+        ignoreWarnings: true,
+      );
       expect(res.code, isNull);
       expect(res.isAlreadyPaid, isFalse);
       expect(res.needsRepaymentConfirmation, isFalse);

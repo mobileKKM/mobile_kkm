@@ -17,14 +17,28 @@ String lineKind(AppLocalizations l10n, TransportLine line) => (line.isTram ?? fa
 
 /// Finds a line by its number, to take the place of [replacing] on a ticket.
 /// Pops with the line that was picked.
+///
+/// [LineSearchScreen.pick] picks up to [max] lines for a new ticket instead,
+/// and pops with all of them on Done.
 class LineSearchScreen extends ConsumerStatefulWidget {
-  const LineSearchScreen({super.key, required this.replacing, required this.onTicket});
+  const LineSearchScreen({super.key, required int this.replacing, required this.onTicket})
+    : max = null,
+      picked = const [];
+
+  const LineSearchScreen.pick({super.key, required int this.max, this.picked = const [], this.onTicket = const {}})
+    : replacing = null;
 
   /// The number of the line that is given up.
-  final int replacing;
+  final int? replacing;
 
   /// The numbers the ticket will have besides: those cannot be picked.
   final Set<int> onTicket;
+
+  /// How many lines can be picked; null when replacing one.
+  final int? max;
+
+  /// The lines picked so far.
+  final List<TransportLine> picked;
 
   @override
   ConsumerState<LineSearchScreen> createState() => _LineSearchScreenState();
@@ -35,6 +49,7 @@ class _LineSearchScreenState extends ConsumerState<LineSearchScreen> {
 
   final _query = TextEditingController();
   Timer? _debounce;
+  late final List<TransportLine> _picked = [...widget.picked];
 
   /// What the server found for the number as it stands; null before the
   /// first answer and while the field is empty.
@@ -85,6 +100,18 @@ class _LineSearchScreenState extends ConsumerState<LineSearchScreen> {
   void _clear() {
     _query.clear();
     _onChanged('');
+  }
+
+  bool _isPicked(TransportLine line) => _picked.any((picked) => picked.line == line.line);
+
+  void _toggle(TransportLine line) {
+    setState(() {
+      if (_isPicked(line)) {
+        _picked.removeWhere((picked) => picked.line == line.line);
+      } else if (_picked.length < widget.max!) {
+        _picked.add(line);
+      }
+    });
   }
 
   @override
@@ -157,28 +184,39 @@ class _LineSearchScreenState extends ConsumerState<LineSearchScreen> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Container(
-                  height: 32,
-                  padding: const EdgeInsetsDirectional.only(start: 8, end: 12),
-                  decoration: BoxDecoration(color: scheme.secondaryContainer, borderRadius: BorderRadius.circular(10)),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Symbols.swap_horiz_rounded, size: 18, color: scheme.onSecondaryContainer),
-                      const SizedBox(width: 6),
-                      Text(
-                        l10n.lineReplacing('${widget.replacing}'),
-                        style: theme.textTheme.labelLarge?.copyWith(color: scheme.onSecondaryContainer),
-                      ),
-                    ],
+            if (widget.max case final max?)
+              _PickedBar(
+                picked: _picked,
+                max: max,
+                onRemove: (line) => setState(() => _picked.removeWhere((p) => p.line == line.line)),
+                onDone: () => Navigator.of(context).pop(List<TransportLine>.unmodifiable(_picked)),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Container(
+                    height: 32,
+                    padding: const EdgeInsetsDirectional.only(start: 8, end: 12),
+                    decoration: BoxDecoration(
+                      color: scheme.secondaryContainer,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Symbols.swap_horiz_rounded, size: 18, color: scheme.onSecondaryContainer),
+                        const SizedBox(width: 6),
+                        Text(
+                          l10n.lineReplacing('${widget.replacing ?? ''}'),
+                          style: theme.textTheme.labelLarge?.copyWith(color: scheme.onSecondaryContainer),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
             // Only before the first answer: after it the rows stay until the next.
             if (_searching && lines == null)
               const Padding(
@@ -199,6 +237,19 @@ class _LineSearchScreenState extends ConsumerState<LineSearchScreen> {
                       separatorBuilder: (context, _) => const SizedBox(height: 2),
                       itemBuilder: (context, index) {
                         final line = lines[index];
+                        final max = widget.max;
+                        if (max != null) {
+                          final picked = _isPicked(line);
+                          return _LineRow(
+                            line: line,
+                            first: index == 0,
+                            last: index == lines.length - 1,
+                            onTicket: widget.onTicket.contains(line.line),
+                            picked: picked,
+                            full: !picked && _picked.length >= max,
+                            onTap: () => _toggle(line),
+                          );
+                        }
                         return _LineRow(
                           line: line,
                           first: index == 0,
@@ -242,11 +293,19 @@ class _LineRow extends StatelessWidget {
     required this.last,
     required this.onTicket,
     required this.onTap,
+    this.picked,
+    this.full = false,
   });
 
   final TransportLine line;
   final bool first;
   final bool last;
+
+  /// Picking several: whether this one is among them (a checkbox shows).
+  final bool? picked;
+
+  /// Picking several: as many as allowed are picked, and not this one.
+  final bool full;
 
   /// Already on the ticket: shown, so that it is not looked for, but not
   /// to be picked.
@@ -260,21 +319,29 @@ class _LineRow extends StatelessWidget {
     final scheme = theme.colorScheme;
     const inner = Radius.circular(6);
     const outer = Radius.circular(20);
-    return Opacity(
-      opacity: onTicket ? 0.5 : 1,
+    final picked = this.picked;
+    final enabled = !onTicket && !full;
+    final kind = picked == null
+        ? lineKind(l10n, line)
+        : '${lineKind(l10n, line)} · ${(line.secondZone ?? false) ? l10n.lineAlsoZoneII : l10n.lineZoneI}';
+    // Disabled in the theme's disabled colour; the Checkbox and the
+    // InkWell show their own disabled states.
+    final disabled = enabled ? null : theme.disabledColor;
+    return Semantics(
+      enabled: enabled,
       child: Material(
-        color: scheme.surfaceContainer,
+        color: picked ?? false ? scheme.secondaryContainer : scheme.surfaceContainer,
         borderRadius: BorderRadius.vertical(top: first ? outer : inner, bottom: last ? outer : inner),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: onTicket ? null : onTap,
+          onTap: enabled ? onTap : null,
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 64),
             child: Padding(
               padding: const EdgeInsetsDirectional.only(start: 12, end: 16),
               child: Row(
                 children: [
-                  IconTile(lineIcon(line), size: 40),
+                  IconTile(lineIcon(line), size: 40, foreground: disabled),
                   const SizedBox(width: 14),
                   SizedBox(
                     width: 56,
@@ -283,14 +350,17 @@ class _LineRow extends StatelessWidget {
                       maxLines: 1,
                       softWrap: false,
                       overflow: TextOverflow.visible,
-                      style: theme.textTheme.titleLarge?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: disabled,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
                     ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Text(
-                      lineKind(l10n, line),
-                      style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+                      kind,
+                      style: theme.textTheme.bodyMedium?.copyWith(color: disabled ?? scheme.onSurfaceVariant),
                     ),
                   ),
                   if (onTicket) ...[
@@ -308,11 +378,98 @@ class _LineRow extends StatelessWidget {
                       ),
                     ),
                   ],
+                  if (picked != null) ...[
+                    const SizedBox(width: 8),
+                    ExcludeSemantics(
+                      child: Checkbox(value: picked, onChanged: enabled ? (_) => onTap() : null),
+                    ),
+                  ],
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Picking several lines: how many are picked, their chips and Done.
+class _PickedBar extends StatelessWidget {
+  const _PickedBar({required this.picked, required this.max, required this.onRemove, required this.onDone});
+
+  final List<TransportLine> picked;
+  final int max;
+  final ValueChanged<TransportLine> onRemove;
+  final VoidCallback onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    l10n.lineChosen(picked.length, max),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontSize: 13,
+                      height: 18 / 13,
+                      fontWeight: FontWeight.w600,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                for (final line in picked)
+                  Container(
+                    height: 32,
+                    padding: const EdgeInsetsDirectional.only(start: 12, end: 2),
+                    decoration: BoxDecoration(color: scheme.secondaryContainer, borderRadius: BorderRadius.circular(8)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${line.line ?? ''}',
+                          style: theme.textTheme.labelLarge?.copyWith(color: scheme.onSecondaryContainer),
+                        ),
+                        IconButton(
+                          tooltip: l10n.lineRemove('${line.line ?? ''}'),
+                          iconSize: 18,
+                          visualDensity: VisualDensity.compact,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints.tightFor(width: 28, height: 28),
+                          color: scheme.onSecondaryContainer,
+                          icon: const Icon(Symbols.close_rounded),
+                          onPressed: () => onRemove(line),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(0, 40),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              textStyle: theme.textTheme.labelLarge,
+            ),
+            onPressed: onDone,
+            child: Text(l10n.lineDone),
+          ),
+        ],
       ),
     );
   }

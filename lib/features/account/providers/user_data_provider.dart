@@ -7,6 +7,7 @@ import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/features/account/services/user_data_cache.dart';
 import 'package:mobile_kkm/features/auth/providers/auth_controller.dart';
+import 'package:mobile_kkm/features/purchase/services/last_payment_method_store.dart';
 
 /// Persistence for [userDataProvider], supplied in `main()`.
 final userDataCacheProvider = Provider<UserDataCache>((ref) => throw UnimplementedError('overridden in main()'));
@@ -43,6 +44,11 @@ class UserDataController extends AsyncNotifier<UserDataResponse?> {
           await ref.read(photoCacheProvider).clear();
         } catch (_) {
           // Nothing was cached, or the cache could not be opened.
+        }
+        try {
+          await ref.read(lastPaymentMethodStoreProvider).clear();
+        } catch (_) {
+          // The keystore could not be reached; the next sign-out tries again.
         }
         return null;
       case AuthStatus.authenticated:

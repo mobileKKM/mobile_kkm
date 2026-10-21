@@ -1,3 +1,4 @@
+import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +27,11 @@ import 'package:mobile_kkm/features/city_card/screens/city_card_screen.dart';
 import 'package:mobile_kkm/features/debug/screens/debug_screen.dart';
 import 'package:mobile_kkm/features/home/screens/home_screen.dart';
 import 'package:mobile_kkm/features/map/screens/map_screen.dart';
+import 'package:mobile_kkm/features/purchase/models/purchase_selection.dart';
+import 'package:mobile_kkm/features/purchase/screens/buy_screen.dart';
+import 'package:mobile_kkm/features/purchase/screens/checkout_screen.dart';
+import 'package:mobile_kkm/features/purchase/screens/payment_screen.dart';
+import 'package:mobile_kkm/features/purchase/services/checkout_controller.dart';
 import 'package:mobile_kkm/features/shell/widgets/main_shell.dart';
 import 'package:mobile_kkm/features/splash/screens/splash_screen.dart';
 import 'package:mobile_kkm/features/tickets/screens/ticket_change_line_screen.dart';
@@ -100,6 +106,17 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'return',
             builder: (context, state) => TicketReturnScreen(transactionCode: state.pathParameters['transactionCode']!),
           ),
+          // Continue payment opens it with the ticket's details; without
+          // them it is the ticket details screen.
+          GoRoute(
+            path: 'pay',
+            redirect: (context, state) =>
+                state.extra is TicketDetailResponse ? null : Routes.ticket(state.pathParameters['transactionCode']!),
+            builder: (context, state) => TicketPayScreen(
+              transactionCode: state.pathParameters['transactionCode']!,
+              details: state.extra! as TicketDetailResponse,
+            ),
+          ),
           GoRoute(
             path: 'change-line',
             builder: (context, state) =>
@@ -120,8 +137,20 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.accountEdit, builder: (context, state) => const EditAccountScreen()),
       GoRoute(path: Routes.accountChangePassword, builder: (context, state) => const ChangePasswordScreen()),
       GoRoute(path: Routes.accountDelete, builder: (context, state) => const DeleteAccountScreen()),
+      GoRoute(
+        path: Routes.buy,
+        builder: (context, state) => BuyScreen(entry: purchaseEntryOf(state.uri)),
+        routes: [
+          GoRoute(
+            path: 'pay',
+            // The priced choice comes along; without it (a restored stack) the form starts again.
+            redirect: (context, state) => state.extra is CheckoutEntry ? null : Routes.buy,
+            builder: (context, state) => CheckoutScreen(entry: state.extra! as CheckoutEntry),
+          ),
+        ],
+      ),
+      GoRoute(path: Routes.payment, builder: (context, state) => const PaymentScreen()),
       // Not built yet.
-      _comingSoon(Routes.buy, (l10n) => l10n.navBuy),
       _comingSoon(Routes.subscription, (l10n) => l10n.subscriptionTitle),
       GoRoute(
         path: Routes.login,
@@ -206,4 +235,16 @@ String? redirectFor(Uri uri, AuthStatus status, {bool outdated = false, CardGate
     },
     AuthStatus.unauthenticated => Routes.isPublic(path) ? null : Routes.login,
   };
+}
+
+/// How `/buy` was opened: `?extend=` or `?similar=` a transaction code.
+PurchaseEntry purchaseEntryOf(Uri uri) {
+  final query = uri.queryParameters;
+  if (query['extend'] case final code? when code.isNotEmpty) {
+    return PurchaseEntry.extend(code);
+  }
+  if (query['similar'] case final code? when code.isNotEmpty) {
+    return PurchaseEntry.similar(code);
+  }
+  return const PurchaseEntry.fresh();
 }

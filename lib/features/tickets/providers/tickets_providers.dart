@@ -2,13 +2,35 @@ import 'package:ekp_api/ekp_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
+import 'package:mobile_kkm/features/purchase/services/payments_dao.dart';
 import 'package:mobile_kkm/features/tickets/models/stored_ticket.dart';
 import 'package:mobile_kkm/features/tickets/services/ticket_sync.dart';
 import 'package:mobile_kkm/features/tickets/utils/ticket_format.dart';
 
-/// The stored mobile tickets. Reads the database only; `ticketSyncProvider`
-/// is what brings it up to date.
-final mkkmTicketsProvider = StreamProvider<List<StoredTicket>>((ref) => ref.watch(ticketsDaoProvider).watchAll());
+/// The stored mobile tickets as the server sent them. Reads the database
+/// only; `ticketSyncProvider` is what brings it up to date.
+final storedTicketsProvider = StreamProvider<List<StoredTicket>>((ref) => ref.watch(ticketsDaoProvider).watchAll());
+
+/// The stored mobile tickets as the app shows them: a `pending` ticket
+/// whose payment the app saw being made is `processing` (no actions) until
+/// the server lists it otherwise, as the official client does. The server
+/// never sends `processing` itself.
+final mkkmTicketsProvider = Provider<AsyncValue<List<StoredTicket>>>((ref) {
+  final tickets = ref.watch(storedTicketsProvider);
+  final marks = ref.watch(paymentMarksProvider).value ?? const <String, DateTime>{};
+  if (marks.isEmpty) {
+    return tickets;
+  }
+  return tickets.whenData(
+    (list) => [
+      for (final stored in list)
+        if (stored.ticket.status == 'pending' && marks.containsKey(stored.ticket.ticketGuid))
+          StoredTicket(stored.ticket.copyWith(status: 'processing'), pinned: stored.pinned)
+        else
+          stored,
+    ],
+  );
+});
 
 /// The stored tickets in the order of the Tickets list; see [listRankOf].
 final sortedTicketsProvider = Provider<List<StoredTicket>?>((ref) {

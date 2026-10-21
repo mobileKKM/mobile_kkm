@@ -48,6 +48,27 @@
                     android:pathPrefix="/konto-uzytkownika/"/>
             </intent-filter>
         </activity>
+        <!-- tPay's last page leads to these after a payment in the Custom
+             Tab. Not our domain, so no autoVerify: on Android 12+ the user has
+             to enable "Open supported links" (the hint on Check and pay);
+             without it the app finds out by asking payments/check. The
+             activity has no UI: it hands the link to MainActivity, which
+             closes the tab above it. -->
+        <activity
+            android:name=".PaymentReturnActivity"
+            android:exported="true"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https" android:host="ekp.mpk.krakow.pl"/>
+                <data android:path="/payment/success"/>
+                <data android:path="/payment/rejected"/>
+            </intent-filter>
+        </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
