@@ -20,6 +20,7 @@ void main() {
     expect(app.location, '/map');
     expect(find.byKey(fakeMapKey), findsOneWidget);
     expect(find.widgetWithText(SearchBar, 'Search for a stop'), findsOneWidget);
+    expect(find.textContaining('Map preview:'), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
     // From the top edge down to the navigation bar.
     expect(tester.getTopLeft(find.byKey(fakeMapKey)), Offset.zero);
@@ -67,7 +68,7 @@ void main() {
 
     await tester.tap(filters);
     await tester.pumpAndSettle();
-    expect(find.text('Coming soon'), findsOneWidget);
+    expect(find.text('Filters are coming in a later version.'), findsOneWidget);
   });
 
   group('the location button', () {

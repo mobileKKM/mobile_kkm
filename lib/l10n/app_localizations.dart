@@ -560,18 +560,6 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get navAccount;
 
-  /// No description provided for @comingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Coming soon'**
-  String get comingSoon;
-
-  /// No description provided for @comingSoonBody.
-  ///
-  /// In en, this message translates to:
-  /// **'This part of the app is not ready yet.'**
-  String get comingSoonBody;
-
   /// No description provided for @linkOpenFailed.
   ///
   /// In en, this message translates to:
@@ -614,6 +602,12 @@ abstract class AppLocalizations {
   /// **'Search for a stop'**
   String get mapSearchHint;
 
+  /// No description provided for @mapPreviewNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Map preview: live vehicles, stops with departures and stop search are coming in a later version.'**
+  String get mapPreviewNotice;
+
   /// No description provided for @mapMyLocation.
   ///
   /// In en, this message translates to:
@@ -631,6 +625,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Filters'**
   String get mapFilters;
+
+  /// No description provided for @mapFiltersUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters are coming in a later version.'**
+  String get mapFiltersUnavailable;
 
   /// No description provided for @mapLocationDenied.
   ///
@@ -662,11 +662,11 @@ abstract class AppLocalizations {
   /// **'5+1 half-year ticket'**
   String get subscriptionTitle;
 
-  /// No description provided for @subscriptionCtaBody.
+  /// No description provided for @subscriptionUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'See the offer and sign up'**
-  String get subscriptionCtaBody;
+  /// **'Coming in a later version of the app'**
+  String get subscriptionUnavailable;
 
   /// No description provided for @ticketsActive.
   ///

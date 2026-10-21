@@ -5,6 +5,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/platform/location_service.dart';
 import 'package:mobile_kkm/core/providers/platform_providers.dart';
+import 'package:mobile_kkm/core/widgets/message_banner.dart';
 import 'package:mobile_kkm/features/account/widgets/link_sheet.dart';
 import 'package:mobile_kkm/features/map/constants/map_credits.dart';
 import 'package:mobile_kkm/features/map/models/map_view_controller.dart';
@@ -13,7 +14,7 @@ import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// The map of Kraków, which shows and follows the user's position on request. Vehicles, stops
 /// with their departures and the stop search are still to come; the search
-/// bar is a stand-in.
+/// bar is a stand-in, and a notice under it says so.
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
 
@@ -116,7 +117,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             shape: fabShape,
             backgroundColor: scheme.surfaceContainerHigh,
             foregroundColor: scheme.primary,
-            onPressed: () => _say(l10n.comingSoon),
+            onPressed: () => _say(l10n.mapFiltersUnavailable),
             child: const Icon(Symbols.filter_alt_rounded),
           ),
           const SizedBox(height: 12),
@@ -221,22 +222,32 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               bottom: false,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(28)),
-                    boxShadow: [
-                      BoxShadow(color: Color(0x29000000), offset: Offset(0, 1), blurRadius: 3),
-                      BoxShadow(color: Color(0x1A181C50), offset: Offset(0, 4), blurRadius: 10),
-                    ],
-                  ),
-                  child: SearchBar(
-                    enabled: false,
-                    hintText: l10n.mapSearchHint,
-                    elevation: const WidgetStatePropertyAll(0),
-                    backgroundColor: WidgetStatePropertyAll(scheme.surfaceContainerHigh),
-                    leading: Icon(Symbols.search_rounded, color: scheme.onSurface),
-                    padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 16)),
-                  ),
+                child: Column(
+                  spacing: 8,
+                  children: [
+                    DecoratedBox(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(28)),
+                        boxShadow: _floatingShadow,
+                      ),
+                      child: SearchBar(
+                        enabled: false,
+                        hintText: l10n.mapSearchHint,
+                        elevation: const WidgetStatePropertyAll(0),
+                        backgroundColor: WidgetStatePropertyAll(scheme.surfaceContainerHigh),
+                        leading: Icon(Symbols.search_rounded, color: scheme.onSurface),
+                        padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 16)),
+                      ),
+                    ),
+                    // The beta's map only shows the city and the user's position.
+                    DecoratedBox(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        boxShadow: _floatingShadow,
+                      ),
+                      child: MessageBanner(l10n.mapPreviewNotice, kind: BannerKind.info),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -246,3 +257,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 }
+
+/// Lifts what floats over the map off it.
+const _floatingShadow = [
+  BoxShadow(color: Color(0x29000000), offset: Offset(0, 1), blurRadius: 3),
+  BoxShadow(color: Color(0x1A181C50), offset: Offset(0, 4), blurRadius: 10),
+];

@@ -195,12 +195,13 @@ void main() {
   });
 
   group('the 5+1 row', () {
-    testWidgets('is offered to Karta Krakowska holders and opens the programme', (tester) async {
+    testWidgets('is shown to Karta Krakowska holders as coming soon and leads nowhere', (tester) async {
       final app = await pumpApp(tester, _adapter([]), session: signedInSession);
+      expect(find.text('Coming in a later version of the app'), findsOneWidget);
 
       await tapVisible(tester, find.text(_subscription));
 
-      expect(app.location, '/subscription');
+      expect(app.location, '/home');
     });
 
     testWidgets('is not shown without the inhabitant privilege', (tester) async {

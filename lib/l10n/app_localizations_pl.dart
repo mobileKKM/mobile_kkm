@@ -290,12 +290,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get navAccount => 'Konto';
 
   @override
-  String get comingSoon => 'Już wkrótce';
-
-  @override
-  String get comingSoonBody => 'Ta część aplikacji nie jest jeszcze gotowa.';
-
-  @override
   String get linkOpenFailed => 'Nie udało się otworzyć linku.';
 
   @override
@@ -319,6 +313,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get mapSearchHint => 'Szukaj przystanku';
 
   @override
+  String get mapPreviewNotice =>
+      'Podgląd mapy: pojazdy na żywo, przystanki z odjazdami i wyszukiwanie przystanków pojawią się w kolejnej wersji.';
+
+  @override
   String get mapMyLocation => 'Moja lokalizacja';
 
   @override
@@ -326,6 +324,9 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get mapFilters => 'Filtry';
+
+  @override
+  String get mapFiltersUnavailable => 'Filtry pojawią się w kolejnej wersji.';
 
   @override
   String get mapLocationDenied => 'Zezwól na dostęp do lokalizacji, aby zobaczyć, gdzie jesteś.';
@@ -343,7 +344,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get subscriptionTitle => 'Bilet półroczny 5+1';
 
   @override
-  String get subscriptionCtaBody => 'Sprawdź ofertę i dołącz';
+  String get subscriptionUnavailable => 'Pojawi się w kolejnej wersji aplikacji';
 
   @override
   String get ticketsActive => 'Aktywne';

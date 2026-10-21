@@ -278,12 +278,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navAccount => 'Account';
 
   @override
-  String get comingSoon => 'Coming soon';
-
-  @override
-  String get comingSoonBody => 'This part of the app is not ready yet.';
-
-  @override
   String get linkOpenFailed => 'Could not open this link.';
 
   @override
@@ -307,6 +301,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mapSearchHint => 'Search for a stop';
 
   @override
+  String get mapPreviewNotice =>
+      'Map preview: live vehicles, stops with departures and stop search are coming in a later version.';
+
+  @override
   String get mapMyLocation => 'My location';
 
   @override
@@ -314,6 +312,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mapFilters => 'Filters';
+
+  @override
+  String get mapFiltersUnavailable => 'Filters are coming in a later version.';
 
   @override
   String get mapLocationDenied => 'Allow access to your location to see where you are.';
@@ -331,7 +332,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionTitle => '5+1 half-year ticket';
 
   @override
-  String get subscriptionCtaBody => 'See the offer and sign up';
+  String get subscriptionUnavailable => 'Coming in a later version of the app';
 
   @override
   String get ticketsActive => 'Active';

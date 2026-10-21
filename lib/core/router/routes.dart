@@ -28,7 +28,6 @@ abstract final class Routes {
 
   /// Payment: tPay opens over it, and it shows how the payment went.
   static const payment = '/payment';
-  static const subscription = '/subscription';
 
   /// The mKKM card set-up: all a signed-in user gets until the account has
   /// an attached card. Its two steps lie on top of each other.
@@ -112,7 +111,6 @@ abstract final class Routes {
         buy,
         buyPay,
         payment,
-        subscription,
       }.contains(path) ||
       path.startsWith(_ticketPrefix) ||
       path.startsWith(_ticketControlPrefix);

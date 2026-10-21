@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_kkm/core/providers/app_startup_provider.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
-import 'package:mobile_kkm/core/widgets/coming_soon_screen.dart';
 import 'package:mobile_kkm/features/account/screens/account_screen.dart';
 import 'package:mobile_kkm/features/account/screens/change_password_screen.dart';
 import 'package:mobile_kkm/features/account/screens/delete_account_screen.dart';
@@ -42,7 +41,6 @@ import 'package:mobile_kkm/features/tickets/screens/ticket_details_screen.dart';
 import 'package:mobile_kkm/features/tickets/screens/ticket_return_screen.dart';
 import 'package:mobile_kkm/features/tickets/screens/tickets_screen.dart';
 import 'package:mobile_kkm/features/update/screens/update_required_screen.dart';
-import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
@@ -158,8 +156,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: Routes.payment, builder: (context, state) => const PaymentScreen()),
-      // Not built yet.
-      _comingSoon(Routes.subscription, (l10n) => l10n.subscriptionTitle),
       GoRoute(
         path: Routes.login,
         builder: (context, state) =>
@@ -190,11 +186,6 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.onDispose(router.dispose);
   return router;
 });
-
-GoRoute _comingSoon(String path, String Function(AppLocalizations l10n) title) => GoRoute(
-  path: path,
-  builder: (context, state) => ComingSoonScreen(title: title(AppLocalizations.of(context))),
-);
 
 /// Where [uri] should go instead, or null to stay.
 ///

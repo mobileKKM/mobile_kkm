@@ -153,7 +153,6 @@ void main() {
         '/karta-krakowska',
         '/karta-krakowska/code',
         '/buy',
-        '/subscription',
         '/ticket/NDAwMDAxIzE',
         '/ticket/NDAwMDAxIzE/return',
         '/ticket-control/feedfacefeedfacefeedfacefeedface',
