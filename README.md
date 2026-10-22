@@ -6,6 +6,8 @@
 [![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS-3DDC84)](#status)
 
+[<img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="56">](obtainium://app/%7B%22id%22%3A%22de.codebucket.mkkm%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2FmobileKKM%2Fmobile_kkm%22%2C%22author%22%3A%22David%20Sn%22%2C%22name%22%3A%22mobileKKM%22%2C%22preferredApkIndex%22%3A0%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Atrue%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22foss%5C%5C%5C%5C.apk%24%5C%22%7D%22%7D)
+
 Unofficial, community-built **FOSS software for the mKKM / eKP system** of
 ZTP / MPK Kraków — reverse-engineered from the official Android client,
 with the long-term goal of a free and open replacement app.
