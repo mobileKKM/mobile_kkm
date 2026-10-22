@@ -10,8 +10,8 @@
 # the recommended version. Add their build entries by hand and leave CurrentVersion(Code) on the
 # last stable release, so they only reach users with "Unstable updates" on.
 Categories:
-  - Public Transport
   - Pass Wallet
+  - Public Transport
 License: GPL-3.0-or-later
 AuthorName: David Sn
 WebSite: https://mobilekkm.app
@@ -26,6 +26,11 @@ AntiFeatures:
   NonFreeNet:
     en-US: Relies on the proprietary eKP ticketing service of ZTP / MPK Kraków.
     pl: Korzysta z zamkniętego systemu biletowego eKP ZTP / MPK Kraków.
+
+# Reproducible build: F-Droid rebuilds the APK, copies the signature of this release file onto it and
+# publishes the result only if it matches byte for byte (checked with apksigcopier against v2.0.0-beta.1).
+Binaries: https://github.com/mobileKKM/mobile_kkm/releases/download/v%v/mobileKKM-%v-foss.apk
+AllowedAPKSigningKeys: 472ca482b13ee2a71d3683cddbede921dfcba0b650e6d9360d2507e950b4fe04
 
 RepoType: git
 Repo: https://github.com/mobileKKM/mobile_kkm.git
@@ -42,6 +47,12 @@ Builds:
       - apt-get update
       - apt-get install -y openjdk-21-jdk-headless
       - update-java-alternatives -a
+      # Flutter embeds the build directory and the Android SDK path in the native libraries. release.yml builds
+      # on GitHub's runner, so build here at the same two paths (SDK: F-Droid's /opt/android-sdk, linked).
+      - mkdir -p /home/runner/work/mobile_kkm/mobile_kkm
+      - chown -R vagrant:vagrant /home/runner
+      - mkdir -p /usr/local/lib/android
+      - ln -s /opt/android-sdk /usr/local/lib/android/sdk
     rm:
       - ios
     prebuild:
@@ -55,13 +66,25 @@ Builds:
       - find .pub-cache/hosted/pub.dev -type d -name example -prune -exec rm -rf {} +
       - rm -rf .pub-cache/hosted/pub.dev/*/extension .pub-cache/hosted/pub.dev/archive-*/web
     build:
-      - export PUB_CACHE=$(pwd)/.pub-cache
-      # As release.yml builds it: ARM only, Dart debug info left out of the APK.
-      # The update screen leads to F-Droid, not to the GitHub releases.
-      - $$flutter$$/bin/flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/symbols --dart-define=UPDATE_URL=https://f-droid.org/packages/de.codebucket.mkkm/
+      # As release.yml builds it (APK, no dart defines): ARM only, Dart debug info left out. The tree is copied
+      # to GitHub's checkout path first and pub get runs again there (package_config.json holds absolute paths).
+      - SRC=$(pwd)
+      - DST=/home/runner/work/mobile_kkm/mobile_kkm
+      - cp -a "$SRC/." "$DST/"
+      - cd "$DST"
+      - export PUB_CACHE="$DST/.pub-cache"
+      - export ANDROID_HOME=/usr/local/lib/android/sdk ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
+      - $$flutter$$/bin/flutter config --android-sdk /usr/local/lib/android/sdk
+      - $$flutter$$/bin/flutter pub get --offline
+      - $$flutter$$/bin/flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/symbols
+      - mkdir -p "$SRC/build/app/outputs/flutter-apk"
+      - cp build/app/outputs/flutter-apk/app-release.apk "$SRC/build/app/outputs/flutter-apk/"
 
-AutoUpdateMode: Version
-UpdateCheckMode: Tags ^v[0-9.]+$
-UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+# No stable tag yet, so checkupdates would fail. With 2.0.0:
+#   AutoUpdateMode: Version
+#   UpdateCheckMode: Tags ^v[0-9.]+$
+#   UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+AutoUpdateMode: None
+UpdateCheckMode: None
 CurrentVersion: 2.0.0-beta.1
 CurrentVersionCode: 24
