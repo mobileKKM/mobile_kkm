@@ -7,7 +7,8 @@ import 'package:mobile_kkm/core/widgets/icon_tile.dart';
 class EmptyStateCard extends StatelessWidget {
   const EmptyStateCard({
     super.key,
-    required this.icon,
+    this.icon,
+    this.glyph,
     required this.title,
     this.body,
     this.actionIcon,
@@ -15,9 +16,12 @@ class EmptyStateCard extends StatelessWidget {
     this.onAction,
     this.tonal = false,
     this.quiet = false,
-  });
+  }) : assert((icon == null) != (glyph == null));
 
-  final IconData icon;
+  final IconData? icon;
+
+  /// A widget following the [IconTheme] in place of [icon].
+  final Widget? glyph;
   final String title;
   final String? body;
   final IconData? actionIcon;
@@ -44,14 +48,24 @@ class EmptyStateCard extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(24, quiet ? 28 : 32, 24, 24),
         child: Column(
           children: [
-            IconTile(
-              icon,
-              size: 72,
-              radius: 24,
-              iconSize: 36,
-              background: quiet ? scheme.surfaceContainerHigh : scheme.primaryFixed,
-              foreground: quiet ? scheme.onSurfaceVariant : scheme.onPrimaryFixed,
-            ),
+            if (icon case final icon?)
+              IconTile(
+                icon,
+                size: 72,
+                radius: 24,
+                iconSize: 36,
+                background: quiet ? scheme.surfaceContainerHigh : scheme.primaryFixed,
+                foreground: quiet ? scheme.onSurfaceVariant : scheme.onPrimaryFixed,
+              )
+            else
+              IconTile.glyph(
+                glyph!,
+                size: 72,
+                radius: 24,
+                iconSize: 36,
+                background: quiet ? scheme.surfaceContainerHigh : scheme.primaryFixed,
+                foreground: quiet ? scheme.onSurfaceVariant : scheme.onPrimaryFixed,
+              ),
             const SizedBox(height: 16),
             Text(
               title,

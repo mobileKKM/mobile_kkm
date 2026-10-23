@@ -13,6 +13,7 @@ import 'package:mobile_kkm/core/widgets/app_status_banner.dart';
 import 'package:mobile_kkm/core/widgets/bottom_action_bar.dart';
 import 'package:mobile_kkm/core/widgets/empty_state_card.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
+import 'package:mobile_kkm/core/widgets/karta_krakowska_icon.dart';
 import 'package:mobile_kkm/core/widgets/status_chip.dart';
 import 'package:mobile_kkm/features/account/constants/contacts.dart';
 import 'package:mobile_kkm/features/account/providers/user_data_provider.dart';
@@ -110,7 +111,7 @@ class _CityCardScreenState extends ConsumerState<CityCardScreen> {
                     _StatusCard(card)
                   else
                     EmptyStateCard(
-                      icon: Symbols.badge_rounded,
+                      glyph: const KartaKrakowskaIcon(),
                       title: l10n.cityCardNone,
                       actionIcon: Symbols.open_in_new_rounded,
                       actionLabel: l10n.cityCardHowTo,
@@ -180,8 +181,8 @@ class _StatusCard extends StatelessWidget {
           Row(
             spacing: 12,
             children: [
-              IconTile(
-                Symbols.badge_rounded,
+              IconTile.glyph(
+                const KartaKrakowskaIcon(),
                 iconSize: 24,
                 background: scheme.primaryContainer,
                 foreground: scheme.primaryFixed,

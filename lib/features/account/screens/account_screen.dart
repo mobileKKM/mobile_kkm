@@ -9,6 +9,7 @@ import 'package:mobile_kkm/core/providers/platform_providers.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/theme/app_theme.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
+import 'package:mobile_kkm/core/widgets/karta_krakowska_icon.dart';
 import 'package:mobile_kkm/core/widgets/row_group.dart';
 import 'package:mobile_kkm/core/widgets/skeleton_box.dart';
 import 'package:mobile_kkm/core/widgets/status_chip.dart';
@@ -61,7 +62,7 @@ class AccountScreen extends ConsumerWidget {
                     onTap: () => context.push(Routes.accountEdit),
                   ),
                   _Entry(
-                    icon: Symbols.badge_rounded,
+                    glyph: const KartaKrakowskaIcon(),
                     label: l10n.cityCardTitle,
                     // Unknown until the user data is there: no claim either way.
                     trailing: switch (resident) {
@@ -256,15 +257,17 @@ class _Header extends StatelessWidget {
 
 class _Entry extends StatelessWidget {
   const _Entry({
-    required this.icon,
+    this.icon,
+    this.glyph,
     required this.label,
     required this.onTap,
     this.subtitle,
     this.trailing,
     this.danger = false,
-  });
+  }) : assert((icon == null) != (glyph == null));
 
-  final IconData icon;
+  final IconData? icon;
+  final Widget? glyph;
   final String label;
   final VoidCallback onTap;
   final String? subtitle;
@@ -280,9 +283,16 @@ class _Entry extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return GroupRow(
-      leading: danger
-          ? IconTile(icon, background: scheme.errorContainer, foreground: scheme.onErrorContainer)
-          : IconTile(icon),
+      leading: switch ((icon, glyph)) {
+        (final icon?, _) when danger => IconTile(
+          icon,
+          background: scheme.errorContainer,
+          foreground: scheme.onErrorContainer,
+        ),
+        (final icon?, _) => IconTile(icon),
+        (_, final glyph?) => IconTile.glyph(glyph),
+        _ => throw StateError('An entry needs an icon or a glyph.'),
+      },
       label: label,
       labelColor: danger ? scheme.error : null,
       subtitle: subtitle,

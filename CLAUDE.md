@@ -131,6 +131,7 @@ Use the shared widgets:
 - `BottomActionBar` for a pinned bottom button; `SystemBarScrim` for content scrolling under the navigation bar.
 - `EmptyStateCard` / `LoadProblem` for missing or failed content; `SkeletonBox` in `SkeletonPulse` for first loads; `StatusChip` (icon + word, never colour alone).
 - `showAppSnackBar()` for every snackbar; `SubmitButton` for busy buttons.
+- `KartaKrakowskaIcon` for the Karta Krakowska glyph (monochrome SVG ported from the old app, tinted by `IconTheme`); in a tile use `IconTile.glyph`.
 - `CodeScreen` for any code shown to someone else; `PhotoPreview`, `BulletCard`, `Perforation` as named.
 - On the brand surface use `primaryFixed` / `onPrimaryFixed`, never `primary`. Filled buttons in dialogs use `AppTheme.dialogAction` (40 dp).
 

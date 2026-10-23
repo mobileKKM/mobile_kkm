@@ -3,6 +3,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/router/routes.dart';
 import 'package:mobile_kkm/core/widgets/icon_tile.dart';
+import 'package:mobile_kkm/core/widgets/karta_krakowska_icon.dart';
 import 'package:mobile_kkm/l10n/app_localizations.dart';
 
 /// The four shortcuts on the home screen, two by two.
@@ -19,7 +20,11 @@ class QuickActions extends StatelessWidget {
         onTap: () => context.go(Routes.tickets),
       ),
       _QuickAction(icon: Symbols.add_shopping_cart_rounded, label: l10n.navBuy, onTap: () => context.push(Routes.buy)),
-      _QuickAction(icon: Symbols.badge_rounded, label: l10n.cityCardTitle, onTap: () => context.push(Routes.cityCard)),
+      _QuickAction(
+        glyph: const KartaKrakowskaIcon(),
+        label: l10n.cityCardTitle,
+        onTap: () => context.push(Routes.cityCard),
+      ),
       _QuickAction(
         icon: Symbols.departure_board_rounded,
         label: l10n.quickActionDepartures,
@@ -47,9 +52,11 @@ class QuickActions extends StatelessWidget {
 }
 
 class _QuickAction extends StatelessWidget {
-  const _QuickAction({required this.icon, required this.label, required this.onTap});
+  const _QuickAction({this.icon, this.glyph, required this.label, required this.onTap})
+    : assert((icon == null) != (glyph == null));
 
-  final IconData icon;
+  final IconData? icon;
+  final Widget? glyph;
   final String label;
   final VoidCallback onTap;
 
@@ -72,7 +79,10 @@ class _QuickAction extends StatelessWidget {
             padding: EdgeInsetsDirectional.fromSTEB(12, 12, narrow ? 8 : 14, 12),
             child: Row(
               children: [
-                IconTile(icon, size: narrow ? 40 : 44),
+                if (icon case final icon?)
+                  IconTile(icon, size: narrow ? 40 : 44)
+                else
+                  IconTile.glyph(glyph!, size: narrow ? 40 : 44),
                 SizedBox(width: narrow ? 10 : 12),
                 Expanded(
                   child: Text(label, style: theme.textTheme.labelLarge?.copyWith(fontSize: 15, height: 20 / 15)),
