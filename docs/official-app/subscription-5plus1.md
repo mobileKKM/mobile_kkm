@@ -36,20 +36,21 @@ On opening, and again every time it regains focus:
 
 Heading "Zapisz się na subskrypcję biletu".
 
-1. **Identity.** PESEL, or the birth date for accounts without one, and the e-mail. Each is
-   prefilled from the user data and locked when the account already has a value.
+1. **Identity.** PESEL, or the birth date (`YYYY-MM-DD`) for accounts without one, and the e-mail.
+   Each is prefilled from the user data and locked when the account already has a value.
 2. **"Wybierz nośnik".** The user's cards as selectable panels: type name, owner's name, "Numer
    klienta", and for cards with the resident's status "Status Karty Krakowskiej:" with its dates.
    Cards without the status carry a red line "Ten nośnik nie posiada aktywnego statusu mieszkańca!".
    Only an mKKM card with an active resident's status can be chosen. Tapping any other gives the
    dialog "W aplikacji mobilnej można kupować bilety tylko dla nośników mKKM z aktywnym statusem
-   mieszkańca". When exactly one card qualifies it is preselected.
+   mieszkańca". The first card of the list is preselected when it qualifies; otherwise nothing is.
 3. **"Automatyczne odnawianie subskrypcji:"** with one checkbox: "Automatycznie ponawiaj subskrypcję
    po zakończonym cyklu 6-miesięcznym".
 4. **Consents** from the server, as checkboxes. Required ones left empty show "Pole wymagane" after
    the first attempt.
-5. **"ZAPISZ SIĘ"** → `POST subscriptions/sign-in` with the name, the chosen card, the consents and
-   the renewal choice. Not choosing a card gives "Wybierz nośnik". Server errors appear as a dialog
+5. **"ZAPISZ SIĘ"** → `POST subscriptions/sign-in` with `firstName`, `lastName` and `ccCustomerId`
+   of the chosen card (as the storage-media list has them, upper case), `email` and `pesel` or
+   `birthDate` from step 1, the consents (with their `content`) and the renewal choice. Not choosing a card gives "Wybierz nośnik". Server errors appear as a dialog
    and under the affected fields. Success reloads the screen into the signed-up state.
 
 ## Signed up: the status
@@ -73,7 +74,7 @@ Heading "Zapisz się na subskrypcję biletu".
 | Button | Does |
 |---|---|
 | Odnawiaj automatycznie subskrypcję / Nie odnawiaj automatycznie subskrypcji | Opens a confirmation explaining the consequence (below), then `PUT subscriptions/edit` |
-| DODAJ KARTĘ PŁATNICZĄ | `POST payments/add-payment-card`, then the returned tPay page in a WebView |
+| DODAJ KARTĘ PŁATNICZĄ | `POST payments/add-payment-card` (body `null`), then the returned `tPayRedirectUrl` in a WebView; any status but 200 shows the server's `message`. The code is a copy of the card change below. |
 | ZMIEŃ DANE KARTY PŁATNICZEJ | `POST payments/change-payment-card`, then the tPay page |
 | ANULUJ SUBSKRYPCJĘ | Confirmation "Czy na pewno chcesz anulować subskrypcję 5plus1 ?" (Tak / Nie), then `POST subscriptions/cancel`; success dialog "Subskrypcja została pomyślnie anulowana." |
 
@@ -106,11 +107,13 @@ the sketch are made up):
 | Button | Shown when | Does |
 |---|---|---|
 | USUŃ BILET | `canRemove` | Confirmation "Czy na pewno chcesz usunąć bilet?" (Tak / Nie), then `POST subscriptions/tickets/{ticketGuid}/remove` |
-| Zapłać | `canBePaid`, and no payment was just made in this session | `POST subscriptions/tickets/pay`, then the tPay page |
+| Zapłać | `canBePaid`, and no payment was just made in this session | `POST subscriptions/tickets/pay` with `{ticketGuid, ignoreWarnings}` (the guid of `pendingTicket`, else of `activeTicket`), then `tpayRedirectUrl` |
 
 "Zapłać" has the same repeat-payment guard as the normal purchase: when the server answers that an
 earlier payment is still awaiting confirmation, the "Ponowienie płatności" warning appears and
-"Zapłać" there repeats the request with `ignoreWarnings`.
+"Zapłać" there repeats the request with `ignoreWarnings`. Success needs HTTP 200 **and** a
+`tpayRedirectUrl`; otherwise `code: 2` (at any status) opens the warning, and anything else shows the
+server's `message`.
 
 With no tickets at all: "Brak aktywnych lub przyszłych biletów" and, when the action is available,
 "KUP BILET" → `BuyTicket51`.
@@ -124,14 +127,19 @@ Much simpler than the normal purchase form: the subscription fixes the zone and 
 - A box: "Nie posiadasz jeszcze biletu w ramach subskrypcji. Wybierz rodzaj biletu oraz czas jego
   aktywacji."
 - A warning when the card already holds a valid or future ticket: "Na karcie znajduje się ważny
-  bilet lub bilet rozpoczynający ważność w przyszłości. Bilet od … do ….".
+  bilet lub bilet rozpoczynający ważność w przyszłości. Bilet od … do ….". The dates are
+  `ticketSavedOnCard.dateStart` / `dateEnd`, shown in Europe/Warsaw time as `HH:mm DD.MM.YYYY`.
 - Two kind buttons: **N** NORMALNY and **U** ULGOWY. Changing the kind reloads
   `subscriptions/tickets/buying-ticket-details` for that kind.
-- "Aktywny od:" with tomorrow at midnight. The date cannot be changed, and a note says so: "Bilet
+- "Aktywny od:" with tomorrow at midnight in the device's time zone (`moment().add(1, 'day').startOf('day')`). The date cannot be changed, and a note says so: "Bilet
   zakupiony w ramach subskrypcji 5 plus 1 rozpoczyna swoją ważność od dnia jutrzejszego."
 - "Nazwa:" with the product name and "Cena" with the price, both from the server.
 - A checkbox: "Wyrażam zgodę na comiesięczne obciążanie mojej karty do końca trwania subskrypcji".
-- "POTWIERDŹ" → `POST subscriptions/tickets/buy` with the kind, the consent and the start date.
+- "POTWIERDŹ" → `POST subscriptions/tickets/buy` with the kind (`normal` / `halfPrice`, `normal` at
+  first), the consent and the start date (`toISOString()`). The form checks only that a kind is
+  chosen; the consent is left to the server, which refuses `false` with a 422. A reply with `errors`
+  shows them under the fields, any other failure the server's `message`; success needs HTTP 200 and
+  no `code`.
 
 **After the ticket is created** the form is replaced by its result: "Bilet:", "Cena:", "Aktywny od:",
 "Aktywny do:", and two buttons: "Zapłać" (opens the returned tPay page) and "WRÓĆ DO LISTY".
@@ -198,4 +206,6 @@ true` and the payment "ePłatność - cykliczne obciążanie karty płatniczej".
 other ticket (`canReturn`, `minExpireReturnDate`, and `ticket-returns/calculate` answered).
 
 Not captured: `subscriptions/tickets/pay`, `payments/add-payment-card`, a sign-up with a birth date,
-the reduced (`halfPrice`) kind.
+the reduced (`halfPrice`) kind and a non-null `ticketSavedOnCard`; what the client does with each is
+described in the sections above. `subscriptions/is_signed_in` and `subscriptions/tickets/return`
+are defined in the client but never called.

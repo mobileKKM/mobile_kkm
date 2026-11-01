@@ -40,14 +40,14 @@ class SubscriptionsApi extends EkpApiService {
   /// flips `changeCard`/`buyTicket` to true).
   ///
   /// Wire quirks, mirrored from the official client:
-  /// * [firstName]/[lastName] are the UPPERCASED names from
-  ///   `customerDetail` (sign the values as returned by [details]).
+  /// * [firstName], [lastName] and [ccCustomerId] are those of the chosen
+  ///   card as `storage-medium/list` has them (names upper case;
+  ///   `ccCustomerId` is the internal id, int on the wire, not the public
+  ///   customer code).
   /// * Exactly one of [pesel] and [birthDate] is sent: the official client
-  ///   sends `pesel` when the account has one and otherwise `birthDate`,
-  ///   taken unchanged from the user data. The [birthDate] variant was
-  ///   never captured.
-  /// * [ccCustomerId] is the internal id (int on the wire), not the
-  ///   public customer code.
+  ///   sends `pesel` when the account has one and otherwise `birthDate`
+  ///   (`YYYY-MM-DD`), taken unchanged from the user data, as is [email].
+  ///   The [birthDate] variant was never captured.
   /// * [marketingConsents] entries are serialized WITH their `content`
   ///   (unlike `auth/register`, which sends only `id` + `isChecked`).
   /// * [isCycleRefreshEnabled] pairs with the `isCycleRefreshEnabled`
@@ -167,7 +167,9 @@ class SubscriptionsApi extends EkpApiService {
   /// subscription ticket ([SubscriptionTicket.canBePaid]).
   ///
   /// Never captured: path, verb and body are the official client's, the
-  /// response is typed from the fields it reads.
+  /// response is typed from the fields it reads. It pays the guid of
+  /// `pendingTicket`, else of `activeTicket`, and counts only HTTP 200 with
+  /// a `tpayRedirectUrl` as success.
   ///
   /// * HTTP 200 → the response carries `tpayRedirectUrl`
   /// * body `code: 2` → returned, not thrown, with
