@@ -624,6 +624,39 @@ void main() {
     expect(find.widgetWithText(TicketCard, 'Network ticket · Strefa I'), findsOneWidget);
   });
 
+  testWidgets('while the line scopes are on their way a bar holds the place of the title', (tester) async {
+    final ticket = {...validTicket(), 'ticketNumberOfLineCode': 3};
+    final adapter = _adapter([ticket]);
+    final release = adapter.hold('GET', '/dictionary/ticket-number-of-line-list');
+    await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Tickets');
+    expect(find.byKey(const Key('ticket-title-loading')), findsOneWidget);
+    expect(find.widgetWithText(TicketCard, 'Network ticket'), findsNothing);
+
+    // Not to be had: the title comes without its zone.
+    release();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('ticket-title-loading')), findsNothing);
+    expect(find.widgetWithText(TicketCard, 'Network ticket'), findsOneWidget);
+  });
+
+  testWidgets('a 5+1 ticket is named by its network, not the type code in its lines', (tester) async {
+    final ticket = {
+      ...validTicket(),
+      'ticketNumberOfLineCode': 3,
+      'specialTransportLine': '1001',
+      'lines': [
+        {'line': 1001, 'is_tram': false, 'is_bus': false},
+      ],
+    };
+    final adapter = _adapter([ticket])..reply('GET', '/dictionary/ticket-number-of-line-list', 200, lineScopesJson);
+    await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Tickets');
+
+    expect(find.widgetWithText(TicketCard, 'Network ticket · Strefa I'), findsOneWidget);
+    expect(find.textContaining('1001'), findsNothing);
+  });
+
   testWidgets('a ticket and a history entry open their details', (tester) async {
     final ticket = validTicket();
     final adapter = _adapter([ticket])

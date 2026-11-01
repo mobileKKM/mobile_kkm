@@ -110,6 +110,14 @@ void main() {
     expect(ticketZone(null, scopes), isNull);
   });
 
+  test('lineScopeOf finds the line scope by its code', () {
+    const scopes = TicketNumberOfLineListResponse(list: [TicketNumberOfLine(code: 3, selectableLines: false)]);
+    expect(lineScopeOf(3, scopes)?.selectableLines, isFalse);
+    expect(lineScopeOf(4, scopes), isNull);
+    expect(lineScopeOf(3, null), isNull);
+    expect(lineScopeOf(null, scopes), isNull);
+  });
+
   test('ticketScope names the lines or the network, then the zone', () {
     final l10n = lookupAppLocalizations(const Locale('en'));
     expect(ticketScope(l10n, const MkkmTicket(isNetwork: true)), 'Network ticket');
@@ -121,6 +129,17 @@ void main() {
       ticketScope(l10n, const MkkmTicket(lines: [TransportLine(line: 4), TransportLine(line: 52)])),
       'Lines 4, 52',
     );
+  });
+
+  test('ticketScope ignores the lines of a scope without selectable lines', () {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    // A 5+1 ticket lists its type code as a line.
+    const fivePlusOne = MkkmTicket(isNetwork: true, lines: [TransportLine(line: 1001)]);
+    expect(ticketScope(l10n, fivePlusOne, zone: 'Strefa I', selectableLines: false), 'Network ticket · Strefa I');
+    // A line ticket is sold under the network type.
+    const lineTicket = MkkmTicket(isNetwork: true, lines: [TransportLine(line: 12)]);
+    expect(ticketScope(l10n, lineTicket, selectableLines: true), 'Line 12');
+    expect(ticketScope(l10n, lineTicket), 'Line 12');
   });
 
   group('what a card says', () {

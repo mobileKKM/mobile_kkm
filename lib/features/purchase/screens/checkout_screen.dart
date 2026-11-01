@@ -290,6 +290,7 @@ class _Summary extends ConsumerWidget {
           isNetwork: calculation.isNetwork,
           isMetropolitan: calculation.isMetropolitan,
           zone: ticketZone(calculation.ticketNumberOfLineCode, scopes),
+          selectableLines: lineScopeOf(calculation.ticketNumberOfLineCode, scopes)?.selectableLines,
         ),
         subtitle: [
           ?ticketFare(calculation.ticketKindCode, kinds),
@@ -311,7 +312,12 @@ class _Summary extends ConsumerWidget {
     }
     final product = details?.ticketEkp?.productName;
     return PurchaseSummaryCard(
-      title: ticketScope(l10n, ticket, zone: ticketZone(ticket.ticketNumberOfLineCode, scopes)),
+      title: ticketScope(
+        l10n,
+        ticket,
+        zone: ticketZone(ticket.ticketNumberOfLineCode, scopes),
+        selectableLines: lineScopeOf(ticket.ticketNumberOfLineCode, scopes)?.selectableLines,
+      ),
       subtitle: [
         ?ticketFare(ticket.ticketKindCode, kinds),
         ?ticketPeriod(ticket.ticketPeriodCode, periods),

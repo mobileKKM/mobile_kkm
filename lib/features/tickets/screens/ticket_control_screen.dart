@@ -361,10 +361,12 @@ class _TicketFacts extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final zone = ticketZone(ticket.ticketNumberOfLineCode, ref.watch(ticketLineScopesProvider).value);
+    final scopes = ref.watch(ticketLineScopesProvider).value;
+    final zone = ticketZone(ticket.ticketNumberOfLineCode, scopes);
+    final selectableLines = lineScopeOf(ticket.ticketNumberOfLineCode, scopes)?.selectableLines;
     final fare = ticketFare(ticket.ticketKindCode, ref.watch(ticketKindsProvider).value);
     final facts = [
-      (l10n.ticketControlTicket, ticketScope(l10n, ticket, zone: zone)),
+      (l10n.ticketControlTicket, ticketScope(l10n, ticket, zone: zone, selectableLines: selectableLines)),
       if (fare != null) (l10n.ticketControlFare, fare),
       if (ticket.endDate case final end?) (l10n.ticketControlValidUntil, formatDateTime(l10n.localeName, end)),
     ];

@@ -214,7 +214,8 @@ const productCodes = {'ticketKindCode': 2, 'ticketPeriodCode': 1};
 
 const lineScopesJson = {
   'list': [
-    {'code': 3, 'description': 'Wszystkie linie - Strefa I'},
+    {'code': 1, 'description': '1 linia - Strefa I', 'selectableLines': true},
+    {'code': 3, 'description': 'Wszystkie linie - Strefa I', 'selectableLines': false},
   ],
 };
 

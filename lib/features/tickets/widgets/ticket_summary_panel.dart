@@ -29,8 +29,13 @@ class TicketSummaryPanel extends ConsumerWidget {
 
     final String title;
     if (mobile != null) {
-      final zone = ticketZone(mobile.ticketNumberOfLineCode, ref.watch(ticketLineScopesProvider).value);
-      title = ticketScope(l10n, mobile, zone: zone);
+      final scopes = ref.watch(ticketLineScopesProvider).value;
+      title = ticketScope(
+        l10n,
+        mobile,
+        zone: ticketZone(mobile.ticketNumberOfLineCode, scopes),
+        selectableLines: lineScopeOf(mobile.ticketNumberOfLineCode, scopes)?.selectableLines,
+      );
     } else {
       title = purchase?.productName ?? l10n.ticketTitleGeneric;
     }

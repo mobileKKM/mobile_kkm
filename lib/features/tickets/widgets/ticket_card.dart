@@ -195,12 +195,41 @@ class TicketCardColors extends InheritedWidget {
   bool updateShouldNotify(TicketCardColors old) => old.palette != palette;
 }
 
+/// A grey bar holding the place of a line of text still on its way, as tall
+/// as that line so the card does not jump when it arrives.
+class _LoadingBar extends StatelessWidget {
+  const _LoadingBar({
+    super.key,
+    required this.lineHeight,
+    required this.width,
+    required this.height,
+    required this.color,
+  });
+
+  final double lineHeight;
+  final double width;
+  final double height;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    height: lineHeight,
+    alignment: AlignmentDirectional.centerStart,
+    child: Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.32), borderRadius: BorderRadius.circular(height / 2)),
+    ),
+  );
+}
+
 /// One ticket: what it covers, its state, how long it still runs, and on a
 /// perforated stub the one thing to do with it.
 class TicketCard extends StatelessWidget {
   const TicketCard({
     super.key,
     required this.title,
+    this.titleLoading = false,
     this.subtitle,
     this.subtitleLoading = false,
     this.icon = Symbols.directions_bus_rounded,
@@ -218,6 +247,10 @@ class TicketCard extends StatelessWidget {
   });
 
   final String title;
+
+  /// A grey bar in the place of a [title] whose scope is still on its way
+  /// (a ticket's lines can only be read with it).
+  final bool titleLoading;
 
   /// The product's name, under what it covers.
   final String? subtitle;
@@ -308,23 +341,28 @@ class TicketCard extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(title, style: theme.textTheme.titleMedium?.copyWith(color: palette.high)),
+                                  if (titleLoading)
+                                    _LoadingBar(
+                                      key: const Key('ticket-title-loading'),
+                                      lineHeight: 24,
+                                      width: 180,
+                                      height: 16,
+                                      color: palette.medium,
+                                    )
+                                  else
+                                    Text(title, style: theme.textTheme.titleMedium?.copyWith(color: palette.high)),
                                   if (subtitle != null) ...[
                                     const SizedBox(height: 2),
                                     Text(subtitle!, style: quiet),
                                   ] else if (subtitleLoading)
-                                    Container(
-                                      key: const Key('ticket-subtitle-loading'),
-                                      height: 20,
-                                      margin: const EdgeInsets.only(top: 2),
-                                      alignment: AlignmentDirectional.centerStart,
-                                      child: Container(
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: _LoadingBar(
+                                        key: const Key('ticket-subtitle-loading'),
+                                        lineHeight: 20,
                                         width: 148,
                                         height: 12,
-                                        decoration: BoxDecoration(
-                                          color: palette.medium.withValues(alpha: 0.32),
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
+                                        color: palette.medium,
                                       ),
                                     ),
                                 ],

@@ -125,41 +125,58 @@ bool canControl(MkkmTicket ticket, DateTime now) {
   return (ticket.assigned ?? false) && (start == null || !now.isBefore(start));
 }
 
-/// `Strefa I` out of the dictionary's `Wszystkie linie - Strefa I` for the
-/// ticket's line scope. Null until the dictionary is there.
-String? ticketZone(int? lineScopeCode, TicketNumberOfLineListResponse? scopes) {
+/// The dictionary entry for [lineScopeCode], or null until the dictionary is there.
+TicketNumberOfLine? lineScopeOf(int? lineScopeCode, TicketNumberOfLineListResponse? scopes) {
   if (lineScopeCode == null || scopes == null) {
     return null;
   }
   for (final scope in scopes.list) {
     if (scope.code == lineScopeCode) {
-      final parts = (scope.description ?? '').split(' - ');
-      return parts.length < 2 ? null : parts.last.trim();
+      return scope;
     }
   }
   return null;
 }
 
+/// `Strefa I` out of the dictionary's `Wszystkie linie - Strefa I` for the
+/// ticket's line scope. Null until the dictionary is there.
+String? ticketZone(int? lineScopeCode, TicketNumberOfLineListResponse? scopes) {
+  final parts = (lineScopeOf(lineScopeCode, scopes)?.description ?? '').split(' - ');
+  return parts.length < 2 ? null : parts.last.trim();
+}
+
 /// What the ticket covers: its lines or its network, and the zone when
-/// [zone] is known.
-String ticketScope(AppLocalizations l10n, MkkmTicket ticket, {String? zone}) => scopeTitle(
+/// [zone] is known. [selectableLines] is its line scope's flag (see
+/// [scopeTitle]).
+String ticketScope(AppLocalizations l10n, MkkmTicket ticket, {String? zone, bool? selectableLines}) => scopeTitle(
   l10n,
   lines: ticket.lines,
   isNetwork: ticket.isNetwork,
   isMetropolitan: ticket.isMetropolitan,
   zone: zone,
+  selectableLines: selectableLines,
 );
 
 /// [ticketScope] from the flags and [lines] alone, for a ticket not bought
 /// yet (checkout reads them from the calculation).
+///
+/// [selectableLines] is the line scope's flag from the dictionary: a scope
+/// without selectable lines covers them all, and its [lines] are ignored
+/// (a 5+1 ticket lists its type code, 1001, there). Null until the
+/// dictionary is there; [lines] count then. The flags alone can't tell: a
+/// line ticket is sold under the network type.
 String scopeTitle(
   AppLocalizations l10n, {
   required List<TransportLine> lines,
   bool? isNetwork,
   bool? isMetropolitan,
   String? zone,
+  bool? selectableLines,
 }) {
-  final numbers = [for (final line in lines) ?line.line];
+  final numbers = [
+    if (selectableLines ?? true)
+      for (final line in lines) ?line.line,
+  ];
   final String scope;
   if (isMetropolitan ?? false) {
     scope = l10n.ticketTitleMetropolitan;

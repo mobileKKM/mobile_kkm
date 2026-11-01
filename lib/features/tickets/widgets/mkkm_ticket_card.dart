@@ -42,9 +42,19 @@ class MkkmTicketCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final locale = l10n.localeName;
-    // The zone's name comes from a dictionary; the card does without it
-    // until that is there.
-    final zone = ticketZone(ticket.ticketNumberOfLineCode, ref.watch(ticketLineScopesProvider).value);
+    // The line scope comes from a dictionary: it names the zone and says
+    // whether the ticket's lines are lines (a 5+1 ticket lists its type
+    // code there). A first start waits for it with a bar; one that could
+    // not be loaded leaves the zone out.
+    final scopesAsync = ref.watch(ticketLineScopesProvider);
+    final scopes = scopesAsync.value;
+    final titleLoading =
+        ticket.ticketNumberOfLineCode != null &&
+        !scopesAsync.hasError &&
+        scopesAsync.isLoading &&
+        !scopesAsync.hasValue;
+    final zone = ticketZone(ticket.ticketNumberOfLineCode, scopes);
+    final selectableLines = lineScopeOf(ticket.ticketNumberOfLineCode, scopes)?.selectableLines;
     final now = DateTime.now();
     final phase = cancelled ? TicketPhase.cancelled : phaseOf(ticket, now);
     final tone = cancelled ? TicketTone.over : toneOf(ticket, now);
@@ -81,7 +91,8 @@ class MkkmTicketCard extends ConsumerWidget {
     }
 
     return TicketCard(
-      title: ticketScope(l10n, ticket, zone: zone),
+      title: ticketScope(l10n, ticket, zone: zone, selectableLines: selectableLines),
+      titleLoading: titleLoading,
       subtitle: productLoading ? null : product,
       subtitleLoading: productLoading,
       icon: isTramTicket(ticket) ? Symbols.tram_rounded : Symbols.directions_bus_rounded,
