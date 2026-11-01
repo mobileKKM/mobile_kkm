@@ -57,6 +57,46 @@ void main() {
       expect(e.codeAsInt, isNull);
     });
 
+    EkpApiException fromBody(int status, Object? data) => EkpApiException.fromDio(
+      DioException(
+        requestOptions: RequestOptions(path: '/x'),
+        response: Response(
+          statusCode: status,
+          requestOptions: RequestOptions(path: '/x'),
+          data: data,
+        ),
+      ),
+    );
+
+    test('422 validation body maps its per-field errors', () {
+      final e = fromBody(422, {
+        'errors': {
+          'isAutomaticSubscriptionEnabled': ['To pole jest wymagane'],
+        },
+      });
+      expect(e, isA<EkpHttpException>().having((e) => e.statusCode, 'statusCode', 422));
+      expect((e as EkpHttpException).errors, {
+        'isAutomaticSubscriptionEnabled': ['To pole jest wymagane'],
+      });
+      expect(e.message, isNull);
+      expect(e.code, isNull);
+    });
+
+    test('a lone error message per field becomes a one-item list', () {
+      final e = fromBody(422, {
+        'errors': {'kind': 'Nieprawidłowa wartość', 'other': null},
+      }) as EkpHttpException;
+      expect(e.errors, {
+        'kind': ['Nieprawidłowa wartość'],
+        'other': <String>[],
+      });
+    });
+
+    test('bodies without an errors map have no errors', () {
+      expect((fromBody(400, {'code': 5, 'message': 'Błąd'}) as EkpHttpException).errors, isNull);
+      expect((fromBody(422, {'errors': 'x'}) as EkpHttpException).errors, isNull);
+    });
+
     test('no response becomes EkpNetworkException', () {
       final e = EkpApiException.fromDio(
         DioException(

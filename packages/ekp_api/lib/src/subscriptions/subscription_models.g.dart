@@ -9,27 +9,67 @@ part of 'subscription_models.dart';
 _SubscriptionTicket _$SubscriptionTicketFromJson(Map<String, dynamic> json) => _SubscriptionTicket(
   ticketGuid: json['ticketGuid'] as String?,
   transactionCode: json['transactionCode'] as String?,
-  startDate: json['startDate'] == null ? null : DateTime.parse(json['startDate'] as String),
-  endDate: json['endDate'] == null ? null : DateTime.parse(json['endDate'] as String),
-  commodityName: json['commodityName'] as String?,
+  customerCode: (json['customerCode'] as num?)?.toInt(),
+  cityCardCode: (json['cityCardCode'] as num?)?.toInt(),
+  status: (json['status'] as num?)?.toInt(),
+  paymentStatus: (json['paymentStatus'] as num?)?.toInt(),
+  paymentType: (json['paymentType'] as num?)?.toInt(),
+  kind: (json['kind'] as num?)?.toInt(),
+  type: (json['type'] as num?)?.toInt(),
   monthsPeriod: (json['monthsPeriod'] as num?)?.toInt(),
   daysPeriod: (json['daysPeriod'] as num?)?.toInt(),
   price: (json['price'] as num?)?.toDouble(),
-  canBePaid: json['canBePaid'] as bool?,
+  commodityName: json['commodityName'] as String?,
+  isPromotionTicket: json['isPromotionTicket'] as bool?,
+  createdDate: json['createdDate'] == null ? null : DateTime.parse(json['createdDate'] as String),
+  startDate: json['startDate'] == null ? null : DateTime.parse(json['startDate'] as String),
+  endDate: json['endDate'] == null ? null : DateTime.parse(json['endDate'] as String),
+  cancelingDate: json['cancelingDate'] == null ? null : DateTime.parse(json['cancelingDate'] as String),
+  lines:
+      (json['lines'] as List<dynamic>?)
+          ?.map((e) => SubscriptionTicketLine.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const <SubscriptionTicketLine>[],
+  canReturn: json['canReturn'] as bool?,
   canRemove: json['canRemove'] as bool?,
+  canBePaid: json['canBePaid'] as bool?,
 );
 
 Map<String, dynamic> _$SubscriptionTicketToJson(_SubscriptionTicket instance) => <String, dynamic>{
   'ticketGuid': instance.ticketGuid,
   'transactionCode': instance.transactionCode,
-  'startDate': instance.startDate?.toIso8601String(),
-  'endDate': instance.endDate?.toIso8601String(),
-  'commodityName': instance.commodityName,
+  'customerCode': instance.customerCode,
+  'cityCardCode': instance.cityCardCode,
+  'status': instance.status,
+  'paymentStatus': instance.paymentStatus,
+  'paymentType': instance.paymentType,
+  'kind': instance.kind,
+  'type': instance.type,
   'monthsPeriod': instance.monthsPeriod,
   'daysPeriod': instance.daysPeriod,
   'price': instance.price,
-  'canBePaid': instance.canBePaid,
+  'commodityName': instance.commodityName,
+  'isPromotionTicket': instance.isPromotionTicket,
+  'createdDate': instance.createdDate?.toIso8601String(),
+  'startDate': instance.startDate?.toIso8601String(),
+  'endDate': instance.endDate?.toIso8601String(),
+  'cancelingDate': instance.cancelingDate?.toIso8601String(),
+  'lines': instance.lines,
+  'canReturn': instance.canReturn,
   'canRemove': instance.canRemove,
+  'canBePaid': instance.canBePaid,
+};
+
+_SubscriptionTicketLine _$SubscriptionTicketLineFromJson(Map<String, dynamic> json) => _SubscriptionTicketLine(
+  number: (json['number'] as num?)?.toInt(),
+  isFirstZone: json['isFirstZone'] as bool?,
+  isSecondZone: json['isSecondZone'] as bool?,
+);
+
+Map<String, dynamic> _$SubscriptionTicketLineToJson(_SubscriptionTicketLine instance) => <String, dynamic>{
+  'number': instance.number,
+  'isFirstZone': instance.isFirstZone,
+  'isSecondZone': instance.isSecondZone,
 };
 
 _SubscriptionDetails _$SubscriptionDetailsFromJson(Map<String, dynamic> json) => _SubscriptionDetails(
@@ -146,6 +186,7 @@ _SubscriptionTicketBuyResponse _$SubscriptionTicketBuyResponseFromJson(Map<Strin
       price: (json['price'] as num?)?.toDouble(),
       ticketStartDate: json['ticketStartDate'] == null ? null : DateTime.parse(json['ticketStartDate'] as String),
       ticketEndDate: json['ticketEndDate'] == null ? null : DateTime.parse(json['ticketEndDate'] as String),
+      kind: (json['kind'] as num?)?.toInt(),
       tpayRedirectUrl: json['tpayRedirectUrl'] as String?,
       code: json['code'],
       message: json['message'] as String?,
@@ -157,6 +198,7 @@ Map<String, dynamic> _$SubscriptionTicketBuyResponseToJson(_SubscriptionTicketBu
       'price': instance.price,
       'ticketStartDate': instance.ticketStartDate?.toIso8601String(),
       'ticketEndDate': instance.ticketEndDate?.toIso8601String(),
+      'kind': instance.kind,
       'tpayRedirectUrl': instance.tpayRedirectUrl,
       'code': instance.code,
       'message': instance.message,

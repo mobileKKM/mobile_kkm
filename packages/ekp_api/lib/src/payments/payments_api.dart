@@ -25,7 +25,8 @@ class PaymentsApi extends EkpApiService {
   /// response carries [ChangePaymentCardResponse.tPayRedirectUrl], which
   /// opens in a webview and completes through the same
   /// `/payment/{success,rejected}` → `payments/result` sequence as a
-  /// ticket purchase.
+  /// ticket purchase, with `type=1` (as for 5+1 ticket payments). Once
+  /// booked, `subscriptions/details` shows the new card's masked number.
   Future<ChangePaymentCardResponse> changePaymentCard() async {
     return guard(() async {
       final response = await dio.post<Map<String, dynamic>>(
@@ -86,7 +87,10 @@ class PaymentsApi extends EkpApiService {
   /// or `/payment/rejected?id=…&type=2` (result `'Error'`), then reloads
   /// the ticket list.
   ///
-  /// [id] and [type] come from that redirect's query string; every body
+  /// [id] and [type] come from that redirect's query string: `type` is
+  /// `2` for a ticket purchase and `1` for 5+1 (a subscription ticket's
+  /// payment or a card change, success and rejection both captured), where
+  /// [id] is a payment id that matches neither ticket guid. Every body
   /// field is a STRING on the wire
   /// (`{"id":"…","type":"2","result":"Success"|"Error"}`).
   /// Success is HTTP 200 with an empty body.

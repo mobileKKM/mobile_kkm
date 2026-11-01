@@ -102,13 +102,10 @@ class SubscriptionsApi extends EkpApiService {
     });
   }
 
-  // The endpoints below were never captured. Paths, verbs and request
-  // bodies are those of the official client; the responses are typed from
-  // the fields it reads.
-
   /// `PUT subscriptions/edit` — turns automatic renewal into a new 5+1
-  /// cycle on or off. The body is `{isCycleRefreshEnabled}` alone; the new
-  /// value is observable afterwards via [details].
+  /// cycle on or off. The body is `{isCycleRefreshEnabled}` alone; success
+  /// is HTTP 200 with an empty body, and the new value is observable
+  /// afterwards via [details].
   Future<void> setCycleRefresh({required bool enabled}) async {
     return guard(() async {
       await dio.put<dynamic>(
@@ -136,13 +133,15 @@ class SubscriptionsApi extends EkpApiService {
   }
 
   /// `POST subscriptions/tickets/buy` — buys the first ticket of a 5+1
-  /// cycle (available once [availableActions] reports `buyTicket: true`).
-  /// Open [SubscriptionTicketBuyResponse.tpayRedirectUrl] in a webview to
-  /// pay; the ticket shows up as `pendingTicket` in [details].
+  /// cycle (available once [availableActions] reports `buyTicket: true`;
+  /// it reports false while that ticket is pending). Open
+  /// [SubscriptionTicketBuyResponse.tpayRedirectUrl] in a webview to pay;
+  /// the ticket shows up as `pendingTicket` in [details].
   ///
   /// * [isAutomaticSubscriptionEnabled] is the customer's consent to the
   ///   monthly card debit — not the renewal flag, which is
-  ///   [setCycleRefresh].
+  ///   [setCycleRefresh]. The server requires it: `false` is refused with
+  ///   HTTP 422 and [EkpHttpException.errors] naming the field.
   /// * [validFrom] is sent as a UTC instant. The official client always
   ///   sends the start of tomorrow in local time: a 5+1 ticket becomes
   ///   valid the day after its purchase.
@@ -166,6 +165,9 @@ class SubscriptionsApi extends EkpApiService {
 
   /// `POST subscriptions/tickets/pay` — starts the payment of an unpaid
   /// subscription ticket ([SubscriptionTicket.canBePaid]).
+  ///
+  /// Never captured: path, verb and body are the official client's, the
+  /// response is typed from the fields it reads.
   ///
   /// * HTTP 200 → the response carries `tpayRedirectUrl`
   /// * body `code: 2` → returned, not thrown, with
@@ -198,7 +200,9 @@ class SubscriptionsApi extends EkpApiService {
 
   /// `POST subscriptions/tickets/{ticketGuid}/remove` — deletes a
   /// subscription ticket ([SubscriptionTicket.canRemove]). Like [cancel],
-  /// the official client sends the literal body `null`.
+  /// the official client sends the literal body `null`; success is HTTP 200
+  /// with an empty body, after which [availableActions] offers `buyTicket`
+  /// again.
   Future<void> removeTicket(String ticketGuid) async {
     return guard(() async {
       await dio.post<dynamic>(

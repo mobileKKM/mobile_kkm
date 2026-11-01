@@ -17,12 +17,16 @@ T _$identity<T>(T value) => value;
 mixin _$SubscriptionTicket {
 
 /// The id [SubscriptionsApi.payTicket] and
-/// [SubscriptionsApi.removeTicket] take.
- String? get ticketGuid;/// Present once the ticket has a transaction — the id used by
-/// `GET /tickets/{id}`.
- String? get transactionCode; DateTime? get startDate; DateTime? get endDate; String? get commodityName; int? get monthsPeriod; int? get daysPeriod; double? get price;/// The ticket still awaits payment ([SubscriptionsApi.payTicket]).
- bool? get canBePaid;/// The ticket can be deleted ([SubscriptionsApi.removeTicket]).
- bool? get canRemove;
+/// [SubscriptionsApi.removeTicket] take. Not the `ticketGuid` of the
+/// same ticket in `mkkm/tickets/list`; [transactionCode] is shared.
+ String? get ticketGuid;/// The id used by `GET /tickets/{id}`; present from the purchase on.
+ String? get transactionCode; int? get customerCode;/// Key of `dictionary/city-card-types` (8 = mKKM).
+ int? get cityCardCode; int? get status; int? get paymentStatus; int? get paymentType;/// Ticket kind code (`ticketKindCode` elsewhere).
+ int? get kind; int? get type; int? get monthsPeriod; int? get daysPeriod; double? get price; String? get commodityName; bool? get isPromotionTicket;/// UTC, with seven fraction digits on the wire.
+ DateTime? get createdDate; DateTime? get startDate; DateTime? get endDate; DateTime? get cancelingDate; List<SubscriptionTicketLine> get lines; bool? get canReturn;/// The ticket can be deleted ([SubscriptionsApi.removeTicket]).
+ bool? get canRemove;/// The ticket can be paid ([SubscriptionsApi.payTicket]). Stays true
+/// for a while after a successful payment (see above).
+ bool? get canBePaid;
 /// Create a copy of SubscriptionTicket
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -36,20 +40,20 @@ $SubscriptionTicketCopyWith<SubscriptionTicket> get copyWith => _$SubscriptionTi
 @override
 bool operator ==(Object other) {
   final _this = this as SubscriptionTicket;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionTicket&&(identical(other.ticketGuid, _this.ticketGuid) || other.ticketGuid == _this.ticketGuid)&&(identical(other.transactionCode, _this.transactionCode) || other.transactionCode == _this.transactionCode)&&(identical(other.startDate, _this.startDate) || other.startDate == _this.startDate)&&(identical(other.endDate, _this.endDate) || other.endDate == _this.endDate)&&(identical(other.commodityName, _this.commodityName) || other.commodityName == _this.commodityName)&&(identical(other.monthsPeriod, _this.monthsPeriod) || other.monthsPeriod == _this.monthsPeriod)&&(identical(other.daysPeriod, _this.daysPeriod) || other.daysPeriod == _this.daysPeriod)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.canBePaid, _this.canBePaid) || other.canBePaid == _this.canBePaid)&&(identical(other.canRemove, _this.canRemove) || other.canRemove == _this.canRemove));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionTicket&&(identical(other.ticketGuid, _this.ticketGuid) || other.ticketGuid == _this.ticketGuid)&&(identical(other.transactionCode, _this.transactionCode) || other.transactionCode == _this.transactionCode)&&(identical(other.customerCode, _this.customerCode) || other.customerCode == _this.customerCode)&&(identical(other.cityCardCode, _this.cityCardCode) || other.cityCardCode == _this.cityCardCode)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.paymentStatus, _this.paymentStatus) || other.paymentStatus == _this.paymentStatus)&&(identical(other.paymentType, _this.paymentType) || other.paymentType == _this.paymentType)&&(identical(other.kind, _this.kind) || other.kind == _this.kind)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.monthsPeriod, _this.monthsPeriod) || other.monthsPeriod == _this.monthsPeriod)&&(identical(other.daysPeriod, _this.daysPeriod) || other.daysPeriod == _this.daysPeriod)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.commodityName, _this.commodityName) || other.commodityName == _this.commodityName)&&(identical(other.isPromotionTicket, _this.isPromotionTicket) || other.isPromotionTicket == _this.isPromotionTicket)&&(identical(other.createdDate, _this.createdDate) || other.createdDate == _this.createdDate)&&(identical(other.startDate, _this.startDate) || other.startDate == _this.startDate)&&(identical(other.endDate, _this.endDate) || other.endDate == _this.endDate)&&(identical(other.cancelingDate, _this.cancelingDate) || other.cancelingDate == _this.cancelingDate)&&const DeepCollectionEquality().equals(other.lines, _this.lines)&&(identical(other.canReturn, _this.canReturn) || other.canReturn == _this.canReturn)&&(identical(other.canRemove, _this.canRemove) || other.canRemove == _this.canRemove)&&(identical(other.canBePaid, _this.canBePaid) || other.canBePaid == _this.canBePaid));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as SubscriptionTicket;
-  return Object.hash(runtimeType,_this.ticketGuid,_this.transactionCode,_this.startDate,_this.endDate,_this.commodityName,_this.monthsPeriod,_this.daysPeriod,_this.price,_this.canBePaid,_this.canRemove);
+  return Object.hashAll([runtimeType,_this.ticketGuid,_this.transactionCode,_this.customerCode,_this.cityCardCode,_this.status,_this.paymentStatus,_this.paymentType,_this.kind,_this.type,_this.monthsPeriod,_this.daysPeriod,_this.price,_this.commodityName,_this.isPromotionTicket,_this.createdDate,_this.startDate,_this.endDate,_this.cancelingDate,const DeepCollectionEquality().hash(_this.lines),_this.canReturn,_this.canRemove,_this.canBePaid]);
 }
 
 @override
 String toString() {
   final _this = this as SubscriptionTicket;
-  return 'SubscriptionTicket(ticketGuid: ${_this.ticketGuid}, transactionCode: ${_this.transactionCode}, startDate: ${_this.startDate}, endDate: ${_this.endDate}, commodityName: ${_this.commodityName}, monthsPeriod: ${_this.monthsPeriod}, daysPeriod: ${_this.daysPeriod}, price: ${_this.price}, canBePaid: ${_this.canBePaid}, canRemove: ${_this.canRemove})';
+  return 'SubscriptionTicket(ticketGuid: ${_this.ticketGuid}, transactionCode: ${_this.transactionCode}, customerCode: ${_this.customerCode}, cityCardCode: ${_this.cityCardCode}, status: ${_this.status}, paymentStatus: ${_this.paymentStatus}, paymentType: ${_this.paymentType}, kind: ${_this.kind}, type: ${_this.type}, monthsPeriod: ${_this.monthsPeriod}, daysPeriod: ${_this.daysPeriod}, price: ${_this.price}, commodityName: ${_this.commodityName}, isPromotionTicket: ${_this.isPromotionTicket}, createdDate: ${_this.createdDate}, startDate: ${_this.startDate}, endDate: ${_this.endDate}, cancelingDate: ${_this.cancelingDate}, lines: ${_this.lines}, canReturn: ${_this.canReturn}, canRemove: ${_this.canRemove}, canBePaid: ${_this.canBePaid})';
 }
 
 
@@ -60,7 +64,7 @@ abstract mixin class $SubscriptionTicketCopyWith<$Res>  {
   factory $SubscriptionTicketCopyWith(SubscriptionTicket value, $Res Function(SubscriptionTicket) _then) = _$SubscriptionTicketCopyWithImpl;
 @useResult
 $Res call({
- String? ticketGuid, String? transactionCode, DateTime? startDate, DateTime? endDate, String? commodityName, int? monthsPeriod, int? daysPeriod, double? price, bool? canBePaid, bool? canRemove
+ String? ticketGuid, String? transactionCode, int? customerCode, int? cityCardCode, int? status, int? paymentStatus, int? paymentType, int? kind, int? type, int? monthsPeriod, int? daysPeriod, double? price, String? commodityName, bool? isPromotionTicket, DateTime? createdDate, DateTime? startDate, DateTime? endDate, DateTime? cancelingDate, List<SubscriptionTicketLine> lines, bool? canReturn, bool? canRemove, bool? canBePaid
 });
 
 
@@ -77,18 +81,30 @@ class _$SubscriptionTicketCopyWithImpl<$Res>
 
 /// Create a copy of SubscriptionTicket
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? ticketGuid = freezed,Object? transactionCode = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? commodityName = freezed,Object? monthsPeriod = freezed,Object? daysPeriod = freezed,Object? price = freezed,Object? canBePaid = freezed,Object? canRemove = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? ticketGuid = freezed,Object? transactionCode = freezed,Object? customerCode = freezed,Object? cityCardCode = freezed,Object? status = freezed,Object? paymentStatus = freezed,Object? paymentType = freezed,Object? kind = freezed,Object? type = freezed,Object? monthsPeriod = freezed,Object? daysPeriod = freezed,Object? price = freezed,Object? commodityName = freezed,Object? isPromotionTicket = freezed,Object? createdDate = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? cancelingDate = freezed,Object? lines = null,Object? canReturn = freezed,Object? canRemove = freezed,Object? canBePaid = freezed,}) {
   return _then(SubscriptionTicket(
 ticketGuid: freezed == ticketGuid ? _self.ticketGuid : ticketGuid // ignore: cast_nullable_to_non_nullable
 as String?,transactionCode: freezed == transactionCode ? _self.transactionCode : transactionCode // ignore: cast_nullable_to_non_nullable
-as String?,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,commodityName: freezed == commodityName ? _self.commodityName : commodityName // ignore: cast_nullable_to_non_nullable
-as String?,monthsPeriod: freezed == monthsPeriod ? _self.monthsPeriod : monthsPeriod // ignore: cast_nullable_to_non_nullable
+as String?,customerCode: freezed == customerCode ? _self.customerCode : customerCode // ignore: cast_nullable_to_non_nullable
+as int?,cityCardCode: freezed == cityCardCode ? _self.cityCardCode : cityCardCode // ignore: cast_nullable_to_non_nullable
+as int?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as int?,paymentStatus: freezed == paymentStatus ? _self.paymentStatus : paymentStatus // ignore: cast_nullable_to_non_nullable
+as int?,paymentType: freezed == paymentType ? _self.paymentType : paymentType // ignore: cast_nullable_to_non_nullable
+as int?,kind: freezed == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as int?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as int?,monthsPeriod: freezed == monthsPeriod ? _self.monthsPeriod : monthsPeriod // ignore: cast_nullable_to_non_nullable
 as int?,daysPeriod: freezed == daysPeriod ? _self.daysPeriod : daysPeriod // ignore: cast_nullable_to_non_nullable
 as int?,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
-as double?,canBePaid: freezed == canBePaid ? _self.canBePaid : canBePaid // ignore: cast_nullable_to_non_nullable
+as double?,commodityName: freezed == commodityName ? _self.commodityName : commodityName // ignore: cast_nullable_to_non_nullable
+as String?,isPromotionTicket: freezed == isPromotionTicket ? _self.isPromotionTicket : isPromotionTicket // ignore: cast_nullable_to_non_nullable
+as bool?,createdDate: freezed == createdDate ? _self.createdDate : createdDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,cancelingDate: freezed == cancelingDate ? _self.cancelingDate : cancelingDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,lines: null == lines ? _self.lines : lines // ignore: cast_nullable_to_non_nullable
+as List<SubscriptionTicketLine>,canReturn: freezed == canReturn ? _self.canReturn : canReturn // ignore: cast_nullable_to_non_nullable
 as bool?,canRemove: freezed == canRemove ? _self.canRemove : canRemove // ignore: cast_nullable_to_non_nullable
+as bool?,canBePaid: freezed == canBePaid ? _self.canBePaid : canBePaid // ignore: cast_nullable_to_non_nullable
 as bool?,
   ));
 }
@@ -174,10 +190,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? ticketGuid,  String? transactionCode,  DateTime? startDate,  DateTime? endDate,  String? commodityName,  int? monthsPeriod,  int? daysPeriod,  double? price,  bool? canBePaid,  bool? canRemove)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? ticketGuid,  String? transactionCode,  int? customerCode,  int? cityCardCode,  int? status,  int? paymentStatus,  int? paymentType,  int? kind,  int? type,  int? monthsPeriod,  int? daysPeriod,  double? price,  String? commodityName,  bool? isPromotionTicket,  DateTime? createdDate,  DateTime? startDate,  DateTime? endDate,  DateTime? cancelingDate,  List<SubscriptionTicketLine> lines,  bool? canReturn,  bool? canRemove,  bool? canBePaid)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SubscriptionTicket() when $default != null:
-return $default(_that.ticketGuid,_that.transactionCode,_that.startDate,_that.endDate,_that.commodityName,_that.monthsPeriod,_that.daysPeriod,_that.price,_that.canBePaid,_that.canRemove);case _:
+return $default(_that.ticketGuid,_that.transactionCode,_that.customerCode,_that.cityCardCode,_that.status,_that.paymentStatus,_that.paymentType,_that.kind,_that.type,_that.monthsPeriod,_that.daysPeriod,_that.price,_that.commodityName,_that.isPromotionTicket,_that.createdDate,_that.startDate,_that.endDate,_that.cancelingDate,_that.lines,_that.canReturn,_that.canRemove,_that.canBePaid);case _:
   return orElse();
 
 }
@@ -195,10 +211,10 @@ return $default(_that.ticketGuid,_that.transactionCode,_that.startDate,_that.end
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? ticketGuid,  String? transactionCode,  DateTime? startDate,  DateTime? endDate,  String? commodityName,  int? monthsPeriod,  int? daysPeriod,  double? price,  bool? canBePaid,  bool? canRemove)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? ticketGuid,  String? transactionCode,  int? customerCode,  int? cityCardCode,  int? status,  int? paymentStatus,  int? paymentType,  int? kind,  int? type,  int? monthsPeriod,  int? daysPeriod,  double? price,  String? commodityName,  bool? isPromotionTicket,  DateTime? createdDate,  DateTime? startDate,  DateTime? endDate,  DateTime? cancelingDate,  List<SubscriptionTicketLine> lines,  bool? canReturn,  bool? canRemove,  bool? canBePaid)  $default,) {final _that = this;
 switch (_that) {
 case _SubscriptionTicket():
-return $default(_that.ticketGuid,_that.transactionCode,_that.startDate,_that.endDate,_that.commodityName,_that.monthsPeriod,_that.daysPeriod,_that.price,_that.canBePaid,_that.canRemove);case _:
+return $default(_that.ticketGuid,_that.transactionCode,_that.customerCode,_that.cityCardCode,_that.status,_that.paymentStatus,_that.paymentType,_that.kind,_that.type,_that.monthsPeriod,_that.daysPeriod,_that.price,_that.commodityName,_that.isPromotionTicket,_that.createdDate,_that.startDate,_that.endDate,_that.cancelingDate,_that.lines,_that.canReturn,_that.canRemove,_that.canBePaid);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -215,10 +231,10 @@ return $default(_that.ticketGuid,_that.transactionCode,_that.startDate,_that.end
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? ticketGuid,  String? transactionCode,  DateTime? startDate,  DateTime? endDate,  String? commodityName,  int? monthsPeriod,  int? daysPeriod,  double? price,  bool? canBePaid,  bool? canRemove)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? ticketGuid,  String? transactionCode,  int? customerCode,  int? cityCardCode,  int? status,  int? paymentStatus,  int? paymentType,  int? kind,  int? type,  int? monthsPeriod,  int? daysPeriod,  double? price,  String? commodityName,  bool? isPromotionTicket,  DateTime? createdDate,  DateTime? startDate,  DateTime? endDate,  DateTime? cancelingDate,  List<SubscriptionTicketLine> lines,  bool? canReturn,  bool? canRemove,  bool? canBePaid)?  $default,) {final _that = this;
 switch (_that) {
 case _SubscriptionTicket() when $default != null:
-return $default(_that.ticketGuid,_that.transactionCode,_that.startDate,_that.endDate,_that.commodityName,_that.monthsPeriod,_that.daysPeriod,_that.price,_that.canBePaid,_that.canRemove);case _:
+return $default(_that.ticketGuid,_that.transactionCode,_that.customerCode,_that.cityCardCode,_that.status,_that.paymentStatus,_that.paymentType,_that.kind,_that.type,_that.monthsPeriod,_that.daysPeriod,_that.price,_that.commodityName,_that.isPromotionTicket,_that.createdDate,_that.startDate,_that.endDate,_that.cancelingDate,_that.lines,_that.canReturn,_that.canRemove,_that.canBePaid);case _:
   return null;
 
 }
@@ -230,25 +246,47 @@ return $default(_that.ticketGuid,_that.transactionCode,_that.startDate,_that.end
 @JsonSerializable()
 
 class _SubscriptionTicket implements SubscriptionTicket {
-  const _SubscriptionTicket({this.ticketGuid, this.transactionCode, this.startDate, this.endDate, this.commodityName, this.monthsPeriod, this.daysPeriod, this.price, this.canBePaid, this.canRemove});
+  const _SubscriptionTicket({this.ticketGuid, this.transactionCode, this.customerCode, this.cityCardCode, this.status, this.paymentStatus, this.paymentType, this.kind, this.type, this.monthsPeriod, this.daysPeriod, this.price, this.commodityName, this.isPromotionTicket, this.createdDate, this.startDate, this.endDate, this.cancelingDate,  List<SubscriptionTicketLine> lines = const <SubscriptionTicketLine>[], this.canReturn, this.canRemove, this.canBePaid}): _lines = lines;
   factory _SubscriptionTicket.fromJson(Map<String, dynamic> json) => _$SubscriptionTicketFromJson(json);
 
 /// The id [SubscriptionsApi.payTicket] and
-/// [SubscriptionsApi.removeTicket] take.
+/// [SubscriptionsApi.removeTicket] take. Not the `ticketGuid` of the
+/// same ticket in `mkkm/tickets/list`; [transactionCode] is shared.
 @override final  String? ticketGuid;
-/// Present once the ticket has a transaction — the id used by
-/// `GET /tickets/{id}`.
+/// The id used by `GET /tickets/{id}`; present from the purchase on.
 @override final  String? transactionCode;
-@override final  DateTime? startDate;
-@override final  DateTime? endDate;
-@override final  String? commodityName;
+@override final  int? customerCode;
+/// Key of `dictionary/city-card-types` (8 = mKKM).
+@override final  int? cityCardCode;
+@override final  int? status;
+@override final  int? paymentStatus;
+@override final  int? paymentType;
+/// Ticket kind code (`ticketKindCode` elsewhere).
+@override final  int? kind;
+@override final  int? type;
 @override final  int? monthsPeriod;
 @override final  int? daysPeriod;
 @override final  double? price;
-/// The ticket still awaits payment ([SubscriptionsApi.payTicket]).
-@override final  bool? canBePaid;
+@override final  String? commodityName;
+@override final  bool? isPromotionTicket;
+/// UTC, with seven fraction digits on the wire.
+@override final  DateTime? createdDate;
+@override final  DateTime? startDate;
+@override final  DateTime? endDate;
+@override final  DateTime? cancelingDate;
+ final  List<SubscriptionTicketLine> _lines;
+@override@JsonKey() List<SubscriptionTicketLine> get lines {
+  if (_lines is EqualUnmodifiableListView) return _lines;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_lines);
+}
+
+@override final  bool? canReturn;
 /// The ticket can be deleted ([SubscriptionsApi.removeTicket]).
 @override final  bool? canRemove;
+/// The ticket can be paid ([SubscriptionsApi.payTicket]). Stays true
+/// for a while after a successful payment (see above).
+@override final  bool? canBePaid;
 
 /// Create a copy of SubscriptionTicket
 /// with the given fields replaced by the non-null parameter values.
@@ -263,18 +301,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubscriptionTicket&&(identical(other.ticketGuid, ticketGuid) || other.ticketGuid == ticketGuid)&&(identical(other.transactionCode, transactionCode) || other.transactionCode == transactionCode)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.commodityName, commodityName) || other.commodityName == commodityName)&&(identical(other.monthsPeriod, monthsPeriod) || other.monthsPeriod == monthsPeriod)&&(identical(other.daysPeriod, daysPeriod) || other.daysPeriod == daysPeriod)&&(identical(other.price, price) || other.price == price)&&(identical(other.canBePaid, canBePaid) || other.canBePaid == canBePaid)&&(identical(other.canRemove, canRemove) || other.canRemove == canRemove));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubscriptionTicket&&(identical(other.ticketGuid, ticketGuid) || other.ticketGuid == ticketGuid)&&(identical(other.transactionCode, transactionCode) || other.transactionCode == transactionCode)&&(identical(other.customerCode, customerCode) || other.customerCode == customerCode)&&(identical(other.cityCardCode, cityCardCode) || other.cityCardCode == cityCardCode)&&(identical(other.status, status) || other.status == status)&&(identical(other.paymentStatus, paymentStatus) || other.paymentStatus == paymentStatus)&&(identical(other.paymentType, paymentType) || other.paymentType == paymentType)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.type, type) || other.type == type)&&(identical(other.monthsPeriod, monthsPeriod) || other.monthsPeriod == monthsPeriod)&&(identical(other.daysPeriod, daysPeriod) || other.daysPeriod == daysPeriod)&&(identical(other.price, price) || other.price == price)&&(identical(other.commodityName, commodityName) || other.commodityName == commodityName)&&(identical(other.isPromotionTicket, isPromotionTicket) || other.isPromotionTicket == isPromotionTicket)&&(identical(other.createdDate, createdDate) || other.createdDate == createdDate)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.cancelingDate, cancelingDate) || other.cancelingDate == cancelingDate)&&const DeepCollectionEquality().equals(other.lines, _lines)&&(identical(other.canReturn, canReturn) || other.canReturn == canReturn)&&(identical(other.canRemove, canRemove) || other.canRemove == canRemove)&&(identical(other.canBePaid, canBePaid) || other.canBePaid == canBePaid));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,ticketGuid,transactionCode,startDate,endDate,commodityName,monthsPeriod,daysPeriod,price,canBePaid,canRemove);
+    return Object.hashAll([runtimeType,ticketGuid,transactionCode,customerCode,cityCardCode,status,paymentStatus,paymentType,kind,type,monthsPeriod,daysPeriod,price,commodityName,isPromotionTicket,createdDate,startDate,endDate,cancelingDate,const DeepCollectionEquality().hash(_lines),canReturn,canRemove,canBePaid]);
 }
 
 @override
 String toString() {
-    return 'SubscriptionTicket(ticketGuid: $ticketGuid, transactionCode: $transactionCode, startDate: $startDate, endDate: $endDate, commodityName: $commodityName, monthsPeriod: $monthsPeriod, daysPeriod: $daysPeriod, price: $price, canBePaid: $canBePaid, canRemove: $canRemove)';
+    return 'SubscriptionTicket(ticketGuid: $ticketGuid, transactionCode: $transactionCode, customerCode: $customerCode, cityCardCode: $cityCardCode, status: $status, paymentStatus: $paymentStatus, paymentType: $paymentType, kind: $kind, type: $type, monthsPeriod: $monthsPeriod, daysPeriod: $daysPeriod, price: $price, commodityName: $commodityName, isPromotionTicket: $isPromotionTicket, createdDate: $createdDate, startDate: $startDate, endDate: $endDate, cancelingDate: $cancelingDate, lines: $lines, canReturn: $canReturn, canRemove: $canRemove, canBePaid: $canBePaid)';
 }
 
 
@@ -285,7 +323,7 @@ abstract mixin class _$SubscriptionTicketCopyWith<$Res> implements $Subscription
   factory _$SubscriptionTicketCopyWith(_SubscriptionTicket value, $Res Function(_SubscriptionTicket) _then) = __$SubscriptionTicketCopyWithImpl;
 @override @useResult
 $Res call({
- String? ticketGuid, String? transactionCode, DateTime? startDate, DateTime? endDate, String? commodityName, int? monthsPeriod, int? daysPeriod, double? price, bool? canBePaid, bool? canRemove
+ String? ticketGuid, String? transactionCode, int? customerCode, int? cityCardCode, int? status, int? paymentStatus, int? paymentType, int? kind, int? type, int? monthsPeriod, int? daysPeriod, double? price, String? commodityName, bool? isPromotionTicket, DateTime? createdDate, DateTime? startDate, DateTime? endDate, DateTime? cancelingDate, List<SubscriptionTicketLine> lines, bool? canReturn, bool? canRemove, bool? canBePaid
 });
 
 
@@ -302,18 +340,306 @@ class __$SubscriptionTicketCopyWithImpl<$Res>
 
 /// Create a copy of SubscriptionTicket
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? ticketGuid = freezed,Object? transactionCode = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? commodityName = freezed,Object? monthsPeriod = freezed,Object? daysPeriod = freezed,Object? price = freezed,Object? canBePaid = freezed,Object? canRemove = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? ticketGuid = freezed,Object? transactionCode = freezed,Object? customerCode = freezed,Object? cityCardCode = freezed,Object? status = freezed,Object? paymentStatus = freezed,Object? paymentType = freezed,Object? kind = freezed,Object? type = freezed,Object? monthsPeriod = freezed,Object? daysPeriod = freezed,Object? price = freezed,Object? commodityName = freezed,Object? isPromotionTicket = freezed,Object? createdDate = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? cancelingDate = freezed,Object? lines = null,Object? canReturn = freezed,Object? canRemove = freezed,Object? canBePaid = freezed,}) {
   return _then(_SubscriptionTicket(
 ticketGuid: freezed == ticketGuid ? _self.ticketGuid : ticketGuid // ignore: cast_nullable_to_non_nullable
 as String?,transactionCode: freezed == transactionCode ? _self.transactionCode : transactionCode // ignore: cast_nullable_to_non_nullable
-as String?,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,commodityName: freezed == commodityName ? _self.commodityName : commodityName // ignore: cast_nullable_to_non_nullable
-as String?,monthsPeriod: freezed == monthsPeriod ? _self.monthsPeriod : monthsPeriod // ignore: cast_nullable_to_non_nullable
+as String?,customerCode: freezed == customerCode ? _self.customerCode : customerCode // ignore: cast_nullable_to_non_nullable
+as int?,cityCardCode: freezed == cityCardCode ? _self.cityCardCode : cityCardCode // ignore: cast_nullable_to_non_nullable
+as int?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as int?,paymentStatus: freezed == paymentStatus ? _self.paymentStatus : paymentStatus // ignore: cast_nullable_to_non_nullable
+as int?,paymentType: freezed == paymentType ? _self.paymentType : paymentType // ignore: cast_nullable_to_non_nullable
+as int?,kind: freezed == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as int?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as int?,monthsPeriod: freezed == monthsPeriod ? _self.monthsPeriod : monthsPeriod // ignore: cast_nullable_to_non_nullable
 as int?,daysPeriod: freezed == daysPeriod ? _self.daysPeriod : daysPeriod // ignore: cast_nullable_to_non_nullable
 as int?,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
-as double?,canBePaid: freezed == canBePaid ? _self.canBePaid : canBePaid // ignore: cast_nullable_to_non_nullable
+as double?,commodityName: freezed == commodityName ? _self.commodityName : commodityName // ignore: cast_nullable_to_non_nullable
+as String?,isPromotionTicket: freezed == isPromotionTicket ? _self.isPromotionTicket : isPromotionTicket // ignore: cast_nullable_to_non_nullable
+as bool?,createdDate: freezed == createdDate ? _self.createdDate : createdDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,cancelingDate: freezed == cancelingDate ? _self.cancelingDate : cancelingDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,lines: null == lines ? _self._lines : lines // ignore: cast_nullable_to_non_nullable
+as List<SubscriptionTicketLine>,canReturn: freezed == canReturn ? _self.canReturn : canReturn // ignore: cast_nullable_to_non_nullable
 as bool?,canRemove: freezed == canRemove ? _self.canRemove : canRemove // ignore: cast_nullable_to_non_nullable
+as bool?,canBePaid: freezed == canBePaid ? _self.canBePaid : canBePaid // ignore: cast_nullable_to_non_nullable
+as bool?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$SubscriptionTicketLine {
+
+ int? get number; bool? get isFirstZone; bool? get isSecondZone;
+/// Create a copy of SubscriptionTicketLine
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SubscriptionTicketLineCopyWith<SubscriptionTicketLine> get copyWith => _$SubscriptionTicketLineCopyWithImpl<SubscriptionTicketLine>(this as SubscriptionTicketLine, _$identity);
+
+  /// Serializes this SubscriptionTicketLine to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as SubscriptionTicketLine;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionTicketLine&&(identical(other.number, _this.number) || other.number == _this.number)&&(identical(other.isFirstZone, _this.isFirstZone) || other.isFirstZone == _this.isFirstZone)&&(identical(other.isSecondZone, _this.isSecondZone) || other.isSecondZone == _this.isSecondZone));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as SubscriptionTicketLine;
+  return Object.hash(runtimeType,_this.number,_this.isFirstZone,_this.isSecondZone);
+}
+
+@override
+String toString() {
+  final _this = this as SubscriptionTicketLine;
+  return 'SubscriptionTicketLine(number: ${_this.number}, isFirstZone: ${_this.isFirstZone}, isSecondZone: ${_this.isSecondZone})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SubscriptionTicketLineCopyWith<$Res>  {
+  factory $SubscriptionTicketLineCopyWith(SubscriptionTicketLine value, $Res Function(SubscriptionTicketLine) _then) = _$SubscriptionTicketLineCopyWithImpl;
+@useResult
+$Res call({
+ int? number, bool? isFirstZone, bool? isSecondZone
+});
+
+
+
+
+}
+/// @nodoc
+class _$SubscriptionTicketLineCopyWithImpl<$Res>
+    implements $SubscriptionTicketLineCopyWith<$Res> {
+  _$SubscriptionTicketLineCopyWithImpl(this._self, this._then);
+
+  final SubscriptionTicketLine _self;
+  final $Res Function(SubscriptionTicketLine) _then;
+
+/// Create a copy of SubscriptionTicketLine
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? number = freezed,Object? isFirstZone = freezed,Object? isSecondZone = freezed,}) {
+  return _then(SubscriptionTicketLine(
+number: freezed == number ? _self.number : number // ignore: cast_nullable_to_non_nullable
+as int?,isFirstZone: freezed == isFirstZone ? _self.isFirstZone : isFirstZone // ignore: cast_nullable_to_non_nullable
+as bool?,isSecondZone: freezed == isSecondZone ? _self.isSecondZone : isSecondZone // ignore: cast_nullable_to_non_nullable
+as bool?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SubscriptionTicketLine].
+extension SubscriptionTicketLinePatterns on SubscriptionTicketLine {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SubscriptionTicketLine value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SubscriptionTicketLine() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SubscriptionTicketLine value)  $default,){
+final _that = this;
+switch (_that) {
+case _SubscriptionTicketLine():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SubscriptionTicketLine value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SubscriptionTicketLine() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? number,  bool? isFirstZone,  bool? isSecondZone)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SubscriptionTicketLine() when $default != null:
+return $default(_that.number,_that.isFirstZone,_that.isSecondZone);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? number,  bool? isFirstZone,  bool? isSecondZone)  $default,) {final _that = this;
+switch (_that) {
+case _SubscriptionTicketLine():
+return $default(_that.number,_that.isFirstZone,_that.isSecondZone);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? number,  bool? isFirstZone,  bool? isSecondZone)?  $default,) {final _that = this;
+switch (_that) {
+case _SubscriptionTicketLine() when $default != null:
+return $default(_that.number,_that.isFirstZone,_that.isSecondZone);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SubscriptionTicketLine implements SubscriptionTicketLine {
+  const _SubscriptionTicketLine({this.number, this.isFirstZone, this.isSecondZone});
+  factory _SubscriptionTicketLine.fromJson(Map<String, dynamic> json) => _$SubscriptionTicketLineFromJson(json);
+
+@override final  int? number;
+@override final  bool? isFirstZone;
+@override final  bool? isSecondZone;
+
+/// Create a copy of SubscriptionTicketLine
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SubscriptionTicketLineCopyWith<_SubscriptionTicketLine> get copyWith => __$SubscriptionTicketLineCopyWithImpl<_SubscriptionTicketLine>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SubscriptionTicketLineToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubscriptionTicketLine&&(identical(other.number, number) || other.number == number)&&(identical(other.isFirstZone, isFirstZone) || other.isFirstZone == isFirstZone)&&(identical(other.isSecondZone, isSecondZone) || other.isSecondZone == isSecondZone));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,number,isFirstZone,isSecondZone);
+}
+
+@override
+String toString() {
+    return 'SubscriptionTicketLine(number: $number, isFirstZone: $isFirstZone, isSecondZone: $isSecondZone)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SubscriptionTicketLineCopyWith<$Res> implements $SubscriptionTicketLineCopyWith<$Res> {
+  factory _$SubscriptionTicketLineCopyWith(_SubscriptionTicketLine value, $Res Function(_SubscriptionTicketLine) _then) = __$SubscriptionTicketLineCopyWithImpl;
+@override @useResult
+$Res call({
+ int? number, bool? isFirstZone, bool? isSecondZone
+});
+
+
+
+
+}
+/// @nodoc
+class __$SubscriptionTicketLineCopyWithImpl<$Res>
+    implements _$SubscriptionTicketLineCopyWith<$Res> {
+  __$SubscriptionTicketLineCopyWithImpl(this._self, this._then);
+
+  final _SubscriptionTicketLine _self;
+  final $Res Function(_SubscriptionTicketLine) _then;
+
+/// Create a copy of SubscriptionTicketLine
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? number = freezed,Object? isFirstZone = freezed,Object? isSecondZone = freezed,}) {
+  return _then(_SubscriptionTicketLine(
+number: freezed == number ? _self.number : number // ignore: cast_nullable_to_non_nullable
+as int?,isFirstZone: freezed == isFirstZone ? _self.isFirstZone : isFirstZone // ignore: cast_nullable_to_non_nullable
+as bool?,isSecondZone: freezed == isSecondZone ? _self.isSecondZone : isSecondZone // ignore: cast_nullable_to_non_nullable
 as bool?,
   ));
 }
@@ -2117,7 +2443,9 @@ $SubscriptionTicketSavedOnCardCopyWith<$Res>? get ticketSavedOnCard {
 /// @nodoc
 mixin _$SubscriptionTicketBuyResponse {
 
- String? get commodityName; double? get price; DateTime? get ticketStartDate; DateTime? get ticketEndDate;/// tpay payment page for the first charge — lowercase `p`, unlike
+ String? get commodityName; double? get price; DateTime? get ticketStartDate; DateTime? get ticketEndDate;/// Ticket kind code of the bought ticket (`ticketKindCode` elsewhere),
+/// not the [SubscriptionTicketKind] sent.
+ int? get kind;/// tpay payment page for the first charge — lowercase `p`, unlike
 /// `ChangePaymentCardResponse.tPayRedirectUrl`.
  String? get tpayRedirectUrl; Object? get code; String? get message;
 /// Create a copy of SubscriptionTicketBuyResponse
@@ -2133,20 +2461,20 @@ $SubscriptionTicketBuyResponseCopyWith<SubscriptionTicketBuyResponse> get copyWi
 @override
 bool operator ==(Object other) {
   final _this = this as SubscriptionTicketBuyResponse;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionTicketBuyResponse&&(identical(other.commodityName, _this.commodityName) || other.commodityName == _this.commodityName)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.ticketStartDate, _this.ticketStartDate) || other.ticketStartDate == _this.ticketStartDate)&&(identical(other.ticketEndDate, _this.ticketEndDate) || other.ticketEndDate == _this.ticketEndDate)&&(identical(other.tpayRedirectUrl, _this.tpayRedirectUrl) || other.tpayRedirectUrl == _this.tpayRedirectUrl)&&const DeepCollectionEquality().equals(other.code, _this.code)&&(identical(other.message, _this.message) || other.message == _this.message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionTicketBuyResponse&&(identical(other.commodityName, _this.commodityName) || other.commodityName == _this.commodityName)&&(identical(other.price, _this.price) || other.price == _this.price)&&(identical(other.ticketStartDate, _this.ticketStartDate) || other.ticketStartDate == _this.ticketStartDate)&&(identical(other.ticketEndDate, _this.ticketEndDate) || other.ticketEndDate == _this.ticketEndDate)&&(identical(other.kind, _this.kind) || other.kind == _this.kind)&&(identical(other.tpayRedirectUrl, _this.tpayRedirectUrl) || other.tpayRedirectUrl == _this.tpayRedirectUrl)&&const DeepCollectionEquality().equals(other.code, _this.code)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as SubscriptionTicketBuyResponse;
-  return Object.hash(runtimeType,_this.commodityName,_this.price,_this.ticketStartDate,_this.ticketEndDate,_this.tpayRedirectUrl,const DeepCollectionEquality().hash(_this.code),_this.message);
+  return Object.hash(runtimeType,_this.commodityName,_this.price,_this.ticketStartDate,_this.ticketEndDate,_this.kind,_this.tpayRedirectUrl,const DeepCollectionEquality().hash(_this.code),_this.message);
 }
 
 @override
 String toString() {
   final _this = this as SubscriptionTicketBuyResponse;
-  return 'SubscriptionTicketBuyResponse(commodityName: ${_this.commodityName}, price: ${_this.price}, ticketStartDate: ${_this.ticketStartDate}, ticketEndDate: ${_this.ticketEndDate}, tpayRedirectUrl: ${_this.tpayRedirectUrl}, code: ${_this.code}, message: ${_this.message})';
+  return 'SubscriptionTicketBuyResponse(commodityName: ${_this.commodityName}, price: ${_this.price}, ticketStartDate: ${_this.ticketStartDate}, ticketEndDate: ${_this.ticketEndDate}, kind: ${_this.kind}, tpayRedirectUrl: ${_this.tpayRedirectUrl}, code: ${_this.code}, message: ${_this.message})';
 }
 
 
@@ -2157,7 +2485,7 @@ abstract mixin class $SubscriptionTicketBuyResponseCopyWith<$Res>  {
   factory $SubscriptionTicketBuyResponseCopyWith(SubscriptionTicketBuyResponse value, $Res Function(SubscriptionTicketBuyResponse) _then) = _$SubscriptionTicketBuyResponseCopyWithImpl;
 @useResult
 $Res call({
- String? commodityName, double? price, DateTime? ticketStartDate, DateTime? ticketEndDate, String? tpayRedirectUrl, Object? code, String? message
+ String? commodityName, double? price, DateTime? ticketStartDate, DateTime? ticketEndDate, int? kind, String? tpayRedirectUrl, Object? code, String? message
 });
 
 
@@ -2174,13 +2502,14 @@ class _$SubscriptionTicketBuyResponseCopyWithImpl<$Res>
 
 /// Create a copy of SubscriptionTicketBuyResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? commodityName = freezed,Object? price = freezed,Object? ticketStartDate = freezed,Object? ticketEndDate = freezed,Object? tpayRedirectUrl = freezed,Object? code = freezed,Object? message = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? commodityName = freezed,Object? price = freezed,Object? ticketStartDate = freezed,Object? ticketEndDate = freezed,Object? kind = freezed,Object? tpayRedirectUrl = freezed,Object? code = freezed,Object? message = freezed,}) {
   return _then(SubscriptionTicketBuyResponse(
 commodityName: freezed == commodityName ? _self.commodityName : commodityName // ignore: cast_nullable_to_non_nullable
 as String?,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double?,ticketStartDate: freezed == ticketStartDate ? _self.ticketStartDate : ticketStartDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,ticketEndDate: freezed == ticketEndDate ? _self.ticketEndDate : ticketEndDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,tpayRedirectUrl: freezed == tpayRedirectUrl ? _self.tpayRedirectUrl : tpayRedirectUrl // ignore: cast_nullable_to_non_nullable
+as DateTime?,kind: freezed == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as int?,tpayRedirectUrl: freezed == tpayRedirectUrl ? _self.tpayRedirectUrl : tpayRedirectUrl // ignore: cast_nullable_to_non_nullable
 as String?,code: freezed == code ? _self.code : code ,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -2267,10 +2596,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? commodityName,  double? price,  DateTime? ticketStartDate,  DateTime? ticketEndDate,  String? tpayRedirectUrl,  Object? code,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? commodityName,  double? price,  DateTime? ticketStartDate,  DateTime? ticketEndDate,  int? kind,  String? tpayRedirectUrl,  Object? code,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SubscriptionTicketBuyResponse() when $default != null:
-return $default(_that.commodityName,_that.price,_that.ticketStartDate,_that.ticketEndDate,_that.tpayRedirectUrl,_that.code,_that.message);case _:
+return $default(_that.commodityName,_that.price,_that.ticketStartDate,_that.ticketEndDate,_that.kind,_that.tpayRedirectUrl,_that.code,_that.message);case _:
   return orElse();
 
 }
@@ -2288,10 +2617,10 @@ return $default(_that.commodityName,_that.price,_that.ticketStartDate,_that.tick
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? commodityName,  double? price,  DateTime? ticketStartDate,  DateTime? ticketEndDate,  String? tpayRedirectUrl,  Object? code,  String? message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? commodityName,  double? price,  DateTime? ticketStartDate,  DateTime? ticketEndDate,  int? kind,  String? tpayRedirectUrl,  Object? code,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _SubscriptionTicketBuyResponse():
-return $default(_that.commodityName,_that.price,_that.ticketStartDate,_that.ticketEndDate,_that.tpayRedirectUrl,_that.code,_that.message);case _:
+return $default(_that.commodityName,_that.price,_that.ticketStartDate,_that.ticketEndDate,_that.kind,_that.tpayRedirectUrl,_that.code,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -2308,10 +2637,10 @@ return $default(_that.commodityName,_that.price,_that.ticketStartDate,_that.tick
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? commodityName,  double? price,  DateTime? ticketStartDate,  DateTime? ticketEndDate,  String? tpayRedirectUrl,  Object? code,  String? message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? commodityName,  double? price,  DateTime? ticketStartDate,  DateTime? ticketEndDate,  int? kind,  String? tpayRedirectUrl,  Object? code,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _SubscriptionTicketBuyResponse() when $default != null:
-return $default(_that.commodityName,_that.price,_that.ticketStartDate,_that.ticketEndDate,_that.tpayRedirectUrl,_that.code,_that.message);case _:
+return $default(_that.commodityName,_that.price,_that.ticketStartDate,_that.ticketEndDate,_that.kind,_that.tpayRedirectUrl,_that.code,_that.message);case _:
   return null;
 
 }
@@ -2323,13 +2652,16 @@ return $default(_that.commodityName,_that.price,_that.ticketStartDate,_that.tick
 @JsonSerializable()
 
 class _SubscriptionTicketBuyResponse extends SubscriptionTicketBuyResponse {
-  const _SubscriptionTicketBuyResponse({this.commodityName, this.price, this.ticketStartDate, this.ticketEndDate, this.tpayRedirectUrl, this.code, this.message}): super._();
+  const _SubscriptionTicketBuyResponse({this.commodityName, this.price, this.ticketStartDate, this.ticketEndDate, this.kind, this.tpayRedirectUrl, this.code, this.message}): super._();
   factory _SubscriptionTicketBuyResponse.fromJson(Map<String, dynamic> json) => _$SubscriptionTicketBuyResponseFromJson(json);
 
 @override final  String? commodityName;
 @override final  double? price;
 @override final  DateTime? ticketStartDate;
 @override final  DateTime? ticketEndDate;
+/// Ticket kind code of the bought ticket (`ticketKindCode` elsewhere),
+/// not the [SubscriptionTicketKind] sent.
+@override final  int? kind;
 /// tpay payment page for the first charge — lowercase `p`, unlike
 /// `ChangePaymentCardResponse.tPayRedirectUrl`.
 @override final  String? tpayRedirectUrl;
@@ -2349,18 +2681,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubscriptionTicketBuyResponse&&(identical(other.commodityName, commodityName) || other.commodityName == commodityName)&&(identical(other.price, price) || other.price == price)&&(identical(other.ticketStartDate, ticketStartDate) || other.ticketStartDate == ticketStartDate)&&(identical(other.ticketEndDate, ticketEndDate) || other.ticketEndDate == ticketEndDate)&&(identical(other.tpayRedirectUrl, tpayRedirectUrl) || other.tpayRedirectUrl == tpayRedirectUrl)&&const DeepCollectionEquality().equals(other.code, code)&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubscriptionTicketBuyResponse&&(identical(other.commodityName, commodityName) || other.commodityName == commodityName)&&(identical(other.price, price) || other.price == price)&&(identical(other.ticketStartDate, ticketStartDate) || other.ticketStartDate == ticketStartDate)&&(identical(other.ticketEndDate, ticketEndDate) || other.ticketEndDate == ticketEndDate)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.tpayRedirectUrl, tpayRedirectUrl) || other.tpayRedirectUrl == tpayRedirectUrl)&&const DeepCollectionEquality().equals(other.code, code)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,commodityName,price,ticketStartDate,ticketEndDate,tpayRedirectUrl,const DeepCollectionEquality().hash(code),message);
+    return Object.hash(runtimeType,commodityName,price,ticketStartDate,ticketEndDate,kind,tpayRedirectUrl,const DeepCollectionEquality().hash(code),message);
 }
 
 @override
 String toString() {
-    return 'SubscriptionTicketBuyResponse(commodityName: $commodityName, price: $price, ticketStartDate: $ticketStartDate, ticketEndDate: $ticketEndDate, tpayRedirectUrl: $tpayRedirectUrl, code: $code, message: $message)';
+    return 'SubscriptionTicketBuyResponse(commodityName: $commodityName, price: $price, ticketStartDate: $ticketStartDate, ticketEndDate: $ticketEndDate, kind: $kind, tpayRedirectUrl: $tpayRedirectUrl, code: $code, message: $message)';
 }
 
 
@@ -2371,7 +2703,7 @@ abstract mixin class _$SubscriptionTicketBuyResponseCopyWith<$Res> implements $S
   factory _$SubscriptionTicketBuyResponseCopyWith(_SubscriptionTicketBuyResponse value, $Res Function(_SubscriptionTicketBuyResponse) _then) = __$SubscriptionTicketBuyResponseCopyWithImpl;
 @override @useResult
 $Res call({
- String? commodityName, double? price, DateTime? ticketStartDate, DateTime? ticketEndDate, String? tpayRedirectUrl, Object? code, String? message
+ String? commodityName, double? price, DateTime? ticketStartDate, DateTime? ticketEndDate, int? kind, String? tpayRedirectUrl, Object? code, String? message
 });
 
 
@@ -2388,13 +2720,14 @@ class __$SubscriptionTicketBuyResponseCopyWithImpl<$Res>
 
 /// Create a copy of SubscriptionTicketBuyResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? commodityName = freezed,Object? price = freezed,Object? ticketStartDate = freezed,Object? ticketEndDate = freezed,Object? tpayRedirectUrl = freezed,Object? code = freezed,Object? message = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? commodityName = freezed,Object? price = freezed,Object? ticketStartDate = freezed,Object? ticketEndDate = freezed,Object? kind = freezed,Object? tpayRedirectUrl = freezed,Object? code = freezed,Object? message = freezed,}) {
   return _then(_SubscriptionTicketBuyResponse(
 commodityName: freezed == commodityName ? _self.commodityName : commodityName // ignore: cast_nullable_to_non_nullable
 as String?,price: freezed == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double?,ticketStartDate: freezed == ticketStartDate ? _self.ticketStartDate : ticketStartDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,ticketEndDate: freezed == ticketEndDate ? _self.ticketEndDate : ticketEndDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,tpayRedirectUrl: freezed == tpayRedirectUrl ? _self.tpayRedirectUrl : tpayRedirectUrl // ignore: cast_nullable_to_non_nullable
+as DateTime?,kind: freezed == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as int?,tpayRedirectUrl: freezed == tpayRedirectUrl ? _self.tpayRedirectUrl : tpayRedirectUrl // ignore: cast_nullable_to_non_nullable
 as String?,code: freezed == code ? _self.code : code ,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

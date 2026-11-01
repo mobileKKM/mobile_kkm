@@ -68,13 +68,13 @@ client.session.events.listen((event) { /* auth lifecycle */ });
 
 ## Not yet covered
 
-- Verification of the subscription (5+1) ticket endpoints against the live
-  server. Ticket purchase, payment and removal (`subscriptions/tickets/*`),
-  the automatic-renewal toggle (`subscriptions/edit`, flag
-  `isCycleRefreshEnabled`) and `payments/add-payment-card` are implemented
-  from the official client's code alone: their requests match what it
-  sends, but no response was ever captured, so response field types are
-  inferred. Sign-in, card change and cancellation *are* capture-verified.
+- Parts of the subscription (5+1) API that were never captured:
+  `subscriptions/tickets/pay` and `payments/add-payment-card` (requests as
+  the official client sends them, responses typed from what it reads),
+  sign-in with `birthDate`, the `halfPrice` ticket kind and a non-null
+  `ticketSavedOnCard`. Everything else of 5+1 — sign-in, details and
+  actions, the renewal switch, buying and removing a ticket, card change,
+  cancellation, `payments/result` with `type: "1"` — is capture-verified.
 - `subscriptions/is_signed_in` and `subscriptions/tickets/return` — known
   to the official client but never called by it
 - The tpay payment webview itself (the `payments/result` callback after a

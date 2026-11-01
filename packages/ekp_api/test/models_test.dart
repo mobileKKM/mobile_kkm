@@ -256,6 +256,18 @@ void main() {
       expect(res.minExpireReturnDate, isNotNull);
     });
 
+    test('TicketDetailResponse marks a 5+1 ticket in its details only', () {
+      final res = TicketDetailResponse.fromJson(fixture('ticket_detail_5plus1'));
+      expect(res.ticket!.promotionName, '5+1');
+      expect(res.ticket!.paymentDescription, contains('cykliczne'));
+      final ekp = res.ticketEkp!;
+      expect(ekp.fivePlusOneTicket, isTrue);
+      expect(ekp.promotionName, isNull);
+      expect(ekp.statusEnum, MkkmTicketStatus.active);
+      expect(res.canReturn, isTrue);
+      expect(res.minExpireReturnDate, DateTime.utc(2025, 10, 16, 22));
+    });
+
     test('TicketDetailResponse parses the line-change history of a line-scoped ticket', () {
       final res = TicketDetailResponse.fromJson(fixture('ticket_detail_line_changed'));
       expect(res.canChangeLine, isFalse, reason: 'this ticket cannot be changed again');
@@ -387,35 +399,77 @@ void main() {
       expect(detail.clientCode, 100001);
     });
 
-    test('SubscriptionDetails parses a pending ticket', () {
+    test('SubscriptionDetails parses an unpaid pending ticket', () {
       final res = SubscriptionDetails.fromJson(fixture('subscriptions_details_ticket'));
       expect(res.activeTicket, isNull);
+      expect(res.counter, 0);
       final ticket = res.pendingTicket!;
-      expect(ticket.ticketGuid, 'feedfacefeedfacefeedfacefeedface');
-      expect(ticket.transactionCode, isNull);
-      expect(ticket.startDate, DateTime(2025, 10, 2));
-      expect(ticket.endDate, DateTime(2025, 11, 1, 23, 59, 59));
-      expect(ticket.commodityName, 'Bilet 5+1 normalny');
+      expect(ticket.ticketGuid, 'cafebabecafebabecafebabecafebabe');
+      expect(ticket.transactionCode, 'NDAwMDA5IzE');
+      expect(ticket.customerCode, 100001);
+      expect(ticket.cityCardCode, 8);
+      expect(ticket.status, 1);
+      expect(ticket.paymentStatus, 0);
+      expect(ticket.paymentType, 1);
+      expect(ticket.kind, 21);
+      expect(ticket.type, 3);
       expect(ticket.monthsPeriod, 1);
-      expect(ticket.price, 80.0);
-      expect(ticket.canBePaid, isTrue);
+      expect(ticket.daysPeriod, 7);
+      expect(ticket.price, 99.0);
+      expect(ticket.commodityName, 'Bilet norm. mieszk. 1-mies. sieciowy st. I');
+      expect(ticket.isPromotionTicket, isFalse);
+      // Seven fraction digits on the wire.
+      expect(ticket.createdDate, DateTime.utc(2025, 10, 1, 13, 29, 37, 653, 172));
+      expect(ticket.startDate, DateTime.utc(2025, 10, 1, 22));
+      expect(ticket.endDate, DateTime.utc(2025, 11, 1, 22, 59, 59));
+      expect(ticket.cancelingDate, isNull);
+      expect(ticket.lines, const [SubscriptionTicketLine(number: 1001, isFirstZone: true, isSecondZone: false)]);
+      expect(ticket.canReturn, isFalse);
       expect(ticket.canRemove, isTrue);
+      expect(ticket.canBePaid, isTrue);
+    });
+
+    test('SubscriptionDetails parses a booked ticket', () {
+      final res = SubscriptionDetails.fromJson(fixture('subscriptions_details_paid'));
+      // Paid but starting tomorrow: still the pending ticket.
+      expect(res.activeTicket, isNull);
+      expect(res.counter, 1);
+      final ticket = res.pendingTicket!;
+      expect(ticket.status, 3);
+      expect(ticket.paymentStatus, 2);
+      expect(ticket.canRemove, isFalse);
+      expect(ticket.canBePaid, isFalse);
+    });
+
+    test('SubscriptionTicket defaults lines to empty', () {
+      expect(SubscriptionTicket.fromJson(const {'ticketGuid': 'x'}).lines, isEmpty);
     });
 
     test('SubscriptionBuyingTicketDetails parses', () {
       final res = SubscriptionBuyingTicketDetails.fromJson(fixture('subscriptions_buying_ticket_details'));
-      expect(res.commodityName, 'Bilet 5+1 normalny');
-      expect(res.price, 80.0);
+      expect(res.commodityName, 'Bilet norm. mieszk. 1-mies. sieciowy st. I');
+      expect(res.price, 99.0);
+      expect(res.ticketSavedOnCard, isNull);
+    });
+
+    test('SubscriptionBuyingTicketDetails parses a ticket on the card (official client shape)', () {
+      final res = SubscriptionBuyingTicketDetails.fromJson(const {
+        'commodityName': 'Bilet norm. mieszk. 1-mies. sieciowy st. I',
+        'price': 99.0,
+        'ticketSavedOnCard': {'dateStart': '2025-09-01T00:00:00', 'dateEnd': '2025-09-30T23:59:59'},
+      });
       expect(res.ticketSavedOnCard!.dateStart, DateTime(2025, 9));
       expect(res.ticketSavedOnCard!.dateEnd, DateTime(2025, 9, 30, 23, 59, 59));
     });
 
     test('SubscriptionTicketBuyResponse parses', () {
       final res = SubscriptionTicketBuyResponse.fromJson(fixture('subscriptions_ticket_buy'));
-      expect(res.commodityName, 'Bilet 5+1 normalny');
-      expect(res.ticketStartDate, DateTime(2025, 10, 2));
-      expect(res.ticketEndDate, DateTime(2025, 11, 1, 23, 59, 59));
-      expect(res.tpayRedirectUrl, 'https://secure.tpay.com/?id=deadbeef');
+      expect(res.commodityName, 'Bilet norm. mieszk. 1-mies. sieciowy st. I');
+      expect(res.price, 99.0);
+      expect(res.kind, 21);
+      expect(res.ticketStartDate, DateTime.utc(2025, 10, 1, 22));
+      expect(res.ticketEndDate, DateTime.utc(2025, 11, 1, 22, 59, 59));
+      expect(res.tpayRedirectUrl, 'https://secure.tpay.com/cards/?sale_auth=deadbeef');
       expect(res.codeAsInt, isNull);
     });
 

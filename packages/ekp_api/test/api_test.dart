@@ -419,7 +419,7 @@ void main() {
         (200, fixture('subscriptions_buying_ticket_details')),
       ]);
       final res = await client.subscriptions.buyingTicketDetails(kind: SubscriptionTicketKind.halfPrice);
-      expect(res.price, 80.0);
+      expect(res.price, 99.0);
       final req = requestsTo('/subscriptions/tickets/buying-ticket-details').single;
       expectBearer(req);
       expect(req.queryParameters, {'ticketKind': 'halfPrice'});
@@ -432,7 +432,8 @@ void main() {
         isAutomaticSubscriptionEnabled: true,
         validFrom: DateTime.utc(2025, 10, 1, 22),
       );
-      expect(res.tpayRedirectUrl, 'https://secure.tpay.com/?id=deadbeef');
+      expect(res.tpayRedirectUrl, 'https://secure.tpay.com/cards/?sale_auth=deadbeef');
+      expect(res.kind, 21);
       expect(res.code, isNull);
       final req = requestsTo('/subscriptions/tickets/buy').single;
       expectBearer(req);
@@ -441,6 +442,33 @@ void main() {
         'isAutomaticSubscriptionEnabled': true,
         'validFrom': '2025-10-01T22:00:00.000Z',
       });
+    });
+
+    test('buyTicket without the debit consent is refused with field errors', () async {
+      adapter.onPost('/subscriptions/tickets/buy', [
+        (
+          422,
+          {
+            'errors': {
+              'isAutomaticSubscriptionEnabled': ['To pole jest wymagane'],
+            },
+          },
+        ),
+      ]);
+      await expectLater(
+        client.subscriptions.buyTicket(
+          kind: SubscriptionTicketKind.normal,
+          isAutomaticSubscriptionEnabled: false,
+          validFrom: DateTime.utc(2025, 10, 1, 22),
+        ),
+        throwsA(
+          isA<EkpHttpException>().having((e) => e.statusCode, 'statusCode', 422).having(
+            (e) => e.errors?['isAutomaticSubscriptionEnabled'],
+            'errors',
+            ['To pole jest wymagane'],
+          ),
+        ),
+      );
     });
 
     test('payTicket posts the guid, parses the redirect', () async {
@@ -810,6 +838,12 @@ void main() {
       adapter.onPost('/payments/result', [(200, '')]);
       await client.payments.result(id: 'abc123', type: '2');
       expect(bodyOf(requestsTo('/payments/result').single), {'id': 'abc123', 'type': '2', 'result': 'Success'});
+    });
+
+    test('result reports a 5+1 payment with type 1', () async {
+      adapter.onPost('/payments/result', [(200, '')]);
+      await client.payments.result(id: 'abc123', type: '1');
+      expect(bodyOf(requestsTo('/payments/result').single), {'id': 'abc123', 'type': '1', 'result': 'Success'});
     });
 
     test('result forwards the Error outcome', () async {

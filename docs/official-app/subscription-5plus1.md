@@ -153,3 +153,49 @@ customer website), not against URLs sent with the payment. The outcome is posted
 After a success the subscription is reloaded 1.5 seconds later, and the purchase screen goes back to
 the status screen. Until that reload shows the new state, the "Zapłać" button on the ticket stays
 hidden so that the same ticket is not paid twice.
+
+## Seen on the wire
+
+A capture of the official app (2026-11-01) going through sign-up, a card change, buying, removing
+and paying tickets and the renewal switch. Shapes only; the values here are illustrative.
+
+**Sign-up.** `subscriptions/sign-in` answers 200 with an empty body. An account whose payment card
+the server already knows comes back with `maskedCardNumber` set and `newCard: false`, so "DODAJ
+KARTĘ PŁATNICZĄ" never appears for it. `available-actions` then offers `changeCard` and `buyTicket`.
+
+**Buying.** `buying-ticket-details?ticketKind=normal` gives the name and price (`ticketSavedOnCard`
+null). `tickets/buy` sends `validFrom` as tomorrow 00:00 local time in UTC. The monthly-charge
+consent is required by the server, not only by the form: `isAutomaticSubscriptionEnabled: false`
+is refused with HTTP 422 and `{"errors": {"isAutomaticSubscriptionEnabled": ["To pole jest
+wymagane"]}}`. The answer adds `kind`, the ticket kind code (21 for a resident's normal ticket).
+While the ticket is pending, `available-actions.buyTicket` is false; removing it (`tickets/{guid}/remove`,
+body `null`, empty 200) makes it true again.
+
+**The pending ticket's states** in `subscriptions/details`:
+
+| Moment | `status` | `paymentStatus` | `canBePaid` / `canRemove` | `counter` |
+|---|---|---|---|---|
+| Just bought | 1 | 0 | true / true | 0 |
+| tPay done, `payments/result` posted | 1 | 4 | **true** / true | 0 |
+| Payment booked | 3 | 2 | false / false | 1 |
+
+The middle row is why the official app hides "Zapłać" after a payment until the reload shows the
+booked state. A paid ticket starting tomorrow stays `pendingTicket` (`activeTicket` null).
+`user-data.mkkmData.hasActiveSubscription` was true by the time a ticket had been bought.
+
+**Payment return.** Paying a 5+1 ticket and changing the card both end on
+`https://ekp.mpk.krakow.pl/payment/success?id=<payment id>&type=1` — the same address as a ticket
+purchase, with `type=1` instead of `2`. The `id` matches neither the subscription's nor the mKKM
+ticket's `ticketGuid`. `payments/result` is posted with `type: "1"`. After a card change the details
+show the new card's masked number. A card change left on tPay's page ends on
+`payment/rejected?id=<payment id>&type=1` (a fresh id); the app posts `result: "Error"` with
+`type: "1"`, the server answers 200 with an empty body, and the saved card stays as it was.
+
+**The ticket elsewhere.** Once paid, the ticket appears in `mkkm/tickets/list` as `active` with no
+5+1 marker, under a different `ticketGuid`; the `transactionCode` is shared. Its details
+(`tickets/{transactionCode}`) carry `ticket.promotionName: "5+1"`, `ticketEkp.fivePlusOneTicket:
+true` and the payment "ePłatność - cykliczne obciążanie karty płatniczej". It is returnable like any
+other ticket (`canReturn`, `minExpireReturnDate`, and `ticket-returns/calculate` answered).
+
+Not captured: `subscriptions/tickets/pay`, `payments/add-payment-card`, a sign-up with a birth date,
+the reduced (`halfPrice`) kind.

@@ -64,7 +64,25 @@ sealed class EkpApiException implements Exception {
       code: code,
       errorToken: errorToken,
       fields: body['fields'],
+      errors: _errorsOf(body['errors']),
     );
+  }
+
+  /// The `errors` map of a validation refusal (HTTP 422), field name →
+  /// messages; null when the body has none.
+  static Map<String, List<String>>? _errorsOf(Object? errors) {
+    if (errors is! Map) {
+      return null;
+    }
+    return {
+      for (final MapEntry(:key, :value) in errors.entries)
+        '$key': [
+          if (value is List)
+            for (final message in value) '$message'
+          else if (value != null)
+            '$value',
+        ],
+    };
   }
 
   /// The error body as a map. A request made for a plain response, as
@@ -120,12 +138,18 @@ class EkpUnauthorizedException extends EkpApiException {
 
 /// Any non-2xx response other than 401.
 class EkpHttpException extends EkpApiException {
-  const EkpHttpException({super.message, super.statusCode, super.code, super.errorToken, this.fields});
+  const EkpHttpException({super.message, super.statusCode, super.code, super.errorToken, this.fields, this.errors});
 
   /// Per-field errors of a refused selection (`tickets/calculate`). Only
   /// its name is known (the official client reads it); never captured, so
   /// kept raw.
   final Object? fields;
+
+  /// Per-field messages of a validation refusal: HTTP 422 with
+  /// `{"errors": {"<field>": ["<message>", …]}}` and no `message` or
+  /// `code` (captured from `subscriptions/tickets/buy`). Messages are
+  /// Polish, as sent.
+  final Map<String, List<String>>? errors;
 }
 
 /// The stored session could not be recovered (both recover and refresh

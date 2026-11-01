@@ -1,0 +1,47 @@
+{
+  "isSubscriptionSignedIn": true,
+  "counter": 1,
+  "maskedCardNumber": "****1234",
+  "subscriptionSignedInDate": "2025-10-01T15:27:20.917",
+  "activeTicket": null,
+  "pendingTicket": {
+    "ticketGuid": "cafebabecafebabecafebabecafebabe",
+    "transactionCode": "NDAwMDA5IzE",
+    "customerCode": 100001,
+    "cityCardCode": 8,
+    "status": 3,
+    "paymentStatus": 2,
+    "paymentType": 1,
+    "kind": 21,
+    "type": 3,
+    "monthsPeriod": 1,
+    "daysPeriod": 7,
+    "price": 99.0,
+    "commodityName": "Bilet norm. mieszk. 1-mies. sieciowy st. I",
+    "isPromotionTicket": false,
+    "createdDate": "2025-10-01T13:29:37.6531722Z",
+    "startDate": "2025-10-01T22:00:00Z",
+    "endDate": "2025-11-01T22:59:59Z",
+    "cancelingDate": null,
+    "lines": [
+      {
+        "number": 1001,
+        "isFirstZone": true,
+        "isSecondZone": false
+      }
+    ],
+    "canReturn": false,
+    "canRemove": false,
+    "canBePaid": false
+  },
+  "customerDetail": {
+    "firstName": "JAN",
+    "lastName": "TESTOWY",
+    "pesel": "90010112345",
+    "email": "test@example.com",
+    "cityCardCode": 8,
+    "clientCode": 100001
+  },
+  "isAutomaticSubscriptionEnabled": true,
+  "isCycleRefreshEnabled": false
+}
