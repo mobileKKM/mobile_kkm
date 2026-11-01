@@ -651,7 +651,10 @@ as bool?,
 /// @nodoc
 mixin _$SubscriptionDetails {
 
- bool? get isSubscriptionSignedIn; int? get counter; String? get maskedCardNumber;/// Local time WITHOUT a UTC offset on the wire
+ bool? get isSubscriptionSignedIn; int? get counter;/// The saved payment card. Set right after sign-in when the server
+/// already knows a card for the customer (`newCard` then stays false in
+/// [SubscriptionAvailableActions]); changes once a card change is booked.
+ String? get maskedCardNumber;/// Local time WITHOUT a UTC offset on the wire
 /// (e.g. `2026-10-01T15:43:39.107`) — parsed as such; treat as
 /// Europe/Warsaw local time when displaying.
  DateTime? get subscriptionSignedInDate; SubscriptionTicket? get activeTicket; SubscriptionTicket? get pendingTicket; SubscriptionCustomerDetail? get customerDetail; bool? get isAutomaticSubscriptionEnabled; bool? get isCycleRefreshEnabled;
@@ -902,6 +905,9 @@ class _SubscriptionDetails implements SubscriptionDetails {
 
 @override final  bool? isSubscriptionSignedIn;
 @override final  int? counter;
+/// The saved payment card. Set right after sign-in when the server
+/// already knows a card for the customer (`newCard` then stays false in
+/// [SubscriptionAvailableActions]); changes once a card change is booked.
 @override final  String? maskedCardNumber;
 /// Local time WITHOUT a UTC offset on the wire
 /// (e.g. `2026-10-01T15:43:39.107`) — parsed as such; treat as

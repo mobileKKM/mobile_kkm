@@ -54,6 +54,9 @@ abstract class MkkmData with _$MkkmData {
     bool? hasInhabitantPrivilege,
     DateTime? inhabitantPrivilegeDateFrom,
     DateTime? inhabitantPrivilegeDateTo,
+
+    /// 5+1: false before `subscriptions/sign-in`, true by the time the
+    /// first subscription ticket was bought (not read in between).
     bool? hasActiveSubscription,
     bool? hadAnyInhabitantPrivilege,
     bool? detached,

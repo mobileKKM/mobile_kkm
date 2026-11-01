@@ -630,7 +630,9 @@ mixin _$MkkmData {
 
 /// Note: a String here (e.g. "100001"), unlike the numeric customer
 /// codes used by the tickets endpoints.
- String? get customerCode; bool? get hasInhabitantPrivilege; DateTime? get inhabitantPrivilegeDateFrom; DateTime? get inhabitantPrivilegeDateTo; bool? get hasActiveSubscription; bool? get hadAnyInhabitantPrivilege; bool? get detached;
+ String? get customerCode; bool? get hasInhabitantPrivilege; DateTime? get inhabitantPrivilegeDateFrom; DateTime? get inhabitantPrivilegeDateTo;/// 5+1: false before `subscriptions/sign-in`, true by the time the
+/// first subscription ticket was bought (not read in between).
+ bool? get hasActiveSubscription; bool? get hadAnyInhabitantPrivilege; bool? get detached;
 /// Create a copy of MkkmData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -844,6 +846,8 @@ class _MkkmData implements MkkmData {
 @override final  bool? hasInhabitantPrivilege;
 @override final  DateTime? inhabitantPrivilegeDateFrom;
 @override final  DateTime? inhabitantPrivilegeDateTo;
+/// 5+1: false before `subscriptions/sign-in`, true by the time the
+/// first subscription ticket was bought (not read in between).
 @override final  bool? hasActiveSubscription;
 @override final  bool? hadAnyInhabitantPrivilege;
 @override final  bool? detached;

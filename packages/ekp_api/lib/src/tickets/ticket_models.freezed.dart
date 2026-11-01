@@ -20,7 +20,12 @@ mixin _$MkkmTicket {
  String? get transactionCode; String? get status; DateTime? get datePurchase; DateTime? get startDate; DateTime? get endDate; int? get monthsPeriod; int? get daysPeriod; double? get price; bool? get isAnyAssigned; bool? get assigned; bool? get canAssign; bool? get forCitizen; int? get ticketKindCode; int? get ticketNumberOfLineCode; int? get ticketPeriodCode; String? get specialTransportLine; bool? get isNetwork; bool? get isMetropolitan;/// Selected transport lines for line-scoped tickets, as full
 /// [TransportLine] objects (snake_case wire shape, same as the
 /// `dictionary/transport-line` response).
- List<TransportLine> get lines; bool? get fivePlusOneTicket;/// Numeric customer code — only present in ticket detail responses.
+ List<TransportLine> get lines;/// True for a 5+1 subscription ticket. Only in `ticketEkp` of the
+/// details: a list item carries no 5+1 marker (its `ticketGuid` is not
+/// the subscription's, the `transactionCode` is shared). The details'
+/// `ticket.promotionName` is then `"5+1"`; such a ticket is returnable
+/// like any other.
+ bool? get fivePlusOneTicket;/// Numeric customer code — only present in ticket detail responses.
  int? get customerId; int? get customerCode; int? get cityCardTypeCode; String? get productName; int? get paymentStateId; String? get paymentStateDescription; int? get paymentTypeCode; String? get paymentDescription; String? get promotionName; String? get cityCardTypeName;
 /// Create a copy of MkkmTicket
 /// with the given fields replaced by the non-null parameter values.
@@ -286,6 +291,11 @@ class _MkkmTicket extends MkkmTicket {
   return EqualUnmodifiableListView(_lines);
 }
 
+/// True for a 5+1 subscription ticket. Only in `ticketEkp` of the
+/// details: a list item carries no 5+1 marker (its `ticketGuid` is not
+/// the subscription's, the `transactionCode` is shared). The details'
+/// `ticket.promotionName` is then `"5+1"`; such a ticket is returnable
+/// like any other.
 @override final  bool? fivePlusOneTicket;
 /// Numeric customer code — only present in ticket detail responses.
 @override final  int? customerId;

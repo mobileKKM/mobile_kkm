@@ -93,6 +93,10 @@ abstract class SubscriptionDetails with _$SubscriptionDetails {
   const factory SubscriptionDetails({
     bool? isSubscriptionSignedIn,
     int? counter,
+
+    /// The saved payment card. Set right after sign-in when the server
+    /// already knows a card for the customer (`newCard` then stays false in
+    /// [SubscriptionAvailableActions]); changes once a card change is booked.
     String? maskedCardNumber,
 
     /// Local time WITHOUT a UTC offset on the wire

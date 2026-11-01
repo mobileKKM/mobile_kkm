@@ -79,6 +79,12 @@ abstract class MkkmTicket with _$MkkmTicket {
     /// [TransportLine] objects (snake_case wire shape, same as the
     /// `dictionary/transport-line` response).
     @Default(<TransportLine>[]) List<TransportLine> lines,
+
+    /// True for a 5+1 subscription ticket. Only in `ticketEkp` of the
+    /// details: a list item carries no 5+1 marker (its `ticketGuid` is not
+    /// the subscription's, the `transactionCode` is shared). The details'
+    /// `ticket.promotionName` is then `"5+1"`; such a ticket is returnable
+    /// like any other.
     bool? fivePlusOneTicket,
 
     /// Numeric customer code — only present in ticket detail responses.
