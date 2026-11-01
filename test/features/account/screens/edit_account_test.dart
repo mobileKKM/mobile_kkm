@@ -160,6 +160,39 @@ void main() {
     expect(find.widgetWithText(TextFormField, '600123457'), findsOneWidget);
   });
 
+  testWidgets('street suggestions scroll into view, best matches first', (tester) async {
+    final adapter = _adapter()
+      ..reply('GET', '/account/street-autocomplete/15/Sie', 200, {
+        'streets': ['6 SIERPNIA', 'BOŻEGO MIŁOSIERDZIA', 'CIESIELSKA', 'DŁUGA SIEĆ', 'SIENKIEWICZA'],
+        'code': null,
+        'message': null,
+      });
+    // A phone's height: the address is at the bottom of the form.
+    await pumpApp(tester, adapter, session: signedInSession);
+    await openTab(tester, 'Account');
+    await tapVisible(tester, find.widgetWithText(GroupRow, 'Edit account'));
+    // The street field at the bottom edge, as when typing into it with the
+    // keyboard up.
+    await Scrollable.ensureVisible(
+      tester.element(field('Street')),
+      alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(field('Street'), 'Sie');
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
+
+    final shown = find.descendant(of: find.byType(InkWell), matching: find.textContaining(RegExp('SIE')));
+    expect(tester.widgetList<Text>(shown).map((text) => text.data), [
+      'SIENKIEWICZA',
+      '6 SIERPNIA',
+      'DŁUGA SIEĆ',
+      'BOŻEGO MIŁOSIERDZIA',
+    ]);
+    expect(tester.getRect(find.text('BOŻEGO MIŁOSIERDZIA')).bottom, lessThan(tester.getRect(_save).top));
+  });
+
   group('the photo', () {
     testWidgets('is saved by itself, under the picture', (tester) async {
       final adapter = _adapter();

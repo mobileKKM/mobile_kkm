@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_kkm/core/providers/ekp_providers.dart';
+import 'package:mobile_kkm/features/card_setup/utils/street_rank.dart';
 
 /// The street of an address: typed freely, with the server's streets of
 /// Kraków offered under it once typing stops.
@@ -30,6 +31,7 @@ class _StreetFieldState extends ConsumerState<StreetField> {
   static const _pause = Duration(milliseconds: 500);
   static const _shown = 4;
 
+  final _listKey = GlobalKey();
   Timer? _debounce;
   List<String> _streets = const [];
 
@@ -63,10 +65,28 @@ class _StreetFieldState extends ConsumerState<StreetField> {
       if (!mounted || widget.controller.text.trim() != query) {
         return;
       }
-      setState(() => _streets = reply.streets.take(_shown).toList());
+      setState(() => _streets = rankStreets(reply.streets, query).take(_shown).toList());
+      if (_streets.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _reveal());
+      }
     } catch (_) {
       // Only a help: the street can be typed out.
     }
+  }
+
+  void _reveal() {
+    final context = _listKey.currentContext;
+    if (!mounted || context == null) {
+      return;
+    }
+    unawaited(
+      Scrollable.ensureVisible(
+        context,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutCubic,
+      ),
+    );
   }
 
   void _pick(String street) {
@@ -93,6 +113,7 @@ class _StreetFieldState extends ConsumerState<StreetField> {
         ),
         if (_streets.isNotEmpty)
           Material(
+            key: _listKey,
             color: scheme.surfaceContainerHigh,
             elevation: 2,
             borderRadius: BorderRadius.circular(16),
