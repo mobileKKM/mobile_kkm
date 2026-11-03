@@ -3,8 +3,9 @@
 # keep this one in step with it. Store texts and images come from
 # fastlane/metadata/android/ in this repository.
 #
-# Per release: tag the commit vX.Y.Z (UpdateCheckMode reads the tags) and keep
-# srclibs on the Flutter version the release was built with.
+# Per release: tag the commit vX.Y.Z (UpdateCheckMode reads the tags). The build
+# follows fdroiddata's templates/build-flutter.yml: srclib flutter@stable, checked
+# out at the `flutter-version` of .github/actions/setup-flutter/action.yml.
 #
 # Betas (vX.Y.Z-beta.N) are not matched by UpdateCheckMode on purpose: auto-update would make them
 # the recommended version. Add their build entries by hand and leave CurrentVersion(Code) on the
@@ -41,7 +42,7 @@ Builds:
     commit: 4ad762ee32ac4b829be1e5f882f1940ebcecf1b8
     output: build/app/outputs/flutter-apk/app-release.apk
     srclibs:
-      - flutter@3.47.5
+      - flutter@stable
     # maplibre_gl compiles its Java for 21; the build server's default JDK is older.
     sudo:
       - apt-get update
@@ -49,36 +50,44 @@ Builds:
       - update-java-alternatives -a
       # Flutter embeds the build directory and the Android SDK path in the native libraries. release.yml builds
       # on GitHub's runner, so build here at the same two paths (SDK: F-Droid's /opt/android-sdk, linked).
-      - mkdir -p /home/runner/work/mobile_kkm/mobile_kkm
+      - mkdir -p /home/runner/work/mobile_kkm
       - chown -R vagrant:vagrant /home/runner
       - mkdir -p /usr/local/lib/android
       - ln -s /opt/android-sdk /usr/local/lib/android/sdk
     rm:
       - ios
     prebuild:
+      - flutterVersion=$(sed -n -E "s/^[[:space:]]*flutter-version:[[:space:]]*'?([0-9.]+)'?[[:space:]]*$/\1/p"
+        .github/actions/setup-flutter/action.yml)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
       # The release build falls back to the debug key without android/key.properties; F-Droid signs it itself.
       - sed -i -e '/signingConfig = /d' android/app/build.gradle.kts
+      # pub get at GitHub's checkout path (package_config.json holds absolute paths).
+      - export repo=/home/runner/work/mobile_kkm/mobile_kkm
+      - cd ..
+      - mv de.codebucket.mkkm $repo
+      - pushd $repo
       - export PUB_CACHE=$(pwd)/.pub-cache
       - $$flutter$$/bin/flutter config --no-analytics
-      - $$flutter$$/bin/flutter pub get
-      - sh tool/fdroid/strip_gms.sh
-      # The scanner rejects files in packages' examples and devtools extensions; the build uses none of them.
-      - find .pub-cache/hosted/pub.dev -type d -name example -prune -exec rm -rf {} +
-      - rm -rf .pub-cache/hosted/pub.dev/*/extension .pub-cache/hosted/pub.dev/archive-*/web
-    build:
-      # As release.yml builds it (APK, no dart defines): ARM only, Dart debug info left out. The tree is copied
-      # to GitHub's checkout path first and pub get runs again there (package_config.json holds absolute paths).
-      - SRC=$(pwd)
-      - DST=/home/runner/work/mobile_kkm/mobile_kkm
-      - cp -a "$SRC/." "$DST/"
-      - cd "$DST"
-      - export PUB_CACHE="$DST/.pub-cache"
-      - export ANDROID_HOME=/usr/local/lib/android/sdk ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
       - $$flutter$$/bin/flutter config --android-sdk /usr/local/lib/android/sdk
-      - $$flutter$$/bin/flutter pub get --offline
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - sh tool/fdroid/strip_gms.sh
+      - popd
+      - mv $repo de.codebucket.mkkm
+    scandelete:
+      - .pub-cache
+    build:
+      # As release.yml builds it (APK, no dart defines): ARM only, Dart debug info left out.
+      - export repo=/home/runner/work/mobile_kkm/mobile_kkm
+      - cd ..
+      - mv de.codebucket.mkkm $repo
+      - pushd $repo
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export ANDROID_HOME=/usr/local/lib/android/sdk ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
       - $$flutter$$/bin/flutter build apk --release --target-platform android-arm,android-arm64 --split-debug-info=build/symbols
-      - mkdir -p "$SRC/build/app/outputs/flutter-apk"
-      - cp build/app/outputs/flutter-apk/app-release.apk "$SRC/build/app/outputs/flutter-apk/"
+      - popd
+      - mv $repo de.codebucket.mkkm
 
 # No stable tag yet, so checkupdates would fail. With 2.0.0:
 #   AutoUpdateMode: Version

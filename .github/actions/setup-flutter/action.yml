@@ -10,8 +10,8 @@ runs:
         distribution: temurin
         java-version: '21'
 
-    # Keep on the Flutter version releases are built with, the same as `srclibs: flutter@…` in
-    # tool/fdroid/de.codebucket.mkkm.yml.
+    # Keep on the Flutter version releases are built with. The F-Droid recipe
+    # (tool/fdroid/de.codebucket.mkkm.yml) reads `flutter-version` from here with sed: keep it a bare x.y.z.
     - uses: subosito/flutter-action@v2
       with:
         flutter-version: 3.47.5
